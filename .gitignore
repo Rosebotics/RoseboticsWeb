@@ -1,0 +1,28 @@
+# Generated files
+*.discovery
+*.pyc
+
+# Eclipse
+.classpath
+.project
+.pydevproject
+
+# Android
+android/.settings/*
+android/bin/*
+android/gen/*
+tests/.settings/*
+tests/bin/*
+tests/gen/*
+
+# App Engine
+appengine/.settings/*
+appengine/pytz/*.tmp
+
+# Mac OS X
+*.DS_Store
+
+# Xcode
+*.xcuserstate
+project.xcworkspace/
+xcuserdata/
