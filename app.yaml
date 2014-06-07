@@ -1,4 +1,4 @@
-application: mycourse  # FIXME: Replace this with your application id
+application: roseboticsweb
 version: 1
 runtime: python27
 api_version: 1
@@ -7,9 +7,12 @@ threadsafe: false
 env_variables:
   GCB_PRODUCT_VERSION: '1.6.0'
   GCB_APPSTATS_ENABLED: false
+  GCB_COURSES_CONFIG: 'course:/cs1:/courses/cs1, course:/smartproductdesign:/courses/smartproductdesign, course:/android:/courses/android, course:/web:/courses/web, course:/ios:/courses/ios, course:/misc:/courses/misc, course:/originalsearch:/courses/originalsearch, course:/me430:/courses/me430'
 
-inbound_services:
-- warmup
+# Turned off warmup requests for development.  For more details visit:
+# https://developers.google.com/appengine/docs/python/config/appconfig#Python_app_yaml_Warmup_requests
+#inbound_services:
+#- warmup
 
 builtins:
 - remote_api: on
