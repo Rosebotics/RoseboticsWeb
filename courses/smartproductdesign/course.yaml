@@ -91,7 +91,7 @@ course:
   #
   # If this tag is not present, boilerplate JavaScript to notify Google
   # Analytics is not emitted.  Not having a value here is harmless.
-  google_analytics_id: ''
+  google_analytics_id: 'UA-51734946-1'
 
   # Google Tag Manager ID: Fill this in with a value obtained by signing up
   # at http://www.google.com/tagmanager.  When this ID is present, pages will
@@ -105,7 +105,7 @@ course:
   #
   # If this tag is not present, boilerplate JavaScript to notify Google
   # Tag Manager is not emitted.  Not having a value here is harmless.
-  google_tag_manager_id: 'GTM-KQSLSL'  # Note, I have no idea what this does but easy to add.
+  google_tag_manager_id: 'GTM-KQSLSL'
 
 
 ########################

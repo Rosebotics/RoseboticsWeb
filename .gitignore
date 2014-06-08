@@ -6,6 +6,7 @@
 .classpath
 .project
 .pydevproject
+.settings
 
 # Android
 android/.settings/*
