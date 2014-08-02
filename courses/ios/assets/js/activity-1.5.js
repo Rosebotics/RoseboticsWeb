@@ -31,27 +31,21 @@
 
 var activity = [
 
-  '<b>1.</b> Briefly discribe why and how we will use transistors in this course',
+  '<b>1.</b> What does the service object do?<br>',
 
-  { questionType: 'freetext',
-    correctAnswerRegex: /current/i,
-    correctAnswerOutput: 'Indeed.  The microcontroller will only provide so much current, so we need a transistor to serve as an electrically controlled switch for loads that need more current (or higher voltages).',
-    incorrectAnswerOutput: "That works, but ideally somewhere you'd say the word 'current'. :)",
-    showAnswerOutput: 'The microcontroller will only provide so much current, so we need a transistor to serve as an electrically controlled switch for loads that need more current (or higher voltages)'},
-
-    '<br><br><b>2.</b> A transistor that is controlled by current is called a <br>',
-    
   { questionType: 'multiple choice',
-    choices: [['BJT', true, 'Correct!  Bipolar Junction Transistors turn on and off via current.'],
-              ['MOSFET', false, 'Please try again. MOSFETs are voltage controlled.'],
-              ['H-Bridge', false, 'Please try again. ']]},
+    choices: [['Saves MovieQuotes to Core Data', false, 'Please try again.'],
+              ['Helps with the View (UI) creation', false, 'Please try again.'],
+              ['Handles the low level JSON communication with your backend', true, 'Correct!'],
+              ['Makes coffee', false, 'Please try again.']]},
 
-  '<br><br><b>3.</b> A transistor that is controlled by voltage is called a <br>',
-  
+  '<br><br><b>2.</b> If you are developing an iOS Endpoints app in the middle of the desert and have no internet connection at all, what service RPC URL would be most useful?<br>',
+
   { questionType: 'multiple choice',
-    choices: [['BJT', false, 'Please try again. BJTs are current controlled.'],
-              ['MOSFET', true, 'Correct!  Metal Oxide Semiconductor Field Effect Transistors turn on and off via voltage.'],
-              ['H-Bridge', false, 'Please try again. ']]},
-
+    choices: [['https://yourusername-movie-quotes.appspot.com', false, 'Please try again. That\s the web app\'s URL, not an RPC URL.'],
+              ['https://yourusername-movie-quotes.appspot.com/_ah/api/rpc?prettyPrint=false', false, 'Please try again.  You\'d need the internet to use the deployed version.'],
+              ['http://localhost:8080', false, 'Please try again. That is not the *RPC URL* for localhost.  That\'s the localhost web app url.'],
+              ['http://localhost:8080/_ah/api/rpc?prettyPrint=false', true, 'Correct!  That\'s the format for the RPC URL and it\'ll work in the desert because localhost is simply talking to your computer.'],
+              ['http://localhost:8080/_ah/api/explorer', false, 'Please try again. That one was the built-in explorer that you used for testing the API before using a client app.']]}
 ];
 

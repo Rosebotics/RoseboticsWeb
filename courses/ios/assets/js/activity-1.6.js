@@ -29,71 +29,57 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-		'<b>1.</b> What does BJT stand for?',
+    '<b>1.</b> In order to create the query object used in this video, we used a class method on GTLQueryMoviequotes.  What was the name of that method?<br>',
 
-		{
-			questionType : 'freetext',
-			correctAnswerRegex : /bipolar junction transistor/i,
-			correctAnswerOutput : 'Correct!  Bipolar Junction Transistor.',
-			incorrectAnswerOutput : 'Looking for Bipolar Junction Transistor',
-			outputHeight : '40px'
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ 'queryForMoviequoteList', true, 'Correct!  For the backend we made a list, insert, and delete API method.  This time we\'re using the *List* method.' ],
+          [ 'queryForMoviequoteInsertWithObject', false, 'Please try again.' ],
+          [ 'queryForMoviequoteDeleteWithEntityKey', false, 'Please try again.' ],
+          [ 'queryForMoviequoteSomethingElse', false, 'Please try again. ' ] ]
+    },
 
-		'<br><br><b>2.</b> What are the names of the three legs on a BJT?',
 
-		{
-			questionType : 'freetext',
-			correctAnswerRegex : /(base collector emitter)|(base emitter collector)|(collector base emitter)|(collector emitter base)|(emitter base collector)|(emitter collector base)/i,
-			correctAnswerOutput : 'Correct!  Base Collector Emitter.',
-			incorrectAnswerOutput : 'Looking for Base Collector Emitter',
-			outputHeight : '40px'
-		},
+    '<br><br><b>2.</b> We set the limit to give us 30 quotes.  If there were more than 30 quotes on the server and we wanted more than just the most recent 30 quotes how would we get them?<br>',
 
-		'<br><br><b>3.</b> Assume an NPN BJT for these questions<br>',
-		{
-			questionType : 'multiple choice group',
-			questionsList : [
-					{
-						questionHTML : '<b>a.</b> Always connected to ground',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 2
-					},
-					{
-						questionHTML : '<b>b.</b> Connected to the load (ie motor, LED, etc)',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 1
-					},
-					{
-						questionHTML : '<b>c.</b> Connected by a resistor to the microcontroller',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 0
-					}],
-			allCorrectOutput : 'Well done!',
-			someIncorrectOutput : 'Please try again.',
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ 'We can\'t get them.  30 is the max', false, 'Please try again.' ],
+          [ 'Make a second query for Moviequotes setting the pageToken on that query object to the nextPageToken from this response.', true, 'Correct! A fair amount of code needed to make that happen smoothly and append the results so we did not do it here (keeping it simple).' ],
+          [ '50 quotes is the most we could ever get', false, 'Please try again.' ],
+          [ 'There can never be more than 30 quotes saved on the server.  So a non-issue', false, 'Please try again. ' ] ]
+    },
 
-		'<br><br><b>4.</b> If a load need 120 milliamps how much current needs to flow into the <b>base</b> to turn <b>ON</b> the load?<br>',
+    '<br><br><b>3.</b> If we had not set the limit to 30 would default limit size would we have gotten?<br>',
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ '0 mA', false, 'Please try again.' ],
-					[ '12 mA', true,
-							'Correct!  One tenth the collector-emitter current is needed.' ],
-					[ '50 mA', false, 'Please try again.' ],
-					[ '120 mA', false, 'Please try again. ' ] ]
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ '0 (you must set a limit)', false, 'Please try again.' ],
+          [ '10', true, 'Correct!  I think they picked 10 as the default just to make the point that you should make small fast queries, then come back for more if needed.' ],
+          [ '50', false, 'Please try again.' ],
+          [ 'We would have gotten ALL quotes', false, 'Please try again. ' ] ]
+    },
 
-		'<br><br><b>5.</b> If a load need 120 milliamps how much current needs to flow into the <b>base</b> to turn <b>OFF</b> the load?<br>',
+    '<br><br><b>4.</b> We couldn\'t assign the response.items array (an NSArray) to the self.quotes array (an NSMutableArray).  So what function did we call to fix that issue which created an NSMutableArray from the response.items data?<br>',
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ '0 mA', true,
-							'Correct! Always no current flow to turn off.' ],
-					[ '12 mA', false, 'Please try again.' ],
-					[ '50 mA', false, 'Please try again.' ],
-					[ '120 mA', false, 'Please try again. ' ] ]
-		},
+    {
+      questionType : 'freetext',
+      correctAnswerRegex : /mutableCopy/i,
+      correctAnswerOutput : 'Correct!  mutableCopy.',
+      incorrectAnswerOutput : 'Looking for mutableCopy',
+      outputHeight : '40px'
+    },
+
+    '<br><br><b>5.</b> We set the query.order = "-last_touch_date_time";  If we had never run that particular query when doing localhost testing what would\'ve happen when trying to run that query on the deployed version?<br>',
+
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ 'Ah.... nothing different.  I don\'t even understand why you would ask that.', false, 'Please try again.' ],
+          [ 'If we never ran the -last_touch_date_time query in localhost then that index would not get built when you deploy, making that query impossible to execute for the deployed app.', true, 'Correct!  Crazy I know.  You can open the index.yaml file in the backend folder to see which indexes will be built.' ] ]
+    }
 
 ];
