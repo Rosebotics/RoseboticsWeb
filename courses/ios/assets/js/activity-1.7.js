@@ -30,45 +30,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What does MOSFET stand for?',
+                '<b>1.</b> A refreshControl is available only when your ViewController is a subclass of...?',
 
                 { questionType: 'freetext',
-                  correctAnswerRegex: /metal oxide semiconductor field effect transistor/i,
-                  correctAnswerOutput: 'Correct!  That\'s a mouthful! :).',
-                  incorrectAnswerOutput: 'Looking for Metal Oxide Semiconductor Field Effect Transistor',
-                  outputHeight: '40px'},
-
-                '<br><br><b>2.</b> What are the names of the three legs on a MOSFET?',
-
-                { questionType: 'freetext',
-                  correctAnswerRegex: /(gate source drain)|(gate drain source)|(source gate drain)|(source drain gate)|(drain gate source)|(drain source gate)/i,
-                  correctAnswerOutput: 'Correct!  Gate Drain Source.',
-                  incorrectAnswerOutput: 'Looking for Gate Drain Source',
-                  outputHeight: '40px'},
-
-                  '<br><br><b>3.</b> Assume an N-channel MOSFET for these questions<br>',
-                  
-                  {questionType: 'multiple choice group',
-                	    questionsList: [ 
-                	      {questionHTML: '<b>a.</b> Always connected to ground',
-                	        choices: ['Gate', 'Drain' , 'Source'],
-                	        correctIndex: 2},
-                	      {questionHTML: '<b>b.</b> Connected to the load (ie motor, LED, etc)',
-                	        choices: ['Gate', 'Drain' , 'Source'],
-                	        correctIndex: 1},
-                	      {questionHTML: '<b>c.</b> Connected to the microcontroller',
-                	        choices: ['Gate', 'Drain' , 'Source'],
-                	        correctIndex: 0}
-                	    ],
-                	    allCorrectOutput: 'Well done!',
-                	    someIncorrectOutput: 'Please try again.',
-                	  },
-                              
-                '<br><br><b>4.</b> I like MOSFETs. :) They make my life easy because I just connect it straight to the PIC without sizing a resistor.<br>',
-                  
-                { questionType: 'multiple choice',
-                  choices: [['True', true, 'Correct.  You can even use them in parallel if you need even MORE current.'],
-                            ['False', false, 'Please try again']]},
+                  correctAnswerRegex: /UITableViewController/i,
+                  correctAnswerOutput: 'Correct!  UITableViewController\'s are handy!',
+                  incorrectAnswerOutput: 'Looking for UITableViewController',
+                  outputHeight: '40px'}
 
 ];
 

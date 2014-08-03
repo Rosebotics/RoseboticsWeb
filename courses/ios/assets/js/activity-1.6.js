@@ -35,13 +35,40 @@ var activity = [
       questionType : 'multiple choice',
       choices : [
           [ 'queryForMoviequoteList', true, 'Correct!  For the backend we made a list, insert, and delete API method.  This time we\'re using the *List* method.' ],
-          [ 'queryForMoviequoteInsertWithObject', false, 'Please try again.' ],
-          [ 'queryForMoviequoteDeleteWithEntityKey', false, 'Please try again.' ],
+          [ 'queryForMoviequoteInsertWithObject:', false, 'Please try again.' ],
+          [ 'queryForMoviequoteDeleteWithEntityKey:', false, 'Please try again.' ],
           [ 'queryForMoviequoteSomethingElse', false, 'Please try again. ' ] ]
     },
 
 
-    '<br><br><b>2.</b> We set the limit to give us 30 quotes.  If there were more than 30 quotes on the server and we wanted more than just the most recent 30 quotes how would we get them?<br>',
+  '<br><br><b>2.</b> Under the hood the moviequotes.moviequote.list method uses what type of RESTful API method?  Here is an explaination of each:<br>',
+  '<img width="90%" src="assets/img/restful_api_methods.png" alt="RESTful API Methods"><br>',
+  '<i>Image from <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">http://en.wikipedia.org/wiki/Representational_state_transfer</a></i><br>',
+  { questionType: 'multiple choice',
+    choices: [['GET', true, 'Correct!'],
+              ['PUT', false, 'Please try again.'],
+              ['POST', false, 'Please try again.'],
+              ['DELETE', false, 'Please try again.']]},
+
+    '<br><br>Here is an example GET request, click on this link: (it will open in a new tab)<br><a target="_blank" href="https://fisherds-movie-quotes.appspot.com/_ah/api/moviequotes/v1/moviequote/list?limit=30&order=-last_touch_date_time">https://fisherds-movie-quotes.appspot.com/_ah/api/moviequotes/v1/moviequote/list?limit=30&order=-last_touch_date_time</a><br>',
+    'Can you see how you\'d change it to point to your backend?  Can you see how to change it to only get 2 quotes?<br><br>',
+    '<b>3.</b> That exact GET request was used in this video by the iPhone Simulator to get the data.  It comes in as JSON data, but then each item is converted into an Objective-C object.<br>',
+
+    {
+      questionType : 'multiple choice group',
+      questionsList : [
+          {
+            questionHTML : 'Based on the JSON data response (from the link above) what are the 5 fields present for each MovieQuote in the items array?',
+            choices : [ 'items', 'kind', 'etag', 'quote', 'last_touch_date_time', 'movie', 'entityKey' ],
+            correctIndex : [1,3,4,5,6]
+          } ],
+      allCorrectOutput : 'Well done!  You probably didn\'t expect the *kind* property because it is only used under the hood.  We use last_touch_date_touch for the sort order, quote and movie for display, and entityKey so we can edit or delete the quote later.',
+      someIncorrectOutput : 'Please try again. Hints: items and etag are not in the array',
+    },
+
+
+
+    '<br><br><b>4.</b> We set the limit to give us 30 quotes.  If there were more than 30 quotes on the server and we wanted more than just the most recent 30 quotes how would we get them?<br>',
 
     {
       questionType : 'multiple choice',
@@ -52,7 +79,7 @@ var activity = [
           [ 'There can never be more than 30 quotes saved on the server.  So a non-issue', false, 'Please try again. ' ] ]
     },
 
-    '<br><br><b>3.</b> If we had not set the limit to 30 would default limit size would we have gotten?<br>',
+    '<br><br><b>5.</b> If we had not set the limit to 30 would default limit size would we have gotten?<br>',
 
     {
       questionType : 'multiple choice',
@@ -63,7 +90,7 @@ var activity = [
           [ 'We would have gotten ALL quotes', false, 'Please try again. ' ] ]
     },
 
-    '<br><br><b>4.</b> We couldn\'t assign the response.items array (an NSArray) to the self.quotes array (an NSMutableArray).  So what function did we call to fix that issue which created an NSMutableArray from the response.items data?<br>',
+    '<br><br><b>6.</b> We couldn\'t assign the response.items array (an NSArray) to the self.quotes array (an NSMutableArray).  So what function did we call to fix that issue which created an NSMutableArray from the response.items data?<br>',
 
     {
       questionType : 'freetext',
@@ -73,7 +100,7 @@ var activity = [
       outputHeight : '40px'
     },
 
-    '<br><br><b>5.</b> We set the query.order = "-last_touch_date_time";  If we had never run that particular query when doing localhost testing what would\'ve happen when trying to run that query on the deployed version?<br>',
+    '<br><br><b>7.</b> We set the query.order = "-last_touch_date_time";  If we had never run that particular query when doing localhost testing what would\'ve happen when trying to run that query on the deployed version?<br>',
 
     {
       questionType : 'multiple choice',

@@ -29,71 +29,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-		'<b>1.</b> What does BJT stand for?',
-
-		{
-			questionType : 'freetext',
-			correctAnswerRegex : /bipolar junction transistor/i,
-			correctAnswerOutput : 'Correct!  Bipolar Junction Transistor.',
-			incorrectAnswerOutput : 'Looking for Bipolar Junction Transistor',
-			outputHeight : '40px'
-		},
-
-		'<br><br><b>2.</b> What are the names of the three legs on a BJT?',
-
-		{
-			questionType : 'freetext',
-			correctAnswerRegex : /(base collector emitter)|(base emitter collector)|(collector base emitter)|(collector emitter base)|(emitter base collector)|(emitter collector base)/i,
-			correctAnswerOutput : 'Correct!  Base Collector Emitter.',
-			incorrectAnswerOutput : 'Looking for Base Collector Emitter',
-			outputHeight : '40px'
-		},
-
-		'<br><br><b>3.</b> Assume an NPN BJT for these questions<br>',
-		{
-			questionType : 'multiple choice group',
-			questionsList : [
-					{
-						questionHTML : '<b>a.</b> Always connected to ground',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 2
-					},
-					{
-						questionHTML : '<b>b.</b> Connected to the load (ie motor, LED, etc)',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 1
-					},
-					{
-						questionHTML : '<b>c.</b> Connected by a resistor to the microcontroller',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 0
-					}],
-			allCorrectOutput : 'Well done!',
-			someIncorrectOutput : 'Please try again.',
-		},
-
-		'<br><br><b>4.</b> If a load need 120 milliamps how much current needs to flow into the <b>base</b> to turn <b>ON</b> the load?<br>',
-
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ '0 mA', false, 'Please try again.' ],
-					[ '12 mA', true,
-							'Correct!  One tenth the collector-emitter current is needed.' ],
-					[ '50 mA', false, 'Please try again.' ],
-					[ '120 mA', false, 'Please try again. ' ] ]
-		},
-
-		'<br><br><b>5.</b> If a load need 120 milliamps how much current needs to flow into the <b>base</b> to turn <b>OFF</b> the load?<br>',
-
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ '0 mA', true,
-							'Correct! Always no current flow to turn off.' ],
-					[ '12 mA', false, 'Please try again.' ],
-					[ '50 mA', false, 'Please try again.' ],
-					[ '120 mA', false, 'Please try again. ' ] ]
-		},
+    '<b>1.</b> In this video we don\'t even look at the <b>GTLMoviequotesMovieQuote* returnedMovieQuote</b> variable in the response.  However if we added an <b>NSLog(@"quote = %@", returnedMovieQuote.quote);</b> what word would get printed?  (might need to open your movie_quotes_api.py to find the answer.<br>',
+    {
+      questionType : 'freetext',
+      correctAnswerRegex : /deleted/i,
+      correctAnswerOutput : 'Correct!  Yep, we were required by Endpoints Proto Datastore to return a MovieQuote from a @MovieQuote.method so we made one (that is not stored anywhere) that had quote=deleted.  We could check that property, but we choose not to bother.  Checking only the error variable should be safe.',
+      incorrectAnswerOutput : 'Looking for deleted',
+      outputHeight : '60px'
+    }
 
 ];
