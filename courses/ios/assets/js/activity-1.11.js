@@ -30,20 +30,29 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                
-                '<b>1.</b> I like Darlingtons. :) They make my life easy because I just connect the input straight to the PIC without sizing a resistor.<br>',
-                  
-                { questionType: 'multiple choice',
-                  choices: [['True', true, 'Correct!  They make BJT technology just as easy to use as a MOSFET.  You even get 7 Darlingtons in a single ULN2003 chip.'],
-                            ['False', false, 'Please try again.']]},
 
+                '<b>1.</b> My Weatherpics client app can perform the following tasks:<br>',
 
-                '<br><br><b>2.</b> The ULN2003 provides power to a connected load when it\'s on.<br>',
-                
-                { questionType: 'multiple choice',
-                  choices: [['True', false, 'Please try again. Indeed transistors turn on and off loads, but not by providing power (they provide ground).'],
-                            ['False', true, 'Correct!  One load leg connects to power.  The Darlinton provides ground to the load turn on or leaves the load leg floating to turn off.']]},
-
-
-
+            {
+              questionType : 'multiple choice group',
+              questionsList : [
+                  {
+                    questionHTML : '',
+                    choices : [ 'Works with the deployed app',
+                                'Shows Loading Weatherpics with spinner before initial data load (might be VERY brief)',
+                                'Displays a list of Weatherpic captions on load',
+                                'Does a refresh of the Weatherpic captions on a table pull down (refresh control)',
+                                'Displays a detail view of the Weatherpic to show the image',
+                                'Works with localhost as well',
+                                'Shows No Weatherpics if there are none (good test for localhost)',
+                                'Can create a new Weatherpic by typing in an imageUrl',
+                                'Can create a new Weatherpic by typing leaving the imageUrl blank to get a random image url',
+                                'Can delete a Weatherpic',
+                                'Can edit a caption of a Weatherpic',
+                                'Displays the iOS Create, Delete, and Edit actions on the web app (localhost or deployed)' ],
+                    correctIndex : [0,1,2,3,4,5,6,7,8,9,10,11]
+                  }],
+              allCorrectOutput : 'Nice work finishing this lab!  It was a big task!',
+              someIncorrectOutput : 'Needs to be able to perform all of the requests.',
+            }
 ];

@@ -30,45 +30,33 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What does MOSFET stand for?',
+  '<b>1.</b> Which MovieQuotes API method does update use?<br>',
+  '<img src="assets/img/moviequotes_api.png" alt="Moviequotes API methods"><br>',
 
-                { questionType: 'freetext',
-                  correctAnswerRegex: /metal oxide semiconductor field effect transistor/i,
-                  correctAnswerOutput: 'Correct!  That\'s a mouthful! :).',
-                  incorrectAnswerOutput: 'Looking for Metal Oxide Semiconductor Field Effect Transistor',
-                  outputHeight: '40px'},
+  { questionType: 'multiple choice',
+    choices: [['moviequotes.moviequote.delete', false, 'Please try again'],
+              ['moviequotes.moviequote.insert', true, 'Correct.  Same method we used when adding a quote.'],
+              ['moviequotes.moviequote.list', false, 'Please try again']]
+  },
 
-                '<br><br><b>2.</b> What are the names of the three legs on a MOSFET?',
+  '<br><br><b>2.</b> To play with adding and updating quotes I did these three queries to http://fisherds-movie-quotes.appspot.com/_ah/api/explorer What will the end result be?<br>',
+  '<br><h2>Insert #1</h2>',
+  '<img src="assets/img/explorer_adding_a_quote.png" alt="Moviequotes API explorer"><br>',
+  'That response gave me an entityKey that I used in Query #2 (assume I copy pasted it correctly)<br>',
+  '<br><h2>Insert #2</h2>',
+  '<img src="assets/img/explorer_updating_a_quote.png" alt="Moviequotes API explorer"><br>',
+  '<br><h2>Insert #3</h2>',
+  '<img src="assets/img/explorer_updating_a_quote_missing_field.png" alt="Moviequotes API explorer"><br>',
 
-                { questionType: 'freetext',
-                  correctAnswerRegex: /(gate source drain)|(gate drain source)|(source gate drain)|(source drain gate)|(drain gate source)|(drain source gate)/i,
-                  correctAnswerOutput: 'Correct!  Gate Drain Source.',
-                  incorrectAnswerOutput: 'Looking for Gate Drain Source',
-                  outputHeight: '40px'},
+    { questionType: 'multiple choice',
+      choices: [['You\'d now have 3 quotes.', false, 'Please try again'],
+                ['You\'d now have 2 quotes', false, 'Please try again'],
+                ['You\'d now have 1 quote with quote = "My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "Princess Bride"', false, 'Please try again'],
+                ['You\'d now have 1 quote with quote = "My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "The Princess Bride"', false, 'Please try again'],
+                ['You\'d now have 1 quote with quote = "Hello. My name is Inigo Montoya. You killed my father. Prepare to die." and have no movie title', false, 'Please try again. When you leave out a field it remains unchanged.'],
+                ['You\'d now have 1 quote with quote = "Hello. My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "The Princess Bride"', true, 'Correct! When you leave out a field it remains unchanged.']]},
 
-                  '<br><br><b>3.</b> Assume an N-channel MOSFET for these questions<br>',
-                  
-                  {questionType: 'multiple choice group',
-                	    questionsList: [ 
-                	      {questionHTML: '<b>a.</b> Always connected to ground',
-                	        choices: ['Gate', 'Drain' , 'Source'],
-                	        correctIndex: 2},
-                	      {questionHTML: '<b>b.</b> Connected to the load (ie motor, LED, etc)',
-                	        choices: ['Gate', 'Drain' , 'Source'],
-                	        correctIndex: 1},
-                	      {questionHTML: '<b>c.</b> Connected to the microcontroller',
-                	        choices: ['Gate', 'Drain' , 'Source'],
-                	        correctIndex: 0}
-                	    ],
-                	    allCorrectOutput: 'Well done!',
-                	    someIncorrectOutput: 'Please try again.',
-                	  },
-                              
-                '<br><br><b>4.</b> I like MOSFETs. :) They make my life easy because I just connect it straight to the PIC without sizing a resistor.<br>',
-                  
-                { questionType: 'multiple choice',
-                  choices: [['True', true, 'Correct.  You can even use them in parallel if you need even MORE current.'],
-                            ['False', false, 'Please try again']]},
+   '<br>Note, if the image showed the response from the server you\'d know the answer right away. :)'
 
 ];
 
