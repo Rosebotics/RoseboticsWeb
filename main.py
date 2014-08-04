@@ -40,6 +40,8 @@ from modules.review import review
 from modules.search import search
 from modules.upload import upload
 
+from handlers import main_handler
+
 # use this flag to control debug only features
 debug = not appengine_config.PRODUCTION_MODE
 
@@ -89,7 +91,14 @@ webapp2_i18n_config = {'translations_path': os.path.join(
     appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
 
 # init application
-app = webapp2.WSGIApplication(
+app = webapp2.WSGIApplication([('/', main_handler.HomePage),
+                               ('/course', main_handler.CoursePage),
+                               ('/competition', main_handler.CompetitionPage),
+                               ('/platform', main_handler.PlatformPage),
+                               ('/about', main_handler.AboutPage),
+                               ('/videos', main_handler.VideosPage),
+                               ('/contact', main_handler.ContactPage),
+                               ('/gettingstarted', main_handler.GettingStartedtPage)] +
     global_routes + extensions_routes + appstats_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config},
     debug=debug)
