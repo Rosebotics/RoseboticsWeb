@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -30,12 +29,29 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What was the compiler flag you had to add to the GTL Client Library?',
+    '<b>1.</b> An iOS Cliend ID consist of a Client ID and a Client Secret.<br>',
+    {
+      questionType : 'multiple choice group',
+      questionsList : [
+                       {
+                           questionHTML : 'Where is the <b>iOS Client ID</b> used:',
+                           choices : [ 'Your backend', 'Your iOS App', 'Your computer', 'Google\'s Cloud Services for OAuth' ],
+                           correctIndex : [0, 1, 3]
+                         },
+                         {
+                             questionHTML : 'Where is the <b>iOS Client Secret</b> used',
+                             choices : [ 'Your backend', 'Your iOS App', 'Your computer', 'Google\'s Cloud Services for OAuth' ],
+                             correctIndex : [1, 3]
+                           }],
+      allCorrectOutput : 'Well done!',
+      someIncorrectOutput : 'Please try again.  Hint: Your computer is not involved at all in OAuth.  The first question has 3 answers, the second question has 2 answers.',
+    },
 
-                { questionType: 'freetext',
-                  correctAnswerRegex: /-fno-objc-arc/i,
-                  correctAnswerOutput: 'Correct! Read as... Flag for No Objective-C Automatic Reference Counting.',
-                  incorrectAnswerOutput : 'Please try again.',
-                  outputHeight: '40px'}
+    '<br><br><b>2.</b> You must have a Web Client ID to make/use an iOS Client ID<br>',
+
+    { questionType: 'multiple choice',
+      choices: [['True.  We must have both.', false, 'Try again.  You only need a Web Client ID for JavaScript Ajax request and Android apps'],
+                ['False. You can make an iOS Client ID without making a Web Client ID', true, 'Correct.  iOS does not require a Web Client ID.']]
+    },
+
 ];
-

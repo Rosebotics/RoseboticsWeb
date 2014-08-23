@@ -30,13 +30,14 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> A refreshControl is available only when your ViewController is a subclass of...?',
+                '<b>1.</b> NO real questions.  Did you get the app to communicate with localhost?<br>',
 
-                { questionType: 'freetext',
-                  correctAnswerRegex: /UITableViewController/i,
-                  correctAnswerOutput: 'Correct!  UITableViewController\'s are handy!',
-                  incorrectAnswerOutput: 'Looking for UITableViewController',
-                  outputHeight: '40px'}
-
+            {
+              questionType : 'multiple choice',
+              choices : [
+                  ['Yep. Worked fine.', true, 'Great!' ],
+                  ['I installed PyCrypto but it still didn\'t work', true, 'Well darn.  Thanks for trying.  Maybe next time things will go better. :)' ],
+                  ['Didn\'t try', false, 'Please try again.' ] ]
+            },
 ];
 

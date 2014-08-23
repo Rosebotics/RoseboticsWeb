@@ -31,21 +31,36 @@
 
 var activity = [
 
-  '<b>1.</b> What does the service object do?<br>',
+  '<b>1.</b> What does the service object do again?<br>',
 
   { questionType: 'multiple choice',
-    choices: [['Saves MovieQuotes to Core Data', false, 'Please try again.'],
-              ['Helps with the View (UI) creation', false, 'Please try again.'],
+    choices: [['Saves GradeRecorder grades to Core Data', false, 'Please try again.'],
+              ['Helps create the sign-in web view for OAuth', false, 'Please try again.'],
               ['Handles the low level JSON communication with your backend', true, 'Correct!'],
               ['Makes coffee', false, 'Please try again.']]},
 
-  '<br><br><b>2.</b> If you are developing an iOS Endpoints app in the middle of the desert and have no internet connection at all, what service RPC URL would be most useful?<br>',
+  '<br><br><b>2.</b> Which steps did we complete during this lesson?',
 
-  { questionType: 'multiple choice',
-    choices: [['https://yourusername-movie-quotes.appspot.com', false, 'Please try again. That\s the web app\'s URL, not an RPC URL.'],
-              ['https://yourusername-movie-quotes.appspot.com/_ah/api/rpc?prettyPrint=false', false, 'Please try again.  You\'d need the internet to use the deployed version.'],
-              ['http://localhost:8080', false, 'Please try again. That is not the *RPC URL* for localhost.  That\'s the localhost web app url.'],
-              ['http://localhost:8080/_ah/api/rpc?prettyPrint=false', true, 'Correct!  That\'s the format for the RPC URL and it\'ll work in the desert because localhost is simply talking to your computer.'],
-              ['http://localhost:8080/_ah/api/explorer', false, 'Please try again. That one was the built-in explorer that you used for testing the API before using a client app.']]}
+  {
+    questionType : 'multiple choice group',
+    questionsList : [
+        {
+          questionHTML : '',
+          choices : [ 'We got the Authorizer via the sign-in web view', 'We set the Authoizer on the service (within _setAuthorizer)', 'We created the Service', 'We saved the users password', 'We took care of using a saved Authorizer if available, so a users wouldn\'t need to sign in again.' ],
+          correctIndex : [1,2,4]
+        }],
+    allCorrectOutput : 'Well done!',
+    someIncorrectOutput : 'Please try again. Hints: We never have access to the user\'s password (that is the whole point of OAuth) and we got the Authorizer last time',
+  },
+
+    '<br><br><b>3.</b> In preparation for the second time a user launches the app, what function did we call to know if we have a user is signed in already?  Fill in this blank if ([RHOAuthUtils ___]) {...perform segue...}?<br>',
+
+  {
+    questionType : 'freetext',
+    correctAnswerRegex : /hasAuthorizer/i,
+    correctAnswerOutput : 'Correct!',
+    incorrectAnswerOutput : 'Please try again.  We were looking for hasAuthorizer',
+    showAnswerOutput : 'Here is the answer: hasAuthorizer'
+  },
 ];
 

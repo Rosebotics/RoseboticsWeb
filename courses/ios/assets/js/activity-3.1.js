@@ -31,25 +31,27 @@
 
 var activity = [
 
-  '<b>1.</b> Right now you can add a quote using two very different methods: the web app OR the Endpoints API (which you can access already via the Endpoints Explorer).  Which mechanism uses JSON?<br>',
+  '<b>1.</b> My GraderRecorder backend is up an running (has been since the previous unit).<br>',
 
   { questionType: 'multiple choice',
-    choices: [['The pretty blue web app', false, 'Nope, the web app uses form data to add a quote.  JSON is not used by the web app.'],
-              ['The Endpoints API', true, 'Correct!  Under the hood the Endpoints POST coming in to insert a quote is JSON and all replies from the API are JSON.'],
-              ['Both', false, 'Nope, the web app uses form data to add a quote.  JSON is not used by the web app.']]},
+    choices: [['Yep!  Ready to go!', true, 'Great!  Go ahead and fire up your localhost as well.'],
+              ['I actually never got it working', false, 'You need to get that working first.  You won\'t be able to do anything useful without it.']]},
 
 
-  '<br><br><b>2.</b> The web app is useless to the iOS client code.  Only the Endpoints API will be used by the iOS Client code.<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['True', true, 'Correct!  The iOS client code will use JSON messages with the Endpoints API.  The pretty blue web app does not even need to exist to create an iOS app.'],
-              ['False', false, 'Try again.  Might I suggest True']]},
-
-  '<br><br><b>3.</b> My MovieQuotes Endpoints backend is up and running both deployed and on localhost.<br>',
+  '<br><br><b>2.</b> I have a few grades on my deployed version and localhost version.  Plus I have at least 12+ students. <br>',
 
   { questionType: 'multiple choice',
-    choices: [['Yes', true, 'Great!  You are ready to move on!'],
-              ['No', false, 'You need to get the backend working first. :)  See the prior unit.']]},
+    choices: [['Done.  I used the Roster Import feature and added our class', true, 'Great!  I love that feature. ;)'],
+              ['Done. I manually added 15+ students using Add Student', true, 'That\'s fine too.  Ready to go.'],
+              ['I don\'t have the grades or students prepared', false, 'Try again.  You CAN keep going without data ready, but it should be easy to add.']]},
+
+  '<br><br><b>3.</b> In addition to the Service object what is the new object we\'ll be working with for iOS OAuth client code?<br>',
+
+  { questionType: 'multiple choice',
+    choices: [['Client IDs', false, 'Try again.  We will use Client IDs, but this is not the answer I\'m looking for.'],
+              ['The Authorizer', true, 'Correct!  The Authorizer will add the OAuth token to all queries the service makes.'],
+              ['The Terminator', false, 'Try again.'],
+              ['OAuth', false, 'Try again.  OAuth is the name of the Open standard for Authentication.  It is not the name of the object used in iOS code.']]},
 
 ];
 

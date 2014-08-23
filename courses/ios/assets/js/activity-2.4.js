@@ -31,28 +31,78 @@
 
 var activity = [
 
-  '<b>1.</b>The last thing we did in this video was to call a method to set the Authorizer on the service object.  Will that method do anything?<br>',
+  '<b>1.</b>Put the five steps below in the appropriate order.<br>',
 
   {
-    questionType : 'multiple choice',
-    choices : [
-        ['It will, but right now _setAuthorizer is empty and we don\'t have a service object yet anyway', true, 'Correct!' ],
-        ['We don\'t have the Authorizer yet.', false, 'Please try again.' ],
-        ['Not only do we have the Authorizer, but we are already using the Authorizer!', false, 'Please try again.' ]]
+    questionType : 'multiple choice group',
+    questionsList : [
+        {
+          questionHTML : '<b>a.</b> Select the first step out of these five:',
+          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
+                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
+                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
+                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
+                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
+          correctIndex : 2
+        },
+        {
+          questionHTML : '<b>b.</b> Second step:',
+          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
+                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
+                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
+                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
+                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
+          correctIndex : 1
+        },
+        {
+          questionHTML : '<b>c.</b> Third step:',
+          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
+                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
+                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
+                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
+                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
+          correctIndex : 3
+        }, {
+          questionHTML : '<b>d.</b> Fourth step:',
+          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
+                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
+                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
+                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
+                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
+          correctIndex : 0
+        } , {
+            questionHTML : '<b>d.</b> Final step:',
+            choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
+                        'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
+                        'Open a Terminal window and navigate to your MovieQuotes backend folder.',
+                        'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
+                        'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
+            correctIndex : 4
+          } ],
+    allCorrectOutput : 'Well done!',
+    someIncorrectOutput : 'Please try again. Hints: ...',
   },
 
 
-  '<br><br><b>2.</b> Why did we put the Google\'s sign-in web view inside a Navigation Controller?<br>',
+
+  '<br><br><b>2.</b> If you make an API change to your backend you need to delete the old generated code, rerun the Terminal commands (get_discovery_doc and ServiceGenerator steps), then copy in the new files.<br>',
 
   {
-    questionType : 'multiple choice',
-    choices : [
-        ['It\'s required.  You don\'t get a choice.', false, 'Please try again.' ],
-        ['We wanted to have a Cancel button.', true, 'Correct!' ],
-        ['Because we needed the forward and back browser buttons', false, 'Please try again.' ],
-        ['So that we could get an Authorizer', false, 'Please try again.' ] ]
+    questionType : 'multiple choice group',
+    questionsList : [
+        {
+            questionHTML : 'What are the 2 best tricks (shown in the video) in Terminal to make it easier to type the magic commands again.',
+            choices : [ 'Tab',
+                        'Up arrow',
+                        'Crtl R',
+                        'Spacebar',
+                        'Right arrow'],
+            correctIndex : [1, 2]
+          } ],
+    allCorrectOutput : 'Well done! If you just typed them recently Up Arrow is your best choice.  If it\'s been days, months, or years then your best bet is Ctrl R and type anything from the command that you can remember. :) I remember get_d and ServiceG, then I use right arrow to edit the command or hit enter to run it.',
+    someIncorrectOutput : 'Please try again. Hints: Select only 2.  Tab is a useful Terminal trick (it does autocomplete), but their are two tricks BETTER than Tab.',
   },
 
-  '<br><br>Nice work.  Let\'s go make the Service object and set the Authorizer on it so we can start making queries!',
+  '<br>Note, these tricks will be VERY handy for you in the lab as well.  The next time you type these commands always use Terminal\'s memory for what you typed last time, and then edit only the arguments to the commands for the next backend (which will be the Weatherpics lab).<br>',
 
 ];

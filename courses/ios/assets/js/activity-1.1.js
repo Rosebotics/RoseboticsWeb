@@ -31,25 +31,48 @@
 
 var activity = [
 
-  '<b>1.</b> Right now you can add a quote using two very different methods: the web app OR the Endpoints API (which you can access already via the Endpoints Explorer).  Which mechanism uses JSON?<br>',
+  '<b>1.</b> Match the Google Cloud tool to the description<br>',
+  
+	{
+		questionType : 'multiple choice group',
+		questionsList : [
+				{
+					questionHTML : '<b>a.</b> Used to create JSON APIs to allow iOS and Android apps to communicate with an AppEngine backend',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 6
+				},
+				{
+					questionHTML : '<b>b.</b> Primary tool we\'ll use for storing data in AppEngine',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 3
+				},
+				{
+					questionHTML : '<b>c.</b> Tool that allows you to build and run backends on Google\'s infrastructure using Java, Python, Go, or PHP (we\'ll use Python)',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 0
+				}, {
+					questionHTML : '<b>d.</b> Tool you\'d use to save files, like images, in the cloud using Google\'s infrastructure',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 2
+				} ],
+		allCorrectOutput : 'Well done!',
+		someIncorrectOutput : 'Please try again. Hints: Don\'t use the answers Computer Engine, Cloud SQL, or BigQuery.',
+	},
+	
+
+  '<br><br><b>2.</b> If you were to visit the website <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a> does that site use AppEngine?<br>',
 
   { questionType: 'multiple choice',
-    choices: [['The pretty blue web app', false, 'Nope, the web app uses form data to add a quote.  JSON is not used by the web app.'],
-              ['The Endpoints API', true, 'Correct!  Under the hood the Endpoints POST coming in to insert a quote is JSON and all replies from the API are JSON.'],
-              ['Both', false, 'Nope, the web app uses form data to add a quote.  JSON is not used by the web app.']]},
+    choices: [['Nope.  That URL does not end in .appspot.com so that site does not use AppEngine', false, 'Please try again'],
+              ['There is no good way to know unless you happen to know the creators.  Given that Dr. Fisher made that site it probably does though.', true, 'Correct!  If you are curious www.rosebotics.org is setup as the Custom Domain, but the default AppEngine URL also works.']]},
 
-
-  '<br><br><b>2.</b> The web app is useless to the iOS client code.  Only the Endpoints API will be used by the iOS Client code.<br>',
+  '<br><br><b>3.</b> If the AppEngine App ID for <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a> was say... <b>roseboticsweb</b> (it is) what site would load the same content as <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a>?<br><i>Hint: If you get stuck try clicking on that link.<i><br>',
 
   { questionType: 'multiple choice',
-    choices: [['True', true, 'Correct!  The iOS client code will use JSON messages with the Endpoints API.  The pretty blue web app does not even need to exist to create an iOS app.'],
-              ['False', false, 'Try again.  Might I suggest True']]},
-
-  '<br><br><b>3.</b> My MovieQuotes Endpoints backend is up and running both deployed and on localhost.<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['Yes', true, 'Great!  You are ready to move on!'],
-              ['No', false, 'You need to get the backend working first. :)  See the prior unit.']]},
+    choices: [['<a target="_blank" href="http://rosebotics.appspot.com/">http://rosebotics.appspot.com</a>', false, 'Try again.'],
+              ['<a target="_blank" href="http://roseboticsweb.appspot.org/">http://roseboticsweb.appspot.org</a>', false, 'Try again.'],
+              ['<a target="_blank" href="http://rosebotics.appspot.org/">http://rosebotics.appspot.org</a>', false, 'Try again.'],
+              ['<a target="_blank" href="http://roseboticsweb.appspot.com/">http://roseboticsweb.appspot.com</a>', true, 'Correct!']]},
 
 ];
 

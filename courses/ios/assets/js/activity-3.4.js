@@ -30,12 +30,29 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What was the compiler flag you had to add to the GTL Client Library?',
 
-                { questionType: 'freetext',
-                  correctAnswerRegex: /-fno-objc-arc/i,
-                  correctAnswerOutput: 'Correct! Read as... Flag for No Objective-C Automatic Reference Counting.',
-                  incorrectAnswerOutput : 'Please try again.',
-                  outputHeight: '40px'}
+  '<b>1.</b>The last thing we did in this video was to call a method to set the Authorizer on the service object.  Will that method do anything?<br>',
+
+  {
+    questionType : 'multiple choice',
+    choices : [
+        ['It will, but right now _setAuthorizer is empty and we don\'t have a service object yet anyway', true, 'Correct!' ],
+        ['We don\'t have the Authorizer yet.', false, 'Please try again.' ],
+        ['Not only do we have the Authorizer, but we are already using the Authorizer!', false, 'Please try again.' ]]
+  },
+
+
+  '<br><br><b>2.</b> Why did we put the Google\'s sign-in web view inside a Navigation Controller?<br>',
+
+  {
+    questionType : 'multiple choice',
+    choices : [
+        ['It\'s required.  You don\'t get a choice.', false, 'Please try again.' ],
+        ['We wanted to have a Cancel button.', true, 'Correct!' ],
+        ['Because we needed the forward and back browser buttons', false, 'Please try again.' ],
+        ['So that we could get an Authorizer', false, 'Please try again.' ] ]
+  },
+
+  '<br><br>Nice work.  Let\'s go make the Service object and set the Authorizer on it so we can start making queries!',
+
 ];
-

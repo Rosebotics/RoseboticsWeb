@@ -29,17 +29,11 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-    '<b>1.</b> What frameworks had to be added?<br>',
-    {
-      questionType : 'multiple choice group',
-      questionsList : [
-          {
-            questionHTML : '',
-            choices : [ 'CoreGraphics', 'SystemConfiguration', 'AVFoundation', 'Security' ],
-            correctIndex : [1, 3]
-          }],
-      allCorrectOutput : 'Well done!',
-      someIncorrectOutput : 'Please try again.',
-    }
+    '<b>1.</b> Did you get all of the tools installed and URL submited for your install test?<br>',
+
+    { questionType: 'multiple choice',
+      choices: [['Yep!  It works and I submitted the link.  Visit anytime.', true, 'Great!  Nice work'],
+                ['Nope.  Task not complete.', false, 'Well darn.  That needs to be fixed before you can do any future lessons.  Don\'t kill yourself trying over and over tonight.  Take a break today and come back fresh tomorrow to fix problems.']]
+    },
 
 ];
