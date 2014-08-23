@@ -31,27 +31,48 @@
 
 var activity = [
 
-  '<b>1.</b> Briefly discribe why and how we will use transistors in this course',
-
-  { questionType: 'freetext',
-    correctAnswerRegex: /current/i,
-    correctAnswerOutput: 'Indeed.  The microcontroller will only provide so much current, so we need a transistor to serve as an electrically controlled switch for loads that need more current (or higher voltages).',
-    incorrectAnswerOutput: "That works, but ideally somewhere you'd say the word 'current'. :)",
-    showAnswerOutput: 'The microcontroller will only provide so much current, so we need a transistor to serve as an electrically controlled switch for loads that need more current (or higher voltages)'},
-
-    '<br><br><b>2.</b> A transistor that is controlled by current is called a <br>',
-    
-  { questionType: 'multiple choice',
-    choices: [['BJT', true, 'Correct!  Bipolar Junction Transistors turn on and off via current.'],
-              ['MOSFET', false, 'Please try again. MOSFETs are voltage controlled.'],
-              ['H-Bridge', false, 'Please try again. ']]},
-
-  '<br><br><b>3.</b> A transistor that is controlled by voltage is called a <br>',
+  '<b>1.</b> Match the Google Cloud tool to the description<br>',
   
+	{
+		questionType : 'multiple choice group',
+		questionsList : [
+				{
+					questionHTML : '<b>a.</b> Used to create JSON APIs to allow iOS and Android apps to communicate with an AppEngine backend',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 6
+				},
+				{
+					questionHTML : '<b>b.</b> Primary tool we\'ll use for storing data in AppEngine',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 3
+				},
+				{
+					questionHTML : '<b>c.</b> Tool that allows you to build and run backends on Google\'s infrastructure using Java, Python, Go, or PHP (we\'ll use Python)',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 0
+				}, {
+					questionHTML : '<b>d.</b> Tool you\'d use to save files, like images, in the cloud using Google\'s infrastructure',
+					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
+					correctIndex : 2
+				} ],
+		allCorrectOutput : 'Well done!',
+		someIncorrectOutput : 'Please try again. Hints: Don\'t use the answers Computer Engine, Cloud SQL, or BigQuery.',
+	},
+	
+
+  '<br><br><b>2.</b> If you were to visit the website <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a> does that site use AppEngine?<br>',
+
   { questionType: 'multiple choice',
-    choices: [['BJT', false, 'Please try again. BJTs are current controlled.'],
-              ['MOSFET', true, 'Correct!  Metal Oxide Semiconductor Field Effect Transistors turn on and off via voltage.'],
-              ['H-Bridge', false, 'Please try again. ']]},
+    choices: [['Nope.  That URL does not end in .appspot.com so that site does not use AppEngine', false, 'Please try again'],
+              ['There is no good way to know unless you happen to know the creators.  Given that Dr. Fisher made that site it probably does though.', true, 'Correct!  If you are curious www.rosebotics.org is setup as the Custom Domain, but the default AppEngine URL also works.']]},
+
+  '<br><br><b>3.</b> If the AppEngine App ID for <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a> was say... <b>roseboticsweb</b> (it is) what site would load the same content as <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a>?<br><i>Hint: If you get stuck try clicking on that link.<i><br>',
+
+  { questionType: 'multiple choice',
+    choices: [['<a target="_blank" href="http://rosebotics.appspot.com/">http://rosebotics.appspot.com</a>', false, 'Try again.'],
+              ['<a target="_blank" href="http://roseboticsweb.appspot.org/">http://roseboticsweb.appspot.org</a>', false, 'Try again.'],
+              ['<a target="_blank" href="http://rosebotics.appspot.org/">http://rosebotics.appspot.org</a>', false, 'Try again.'],
+              ['<a target="_blank" href="http://roseboticsweb.appspot.com/">http://roseboticsweb.appspot.com</a>', true, 'Correct!']]},
 
 ];
 
