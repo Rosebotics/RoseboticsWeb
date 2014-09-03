@@ -12,7 +12,7 @@ class HomePage(base_handler.BasePage):
 
 class CoursePage(base_handler.BasePage):
   def template_file(self):
-    return 'templates/underconstruction.html'
+    return 'templates/courses.html'
 
   def page_title(self, player, values):
     return 'Course'
