@@ -31,44 +31,32 @@
 
 var activity = [
 
-  '<b>1.</b> Which three mechanisms <b>could</b> be used to deploy your app?',
+  '<b>1.</b> There are a lot of CSS classes that you can add to a table.  You always need to add the class <b>table</b>. ',
 
   {
 		questionType : 'multiple choice group',
 		questionsList : [
 				{
-					questionHTML : '',
-					choices : [ 'Google App Engine Launcher', 'The command line', 'Eclipse', 'Chrome' ],
-					correctIndex : [0,1,2]
-				} ],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again.',
-	},
-
-  '<br><br><b>2.</b> Match each developer tool to its purpose:<br><br>',
-  
-	{
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : 'Tool used to see detailed information about all traffic (if your app is successfully serving users, errors occurring, pages visited, device used, etc)',
-					choices : [ 'Overview pages that loads by default', 'Compute --> App Engine --> Logs',  'Storage --> Cloud Datastore --> Indexes',  'Storage --> Cloud Datastore --> Datastore Viewer'],
+					questionHTML : ' What additional CSS class did we use in this example?',
+					choices : [ 'table', 'table-striped', 'table-bordered', 'table-hover', 'table-condensed', 'success' ],
 					correctIndex : 1
 				},{
-					questionHTML : 'Tool used to see a high level overview of usage',
-					choices : [ 'Overview pages that loads by default', 'Compute --> App Engine --> Logs',  'Storage --> Cloud Datastore --> Indexes',  'Storage --> Cloud Datastore --> Datastore Viewer'],
-					correctIndex : 0
-				},{
-					questionHTML : 'Tool used to see if the data in your Datastore is ready to serve (usually the last thing to complete before your app is truly live)',
-					choices : [ 'Overview pages that loads by default', 'Compute --> App Engine --> Logs',  'Storage --> Cloud Datastore --> Indexes',  'Storage --> Cloud Datastore --> Datastore Viewer'],
-					correctIndex : 2
-				},{
-					questionHTML : 'Tool used to see the entities saved in the Datastore',
-					choices : [ 'Overview pages that loads by default', 'Compute --> App Engine --> Logs',  'Storage --> Cloud Datastore --> Indexes',  'Storage --> Cloud Datastore --> Datastore Viewer'],
-					correctIndex : 3
-				} ],
+					questionHTML : 'What additional CSS classes would you add if you wanted to shrink your table and give it an outline? (Visit <a target="_blank" href="http://getbootstrap.com/css/#tables">http://getbootstrap.com/css/#tables</a> for help)',
+					choices : [ 'table', 'table-striped', 'table-bordered', 'table-hover', 'table-condensed', 'success' ],
+					correctIndex : [2,4]
+				}  ],
 		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again.',
+		someIncorrectOutput : 'Please try again.  Hint: There are two classes for the second question.  table-striped is NOT one of the answers in the second question.',
+	},
+
+  '<br><br><b>2.</b> In addition to tables we also snuck in info about containers.  Bootstrap requires a container element to wrap site content.  So we wrapped our table in a div that had the class <b>container</b>.  That limited the width to a responsive fixed width.  If instead you wanted to use the full width what container class would you use?  (link that might help <a target="_blank" href="http://getbootstrap.com/css/#overview-container">http://getbootstrap.com/css/#overview-container</a>)<br>',
+
+	{
+		questionType : 'freetext',
+		correctAnswerRegex : /container-fluid/i,
+		correctAnswerOutput : 'Correct!',
+		incorrectAnswerOutput : 'Please try again.',
+		showAnswerOutput : 'Here is the answer: container-fluid'
 	}
 ];
 
