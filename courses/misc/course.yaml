@@ -44,7 +44,7 @@ course:
   # priority. The image alt text allows the image to be understood by text-only
   # screen readers.
   main_video:
-    url: https://www.youtube.com/embed/Kdg2drcUjYI?rel=0
+    url: https://www.youtube.com/embed/cAlLdpmXAzM?rel=0
   main_image:
     url: /assets/img/roselogo.png
     alt_text: Rose-Hulman logo
