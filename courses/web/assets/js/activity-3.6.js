@@ -31,40 +31,38 @@
 
 var activity = [
                 
-  '<b>1.</b> We had to modify the app.yaml file to serve the static files.  Why was that necessary?<br>',
+  '<b>1.</b> We added two attributes to the form element.  What were they?<br>',
 
-	'<img src="assets/img/app_yaml_for_static.png" alt="app.yaml file changes to serve the static folder"><br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['That was NOT necessary, just good practice', false, 'Please try again.' ],
-				['Any folder named "static" must have that annotation.  Naming the folder "static" is critical.', false, 'Please try again.' ],
-				['That directive tells AppEngine to *serve* that folder with the app.  Without those lines the folder is NOT served and cannot be used with your app.',  true, 'Correct!'] ]
+				['href="/addquote" method="POST"', false, 'Please try again.' ],
+				['href="/addquote" method="GET"', false, 'Please try again.' ],
+				['action="/addquote" method="POST"',  true, 'Correct!'],
+				['action="/addquote" method="GET"',  false, 'Please try again.'] ]
 	},
 	
-  '<br><br><b>2.</b> In order to use the CSS file in HTML what did we do?<br>',
+  '<br><br><b>2.</b> A form can have any amount of html within it.  However only certain elements are important to the form that is sent to the backend.  What elements are important?<br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['We added a link to the html body pointing to that file with a rel(ationship) attribute set to stylesheet', false, 'Please try again.' ],
-				['We added a link to the html head pointing to that file with a rel(ationship) attribute set to stylesheet', true, 'Correct!' ],
-				['We added a link to the html body pointing to that file with a rel(ationship) attribute set to css', false, 'Please try again.' ] ]
+				['button elements', false, 'Please try again.' ],
+				['td and th elements', false, 'Please try again.' ],
+				['input elements, specifically their name and value attributes', true, 'Correct!' ],
+				['input elements, specifically their id and value attributes',  ] ]
 	},
 
-	'<br><br> In order to play with out CSS rules a bit we used the Chrome Dev Tools.  Here is some information about opening Chrome Dev Tools taken from <a target="_blank" href="https://developer.chrome.com/devtools">https://developer.chrome.com/devtools</a>',
-
-	'<img src="assets/img/opening_chrome_dev_tools.png" alt="Chrome Dev tools info"><br>',
-	
-  '<br><br><b>3.</b>How did we choose to open the Chrome Dev Tools in this video?<br>',
+	'<br><br><b>3.</b> If you resize the page while your Modal is up (<b>with the form now inside the modal</b>) what happens (Try it first!).<br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['We clicked the Chrome menu icon in the upper right and selected Tools --> Developer Tools', false, 'Please try again.' ],
-				['We right clicked on the page then selected "Inspect Element"', true, 'Correct!' ],
-				['We used the shortcut key Ctrl Shift I', false, 'Please try again.' ] ]
-	}	
+				[ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
+				[ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well and the labels even reflow.', true, 'Correct!' ],
+				[ 'A resize dismisses the Modal.', false, 'Please try again.' ],
+				[ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
+	}		
 	
 ];

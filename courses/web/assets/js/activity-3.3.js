@@ -31,43 +31,33 @@
 
 var activity = [
                 
-  '<b>1.</b> Here is one valid way of serving html from AppEngine:<br>',
+  '<b>1.</b> What does it mean to "load the Bootstrap and jQuery frameworks"?<br>',
 
-	'<img src="assets/img/appengine_not_using_jinja.png" alt="AppEngine not using Jinja.png"><br>',
 
-	'<br>Would that system quickly become very painful when your website gets bigger?<br>',
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['Yes.  In fact, it\'s kinda painful to look at even 3 lines.  I\'d hate to write hundreds of lines like that.', true, 'Correct!' ],
-				['No.  I see no problems with that approach scaling well', false, 'Please try again.' ] ]
+				['Install them on your computer', false, 'Please try again.' ],
+				['Download their SDK\'s for use with JavaScript code', false, 'Please try again.' ],
+				['Simply adding <b>link</b> and <b>script</b> tags on your page so the Bootstrap and jQuery code loads in Chrome at the same time your page loads.', true, 'Correct!' ] ]
 	},
 	
-  '<br><br><b>2.</b> Writing html code within Python modules is obviously the wrong way to do things, but why would you use a Jinja template instead of just serving a regular HTML file?<br>',
+  '<br><br><b>2.</b> If you knew you were going to do <b>localhost</b> development in the future in a location where you wouldn\'t have internet access, what should you change about your Bootstrap and jQuery links before you go offline?<br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['There is no real difference between a Jinja template and a noraml static HTML file', false, 'Please try again.' ],
-				['Jinja templates give you the ability to put values from the Datastore into your html page (even though we aren\'t using that critical feature yet)', true, 'Correct!' ],
-				['You are required to use Jinja and can\'t use static HTML files with AppEngine', false, 'Please try again.' ] ]
+				['While you still have internet access, you should download a copy the 2 Bootstrap .css files, the 1 Bootstrap .js file, and the 1 jQuery .js file and put them into your /static folder, then change the links in the HTML to point to the /static folder copies.  That will work just like the CDN links (even offline for localhost).', true, 'Correct!  The CDN links are just present to make your life easier, but you could serve the .css and .js files from your static folder, just like any other static file.' ],
+				['You could try to do all the stuff mentioned above but it won\'t actually work offline.  You must use the CDN links.', false, 'Please try again.' ],
+				['These CDN links are the only ones you can use.  jQuery must come from the Google CDN server for example.', false, 'Please try again.' ] ]
 	},
 
-  '<br><br><b>3.</b> What steps are required to use Jinja templates',
+  '<br><br><b>3.</b> Compared to installing SDKs for AppEngine, installing Eclipse, PyDev, Python 2.7, etc.  It\'s actually pretty easy to get a page ready to use Bootstrap and jQuery?<br>',
   
 	{
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : '',
-					choices : [ 'Adding Jinja2 to the libraries section of the app.yaml file so AppEngine knows we need to use Jinja2', 'Creating an instance variable of the Jinja Environment', 'Creating an HTML file to use as the Jinja template', 'Rendering a template from the get handler. Such as self.response.out.write(template.render({}))'],
-					correctIndex : [0,1,2,3]
-				} ],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again. Hint: They are all required.',
+		questionType : 'multiple choice',
+		choices : [
+				['Yeah, that was easy and it\'s neat (but wierd) that you can just type JavaScript commands into the Console area in Dev Tools to test the links.', true, 'Great!  Keep rockin!' ],
+				['I was unable to get the test command <b>$("body").html("Hello, World!").addClass("bg-success");</b> to work (or didn\'t try)', false, 'Please try again.  You need to make sure your links are ready to go!' ]]
 	}
-	
-	
-	
-	
 ];

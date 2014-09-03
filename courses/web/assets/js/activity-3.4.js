@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -31,49 +30,50 @@
 
 var activity = [
 
-  '<b>1.</b> Assuming you are doing localhost development, when the form is submitted where does the data go?<br>',
+		'<b>1.</b> There are two Navbars shown below (just images of navbars).  Both nav elements have the class <b>navbar</b> present.<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['To http://localhost:8080 as a GET request', false, 'Please try again.' ],
-				['To http://localhost:8080/addquote as a GET request', false, 'Please try again.' ],
-				['To http://localhost:8080 as a POST request with body ="quote=someQuote&movie=someMovie"', false, 'Please try again.' ],
-				['To http://localhost:8080/addquote as a POST request with body ="quote=someQuote&movie=someMovie"', true, 'Correct!' ] ]
-	},
+		'<img src="assets/img/navbars.png" alt="Navbars"><br>',
+		{
+			questionType : 'multiple choice group',
+			questionsList : [
+					{
+						questionHTML : '<b>a.</b> What <b>class</b> does the second navbar have that makes it show up in black?',
+						choices : [ 'navbar', 'navbar-default',
+								'navbar-inverted', 'navbar-inverse' ],
+						correctIndex : 3
+					},
+					{
+						questionHTML : '<b>b.</b> What <b>class</b> does the first navbar have letting it be gray text on an off white background?',
+						choices : [ 'navbar', 'navbar-default',
+								'navbar-inverted', 'navbar-inverse' ],
+						correctIndex : 1
+					} ],
+			allCorrectOutput : 'Well done!',
+			someIncorrectOutput : 'Please try again. Hints: navbar-inverted is NOT the class name.',
+		},
 
-  '<br><br><b>2.</b> A link element, &lta href="http://someUrl"\>&lt/a>, uses an <b>href</b> attritubute to tell the browser where to do the GET request.  What is the attribute name on a <b>form</b> that tells the browser where to do the POST request?<br>',
+		'<br><br><b>2.</b> Where do our <b>Add Quote</b> and <b>Edit</b> links go?<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['href', false, 'Please try again.' ],
-				['action', true, 'Correct!' ],
-				['method', false, 'Please try again.' ],
-				['post', false, 'Please try again.' ] ]
-	},
+		{
+			questionType : 'multiple choice',
+			choices : [
+					[
+							'To the <b>Add Quote</b> and <b>Edit</b> pages (respectively)',
+							false, 'Please try again.' ],
+					[
+							'Nowhere.  We\'re kinda cheating and making the href="#" and we\'ll later use JavaScript (or data attributes) to make them behave like buttons',
+							true,
+							'Correct!  Technically # isn\'t best practice.  javascript:void(0) is preferred (but both work) See: http://stackoverflow.com/questions/134845/href-attribute-for-javascript-links-or-javascriptvoid0' ],
+					[ 'Both go home.', false, 'Please try again.' ] ]
+		},
 
-  '<br><br><b>3.</b> When our AppEngine app gets a request on the path /addquote how does it know to use an instance of the AddQuoteAction handler?<br>',
+		'<br><br><b>3.</b> Did you try your Navbar on a narrow screen or emulate a smartphone from Chrome Dev Tools?<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['I have NO idea!', false, 'Please try again.' ],
-				['The app.yaml file has a handler for /addquote that serves that handler for that path',  false, 'Please try again.'],
-				['The app.yaml file sends all requests (for any path) to the main.app instance.  The app variable within main.py is setup to use different handlers for different paths', true, 'Correct!' ],
-				['The MovieQuotesPage has no POST handler so the AddQuoteAction must handle all POST requests', false, 'Please try again.  Indeed the MovieQuotesPage has no POST handler and the AddQuoteAction handler DOES have a post handler, but there is a better answer above.' ] ]
-	},
-	
-  '<br><br><b>4.</b> If you open a new tab and typed in <a href="http://localhost:8080/addquote" target="_blank">http://localhost:8080/addquote</a>. What would happen?<br>',
-
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['You would get a new MovieQuote with quote and movie being empty strings, then it would redirect to http://localhos:8080', false, 'Please try again.' ],
-				['Your browser would redirect you to localhost:8080 since the AddQuoteAction handler has no get method',  false, 'Please try again.'],
-				['Nothing good. Your browswer would do a GET request on the /addquote path, which goes to the AddQuoteAction handler, which has no GET method.  So your server logs would have a 404 and no page would not load for the user', true, 'Correct!' ],
-				['A browser does a GET request and /addquote needs a POST request so it would lock up your computer.', false, 'Please try again.  The first part is true, but it wouldn\'t lock up your computer. :)' ] ]
-	}
+		{
+			questionType : 'multiple choice',
+			choices : [
+					['Yep.  Pretty slick!', true, 'Great!  Keep rockin' ],
+					['Nope.  Didn\'t try it.', false, 'Please try again.' ]]
+		}
 
 ];
-
