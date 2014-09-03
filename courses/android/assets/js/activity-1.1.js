@@ -30,28 +30,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-
-  '<b>1.</b> Briefly discribe why and how we will use transistors in this course',
-
-  { questionType: 'freetext',
-    correctAnswerRegex: /current/i,
-    correctAnswerOutput: 'Indeed.  The microcontroller will only provide so much current, so we need a transistor to serve as an electrically controlled switch for loads that need more current (or higher voltages).',
-    incorrectAnswerOutput: "That works, but ideally somewhere you'd say the word 'current'. :)",
-    showAnswerOutput: 'The microcontroller will only provide so much current, so we need a transistor to serve as an electrically controlled switch for loads that need more current (or higher voltages)'},
-
-    '<br><br><b>2.</b> A transistor that is controlled by current is called a <br>',
-    
-  { questionType: 'multiple choice',
-    choices: [['BJT', true, 'Correct!  Bipolar Junction Transistors turn on and off via current.'],
-              ['MOSFET', false, 'Please try again. MOSFETs are voltage controlled.'],
-              ['H-Bridge', false, 'Please try again. ']]},
-
-  '<br><br><b>3.</b> A transistor that is controlled by voltage is called a <br>',
-  
-  { questionType: 'multiple choice',
-    choices: [['BJT', false, 'Please try again. BJTs are current controlled.'],
-              ['MOSFET', true, 'Correct!  Metal Oxide Semiconductor Field Effect Transistors turn on and off via voltage.'],
-              ['H-Bridge', false, 'Please try again. ']]},
-
+	"<b>1.</b> What does an adapter do?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Converts from layout files to views", false, "Try again. Inflaters do that." ],
+				["Replicates views", true, "Correct. It uses a data source that could be an array or even a database or the contact list on your phone" ],
+				["Changes voltage", false, "Try again. Wrong field of study!" ],
+		]
+	},
 ];
-

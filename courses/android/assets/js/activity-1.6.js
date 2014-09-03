@@ -30,20 +30,32 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                
-                '<b>1.</b> I like Darlingtons. :) They make my life easy because I just connect the input straight to the PIC without sizing a resistor.<br>',
-                  
-                { questionType: 'multiple choice',
-                  choices: [['True', true, 'Correct!  They make BJT technology just as easy to use as a MOSFET.  You even get 7 Darlingtons in a single ULN2003 chip.'],
-                            ['False', false, 'Please try again.']]},
-
-
-                '<br><br><b>2.</b> The ULN2003 provides power to a connected load when it\'s on.<br>',
-                
-                { questionType: 'multiple choice',
-                  choices: [['True', false, 'Please try again. Indeed transistors turn on and off loads, but not by providing power (they provide ground).'],
-                            ['False', true, 'Correct!  One load leg connects to power.  The Darlinton provides ground to the load turn on or leaves the load leg floating to turn off.']]},
-
-
-
+	"<b>1.</b> If you make an ArrayAdapter<SomeObject>, what will be displayed in each view?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["the results of the array's toString()", false, "Try again. Unfortunately, the array class' toString method isn't very helpful." ],
+				["each item's getView()", false, "Try again. " ],
+				["the result of each item's toString()", true, "Correct. " ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> How do you get the parts of an object to display in a two line view?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Override getView() and call getItem() to access the object", true, "Correct. " ],
+				["Annotate your class with the .text1 and .text2 identifiers.", false, "Try again. We haven't used annotations yet in this course. But we will when we study Google Cloud Endpoints!" ],
+				["It just works automatically", false, "Try again. " ],
+		]
+	},
+	"<br><br>",
+	"<b>3.</b> Do we need to test to see if convertView is null when we override ArrayAdapter's getView()?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Yes", false, "Try again. The call to super.getView() already checks for that." ],
+				["No", true, "Correct. " ],
+		]
+	},
 ];

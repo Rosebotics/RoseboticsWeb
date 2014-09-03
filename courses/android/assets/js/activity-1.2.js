@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -29,71 +30,42 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-		'<b>1.</b> What does BJT stand for?',
-
-		{
-			questionType : 'freetext',
-			correctAnswerRegex : /bipolar junction transistor/i,
-			correctAnswerOutput : 'Correct!  Bipolar Junction Transistor.',
-			incorrectAnswerOutput : 'Looking for Bipolar Junction Transistor',
-			outputHeight : '40px'
-		},
-
-		'<br><br><b>2.</b> What are the names of the three legs on a BJT?',
-
-		{
-			questionType : 'freetext',
-			correctAnswerRegex : /(base collector emitter)|(base emitter collector)|(collector base emitter)|(collector emitter base)|(emitter base collector)|(emitter collector base)/i,
-			correctAnswerOutput : 'Correct!  Base Collector Emitter.',
-			incorrectAnswerOutput : 'Looking for Base Collector Emitter',
-			outputHeight : '40px'
-		},
-
-		'<br><br><b>3.</b> Assume an NPN BJT for these questions<br>',
-		{
-			questionType : 'multiple choice group',
-			questionsList : [
-					{
-						questionHTML : '<b>a.</b> Always connected to ground',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 2
-					},
-					{
-						questionHTML : '<b>b.</b> Connected to the load (ie motor, LED, etc)',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 1
-					},
-					{
-						questionHTML : '<b>c.</b> Connected by a resistor to the microcontroller',
-						choices : [ 'Base', 'Collector', 'Emitter' ],
-						correctIndex : 0
-					}],
-			allCorrectOutput : 'Well done!',
-			someIncorrectOutput : 'Please try again.',
-		},
-
-		'<br><br><b>4.</b> If a load need 120 milliamps how much current needs to flow into the <b>base</b> to turn <b>ON</b> the load?<br>',
-
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ '0 mA', false, 'Please try again.' ],
-					[ '12 mA', true,
-							'Correct!  One tenth the collector-emitter current is needed.' ],
-					[ '50 mA', false, 'Please try again.' ],
-					[ '120 mA', false, 'Please try again. ' ] ]
-		},
-
-		'<br><br><b>5.</b> If a load need 120 milliamps how much current needs to flow into the <b>base</b> to turn <b>OFF</b> the load?<br>',
-
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ '0 mA', true,
-							'Correct! Always no current flow to turn off.' ],
-					[ '12 mA', false, 'Please try again.' ],
-					[ '50 mA', false, 'Please try again.' ],
-					[ '120 mA', false, 'Please try again. ' ] ]
-		},
-
+	"<b>1.</b> Was your name used in the demo?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Yes", true, "Correct. Hope you enjoyed that. I'm glad you signed up early for the course!" ],
+				["No", true, "Correct. Sorry - I used those people who signed up earliest for the summer class." ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> Which new Eclipse shortcut did we learn?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Ctrl-space", false, "Try again. Hopefully content-assist is an old friend." ],
+				["Alt-shift R", false, "Try again. That's for refactor/renaming - hopefully you already knew that one." ],
+				["Alt-shift A, S", true, "Correct. Makes it convenient to code when we don't know all the string resources we will need ahead of time." ],
+		]
+	},
+	"<br><br>",
+	"<b>3.</b> What layout did we use for a row in the ListView?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["android.R.simple_list_item_1", true, "Correct. " ],
+				["R.simple_list_item_1", false, "Try again. We used a built-in resource." ],
+		]
+	},
+	"<br><br>",
+	"<b>4.</b> Which one is these is NOT a parameter to the ArrayAdapter constructor?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Array", false, "Try again. It needs a data source." ],
+				["Context", false, "Try again. It needs the context too to create views." ],
+				["Layout", false, "Try again. It needs the layout of a single view." ],
+				["ListView", true, "Correct. You bind the adapter to a ListView by calling setAdapter()." ],
+		]
+	},
 ];

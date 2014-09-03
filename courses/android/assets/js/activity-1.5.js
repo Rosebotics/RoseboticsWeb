@@ -30,44 +30,23 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Which is NOT an abstract method in BaseAdapter?<br>",
+	"<b>1.</b> What method did we call to get the month name from the adapter when we clicked that item?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["getContext()", true, "Correct. " ],
+				["getItem()", true, "Correct. " ],
 				["getCount()", false, "Try again. " ],
-				["getItem()", false, "Try again. " ],
 				["getItemId()", false, "Try again. " ],
-				["getView()", false, "Try again. " ],
+				["getItem().getMonth()", false, "Try again. That would work if the item was an object with a month field - our items were just strings." ],
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> Why do we test to see if convertView is null?<br>",
+	"<b>2.</b> When inflating the row_view.xml file, how do we get the left and right text views?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Efficiency", true, "Correct. There is no need to recreate objects that have already been allocated in memory." ],
-				["The code is cleaner and easier to maintain that way", false, "Try again. Not necessarily." ],
-		]
-	},
-	"<br><br>",
-	"<b>3.</b> What method is used to tell the adapter that it needs to update?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["notifyAll()", false, "Try again. That Java method is used when multithreading." ],
-				["notifyDataSetChanged()", true, "Correct. " ],
-				["notifyDataSetInvalidated()", false, "Try again. " ],
-		]
-	},
-	"<br><br>",
-	"<b>4.</b> How do we listen to clicks on views in a ListView?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["onItemClickListener()", true, "Correct. " ],
-				["onClickListener()", false, "Try again. That was for single views." ],
-				["OnItemLongClickListener()", true, "Correct. That isn't the one we used, but it does listen for (long) clicks on ListView items" ],
+				["Call a constructor: new TextView(mContext)", false, "Try again. That was before we had the xml." ],
+				["Find them: findViewById(R.id.row_view.xml)", true, "Correct. Good review." ],
 		]
 	},
 ];
