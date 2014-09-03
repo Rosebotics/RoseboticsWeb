@@ -30,44 +30,35 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Which is NOT an abstract method in BaseAdapter?<br>",
+	"<b>1.</b> Which UI element was NOT used in the demo app?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["getContext()", true, "Correct. " ],
-				["getCount()", false, "Try again. " ],
-				["getItem()", false, "Try again. " ],
-				["getItemId()", false, "Try again. " ],
-				["getView()", false, "Try again. " ],
+				["Button", false, "Try again. There were two buttons." ],
+				["TextView", false, "Try again. The message -I drank 4 cups- was displayed in a TextView." ],
+				["Slider", true, "Correct. " ],
+				["ImageView", false, "Try again. That is how the photo of the coffee cups was displayed." ],
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> Why do we test to see if convertView is null?<br>",
+	"<b>2.</b> Where in the app did we set an OnClickListener to respond to Button presses?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Efficiency", true, "Correct. There is no need to recreate objects that have already been allocated in memory." ],
-				["The code is cleaner and easier to maintain that way", false, "Try again. Not necessarily." ],
+				["activity_main.xml", false, "Try again. That was for the layout." ],
+				["MainActivity.java", true, "Correct. " ],
+				["AndroidManifest.xml", false, "Try again. We have not used that file yet." ],
 		]
 	},
 	"<br><br>",
-	"<b>3.</b> What method is used to tell the adapter that it needs to update?<br>",
+	"<b>3.</b> How can you change the TextSize (font size in a TextView)? (There is more than one correct answer, so try different ones - there is no panelty for taking a question multiple times.)<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["notifyAll()", false, "Try again. That Java method is used when multithreading." ],
-				["notifyDataSetChanged()", true, "Correct. " ],
-				["notifyDataSetInvalidated()", false, "Try again. " ],
-		]
-	},
-	"<br><br>",
-	"<b>4.</b> How do we listen to clicks on views in a ListView?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["onItemClickListener()", true, "Correct. " ],
-				["onClickListener()", false, "Try again. That was for single views." ],
-				["OnItemLongClickListener()", true, "Correct. That isn't the one we used, but it does listen for (long) clicks on ListView items" ],
+				["Edit the raw .xml", true, "Correct. Experienced developers often do that. But it is not the only way." ],
+				["Change the properties in the GUI editor", true, "Correct. That is what I did in the video. Very convenient especially when you are looking for a certain property." ],
+				["Capture the TextView using findViewByID and then call .setTextSize()", true, "Correct. I used the GUI editor, but you can do it in code." ],
+				["Change the AndroidManifest file", false, "Try again. We haven't used that file yet. Any of the other options work, though." ],
 		]
 	},
 ];
