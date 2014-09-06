@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -30,14 +29,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What new annotation do we add to a query_method that we didn't for insert?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["query_fields", true, "Correct. " ],
-				["name", false, "Try again. " ],
-				["path", false, "Try again. " ],
-				["http_method", false, "Try again. " ],
-		]
-	},
+    '<b>1.</b> In this video we don\'t even look at the <b>GTLMoviequotesMovieQuote* returnedMovieQuote</b> variable in the response.  However if we added an <b>NSLog(@"quote = %@", returnedMovieQuote.quote);</b> what word would get printed?  (might need to open your movie_quotes_api.py to find the answer.<br>',
+    {
+      questionType : 'freetext',
+      correctAnswerRegex : /deleted/i,
+      correctAnswerOutput : 'Correct!  Yep, we were required by Endpoints Proto Datastore to return a MovieQuote from a @MovieQuote.method so we made one (that is not stored anywhere) that had quote=deleted.  We could check that property, but we choose not to bother.  Checking only the error variable should be safe.',
+      incorrectAnswerOutput : 'Looking for deleted',
+      outputHeight : '60px'
+    }
+
 ];

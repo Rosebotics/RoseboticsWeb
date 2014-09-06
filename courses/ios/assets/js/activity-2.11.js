@@ -30,29 +30,17 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-
-                '<b>1.</b> My Weatherpics client app can perform the following tasks:<br>',
-
-            {
-              questionType : 'multiple choice group',
-              questionsList : [
-                  {
-                    questionHTML : '',
-                    choices : [ 'Works with the deployed app',
-                                'Shows Loading Weatherpics with spinner before initial data load (might be VERY brief)',
-                                'Displays a list of Weatherpic captions on load',
-                                'Does a refresh of the Weatherpic captions on a table pull down (refresh control)',
-                                'Displays a detail view of the Weatherpic to show the image',
-                                'Works with localhost as well',
-                                'Shows No Weatherpics if there are none (good test for localhost)',
-                                'Can create a new Weatherpic by typing in an imageUrl',
-                                'Can create a new Weatherpic by typing leaving the imageUrl blank to get a random image url',
-                                'Can delete a Weatherpic',
-                                'Can edit a caption of a Weatherpic',
-                                'Displays the iOS Create, Delete, and Edit actions on the web app (localhost or deployed)' ],
-                    correctIndex : [0,1,2,3,4,5,6,7,8,9,10,11]
-                  }],
-              allCorrectOutput : 'Nice work finishing this lab!  It was a big task!',
-              someIncorrectOutput : 'Needs to be able to perform all of the requests.',
-            }
+	"<b>1.</b> Which locations can you use to find the datastore or error logs, either locally or deployed? (Choose all that apply.)",
+	{
+		questionType : "multiple choice group",
+		questionsList : [
+				{
+					questionHTML : "",
+					choices : [ "console.developers.google.com > Compute > AppEngine > Logs", "console.developers.google.com > Storage > Cloud Datastore > Query", "localhost:{admin port} > Datastore Viewer", "Eclipse > console", "App Engine Launcher > Logs"],
+					correctIndex : [0,1,2,3,4]
+				}
+				],
+		allCorrectOutput : "Well done!",
+		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
+	},
 ];

@@ -30,12 +30,23 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What was the compiler flag you had to add to the GTL Client Library?',
-
-                { questionType: 'freetext',
-                  correctAnswerRegex: /-fno-objc-arc/i,
-                  correctAnswerOutput: 'Correct! Read as... Flag for No Objective-C Automatic Reference Counting.',
-                  incorrectAnswerOutput : 'Please try again.',
-                  outputHeight: '40px'}
+	"<b>1.</b> Why do we use App Engine Launcher instead just using Eclipse for everything related to our project?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["GAE Launcher has a better IDE", false, "Try again. Absolutely not." ],
+				["GAE Launcher creates better code from scratch", true, "Correct. I didn't mention it in the video, but it's true. Eclipse can do everything else just fine." ],
+				["Only GAE Launcher can run a web app", false, "Try again. Eclipse can do this too." ],
+				["Only GAE Launcher can deploy a web app", false, "Try again. Eclipse can do this too, as we'll see." ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> How do you check whether the web app starting code is running successfully?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["You can't check until you deploy it", false, "Try again. We can do extensive testing of the backend locally." ],
+				["Just run it and point your browser to localhost", true, "Correct. " ],
+		]
+	},
 ];
-

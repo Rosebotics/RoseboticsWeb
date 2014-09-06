@@ -1,4 +1,6 @@
 id,type,unit_id,title,release_date,now_available
 1,U,1,Intro to AppEngine,,True
-2,U,2,Endpoints iOS Client,,True
-3,U,3,Endpoints with OAuth iOS Client,,True
+2,U,2,EndpointsBackend,,True
+3,U,3,Endpoints iOS Client,,True
+4,U,4,OAuthBackend,,True
+5,U,5,Endpoints with OAuth iOS Client,,True

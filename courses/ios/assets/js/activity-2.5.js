@@ -30,22 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-
-  '<b>1.</b> What does the service object do?<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['Saves MovieQuotes to Core Data', false, 'Please try again.'],
-              ['Helps with the View (UI) creation', false, 'Please try again.'],
-              ['Handles the low level JSON communication with your backend', true, 'Correct!'],
-              ['Makes coffee', false, 'Please try again.']]},
-
-  '<br><br><b>2.</b> If you are developing an iOS Endpoints app in the middle of the desert and have no internet connection at all, what service RPC URL would be most useful?<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['https://yourusername-movie-quotes.appspot.com', false, 'Please try again. That\s the web app\'s URL, not an RPC URL.'],
-              ['https://yourusername-movie-quotes.appspot.com/_ah/api/rpc?prettyPrint=false', false, 'Please try again.  You\'d need the internet to use the deployed version.'],
-              ['http://localhost:8080', false, 'Please try again. That is not the *RPC URL* for localhost.  That\'s the localhost web app url.'],
-              ['http://localhost:8080/_ah/api/rpc?prettyPrint=false', true, 'Correct!  That\'s the format for the RPC URL and it\'ll work in the desert because localhost is simply talking to your computer.'],
-              ['http://localhost:8080/_ah/api/explorer', false, 'Please try again. That one was the built-in explorer that you used for testing the API before using a client app.']]}
+	"<b>1.</b> Were you able to get the web app running?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Yes", true, "Correct. Great!" ],
+				["No", true, "Correct. Sorry. Your first step in troubleshooting is to look for runtime errors in the Eclipse console. If there are none or you can't figure it out, you can also can compare your models.py and app.yaml to the one you downloaded from us to look for errors. As a last resort, you may use our files - that should fix it. Feel free to ask for help if not." ],
+		]
+	},
 ];
-

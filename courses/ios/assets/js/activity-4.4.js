@@ -30,14 +30,26 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What new annotation do we add to a query_method that we didn't for insert?<br>",
+	"<b>1.</b> What new annotations do we need to give values to for the sake of authentication? (Choose all that apply.)",
+	{
+		questionType : "multiple choice group",
+		questionsList : [
+				{
+					questionHTML : "",
+					choices : [ "allowed_client_ids", "audiences", "scopes", "owner_domain"],
+					correctIndex : [0,1]
+				}
+				],
+		allCorrectOutput : "Well done!",
+		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
+	},
+	"<br><br>",
+	"<b>2.</b> Do you need to add an allowed client ID for the API Explorer?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["query_fields", true, "Correct. " ],
-				["name", false, "Try again. " ],
-				["path", false, "Try again. " ],
-				["http_method", false, "Try again. " ],
+				["Yes", true, "Correct. By adding the constant, endpoints.API_EXPLORER_CLIENT_ID" ],
+				["No", false, "Try again. We don't need to define the constant, but we do need to add an existing constant." ],
 		]
 	},
 ];

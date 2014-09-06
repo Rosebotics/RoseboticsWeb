@@ -30,14 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What new annotation do we add to a query_method that we didn't for insert?<br>",
+	"<b>1.</b> Did you get a web client ID?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["query_fields", true, "Correct. " ],
-				["name", false, "Try again. " ],
-				["path", false, "Try again. " ],
-				["http_method", false, "Try again. " ],
+				["Yes", true, "Correct. " ],
+				["No", false, "Try again. You will need one if you want to test your deployed web app." ],
 		]
 	},
 ];

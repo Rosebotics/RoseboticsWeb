@@ -29,29 +29,17 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-    '<b>1.</b> An iOS Cliend ID consist of a Client ID and a Client Secret.<br>',
+    '<b>1.</b> What frameworks had to be added?<br>',
     {
       questionType : 'multiple choice group',
       questionsList : [
-                       {
-                           questionHTML : 'Where is the <b>iOS Client ID</b> used:',
-                           choices : [ 'Your backend', 'Your iOS App', 'Your computer', 'Google\'s Cloud Services for OAuth' ],
-                           correctIndex : [0, 1, 3]
-                         },
-                         {
-                             questionHTML : 'Where is the <b>iOS Client Secret</b> used',
-                             choices : [ 'Your backend', 'Your iOS App', 'Your computer', 'Google\'s Cloud Services for OAuth' ],
-                             correctIndex : [1, 3]
-                           }],
+          {
+            questionHTML : '',
+            choices : [ 'CoreGraphics', 'SystemConfiguration', 'AVFoundation', 'Security' ],
+            correctIndex : [1, 3]
+          }],
       allCorrectOutput : 'Well done!',
-      someIncorrectOutput : 'Please try again.  Hint: Your computer is not involved at all in OAuth.  The first question has 3 answers, the second question has 2 answers.',
-    },
-
-    '<br><br><b>2.</b> You must have a Web Client ID to make/use an iOS Client ID<br>',
-
-    { questionType: 'multiple choice',
-      choices: [['True.  We must have both.', false, 'Try again.  You only need a Web Client ID for JavaScript Ajax request and Android apps'],
-                ['False. You can make an iOS Client ID without making a Web Client ID', true, 'Correct.  iOS does not require a Web Client ID.']]
-    },
+      someIncorrectOutput : 'Please try again.',
+    }
 
 ];

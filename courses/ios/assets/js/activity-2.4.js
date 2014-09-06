@@ -30,79 +30,34 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-
-  '<b>1.</b>Put the five steps below in the appropriate order.<br>',
-
-  {
-    questionType : 'multiple choice group',
-    questionsList : [
-        {
-          questionHTML : '<b>a.</b> Select the first step out of these five:',
-          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
-                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
-                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
-                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
-                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
-          correctIndex : 2
-        },
-        {
-          questionHTML : '<b>b.</b> Second step:',
-          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
-                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
-                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
-                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
-                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
-          correctIndex : 1
-        },
-        {
-          questionHTML : '<b>c.</b> Third step:',
-          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
-                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
-                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
-                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
-                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
-          correctIndex : 3
-        }, {
-          questionHTML : '<b>d.</b> Fourth step:',
-          choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
-                      'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
-                      'Open a Terminal window and navigate to your MovieQuotes backend folder.',
-                      'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
-                      'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
-          correctIndex : 0
-        } , {
-            questionHTML : '<b>d.</b> Final step:',
-            choices : [ 'Type the command: /somepath/ServiceGenerator ./moviequotes-v1.discovery --outputDir ./API',
-                        'Type the command: endpointscfg.py get_discovery_doc -f rpc movie_quotes_api.MovieQuotesApi',
-                        'Open a Terminal window and navigate to your MovieQuotes backend folder.',
-                        'Now that you have the discovery document, build the ServiceGenerator executable (only necessary once)',
-                        'Copy the MovieQuotesApi files from the API folder into your X-Code project (all but GTLMoviequotes_Sources.m file)'],
-            correctIndex : 4
-          } ],
-    allCorrectOutput : 'Well done!',
-    someIncorrectOutput : 'Please try again. Hints: ...',
-  },
-
-
-
-  '<br><br><b>2.</b> If you make an API change to your backend you need to delete the old generated code, rerun the Terminal commands (get_discovery_doc and ServiceGenerator steps), then copy in the new files.<br>',
-
-  {
-    questionType : 'multiple choice group',
-    questionsList : [
-        {
-            questionHTML : 'What are the 2 best tricks (shown in the video) in Terminal to make it easier to type the magic commands again.',
-            choices : [ 'Tab',
-                        'Up arrow',
-                        'Crtl R',
-                        'Spacebar',
-                        'Right arrow'],
-            correctIndex : [1, 2]
-          } ],
-    allCorrectOutput : 'Well done! If you just typed them recently Up Arrow is your best choice.  If it\'s been days, months, or years then your best bet is Ctrl R and type anything from the command that you can remember. :) I remember get_d and ServiceG, then I use right arrow to edit the command or hit enter to run it.',
-    someIncorrectOutput : 'Please try again. Hints: Select only 2.  Tab is a useful Terminal trick (it does autocomplete), but their are two tricks BETTER than Tab.',
-  },
-
-  '<br>Note, these tricks will be VERY handy for you in the lab as well.  The next time you type these commands always use Terminal\'s memory for what you typed last time, and then edit only the arguments to the commands for the next backend (which will be the Weatherpics lab).<br>',
-
+	"<b>1.</b> Which class does MovieQuote directly extend? (Big hint: it's a class inside the Endpoints Proto Datastore code you downloaded.)<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["EndpointsModel", true, "Correct. " ],
+				["ndb.model", false, "Try again. EndpointsModel extends ndb.model, so that is the 'super-super' class." ],
+				["GoogleAppEngineModel", false, "Try again. " ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> What does ndb stand for?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Non-directional beacon", false, "Try again. True, but not in this context. Did you look this up in wikipedia?" ],
+				["No-SQL database", true, "Correct. " ],
+				["Nucleic acid database", false, "Try again. True, but not in this context." ],
+		]
+	},
+	"<br><br>",
+	"<b>3.</b> We used all these property types in MovieQuotes except which one?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["DateTimeProperty", false, "Try again. We used that for the time the movie was last touched." ],
+				["IntegerProperty", true, "Correct. " ],
+				["StringProperty", false, "Try again. We used two string properties" ],
+				["None: we used them all", false, "Try again. " ],
+		]
+	},
 ];

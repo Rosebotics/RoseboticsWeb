@@ -30,26 +30,22 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-
-  '<b>1.</b> Right now you can add a quote using two very different methods: the web app OR the Endpoints API (which you can access already via the Endpoints Explorer).  Which mechanism uses JSON?<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['The pretty blue web app', false, 'Nope, the web app uses form data to add a quote.  JSON is not used by the web app.'],
-              ['The Endpoints API', true, 'Correct!  Under the hood the Endpoints POST coming in to insert a quote is JSON and all replies from the API are JSON.'],
-              ['Both', false, 'Nope, the web app uses form data to add a quote.  JSON is not used by the web app.']]},
-
-
-  '<br><br><b>2.</b> The web app is useless to the iOS client code.  Only the Endpoints API will be used by the iOS Client code.<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['True', true, 'Correct!  The iOS client code will use JSON messages with the Endpoints API.  The pretty blue web app does not even need to exist to create an iOS app.'],
-              ['False', false, 'Try again.  Might I suggest True']]},
-
-  '<br><br><b>3.</b> My MovieQuotes Endpoints backend is up and running both deployed and on localhost.<br>',
-
-  { questionType: 'multiple choice',
-    choices: [['Yes', true, 'Great!  You are ready to move on!'],
-              ['No', false, 'You need to get the backend working first. :)  See the prior unit.']]},
-
+	"<b>1.</b> For authenticated methods, you set user_required to what value?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["\"True\"", false, "Try again. That was a bug in my code in the list and insert methods." ],
+				["True", true, "Correct. " ],
+				["False", false, "Try again. " ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> The get_parent_key(user) helper method belongs to which class?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["endpoints (google's code)", false, "Try again. We gave it to you. Go find it in main.py to convince yourself." ],
+				["main (the starting code)", true, "Correct. " ],
+		]
+	},
 ];
-

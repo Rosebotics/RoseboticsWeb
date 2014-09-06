@@ -30,14 +30,17 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What new annotation do we add to a query_method that we didn't for insert?<br>",
+	"<b>1.</b> What did we change to make the given models use Endpoints? (Choose all that apply.)",
 	{
-		questionType : "multiple choice",
-		choices : [
-				["query_fields", true, "Correct. " ],
-				["name", false, "Try again. " ],
-				["path", false, "Try again. " ],
-				["http_method", false, "Try again. " ],
-		]
+		questionType : "multiple choice group",
+		questionsList : [
+				{
+					questionHTML : "",
+					choices : [ "Make each model class extend EndpointsModel instead of ndb.Model", "Add _message_fields_schema to each class to expose the entityKey (for deletion by key)", "Add the endpoints library to code and to app.yaml"],
+					correctIndex : [0,1,2]
+				}
+				],
+		allCorrectOutput : "Well done!",
+		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
 	},
 ];

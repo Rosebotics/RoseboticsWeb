@@ -29,46 +29,84 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-    '<b>1.</b> One of the topics in this lesson was passing in a callback block to call once all queries finished.  What is the correct syntax on a function that receives a callback block?  Select any correct answer:<br>',
+    '<b>1.</b> In order to create the query object used in this video, we used a class method on GTLQueryMoviequotes.  What was the name of that method?<br>',
 
     {
       questionType : 'multiple choice',
       choices : [
-          [ 'Adding like 7 sets of parenthesis', false, 'Please try again.' ],
-          [ '(returnValue (^)(inputValuesCommaSeparated)) functionName', true, 'Correct.  This shows the generic form.' ],
-          [ '(void (^)()) callback', true, 'Correct.  This is one valid example.' ],
-          [ '(void (^)(NSError* error)) callback', true, 'Correct.  This is one valid example.' ],
-          [ '(int (^)(int a, int b)) addTwoNumbers', true, 'Correct.  This is one valid example.' ],
-          [ 'I can never remember, just copy/paste for somewhere else that used a block', true, 'Correct.  Yeah, I\'m in this camp.' ] ]
+          [ 'queryForMoviequoteList', true, 'Correct!  For the backend we made a list, insert, and delete API method.  This time we\'re using the *List* method.' ],
+          [ 'queryForMoviequoteInsertWithObject:', false, 'Please try again.' ],
+          [ 'queryForMoviequoteDeleteWithEntityKey:', false, 'Please try again.' ],
+          [ 'queryForMoviequoteSomethingElse', false, 'Please try again. ' ] ]
     },
 
-  '<br>If you don\'t feel comfortable with blocks, you can read more about <a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html" target="_blank">Blocks from Apple</a> and see if that helps (I did not help me, but maybe it is valuable to others).',
 
-  '<br><br><b>2.</b> If you have a query.limit of 5 but there are more than 5 results available, what is the best way to get them all?<br>',
-
+  '<br><br><b>2.</b> Under the hood the moviequotes.moviequote.list method uses what type of RESTful API method?  Here is an explaination of each:<br>',
+  '<img width="90%" src="assets/img/restful_api_methods.png" alt="RESTful API Methods"><br>',
+  '<i>Image from <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">http://en.wikipedia.org/wiki/Representational_state_transfer</a></i><br>',
   { questionType: 'multiple choice',
-    choices: [['Raise the query.limit to 50', false, 'Please try again.  That will only work if you know for sure there are 50 or less available.'],
-              ['Pass the .nextPageToken from the collection response into the next query call and use it as the .pageToken on the next query', true, 'Correct!'],
-              ['Pass the .pageToken from the collection response into the next query call and use it as the .nextPageToken on the next query', false, 'Please try again.'],
-              ['Set the .nextPageToken to nil', false, 'Please try again.']]},
+    choices: [['GET', true, 'Correct!'],
+              ['PUT', false, 'Please try again.'],
+              ['POST', false, 'Please try again.'],
+              ['DELETE', false, 'Please try again.']]},
 
-   '<br><br><b>3.</b> Fire up your API Explorer <a href="fisherds-grade-recorder.appspot.com/_ah/api/explorer" target="_blank">yourusername-grade-recorder.appspot.com/_ah/api/explorer</a> and make a graderecorder.student.list with a low limit (say 2) such that there are more results available.<br>',
+    '<br><br>Here is an example GET request, click on this link: (it will open in a new tab)<br><a target="_blank" href="https://fisherds-movie-quotes.appspot.com/_ah/api/moviequotes/v1/moviequote/list?limit=30&order=-last_touch_date_time">https://fisherds-movie-quotes.appspot.com/_ah/api/moviequotes/v1/moviequote/list?limit=30&order=-last_touch_date_time</a><br>',
+    'Can you see how you\'d change it to point to your backend?  Can you see how to change it to only get 2 quotes?<br><br>',
+    '<b>3.</b> That exact GET request was used in this video by the iPhone Simulator to get the data.  It comes in as JSON data, but then each item is converted into an Objective-C object.<br>',
 
-   {
-            questionType : 'multiple choice group',
-            questionsList : [
-                {
-                  questionHTML : 'Since this is the deployed version, what four field are available at the <b>top</b> level on the response?',
-                  choices : [ 'pageToken', 'nextPageToken', 'items (which is an array of GradeEntries)', 'array', 'kind', 'etag' ],
-                  correctIndex : [1,2,4,5]
-                },
-                {
-                  questionHTML : 'If you run the same query on the localhost API Explorer what two fiels are available at the <b>top</b> level of the respose?',
-                  choices : [ 'pageToken', 'nextPageToken', 'items (which is an array of GradeEntries)', 'array', 'kind', 'etag' ],
-                  correctIndex : [1,2]
-                }  ],
-            allCorrectOutput : 'Well done!  It is interesting that etag and kind are only present on the deployed version.  I don\'t really care about that factoid, I just wanted you to get more practice with the API Explorer.',
-            someIncorrectOutput : 'Please try again. Hints: nextPageToken and items will always be present, kind and etag are only available on the deployed version.',
-          }
+    {
+      questionType : 'multiple choice group',
+      questionsList : [
+          {
+            questionHTML : 'Based on the JSON data response (from the link above) what are the 5 fields present for each MovieQuote in the items array?',
+            choices : [ 'items', 'kind', 'etag', 'quote', 'last_touch_date_time', 'movie', 'entityKey' ],
+            correctIndex : [1,3,4,5,6]
+          } ],
+      allCorrectOutput : 'Well done!  You probably didn\'t expect the *kind* property because it is only used under the hood.  We use last_touch_date_touch for the sort order, quote and movie for display, and entityKey so we can edit or delete the quote later.',
+      someIncorrectOutput : 'Please try again. Hints: items and etag are not in the array',
+    },
+
+
+
+    '<br><br><b>4.</b> We set the limit to give us 30 quotes.  If there were more than 30 quotes on the server and we wanted more than just the most recent 30 quotes how would we get them?<br>',
+
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ 'We can\'t get them.  30 is the max', false, 'Please try again.' ],
+          [ 'Make a second query for Moviequotes setting the pageToken on that query object to the nextPageToken from this response.', true, 'Correct! A fair amount of code needed to make that happen smoothly and append the results so we did not do it here (keeping it simple).' ],
+          [ '50 quotes is the most we could ever get', false, 'Please try again.' ],
+          [ 'There can never be more than 30 quotes saved on the server.  So a non-issue', false, 'Please try again. ' ] ]
+    },
+
+    '<br><br><b>5.</b> If we had not set the limit to 30 would default limit size would we have gotten?<br>',
+
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ '0 (you must set a limit)', false, 'Please try again.' ],
+          [ '10', true, 'Correct!  I think they picked 10 as the default just to make the point that you should make small fast queries, then come back for more if needed.' ],
+          [ '50', false, 'Please try again.' ],
+          [ 'We would have gotten ALL quotes', false, 'Please try again. ' ] ]
+    },
+
+    '<br><br><b>6.</b> We couldn\'t assign the response.items array (an NSArray) to the self.quotes array (an NSMutableArray).  So what function did we call to fix that issue which created an NSMutableArray from the response.items data?<br>',
+
+    {
+      questionType : 'freetext',
+      correctAnswerRegex : /mutableCopy/i,
+      correctAnswerOutput : 'Correct!  mutableCopy.',
+      incorrectAnswerOutput : 'Looking for mutableCopy',
+      outputHeight : '40px'
+    },
+
+    '<br><br><b>7.</b> We set the query.order = "-last_touch_date_time";  If we had never run that particular query when doing localhost testing what would\'ve happen when trying to run that query on the deployed version?<br>',
+
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ 'Ah.... nothing different.  I don\'t even understand why you would ask that.', false, 'Please try again.' ],
+          [ 'If we never ran the -last_touch_date_time query in localhost then that index would not get built when you deploy, making that query impossible to execute for the deployed app.', true, 'Correct!  Crazy I know.  You can open the index.yaml file in the backend folder to see which indexes will be built.' ] ]
+    }
 
 ];

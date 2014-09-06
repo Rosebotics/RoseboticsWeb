@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -29,17 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-    '<b>1.</b> What frameworks had to be added?<br>',
-    {
-      questionType : 'multiple choice group',
-      questionsList : [
-          {
-            questionHTML : '',
-            choices : [ 'CoreGraphics', 'SystemConfiguration', 'AVFoundation', 'Security' ],
-            correctIndex : [1, 3]
-          }],
-      allCorrectOutput : 'Well done!',
-      someIncorrectOutput : 'Please try again.',
-    }
-
+	"<b>1.</b> Did you play around with the web client in localhost?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Yes", true, "Correct. Hope you are enjoying this app." ],
+				["No", false, "Try again. Please do so, at least briefly. It will help you understand the app." ],
+		]
+	},
 ];

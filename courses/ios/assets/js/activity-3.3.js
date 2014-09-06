@@ -30,79 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What frameworks had to be added?<br>',
-                {
-                  questionType : 'multiple choice group',
-                  questionsList : [
-                      {
-                        questionHTML : '',
-                        choices : [ 'CoreGraphics', 'SystemConfiguration', 'AVFoundation', 'Security' ],
-                        correctIndex : [1, 3]
-                      }],
-                  allCorrectOutput : 'Well done!',
-                  someIncorrectOutput : 'Please try again.',
-                },
-
-
-                '<br><br><b>2.</b> What was the compiler flag you had to add to the GTL Client Library?',
+                '<b>1.</b> What was the compiler flag you had to add to the GTL Client Library?',
 
                 { questionType: 'freetext',
                   correctAnswerRegex: /-fno-objc-arc/i,
                   correctAnswerOutput: 'Correct! Read as... Flag for No Objective-C Automatic Reference Counting.',
                   incorrectAnswerOutput : 'Please try again.',
-                  outputHeight: '40px'},
-
-
-                '<br><br><b>3.</b> In order to make the Graderecorder specific client code we had a few sub-steps.  Put the steps below in the appropriate order.<br><i>Notice that we are not re-building the ServiceGenerator</i><br>',
-
-                {
-                  questionType : 'multiple choice group',
-                  questionsList : [
-                      {
-                        questionHTML : '<b>a.</b> Select the first step out of these four:',
-                        choices : [ 'Type the command: /somepath/ServiceGenerator ./graderecorder-v1.discovery --outputDir ./API',
-                                    'Type the command: endpointscfg.py get_discovery_doc -f rpc api.GradeRecorderApi',
-                                    'Open a Terminal window and navigate to your GradeRecorder backend folder.',
-                                    'Copy the GradeRecorderApi files from the API folder into your X-Code project (all but GTLGradeRecorder_Sources.m file)'],
-                        correctIndex : 2
-                      },
-                      {
-                        questionHTML : '<b>b.</b> Second step:',
-                        choices : [ 'Type the command: /somepath/ServiceGenerator ./graderecorder-v1.discovery --outputDir ./API',
-                                    'Type the command: endpointscfg.py get_discovery_doc -f rpc api.GradeRecorderApi',
-                                    'Open a Terminal window and navigate to your GradeRecorder backend folder.',
-                                    'Copy the GradeRecorderApi files from the API folder into your X-Code project (all but GTLGradeRecorder_Sources.m file)'],
-                        correctIndex : 1
-                      },
-                      {
-                        questionHTML : '<b>c.</b> Third step:',
-                        choices : [ 'Type the command: /somepath/ServiceGenerator ./graderecorder-v1.discovery --outputDir ./API',
-                                    'Type the command: endpointscfg.py get_discovery_doc -f rpc api.GradeRecorderApi',
-                                    'Open a Terminal window and navigate to your GradeRecorder backend folder.',
-                                    'Copy the GradeRecorderApi files from the API folder into your X-Code project (all but GTLGradeRecorder_Sources.m file)'],
-                        correctIndex : 0
-                      }, {
-                        questionHTML : '<b>d.</b> Fourth step:',
-                        choices : [ 'Type the command: /somepath/ServiceGenerator ./graderecorder-v1.discovery --outputDir ./API',
-                                    'Type the command: endpointscfg.py get_discovery_doc -f rpc api.GradeRecorderApi',
-                                    'Open a Terminal window and navigate to your GradeRecorder backend folder.',
-                                    'Copy the GradeRecorderApi files from the API folder into your X-Code project (all but GTLGradeRecorder_Sources.m file)'],
-                        correctIndex : 3
-                      } ],
-                  allCorrectOutput : 'Well done!',
-                  someIncorrectOutput : 'Please try again. Hints: Terminal --> get_discovery_doc --> ServiceGenerator --> Copy files',
-                },
-
-
-                '<br><br><b>4.</b> What trick did you use in Terminal to search for a command you\'ve run before?<br>',
-
-                {
-                  questionType : 'multiple choice',
-                  choices : [
-                      ['Tab', false, 'Please try again.' ],
-                      ['Ctrl R', true, 'Correct!' ],
-                      ['Option C', false, 'Please try again.' ],
-                      ['Spacebar', false, 'Please try again.' ] ]
-                }
+                  outputHeight: '40px'}
 ];
 

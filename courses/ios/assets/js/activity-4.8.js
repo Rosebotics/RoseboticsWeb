@@ -30,14 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What new annotation do we add to a query_method that we didn't for insert?<br>",
+	"<b>1.</b> Which is more complicated to delete, an assignment or a grade entry?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["query_fields", true, "Correct. " ],
-				["name", false, "Try again. " ],
-				["path", false, "Try again. " ],
-				["http_method", false, "Try again. " ],
+				["Assignment", true, "Correct. Yes, since you need to query for delete the related grade entries as well." ],
+				["GradeEntry", false, "Try again. " ],
 		]
 	},
 ];
