@@ -30,34 +30,50 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                
-  '<b>1.</b> What does it mean to "load the Bootstrap and jQuery frameworks"?<br>',
 
+                '<b>1.</b> Do you think other website\'s use hidden inputs in forms?  Isn\'t that a sneaky trick that should be avoided?<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['Install them on your computer', false, 'Please try again.' ],
-				['Download their SDK\'s for use with JavaScript code', false, 'Please try again.' ],
-				['Simply adding <b>link</b> and <b>script</b> tags on your page so the Bootstrap and jQuery code loads in Chrome at the same time your page loads.', true, 'Correct!' ] ]
-	},
-	
-  '<br><br><b>2.</b> If you knew you were going to do <b>localhost</b> development in the future in a location where you wouldn\'t have internet access, what should you change about your Bootstrap and jQuery links before you go offline?<br>',
+              	{
+              		questionType : 'multiple choice',
+              		choices : [
+              				[
+              						'Happens all the time.  If used for a valid reason it\'s fine, but I\'m sure there is someone out there using hidden inputs for evil.  In general they are totally fine though.', true, 'Correct!' ],
+              				[
+              						'You should never do that!  It is very deceitful!', false, 'Please try again.' ] ]
+              	},
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['While you still have internet access, you should download a copy the 2 Bootstrap .css files, the 1 Bootstrap .js file, and the 1 jQuery .js file and put them into your /static folder, then change the links in the HTML to point to the /static folder copies.  That will work just like the CDN links (even offline for localhost).', true, 'Correct!  The CDN links are just present to make your life easier, but you could serve the .css and .js files from your static folder, just like any other static file.' ],
-				['You could try to do all the stuff mentioned above but it won\'t actually work offline.  You must use the CDN links.', false, 'Please try again.' ],
-				['These CDN links are the only ones you can use.  jQuery must come from the Google CDN server for example.', false, 'Please try again.' ] ]
-	},
+              	'<br><br><b>2.</b> When we set the html on the Modal title and submit button we used the jQuery command <b>.html()</b>, for example .html("stuff").  What jQuery command did we use to set the value inside an <b>input</b> element?<br>',
 
-  '<br><br><b>3.</b> Compared to installing SDKs for AppEngine, installing Eclipse, PyDev, Python 2.7, etc.  It\'s actually pretty easy to get a page ready to use Bootstrap and jQuery?<br>',
-  
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['Yeah, that was easy and it\'s neat (but wierd) that you can just type JavaScript commands into the Console area in Dev Tools to test the links.', true, 'Great!  Keep rockin!' ],
-				['I was unable to get the test command <b>$("body").html("Hello, World!").addClass("bg-success");</b> to work (or didn\'t try)', false, 'Please try again.  You need to make sure your links are ready to go!' ]]
-	}
+              	{
+              		questionType : 'freetext',
+              		correctAnswerRegex : /val/i,
+              		correctAnswerOutput : 'Correct!',
+              		incorrectAnswerOutput : 'Please try again.',
+              		showAnswerOutput : 'Here is the answer: .val() for more info about the command visit -->  http://api.jquery.com/val/'
+              	},
+              	
+
+              	'<br><br><b>3.</b> There are three inputs in the form.  What are the <b>name</b> attributes of our three inputs?',
+
+              	{
+              		questionType : 'multiple choice group',
+              		questionsList : [
+              				{
+              					questionHTML : '',
+              					choices : [ 'name', 'submit', 'quote', 'movie', 'title', 'entity_key', 'entityKey' ],
+              					correctIndex : [2,3,5]
+              				}],
+              		allCorrectOutput : 'Well done!',
+              		someIncorrectOutput : 'Please try again. Try: quote, movie, entity_key',
+              	},
+              	
+
+              	'<br><br><b>4.</b> The very last thing we did was switch the <b>action</b> attribute on the form to <b>/insertquote</b>.  So in the next video what action do you think we\'ll do first?<br>',
+
+              	{
+              		questionType : 'multiple choice',
+              		choices : [
+              				['Go into app.yaml and change the /addquote path to /insertquote', false, 'Please try again.' ],
+              				['Go to the bottom of main.py and change the path-->handler entry that was <b>/addquote-->AddQuoteAction</b> to <b>/insertquote-->InsertQuoteAction</b> (then modify that handler to do Add and Edit based on the presence of the entity_key field)', true, 'Correct!  Let\'s go do that then!' ]]
+              	},
 ];

@@ -31,14 +31,62 @@
 
 var activity = [
 
-  '<b>1.</b> Did you get your html and css files cleaned up?<br>',
+  '<b>1.</b> We added the id of "add-quote" for the menu item, but for the edit buttons we did not use an id.  We added the class edit-movie-quote.  Why didn\'t we use an id for both?<br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['You bet!  I have a pretty white screen and I\'m ready for Bootstrap fun.', true, 'Great!  Let\'s import the jQuery and Bootstrap CSS and JavaScript files.' ],
-				['No.  Mine is all messed up.',  false, 'Well darn.  Kinda need to get that fixed before you can follow along with future videos.' ]]
+				[
+						'We could\'ve used an id for both.  We only did it different to show different mechanisms.',
+						false, 'Please try again.' ],
+				[
+						'You are required to use an id on menu items, but for the other buttons you can do whatever you like.',
+						false, 'Please try again.' ],
+				[
+						'The is only 1 Add Quote menu item so it used an id.  However there are MANY edit buttons and an id should be unique on the page.  So we used a class on the edit buttons since it\'s fine to repeat a class',
+						true, 'Correct!' ],
+				[ 'Buttons don\'t have ids', false, 'Please try again.' ] ]
 	},
+
+	'<br><br><b>2.</b> Could we have used a class on the Add Quote menu item of say... "add-quote" then done a jQuery search for $(".add-quote")?<br>',
+
+	{
+		questionType : 'multiple choice',
+		choices : [
+				[
+						'Sure.  That\'d work.  Although you\'d typically use an id if it is a unique name.  Both work though.',
+						true, 'Correct!' ],
+				[
+						'That wouldn\'t work.  A class must be repeated on multiple elements.',
+						false, 'Please try again.' ],
+				[
+						'That wouldn\'t work.  Menu items can\'t have a class.',
+						false, 'Please try again.' ] ]
+	},
+	
+
+	'<br><br>Yet again we cheated and taught you a whole bunch of jQuery within the "AppEngine Track".  You don\'t need to understand all of the jQuery, but let\'s see what you picked up.<br>',
+	'<b>3.</b> When we wanted to change the text on the submit button to say "Edit Quote", what code did we add to find the submit button within the form and change the html contents?<br>',
+
+	{
+		questionType : 'multiple choice',
+		choices : [
+				[
+						'$("#insert-quote-modal button[type=submit]").html("Edit Quote");',
+						true, 'Correct!' ],
+				[
+						'$("#insert-quote-modal button[name=submit]").html("Edit Quote");',
+						false, 'Please try again.' ],
+				[
+						'$("#insert-quote-modal button[type=submit]").set("Edit Quote");',
+						false, 'Please try again.' ],
+				[
+					'$("#insert-quote-modal button[name=submit]").set("Edit Quote");',
+					false, 'Please try again.' ] ]
+	},
+	
+				
+
 
 ];
 
