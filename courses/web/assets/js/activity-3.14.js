@@ -30,14 +30,17 @@
 
 var activity = [
 
-		'<b>1.</b> Did you get it all working?<br>',
-	
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ 'I\'m pretty sure I did!', true, 'Great!  All answers are correct.  Just curious.  The solution is coming up next for your review.' ],
-					[ 'Ah... maybe... perhaps', true, 'Cool!  All answers are correct.  Just curious.  The solution is coming up next for your review.' ],
-					[ 'In a word... nope', true, 'Oh well. ;)  All answers are correct.  Just curious.  The solution is coming up next for your review.' ]
-					 ]
-		}
+	'<b>1.</b> So how did you do with your SOLO attempt compared to the Solution video?<br>',
+
+	{
+		questionType : 'multiple choice',
+		choices : [
+				[ 'I nailed it.  Didn\'t change a thing after watching the Solution video.', true, 'Great!  All answers are correct.  Just curious.' ],
+				[ 'I mostly got it.  Had to fix up a small amount', true, 'Cool!  All answers are correct.  Just curious.' ],
+				[ 'I did nothing useful with my SOLO effort, but now I\'m on it. :) ', true, 'Oh well. ;)  All answers are correct.  Just curious.' ]
+				 ]
+	},
+		'<br><br>We could ask a lot of additional questions, but this is review of content already coverred when we made the client side Edit changes.  Hopefully the practice helped cement some of the concepts for you!<br><br>',
+		'Let\'s go see if we can get the backend together and finish this web app (I can see the light at the end of the tunnel).'
+
 ];

@@ -30,50 +30,56 @@
 
 var activity = [
 
-		'<b>1.</b> There are two Navbars shown below (just images of navbars).  Both nav elements have the class <b>navbar</b> present.<br>',
+		'<b>1.</b> When we printed out the urlsafe entity key it was a base 64 encoded string of digits, upper and lowercase letters, underscore and hyphen.  ',
+		'However when we made an ndb.Key() and printed out the str representation it actual made some sense.  Assume it said:<br>',
+		'<b>ndb.Key(\'Entity\', \'moviequote_root\', \'MovieQuote\', \'1234567890\')</b><br>',
 
-		'<img src="assets/img/navbars.png" alt="Navbars"><br>',
 		{
 			questionType : 'multiple choice group',
 			questionsList : [
 					{
-						questionHTML : '<b>a.</b> What <b>class</b> does the second navbar have that makes it show up in black?',
-						choices : [ 'navbar', 'navbar-default',
-								'navbar-inverted', 'navbar-inverse' ],
-						correctIndex : 3
+						questionHTML : '<b>a.</b> What Kind of entity does this key represent?',
+						choices : [ 'An Entity', 'moviequote_root', 'A MovieQuote', '1234567890' ],
+						correctIndex : 2
 					},
 					{
-						questionHTML : '<b>b.</b> What <b>class</b> does the first navbar have letting it be gray text on an off white background?',
-						choices : [ 'navbar', 'navbar-default',
-								'navbar-inverted', 'navbar-inverse' ],
+						questionHTML : '<b>b.</b> How many ancestors does this entity key have?',
+						choices : [ '0 - This entity is a <b>root</b> entity with no parent', '1 - The parent of this entity is a root element',
+						            '2 - The parent of this entity has a parent too', '3 - The parent of this entity has a parent too, which has a parent as well'],
+						correctIndex : 1
+					},
+					{
+						questionHTML : '<b>c.</b> What <b>Kind</b> of entity is the parent key?',
+						choices : [ 'An Entity', 'moviequote_root', 'A MovieQuote', '1234567890' ],
+						correctIndex : 0
+					},
+					{
+						questionHTML : '<b>d.</b> The id of the MovieQuote is 1234567890.  What is the <b>id</b> of the parent (yes, an id can be a non-number if it is setup as a string_id)',
+						choices : [ 'An Entity', 'moviequote_root', 'A MovieQuote', '1234567890' ],
 						correctIndex : 1
 					} ],
 			allCorrectOutput : 'Well done!',
-			someIncorrectOutput : 'Please try again. Hints: navbar-inverted is NOT the class name.',
+			someIncorrectOutput : 'Please try again. Hints: The parent is Kind=Entity id=moviequote_root.  This entity is Kind=MovieQuote id=1234567890',
 		},
 
-		'<br><br><b>2.</b> Where do our <b>Add Quote</b> and <b>Edit</b> links go?<br>',
+		'<br><br><b>2.</b> What function did we call on the ndb.Key to retreive the actual MovieQuote entity from the Datastore?<br>',
 
 		{
-			questionType : 'multiple choice',
-			choices : [
-					[
-							'To the <b>Add Quote</b> and <b>Edit</b> pages (respectively)',
-							false, 'Please try again.' ],
-					[
-							'Nowhere.  We\'re kinda cheating and making the href="#" and we\'ll later use JavaScript (or data attributes) to make them behave like buttons',
-							true,
-							'Correct!  Technically # isn\'t best practice.  javascript:void(0) is preferred (but both work) See: http://stackoverflow.com/questions/134845/href-attribute-for-javascript-links-or-javascriptvoid0' ],
-					[ 'Both go home.', false, 'Please try again.' ] ]
+			questionType : 'freetext',
+			correctAnswerRegex : /get/i,
+			correctAnswerOutput : 'Correct!',
+			incorrectAnswerOutput : 'Please try again.',
+			showAnswerOutput : 'Here is the answer: .get()'
 		},
 
-		'<br><br><b>3.</b> Did you try your Navbar on a narrow screen or emulate a smartphone from Chrome Dev Tools?<br>',
+		'<br><br><b>3.</b> What function did we call on the MovieQuote entity to write the contents back into the Datastore (after we finished our updates)?<br>',
 
 		{
-			questionType : 'multiple choice',
-			choices : [
-					['Yep.  Pretty slick!', true, 'Great!  Keep rockin' ],
-					['Nope.  Didn\'t try it.', false, 'Please try again.' ]]
+			questionType : 'freetext',
+			correctAnswerRegex : /put/i,
+			correctAnswerOutput : 'Correct!',
+			incorrectAnswerOutput : 'Please try again.',
+			showAnswerOutput : 'Here is the answer: .put()'
 		}
 
 ];

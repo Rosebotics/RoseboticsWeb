@@ -30,14 +30,36 @@
 
 var activity = [
 
-		'<b>1.</b> Did you get it all working?<br>',
+		'<b>1.</b> The Modal does an animation to appear on the page.  That all happens with JavaScript, but we didn\'t write any code.  How does it work?<br>',
 	
 		{
 			questionType : 'multiple choice',
 			choices : [
-					[ 'I\'m pretty sure I did!', true, 'Great!  All answers are correct.  Just curious.  The solution is coming up next for your review.' ],
-					[ 'Ah... maybe... perhaps', true, 'Cool!  All answers are correct.  Just curious.  The solution is coming up next for your review.' ],
-					[ 'In a word... nope', true, 'Oh well. ;)  All answers are correct.  Just curious.  The solution is coming up next for your review.' ]
+					[ 'No idea!', false, 'Please try again.' ],
+					[ 'One word... jQuery', false, 'Please try again.' ],
+					[ 'The Bootstrap .js file we added looks for the Data attributes.  In this case: <b>data-toggle="modal" data-target="#add-quote-modal"</b>', true, 'Correct!' ]
 					 ]
-		}
+		},
+
+		'<br><br><b>2.</b> Where to you add the html code for the Modal?<br>',
+
+		{
+			questionType : 'multiple choice',
+			choices : [
+					[ 'The code to display the Modal is <b>always</b> on the page, it\'s just not visible to the user initially.  You could put the code pretty much anywhere in the body, but we put it at the bottom (just before the JavaScript) for organization. ', true, 'Correct!' ],
+					[ 'A separate file.',  false, 'Please try again.' ],
+					[ 'It must be the first html after the Navbar', false, 'Please try again.' ]]
+		},
+
+		'<br><br><b>3.</b> If you resize the page while your Modal is up what happens (Try it first!).<br>',
+
+		{
+			questionType : 'multiple choice',
+			choices : [
+					[ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
+					[ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well.', true, 'Correct!' ],
+					[ 'A resize dismisses the Modal.', false, 'Please try again.' ],
+					[ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
+		}		
+		
 ];
