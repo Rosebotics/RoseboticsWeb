@@ -30,36 +30,33 @@
 
 var activity = [
 
-		'<b>1.</b> The Modal does an animation to appear on the page.  That all happens with JavaScript, but we didn\'t write any code.  How does it work?<br>',
+		'<b>1.</b> In order to Delete an entity from the Datastore did you call .delete() on the key or on the entity itself?<br>',
 	
 		{
 			questionType : 'multiple choice',
 			choices : [
-					[ 'No idea!', false, 'Please try again.' ],
-					[ 'One word... jQuery', false, 'Please try again.' ],
-					[ 'The Bootstrap .js file we added looks for the Data attributes.  In this case: <b>data-toggle="modal" data-target="#add-quote-modal"</b>', true, 'Correct!' ]
+					[ '.delete() was called on the ndb.Key for the entity', true, 'Correct!  That\'s a feature for the KEY.' ],
+					[ '.delete() was called on the MovieQuote entity itself', false, 'Please try again.' ]
 					 ]
 		},
 
-		'<br><br><b>2.</b> Where to you add the html code for the Modal?<br>',
+		'<br><br><b>2.</b> Once you deployed there was already data present in your public Datastore.  Why?<br>',
 
 		{
 			questionType : 'multiple choice',
 			choices : [
-					[ 'The code to display the Modal is <b>always</b> on the page, it\'s just not visible to the user initially.  You could put the code pretty much anywhere in the body, but we put it at the bottom (just before the JavaScript) for organization. ', true, 'Correct!' ],
-					[ 'A separate file.',  false, 'Please try again.' ],
-					[ 'It must be the first html after the Navbar', false, 'Please try again.' ]]
+					[ 'All the data from the old app must have been copied into the new app engine code',  false, 'Please try again.' ],
+					[ 'The Datastore is independent of the web app.  The new app simply used the existing data (which was unchanged).',  true, 'Correct!  If you HAD lost all your data that would make updating an app VERY problematic. :)'  ]]
 		},
 
-		'<br><br><b>3.</b> If you resize the page while your Modal is up what happens (Try it first!).<br>',
+		'<br><br><b>3.</b> If you are taking this class for credit did you <a target="_blank" href="https://docs.google.com/forms/d/1o9fmeOOYcm-P5qex2xNI9WJki9a9ew8HeNuSRu2aws8/viewform">submit your URL for grading</a> (if you are taking this class for a grade)?<br>',
 
 		{
 			questionType : 'multiple choice',
 			choices : [
-					[ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
-					[ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well.', true, 'Correct!' ],
-					[ 'A resize dismisses the Modal.', false, 'Please try again.' ],
-					[ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
+					[ 'Yes!  Submitted using the link at the end of the doc.', true, 'Great! (multiple answers are fine)' ],
+					[ 'I\'m not taking this class for credit so no need. :)', true, 'Great! (multiple answers are fine)' ],
+					[ 'Ooops. Forgot (or didn\'t finish)', false, 'Need to submit your URL for grading points.'  ]]
 		}		
 		
 ];
