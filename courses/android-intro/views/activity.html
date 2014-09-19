@@ -32,24 +32,20 @@
 
 <div id="gcb-main">
   <ul class="gcb-breadcrumb">
-    {# I18N: Navigation breadcrumb. #}
-    <li><a href="course">{{ gettext('Course') }}</a></li>
+    <li><a href="course">{{ course_info.course.title }}</a></li>
     <li>
       <a href="unit?unit={{ unit.unit_id }}">
-        {# I18N: Navigation breadcrumb. #}
-        {{ gettext('Unit') }} {{ unit.index }}</a></li>
+        {{ unit.title }}</a></li>
     {% if lesson %}
       <li>
         <a href="unit?unit={{ unit.unit_id }}&lesson={{ lesson.lesson_id }}">
-          {# I18N: Navigation breadcrumb. #}
-          {{ gettext('Lesson') }} {{ lesson.index }}</a></li>
+        {{ lesson.title }}</a></li>
     {% endif %}
     <li>{# I18N: Navigation breadcrumb. #} {{ gettext('Activity') }}</li>
   </ul>
   <div>
     <h1 class="gcb-unit-header">
-      {# I18N: Header text for a unit page. #}
-      {{ gettext('Unit %(id)s - %(title)s', id=unit.index, title=unit.title) }}
+      {{ unit.title }}
     </h1>
   </div>
 
