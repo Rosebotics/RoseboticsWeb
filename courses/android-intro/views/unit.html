@@ -44,10 +44,10 @@
     <li><a href="course">{{ gettext('Course') }}</a></li>
     <li><a href="unit?unit={{ unit.unit_id }}">
       {# I18N: Navigation breadcrumb. #}
-      {{ gettext('Unit') }} {{ unit.index }}</a></li>
+      {{ unit.title }}</a></li>
     {% if lesson %}
       {# I18N: Navigation breadcrumb. #}
-      <li>{{ gettext('Lesson') }} {{ lesson.index }}</li>
+      <li>{{ lesson.title }}</li>
     {% endif %}
   </ul>
   <div>
