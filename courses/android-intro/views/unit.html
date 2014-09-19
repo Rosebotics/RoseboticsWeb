@@ -39,19 +39,15 @@
     {% endif %}
   {% endif %}
   <ul class="gcb-breadcrumb">
-    {# I18N: Navigation breadcrumb. #}
     <li><a href="course">{{ course_info.course.title }}</a></li>
     <li><a href="unit?unit={{ unit.unit_id }}">
-      {# I18N: Navigation breadcrumb. #}
       {{ unit.title }}</a></li>
     {% if lesson %}
-      {# I18N: Navigation breadcrumb. #}
       <li>{{ lesson.title }}</li>
     {% endif %}
   </ul>
   <div>
     <h1 class="gcb-unit-header">
-      {# I18N: Header text for a unit page. #}
       {{ unit.title }}
     </h1>
   </div>
