@@ -13,8 +13,7 @@
 {% endblock %}
 
 {% block subtitle %}
-  {# I18N: Title of the webpage. #}
-  - {{ gettext('Unit') }} {{ unit.index }} - {{ unit.title }}
+  {{ unit.title }}
 {% endblock subtitle %}
 
 {% block top_content %}
@@ -92,8 +91,7 @@
                 <div class="gcb-col-3">
                   <p style="float:right; margin-top: 0px;">
                     <a role="button" class="gcb-button" id="lessonNotesLink" href="{{ lesson.notes }}" target="_blank">
-                      {# I18N: Link to a text version of a lesson video. #}
-                      {{ gettext('Text Version') }}
+                      Slides
                     </a>
                   </p>
                 </div>

@@ -13,7 +13,6 @@
 {% endblock %}
 
 {% block subtitle %}
-  {# I18N: Title of the webpage. #}
   {{ unit.title }}
 {% endblock subtitle %}
 
@@ -91,8 +90,7 @@
                 <p style="float:right; margin-top: 0px;">
                   {% if lesson.notes %}
                   <a role="button" class="gcb-button" id="lessonNotesLink" href="{{ lesson.notes }}" target="_blank">
-                    {# I18N: Link to a text version of a lesson video. #}
-                    {{ gettext('Text Version') }}
+                    Slides
                   </a>
                   {% endif %}
                 </p>
