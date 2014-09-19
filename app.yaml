@@ -7,7 +7,14 @@ threadsafe: false
 env_variables:
   GCB_PRODUCT_VERSION: '1.6.0'
   GCB_APPSTATS_ENABLED: false
-  GCB_COURSES_CONFIG: 'course:/cs1:/courses/cs1, course:/smartproductdesign:/courses/smartproductdesign, course:/android:/courses/android, course:/web:/courses/web, course:/ios:/courses/ios, course:/misc:/courses/misc, course:/me430:/courses/me430'
+  GCB_COURSES_CONFIG: >
+                        course:/cs1:/courses/cs1, 
+                        course:/smartproductdesign:/courses/smartproductdesign, 
+                        course:/android:/courses/android, 
+                        course:/web:/courses/web, 
+                        course:/ios:/courses/ios, 
+                        course:/misc:/courses/misc, 
+                        course:/me430:/courses/me430
 
 # Turned off warmup requests for development.  For more details visit:
 # https://developers.google.com/appengine/docs/python/config/appconfig#Python_app_yaml_Warmup_requests
