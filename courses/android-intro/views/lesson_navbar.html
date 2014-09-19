@@ -34,10 +34,10 @@
 
           <div class="gcb-lesson-title-with-progress">
             {% if page_type == 'unit' and lesson.lesson_id == lesson_id %}
-              {{ unit.index }}.{{ lesson.index }} {{ lesson.title }}
+              {{ lesson.title }}
             {% else %}
               <a href="unit?unit={{ unit_id }}&lesson={{ lesson.lesson_id }}">
-                {{ unit.index }}.{{ lesson.index }} {{ lesson.title }}
+                {{ lesson.title }}
               </a>
             {% endif %}
           </div>
