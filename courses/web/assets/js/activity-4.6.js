@@ -31,38 +31,49 @@
 
 var activity = [
                 
-  '<b>1.</b> We added two attributes to the form element.  What were they?<br>',
-
+  '<b>1.</b> If I did an Edit on my student first_name=David, last_name=Fisher, rose_username=fisherds, team=None and made the team=Team2 instead.  What data would be in the Datastore<br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
-				['href="/addquote" method="POST"', false, 'Please try again.' ],
-				['href="/addquote" method="GET"', false, 'Please try again.' ],
-				['action="/addquote" method="POST"',  true, 'Correct!'],
-				['action="/addquote" method="GET"',  false, 'Please try again.'] ]
+				['1 Student with the new team name', true, 'Correct!'],
+				['2 Students both with the same rose_username', false, 'Please try again.' ],
+				['2 Students each with their own rose_username', false, 'Please try again.' ]]
 	},
-	
-  '<br><br><b>2.</b> A form can have any amount of html within it.  However only certain elements are important to the form that is sent to the backend.  What elements are important?<br>',
+    
+	  '<br><br><b>2.</b> If I did an Edit on my student first_name=David, last_name=Fisher, rose_username=fisherds, team=None and made the rose_username=fisher instead.  What data would be in the Datastore<br>',
+
+
+		{
+			questionType : 'multiple choice',
+			choices : [
+					['1 Student (all edits modify the existing student due to our key name trick)', false, 'Please try again.'],
+					['2 Students both with the same rose_username', false, 'Please try again.' ],
+					['2 Students each with their own rose_username', true, 'Correct!' ]]
+		},
+
+	'<br><br><b>3.</b> We could probably slim down this Datastore model by removing the rose_username propery.  With the model object as it is, what are the two ways we could access that value?',
 
 	{
-		questionType : 'multiple choice',
-		choices : [
-				['button elements', false, 'Please try again.' ],
-				['td and th elements', false, 'Please try again.' ],
-				['input elements, specifically their name and value attributes', true, 'Correct!' ],
-				['input elements, specifically their id and value attributes',  ] ]
+		questionType : 'multiple choice group',
+		questionsList : [
+				{
+					questionHTML : '',
+					choices : [ 'Use the rose_username property for the Student entity', 'The key name of the Student Entity (which is also the rose_username)', 'The parent key' ],
+					correctIndex : [0,1]
+				},
+				{
+					questionHTML : 'Assuming you had a Student instance called bob.  How would you get bob\'s rose_username via the property?',
+					choices : [ 'bob.rose_username', 'bob_rose_username' ],
+					correctIndex : 0
+				},
+				{
+					questionHTML : 'How would you get bob\'s rose_username via the key?',
+					choices : [ 'bob.key.id() or bob.key.string_id()', 'bob.id()', 'bob.id' ],
+					correctIndex : 0
+				} ],
+		allCorrectOutput : 'Well done!',
+		someIncorrectOutput : 'Please try again. Hints: The answer to the first coding question is bob.rose_username, then bob.key.id() or bob.key.string_id() for the second coding question.',
 	},
-
-	'<br><br><b>3.</b> If you resize the page while your Modal is up (<b>with the form now inside the modal</b>) what happens (Try it first!).<br>',
-
-	{
-		questionType : 'multiple choice',
-		choices : [
-				[ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
-				[ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well and the labels even reflow.', true, 'Correct!' ],
-				[ 'A resize dismisses the Modal.', false, 'Please try again.' ],
-				[ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
-	}		
 	
 ];

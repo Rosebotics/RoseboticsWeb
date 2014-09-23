@@ -30,36 +30,53 @@
 
 var activity = [
 
-		'<b>1.</b> The Modal does an animation to appear on the page.  That all happens with JavaScript, but we didn\'t write any code.  How does it work?<br>',
-	
 		{
-			questionType : 'multiple choice',
-			choices : [
-					[ 'No idea!', false, 'Please try again.' ],
-					[ 'One word... jQuery', false, 'Please try again.' ],
-					[ 'The Bootstrap .js file we added looks for the Data attributes.  In this case: <b>data-toggle="modal" data-target="#add-quote-modal"</b>', true, 'Correct!' ]
-					 ]
+			questionType : 'multiple choice group',
+			questionsList : [
+					{
+						questionHTML : '<b>1.</b> What are the four attributes for a Query object?',
+						choices : [ 'kind', 'entity', 'ancestor', 'get', 'filters', 'pageToken', 'orders' ],
+						correctIndex : [0,2,4,6]
+					}, ],
+			allCorrectOutput : 'Well done!',
+			someIncorrectOutput : 'Please try again. Hints: Review the notes or visit the Query reference pages.',
 		},
 
-		'<br><br><b>2.</b> Where to you add the html code for the Modal?<br>',
+		'<br><br><b>2.</b> How would you make a <b>query</b> for a Person with an ancestor of bob, filtering for nickname = "bobby", ordering by birthday?<br>Select any correct answer.<br>',
 
 		{
 			questionType : 'multiple choice',
 			choices : [
-					[ 'The code to display the Modal is <b>always</b> on the page, it\'s just not visible to the user initially.  You could put the code pretty much anywhere in the body, but we put it at the bottom (just before the JavaScript) for organization. ', true, 'Correct!' ],
-					[ 'A separate file.',  false, 'Please try again.' ],
-					[ 'It must be the first html after the Navbar', false, 'Please try again.' ]]
+					[ 'Person.query(Person.nickname="bobby", ancestor=bob).order(Person.birthday)', false, 'Please try again.  Note the = should be =='  ],
+					[ 'Person.query(ancestor=bob).filter(Person.nickname == "bobby").order(Person.birthday)', true, 'Correct!  There are actually two valid answers here.' ],
+					[ 'Person.query(Person.nickname=="bobby", ancestor=bob).order(Person.birthday)', true, 'Correct!  There are actually two valid answers here.' ],
+					[ 'Person.query(ancestor=bob, Person.nickname == "bobby").order(Person.birthday)',  false, 'Please try again.  That order won\'t work' ],
+					[ 'Person.query(Person.nickname == "bobby", ancestor=bob).order(Person.birthday).fetch()', false, 'Please try again.  That makes a LIST not a query.' ]]
 		},
 
-		'<br><br><b>3.</b> If you resize the page while your Modal is up what happens (Try it first!).<br>',
+
+		'<br><br><b>3.</b> How would you make a list of all Dog objects where breed = "Malinois"?<br>',
 
 		{
 			questionType : 'multiple choice',
 			choices : [
-					[ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
-					[ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well.', true, 'Correct!' ],
-					[ 'A resize dismisses the Modal.', false, 'Please try again.' ],
-					[ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
+				[ 'Dog.query(Dog.breed == "Malinois", ancestor=bob).order(Dog.birthday)', false, 'Please try again.'  ],
+				[ 'Dog.query(Dog.breed == "Malinois")', false, 'Please try again.'  ],
+				[ 'Dog.query(Dog.breed == "Malinois").fetch()', true, 'Correct!' ],
+				[ 'Dog.query(Dog.breed == "Malinois").get()', false, 'Please try again.'  ],
+				]
+		},
+		
+		'<br><br><b>3.</b> How would you get a single Dog object with breed = "Malinois" and name = "Kingley"? (you happen to know there is only 1 matching entity in the Datastore)<br>',
+
+		{
+			questionType : 'multiple choice',
+			choices : [
+						[ 'Dog.query(Dog.breed == "Malinois", ancestor=bob).order(Dog.birthday)', false, 'Please try again.'  ],
+						[ 'Dog.query(Dog.breed == "Malinois", Dog.name == "Kingley")', false, 'Please try again.'  ],
+						[ 'Dog.query(Dog.breed == "Malinois", Dog.name == "Kingley").fetch()', false, 'Please try again.  Fetch would work, but it gives you a list of ALL hits.  We want only 1 result, so you can use get (which we mentioned in the video, but didn\'t USE in GradeRecorder)' ],
+						[ 'Dog.query(Dog.breed == "Malinois", Dog.name == "Kingley").get()', true, 'Correct!'  ],
+						]
 		}		
 		
 ];
