@@ -30,67 +30,18 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
+'<b>1.</b> Did you complete the Dice with Friends Designing Datastore Models Lab and submit your URL?<br>',
 
-  '<b>1.</b> jQuery uses $("<b>stuff</b>") to find elements on the page.  The <b>stuff</b> uses the exact same selector rules as CSS.<br>',
+{
+	questionType : 'multiple choice',
+	choices : [
+			[
+					'Yep!  It works and I submitted the link.  Visit anytime!', true, 'Great!  Nice work' ],
+			[
+					'Nope.  Task not complete.',
+					false,
+					'Well darn.  That needs to be fixed before you can check yourself off for this unit.  Don\'t kill yourself trying over and over tonight.  Take a break today and come back fresh tomorrow to fix problems.' ] ]
+},
 
-  {
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : '<b>a.</b> What <b>stuff</b> would you add to find an element with the id = "toggle-edit?"',
-					choices : [ '#toggle-edit', '.toggle-edit', '#edit-actions', '.edit-actions' ],
-					correctIndex : 0
-				},{
-					questionHTML : '<b>b.</b> What <b>stuff</b> would you add to find all elements with the class = "edit-actions"?',
-					choices : [ '#toggle-edit', '.toggle-edit', '#edit-actions', '.edit-actions' ],
-					correctIndex : 3
-				},{
-					questionHTML : '<b>c.</b> Would the <b>stuff</b> from part b also find an element with the class = "hidden edit-actions btn btn-default"?',
-					choices : [ 'Yes.  edit-actions is one of the classes in the class list, so it\'s a match.', 'No.  edit-actions would need to be the only class present to be a match' ],
-					correctIndex : 0
-				}],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again. Hints: # is for an id and . is for a class.  .edit-actions would match any element with the edit-actions class (regardless of other classes present)',
-	},
-
-  '<br><br><b>2.</b>  We kinda went nuts with jQuery code this time. :)  We\'ll review jQuery more but let\'s see if you can answer a few questions.<br>',
-
-  {
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : '<b>a.</b> How would you toggle the presence of the class named "hidden" on all elements with the .edit-actions class?"',
-					choices : [ '$(".edit-actions").addClass("hidden")', '$(".edit-actions").removeClass("hidden")', '$(".edit-actions").toggleClass("hidden")' ],
-					correctIndex : 2
-				},{
-					questionHTML : '<b>b.</b> How "could" you add the class named "hidden" on all elements with the .edit-actions class if you knew for sure it is currently missing?',
-					choices : [ '$(".edit-actions").addClass("hidden")', '$(".edit-actions").removeClass("hidden")', '$(".edit-actions").toggleClass("hidden")' ],
-					correctIndex : [0, 2]
-				}],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again.',
-	},
-
-
-  '<br><br><b>3.</b> If you wanted to print "Hi" to the Console log how would you do it?<br>',
-
-	{
-		questionType : 'freetext',
-		correctAnswerRegex : /console.log\(\s*[\'\"]Hi[\'\"]\s*\);/i,
-		correctAnswerOutput : 'Correct!',
-		incorrectAnswerOutput : 'Please try again.',
-		showAnswerOutput : 'Here is the answer:  console.log("Hi");'
-	},
-	
-	'<br><br><b>4.</b> If you click the green edit button or red delete button right now do they do anything?<br>',
-
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['Nope', true, 'Correct!  Let\'s go fix that! :)' ],
-				['Edit works', false, 'Please try again.' ],
-				['Delete works', false, 'Please try again.' ],
-				['Edit and Delete both work', false, 'Please try again.' ] ]
-	},
 ];
 

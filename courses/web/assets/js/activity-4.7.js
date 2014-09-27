@@ -31,32 +31,41 @@
 
 var activity = [
 
-  '<b>1.</b> There are a lot of CSS classes that you can add to a table.  You always need to add the class <b>table</b>. ',
+  '<b>1.</b> Why did we do an insert handler for an Assignment and only an add handler for a Student.<br>',
 
+	{
+		questionType : 'multiple choice',
+		choices : [
+				['We don\'t support edits to a student.', false, 'Please try again.' ],
+				['Because we are using a key name with the Assignment', false, 'Please try again.' ],
+				['Because we are using a randomly generated integer ID for the key identifier with an Assignment instead of a key name.', true, 'Correct!' ],
+				['No idea', false, 'Please try again.' ] ]
+	},
+
+	'<br><br><b>2.</b> What fields are present on the form body when an insert Assignment call is made? (one field might be an empty string, but that still counts :) )',
+	
   {
 		questionType : 'multiple choice group',
 		questionsList : [
 				{
-					questionHTML : ' What additional CSS class did we use in this example?',
-					choices : [ 'table', 'table-striped', 'table-bordered', 'table-hover', 'table-condensed', 'success' ],
-					correctIndex : 1
-				},{
-					questionHTML : 'What additional CSS classes would you add if you wanted to shrink your table and give it an outline? (Visit <a target="_blank" href="http://getbootstrap.com/css/#tables">http://getbootstrap.com/css/#tables</a> for help)',
-					choices : [ 'table', 'table-striped', 'table-bordered', 'table-hover', 'table-condensed', 'success' ],
-					correctIndex : [2,4]
+					questionHTML : '',
+					choices : [ 'rose_username', 'student_key', 'assignment_name', 'assignment_entity_key', 'assignment_number' ],
+					correctIndex : [2,3]
 				}  ],
 		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again.  Hint: There are two classes for the second question.  table-striped is NOT one of the answers in the second question.',
+		someIncorrectOutput : 'Please try again.',
 	},
 
-  '<br><br><b>2.</b> In addition to tables we also snuck in info about containers.  Bootstrap requires a container element to wrap site content.  So we wrapped our table in a div that had the class <b>container</b>.  That limited the width to a responsive fixed width.  If instead you wanted to use the full width what container class would you use?  (link that might help <a target="_blank" href="http://getbootstrap.com/css/#overview-container">http://getbootstrap.com/css/#overview-container</a>)<br>',
+  '<br><br><b>3.</b> How do we know if the insert assignment is an add or an edit?<br>',
 
 	{
-		questionType : 'freetext',
-		correctAnswerRegex : /container-fluid/i,
-		correctAnswerOutput : 'Correct!',
-		incorrectAnswerOutput : 'Please try again.',
-		showAnswerOutput : 'Here is the answer: container-fluid'
-	}
+		questionType : 'multiple choice',
+		choices : [
+				['If there is an entity key present it\'s an edit.  If there is no entity key then it\'s an add.',  true, 'Correct!' ],
+				['If the entity already exist then it must be an edit.', false, 'Please try again.' ],
+				['All inserts are adds.', false, 'Please try again.'],
+				['Since the key name is unique for an assignment an insert will override the old value.', false, 'Please try again.' ] ]
+	},
+
 ];
 

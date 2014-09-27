@@ -29,55 +29,18 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-		'<b>1.</b> For all Bootstrap buttons you should add the class <b>btn</b>.<br>',
-
-		{
-			questionType : 'multiple choice group',
-			questionsList : [
-					{
-						questionHTML : '<b>a.</b> If you want a <b>red</b> button what additional class should you add?',
-						choices : [ 'btn-default', 'btn-primary', 'btn-success', 'btn-danger', 'btn-lg', 'btn-xs', 'hidden' ],
-						correctIndex : 3
-					},
-					{
-						questionHTML : '<b>b.</b> If you want the button to be an extra small button what class do you add?',
-						choices : [ 'btn-default', 'btn-primary', 'btn-success', 'btn-danger', 'btn-lg', 'btn-xs', 'hidden' ],
-						correctIndex : 5
-					},
-					{
-						questionHTML : '<b>c.</b> If you want a <b>green</b> button what additional class should you add?',
-						choices : [ 'btn-default', 'btn-primary', 'btn-success', 'btn-danger', 'btn-lg', 'btn-xs', 'hidden' ],
-						correctIndex : 2
-					}, {
-						questionHTML : '<b>d.</b> If you want a <b>large blue</b> button what additional classes should you add?',
-						choices : [ 'btn-default', 'btn-primary', 'btn-success', 'btn-danger', 'btn-lg', 'btn-xs', 'hidden' ],
-						correctIndex : [ 1, 4 ]
-					} ],
-			allCorrectOutput : 'Well done!',
-			someIncorrectOutput : 'Please try again. Hints: The last one is btn-primary and btn-lg for more help visit http://getbootstrap.com/css/#buttons',
-		},
-
-		'<br><br><b>2.</b> <b>Approximately</b> (i.e. don\'t actually count them) how many icons does Bootstrap provide according to their <a href="http://getbootstrap.com/components/#glyphicons-glyphs" target="_blank">Glyphicons-glyphs page</a>?<br>',
+		'<b>1.</b> Did you complete the GradeRecorder web app and submit your URL?<br>',
 
 		{
 			questionType : 'multiple choice',
 			choices : [
-					['10', false, 'Please try again.' ],
-					['40', false, 'Please try again.' ],
-					['200', true, 'Correct!' ],
-					['Many thousands', false, 'Please try again.' ] ]
+					[
+							'Yep!  It works and I submitted the link.  Visit anytime!', true, 'Great!  Nice work' ],
+					[
+							'Nope.  Task not complete.',
+							false,
+							'Well darn.  That needs to be fixed before you can check yourself off for this unit.  Don\'t kill yourself trying over and over tonight.  Take a break today and come back fresh tomorrow to fix problems.' ] ]
 		},
 
-		'<br><br><b>3.</b> What symbol would this code produce?<br>',
-		'&lt;span class="glyphicon glyphicon-search">&lt;/span><br>',
-
-		{
-			questionType : 'multiple choice',
-			choices : [
-					['Google search goggles', false, 'Please try again.' ],
-					['Magnifying glass', true, 'Correct!' ],
-					['Binoculars', false, 'Please try again.'],
-					['Nothing because that is not valid', false, 'Please try again.' ] ]
-		},
 
 ];
