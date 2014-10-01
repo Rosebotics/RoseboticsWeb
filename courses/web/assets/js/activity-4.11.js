@@ -30,37 +30,17 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-'<b>1.</b> If you wanted a property that was a List of floating point values, which property would you use?<br>',
+'<b>1.</b> Did you complete the Dice with Friends Designing Datastore Models Lab and submit your URL?<br>',
 
 {
 	questionType : 'multiple choice',
 	choices : [
-			['ndb.ListProperty()', false, 'Please try again.' ],
-			['ndb.ListProperty(Float)', false, 'Please try again.' ],
-			['ndb.FloatProperty(repeated)', false, 'Please try again.' ],
-			['ndb.FloatProperty(repeated=True)', true, 'Correct!  All other answers would just be syntax errors.' ] ]
-},
-
-'<br><br><b>2.</b> If you wanted to simply organize your data model some (say it\'s has 20+ properties that naturally group together into 4 groups of 5 each), what property might you use to do some organizational grouping?<br>',
-
-{
-	questionType : 'multiple choice',
-	choices : [
-			['ndb.StringProperty()', false, 'Please try again.' ],
-			['ndb.BlobProperty()', false, 'Please try again.' ],
-			['ndb.StructuredProperty()', true, 'Correct!  That is one common use of StructuredProperty' ],
-			['ndb.JsonProperty()', false, 'Please try again.' ] ]
-},
-
-'<br><br><b>3.</b> If you wanted to do a query for a Dog that had a breed of Malinois or German Shepherd, how would you do it?<br>',
-
-{
-	questionType : 'multiple choice',
-	choices : [
-			['Dog.query(Dog.breed=="Malinois", Dog.breed="German Shepherd")', false, 'Please try again.' ],
-			['Dog.query().filter(Dog.breed=="Malinois").filter(Dog.breed="German Shepherd")', false, 'Please try again.' ],
-			['Dog.query(Dog.breed=="Malinois" or Dog.breed="German Shepherd")', false, 'Please try again.' ],
-			['Dog.query(ndb.OR(Dog.breed=="Malinois", Dog.breed="German Shepherd"))', true, 'Correct!' ] ]
+			[
+					'Yep!  It works and I submitted the link.  Visit anytime!', true, 'Great!  Nice work' ],
+			[
+					'Nope.  Task not complete.',
+					false,
+					'Well darn.  That needs to be fixed before you can check yourself off for this unit.  Don\'t kill yourself trying over and over tonight.  Take a break today and come back fresh tomorrow to fix problems.' ] ]
 },
 
 ];

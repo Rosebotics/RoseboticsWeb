@@ -30,38 +30,36 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-'<b>1.</b> If you wanted a property that was a List of floating point values, which property would you use?<br>',
+'<b>1.</b> If you roll a 5 3 6 3 1 3 and pulled off all the numbers that score, then stop, what would your score be?<br>',
 
 {
 	questionType : 'multiple choice',
 	choices : [
-			['ndb.ListProperty()', false, 'Please try again.' ],
-			['ndb.ListProperty(Float)', false, 'Please try again.' ],
-			['ndb.FloatProperty(repeated)', false, 'Please try again.' ],
-			['ndb.FloatProperty(repeated=True)', true, 'Correct!  All other answers would just be syntax errors.' ] ]
+			['0', false, 'Please try again.' ],
+			['150', false, 'Please try again.' ],
+			['300', false, 'Please try again.' ],
+			['450', true, 'Correct!' ] ]
 },
 
-'<br><br><b>2.</b> If you wanted to simply organize your data model some (say it\'s has 20+ properties that naturally group together into 4 groups of 5 each), what property might you use to do some organizational grouping?<br>',
+'<br><br><b>2.</b> Did you create a plan for your Datastore models before looking at the solution?<br>',
 
 {
 	questionType : 'multiple choice',
 	choices : [
-			['ndb.StringProperty()', false, 'Please try again.' ],
-			['ndb.BlobProperty()', false, 'Please try again.' ],
-			['ndb.StructuredProperty()', true, 'Correct!  That is one common use of StructuredProperty' ],
-			['ndb.JsonProperty()', false, 'Please try again.' ] ]
+			['Nope.  Not so much', false, 'Please try again.' ],
+			['Yes, I made my plan first (with some level of success solo)', true, 'Correct!' ] ]
 },
 
-'<br><br><b>3.</b> If you wanted to do a query for a Dog that had a breed of Malinois or German Shepherd, how would you do it?<br>',
+'<br><br><b>3.</b> Go work the first few steps in the <a target="_blank" href="https://docs.google.com/document/d/1_5k7zFkm-rDrZSD7-jVDL4yS-m3uEuB3pJRbTwo-bVI/edit?usp=sharing">Dice with Friends lab</a>.  Stop after you finish typing out the models.py file.<br>',
 
 {
 	questionType : 'multiple choice',
 	choices : [
-			['Dog.query(Dog.breed=="Malinois", Dog.breed="German Shepherd")', false, 'Please try again.' ],
-			['Dog.query().filter(Dog.breed=="Malinois").filter(Dog.breed="German Shepherd")', false, 'Please try again.' ],
-			['Dog.query(Dog.breed=="Malinois" or Dog.breed="German Shepherd")', false, 'Please try again.' ],
-			['Dog.query(ndb.OR(Dog.breed=="Malinois", Dog.breed="German Shepherd"))', true, 'Correct!' ] ]
+			['Done.  I have my models.py file typed in and I\'m ready to watch the next video to finish the lab', true, 'Great!  Time for the final video!' ],
+			['I have not yet completed the models.py step', false, 'Please get that step complete before watching the next video.  Thanks!' ] ]
 },
+
+
 
 ];
 
