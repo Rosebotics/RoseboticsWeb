@@ -29,21 +29,21 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'Android Introduction'
+  title: 'Web Development'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    Welcome to Android Development.
+    Welcome to Web Development.
 
   # Information about the instructor to display on the main page.
-  instructor_details: 'Dr. Matt Boutell<br>Rose-Hulman'
+  instructor_details: 'Dr. David Fisher <br> Rose-Hulman'
 
   # You can choose whether you want a video or an image on the main page.
   # If you specify both a video and an image link, then the video will take
   # priority. The image alt text allows the image to be understood by text-only
   # screen readers.
   main_video:
-    url: https://www.youtube.com/embed/JGf6UFw5tgA?rel=0
+    url: https://www.youtube.com/embed/cAlLdpmXAzM?rel=0
   main_image:
     url: /assets/img/roselogo.png
     alt_text: Rose-Hulman logo
@@ -78,7 +78,7 @@ course:
 
   # Whether the course material can be accessed without requiring users to log
   # in or register.
-  browsable: false
+  browsable: true
 
   # Google Analytics tag: Fill this in with a value obtained by signing up
   # at http://www.google.com/analytics.  Note that you may wish instead to

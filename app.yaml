@@ -9,12 +9,14 @@ env_variables:
   GCB_APPSTATS_ENABLED: false
   GCB_COURSES_CONFIG: >
                         course:/cs1:/courses/cs1, 
-                        course:/smartproductdesign:/courses/smartproductdesign, 
+                        course:/smartproductdesign:/courses/smartproductdesign,
                         course:/android-intro:/courses/android-intro, 
                         course:/android-ui:/courses/android-ui, 
                         course:/android-storage:/courses/android-storage, 
                         course:/android-cloud-endpoints:/courses/android-cloud-endpoints, 
                         course:/android:/courses/android, 
+                        course:/web-appengine:/courses/web-appengine, 
+                        course:/web-css:/courses/web-css, 
                         course:/web:/courses/web, 
                         course:/ios:/courses/ios, 
                         course:/misc:/courses/misc, 
