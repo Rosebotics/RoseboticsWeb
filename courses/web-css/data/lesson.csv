@@ -1,2 +1,5 @@
 unit_id,unit_title,lesson_id,lesson_title,lesson_activity,lesson_activity_name,lesson_notes,lesson_video_id,lesson_objectives
-1,UnitTitle,1,LessonTitle,yes,Questions,slideLink,youTubeId,"<ul><li></li><li></li><li></li></ul>"
+1,HTML Basics,1,Static File Server Web Links,yes,Questions,https://docs.google.com/document/d/1qtMgDZ7kz2C2Tu7U9Zg2DkJXTHTdzPnfN8QReVTXNhI/edit?usp=sharing,z2KrIdhwxmY,"<ul><li></li><li></li><li></li></ul>"
+1,HTML Basics,2,Tag Practice,yes,Questions,https://docs.google.com/presentation/d/1i4K-ggzh7PQIockifyl2DTG-DXmpyCmtQPejPLiDmGw/edit?usp=sharing,-o0pUZhDrTw,"<ul><li></li><li></li><li></li></ul>"
+1,HTML Basics,3,DOM trees,yes,Questions,https://docs.google.com/presentation/d/1i4K-ggzh7PQIockifyl2DTG-DXmpyCmtQPejPLiDmGw/edit?usp=sharing,i0qfd567GYg,"<ul><li></li><li></li><li></li></ul>"
+
