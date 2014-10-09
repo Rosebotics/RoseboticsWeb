@@ -7,7 +7,7 @@ class HomePage(base_handler.BasePage):
     return 'templates/home.html'
 
   def page_title(self, player, values):
-    return 'Rosebotics'
+    return 'ROSEbotics'
 
 
 class CoursePage(base_handler.BasePage):

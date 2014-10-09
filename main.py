@@ -40,7 +40,7 @@ from modules.review import review
 from modules.search import search
 from modules.upload import upload
 
-from handlers import main_handler
+from handlers import main_handler, course_handlers
 
 # use this flag to control debug only features
 debug = not appengine_config.PRODUCTION_MODE
@@ -98,7 +98,8 @@ app = webapp2.WSGIApplication([('/', main_handler.HomePage),
                                ('/about', main_handler.AboutPage),
                                ('/videos', main_handler.VideosPage),
                                ('/contact', main_handler.ContactPage),
-                               ('/gettingstarted', main_handler.GettingStartedtPage)] +
+                               ('/gettingstarted', main_handler.GettingStartedtPage),
+                               ('/web', course_handlers.WebCoursePage),] +
     global_routes + extensions_routes + appstats_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config},
     debug=debug)
