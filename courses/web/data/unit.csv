@@ -1,5 +1,0 @@
-id,type,unit_id,title,release_date,now_available
-1,U,1,Intro to AppEngine,,True
-2,U,2,First AppEngine Web App,,True
-3,U,3,Intro to using Bootstrap and jQuery with AppEngine Web Apps,,True
-4,U,4,Designing Datastore Models,,True
