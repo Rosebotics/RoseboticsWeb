@@ -57,8 +57,8 @@ var activity = [
 	questionType : 'multiple choice',
 	choices : [
 			['font-style font-weight* font-size/line-height font-family', false, 'Please try again' ],
-			['font-style font-variant font-weight* font-size*/line-height font-family', true, 'Correct!' ],
-			['font-style font-variant font-weight font-size*/line-height font-family*', true, 'Correct! But this option is not really the "best" choice as it is unnecessarially complex and susceptible to problems if the code changes..' ],
+			['font-style font-variant font-weight* font-size*/line-height font-family', false, 'Please try again' ],
+			['font-style font-variant font-weight font-size*/line-height font-family*', true, 'Correct!' ],
 			['font-size*/line-height font-weight font-style font-variant font-family*', false, 'Please try again.' ] ]
 },
 

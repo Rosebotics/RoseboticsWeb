@@ -52,7 +52,7 @@ var activity = [
 	choices : [
 			['up', false, 'Please try again' ],
 			['.top-level', true, 'Correct!' ],
-			['h1+ul', true, 'Correct! But this option is not really the "best" choice as it is unnecessarially complex and susceptible to problems if the code changes..' ],
+			['h1+ul', true, 'Correct! But this option is not really the "best" choice as it is unnecessarially complex and susceptible to problems if the code changes.' ],
 			['h1 ul', false, 'Please try again.' ] ]
 },
 
