@@ -40,8 +40,7 @@ window.onload=function(){
 		  console.log("Show img");
 		}
 	  });
-}
-;
+};
 var activity = [
                 
 

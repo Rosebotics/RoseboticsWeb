@@ -30,28 +30,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                
-  '<b>1.</b> If you wanted to apply a rule only to screens 450 pixels and smaller what @media query could you add?<br>',
+'<b>1.</b> Did you complete the Float Property Exercises and submit your URL?<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['@media screen and (min-width: 450)', false, 'Please try again.  Min width is a rule for BIG screens'],
-				['@media screen and (max-width: 450)', true, 'Correct.  Stating that it is a screen media type I guess is good practice but not required.'],
-				['@media print and (min-width: 450)', false, 'Please try again.'],
-				['@media (max-width: 450)', true, 'Correct. Stating that it is a screen media type I guess is good practice but not required.'],
-				['@media only screen and (max-width: 450)', true, 'Correct. Stating that it is a screen media type I guess is good practice but not required.']]
-	},
-	
-    
-	'<br><br><b>2.</b> If you wanted to apply a rule only to screens 450 pixels and bigger what @media query could you add?<br>',
+{
+	questionType : 'multiple choice',
+	choices : [
+			['Yep.  All set!', true, 'Great!' ],
+			['Not so much.', false, 'Well you should do that. :) ' ]]
+},
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-					['@media screen and (min-width: 450)', true, 'Correct.  And again stating that it is a screen media type I guess is good practice but not required.'],
-					['@media screen and (max-width: 450)', false, 'Please try again.  Max width is a rule for SMALL screens'],
-					['@media print and (min-width: 450)', false, 'Please try again.'],
-					['@media (max-width: 450)', false, 'Please try again.  Max width is a rule for SMALL screens']]
-		},     
 ];

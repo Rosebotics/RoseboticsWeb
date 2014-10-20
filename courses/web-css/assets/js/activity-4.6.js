@@ -31,64 +31,13 @@
 
 var activity = [
                 
-  '<b>1.</b> Did you complete the Advanced CSS Selector exercises (and submit your link if you are taking the class for a grade)?<br>',
+  '<b>1.</b> Did you complete the Lights Out (CSS Only) Lab and submit your link if you are taking the class for a grade?<br>',
 
 	{
 		questionType : 'multiple choice',
 		choices : [
 				['Yep!  Visit anytime.', true, 'Great!'],
 				['Not so much', false, 'Need to get that done!' ]]
-	},
-	
-    
-  '<br><br><b>2.</b> Match the special character used to the selector category.<br>',
-
-	{
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : '<b>a.</b> Uses the : character',
-					choices : [ 'Attribute selector', 'Pseudo-class selector', 'Pseudo-element selector' ],
-					correctIndex : 1
-				},
-				{
-					questionHTML : '<b>b.</b> Uses the :: character (in the CSS3 implementation)',
-					choices : [ 'Attribute selector', 'Pseudo-class selector', 'Pseudo-element selector' ],
-					correctIndex : 2
-				},
-				{
-					questionHTML : '<b>c.</b> Uses [] characters',
-					choices : [ 'Attribute selector', 'Pseudo-class selector', 'Pseudo-element selector' ],
-					correctIndex : 0
-				} ],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again.',
-	},
-    
-	  '<br><br><b>3.</b> Match the specific selector to it\'s selector category.<br>',
-
-		{
-			questionType : 'multiple choice group',
-			questionsList : [
-					{
-						questionHTML : '<b>a.</b> hover active nth-child first-child',
-						choices : [ 'Attribute selector', 'Pseudo-class selector', 'Pseudo-element selector' ],
-						correctIndex : 1
-					},
-					{
-						questionHTML : '<b>b.</b> before after first-line first-letter',
-						choices : [ 'Attribute selector', 'Pseudo-class selector', 'Pseudo-element selector' ],
-						correctIndex : 2
-					},
-					{
-						questionHTML : '<b>c.</b> name=movie_quote type=button scr=blah checked',
-						choices : [ 'Attribute selector', 'Pseudo-class selector', 'Pseudo-element selector' ],
-						correctIndex : 0
-					} ],
-			allCorrectOutput : 'Well done!',
-			someIncorrectOutput : 'Please try again.',
-		},
-	
-		
+	},		
     
 ];
