@@ -144,7 +144,7 @@ function getEditCustomTagUrl(env, tagName) {
   return url;
 }
 
-function getAddCustomTagUrl(env, tagName) {
+function getAddCustomTagUrl(env, tagName, excludedCustomTags) {
   var url = 'oeditorpopup?action=add_custom_tag';
   if (env.schema.id == 'Lesson Entity' && env.schema.properties &&
       env.schema.properties.key) {
@@ -157,6 +157,11 @@ function getAddCustomTagUrl(env, tagName) {
   }
   if (tagName) {
     url += '&tag_name=' + escape(tagName);
+  }
+  if (excludedCustomTags) {
+    for (var i = 0; i < excludedCustomTags.length; i++) {
+      url += '&excluded_tags=' + escape(excludedCustomTags[i]);
+    }
   }
   return url;
 }
@@ -354,7 +359,7 @@ TopLevelEditorControls.prototype = {
     // Allow custom code to register a pre-save handler. If it returns 'false'
     // it will block further action.
     if (this._env.onSaveClick && this._env.onSaveClick() === false) {
-      return;
+      return false;
     }
 
     cbShowMsg("Saving...");
@@ -461,16 +466,14 @@ TopLevelEditorControls.prototype = {
     }
 
     // update UI
-    cbShowMsg(message);
     if (this._env.auto_return) {
+      cbShowMsg(message);
       var exit_url = this._env.exit_url;
       setTimeout(function() {
         window.location = exit_url;
       }, 750);
     } else {
-      setTimeout(function() {
-        cbHideMsg();
-      }, 5000);
+      cbShowMsgAutoHide(message);
     }
 
     // Allow custom code to register a post-save handler.
@@ -492,7 +495,7 @@ TopLevelEditorControls.prototype = {
     // Allow custom code to register a pre-close handler. If it returns 'false'
     // it will block further action.
     if (this._env.onCloseClick && this._env.onCloseClick() === false) {
-      return;
+      return false;
     }
 
     disableAllControlButtons(this._env.form);
@@ -523,7 +526,7 @@ TopLevelEditorControls.prototype = {
     // Allow custom code to register a pre-delete handler. If it returns 'false'
     // it will block further action.
     if (this._env.onDeleteClick && this._env.onDeleteClick() === false) {
-      return;
+      return false;
     }
 
     disableAllControlButtons(this._env.form);
@@ -618,18 +621,13 @@ TopLevelEditorControls.prototype = {
     // cb_global.lastSavedFormValue in TopLevelEditorControls rather than
     // global scope
     this._env.original = payload;
-    this._env.lastSavedFormValue = payload;
-
-    // it is better to set lastSavedFormValue to a cb_global.form.getValue(),
-    // but it does not work for rich edit control as it has delayed loading
-    // and may not be ready when this line above is executed
+    this._env.lastSavedFormValue = this._env.form.getValue();
 
     // update ui state
     document.getElementById("formContainer").style.display = "block";
 
     if (json.message) {
-      cbShowMsg(json.message);
-      setTimeout(function(){ cbHideMsg(); }, 5000);
+      cbShowMsgAutoHide(json.message);
     } else {
       cbHideMsg();
     }

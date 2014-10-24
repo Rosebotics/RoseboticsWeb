@@ -247,6 +247,8 @@ class SearchHandler(utils.BaseHandler):
                 self.template_value['query'] = query
                 SEARCH_QUERIES_MADE.inc()
                 response = fetch(self.get_course(), query, offset=offset)
+                response = self.filter(response, student)
+
                 self.template_value['time'] = '%.2f' % (time.time() - start)
                 self.template_value['search_results'] = response['results']
 
@@ -298,6 +300,22 @@ class SearchHandler(utils.BaseHandler):
             self.template_value['navbar'] = {}
             self.response.out.write(template.render(self.template_value))
 
+    def filter(self, response, student):
+        if not response['results']:
+            return response
+
+        filtered_results = []
+        available_unit_ids = set(
+            str(unit.unit_id) for unit in
+            self.get_course().get_track_matching_student(student))
+        for result in response['results']:
+            if not result.unit_id or str(result.unit_id) in available_unit_ids:
+                filtered_results.append(result)
+        return {
+            'results': filtered_results,
+            'total_found': len(filtered_results)
+        }
+
 
 class AssetsHandler(webapp2.RequestHandler):
     """Content handler for assets associated with search."""
@@ -338,11 +356,7 @@ class SearchDashboardHandler(object):
 
     def get_search(self):
         """Renders course indexing view."""
-        template_values = {
-            'page_title': self.format_title('Search'),
-            'page_title_linked': self.format_title('Search', as_link=True),
-            }
-
+        template_values = {'page_title': self.format_title('Search')}
         mc_template_value = {}
         mc_template_value['module_enabled'] = custom_module.enabled
         indexing_job = IndexCourse(self.app_context).load()
@@ -464,6 +478,10 @@ def check_jobs_and_submit(job, app_context):
 class IndexCourse(jobs.DurableJob):
     """A job that indexes the course."""
 
+    @staticmethod
+    def get_description():
+        return 'course index'
+
     def __init__(self, app_context, incremental=True):
         super(IndexCourse, self).__init__(app_context)
         self.incremental = incremental
@@ -480,6 +498,10 @@ class IndexCourse(jobs.DurableJob):
 
 class ClearIndex(jobs.DurableJob):
     """A job that clears the index for a course."""
+
+    @staticmethod
+    def get_description():
+        return 'clear course index'
 
     def run(self):
         """Clear the index."""

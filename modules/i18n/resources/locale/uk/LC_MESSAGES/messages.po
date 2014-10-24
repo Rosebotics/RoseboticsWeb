@@ -1,15 +1,15 @@
 # Ukrainian translations for PROJECT.
-# Copyright (C) 2013 ORGANIZATION
+# Copyright (C) 2014 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-08-14 10:19-0700\n"
-"PO-Revision-Date: 2013-08-14 10:20-0700\n"
+"POT-Creation-Date: 2014-10-06 19:00-0700\n"
+"PO-Revision-Date: 2014-10-03 16:45-0700\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: uk <LL@li.org>\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
@@ -19,9 +19,41 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
+#. Message displayed as title for unit within a course.
+#: experimental/coursebuilder/controllers/utils.py:208
+#, python-format
+msgid "Unit %s - %s"
+msgstr "Розділ %s – %s"
+
+#. Message displayed as title for unit within a course.
+#: experimental/coursebuilder/controllers/utils.py:220
+msgid "Unit"
+msgstr "Модуль"
+
+#. Confirmation text for the answer given to a question by a student.
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:8
+msgid " Yes, the answer is correct. "
+msgstr " Так, відповідь правильна. "
+
+#. Confirmation text for the answer given to a question by a student.
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:10
+msgid " No, the answer is incorrect. "
+msgstr " Ні, відповідь неправильна. "
+
+#. Confirmation text for the answer given to a question by a student.
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:12
+msgid " The answer is partially correct. "
+msgstr " Відповідь частково правильна. "
+
+#. Text appearing at the bottom of a lesson page after the student asks for it
+#. to be graded.
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:15
+msgid " Your score is: "
+msgstr " Ваш результат: "
+
 #. Error message that is shown to a student when they are using a browser that
 #. does not have JavaScript enabled.
-#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:11
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:22
 msgid " JavaScript should be enabled to grade this question. "
 msgstr " Щоб оцінити цю відповідь, потрібно ввімкнути JavaScript. "
 
@@ -29,32 +61,36 @@ msgstr " Щоб оцінити цю відповідь, потрібно вві�
 #. Text shown after an assignment whose review has been completed.
 #. Shown in the student profile page, next to an assessment title. States
 #. whether the assessment has been completed.
-#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:19
-#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:20
-#: experimental/coursebuilder/views/course.html:49
-#: experimental/coursebuilder/views/course.html:50
-#: experimental/coursebuilder/views/course.html:77
-#: experimental/coursebuilder/views/course.html:78
-#: experimental/coursebuilder/views/course.html:119
-#: experimental/coursebuilder/views/course.html:120
-#: experimental/coursebuilder/views/lesson_navbar.html:15
-#: experimental/coursebuilder/views/lesson_navbar.html:16
-#: experimental/coursebuilder/views/lesson_navbar.html:62
-#: experimental/coursebuilder/views/lesson_navbar.html:63
-#: experimental/coursebuilder/views/review_dashboard.html:49
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:30
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:31
+#: experimental/coursebuilder/views/macros.html:29
+#: experimental/coursebuilder/views/macros.html:30
+#: experimental/coursebuilder/views/macros.html:61
+#: experimental/coursebuilder/views/macros.html:62
+#: experimental/coursebuilder/views/macros.html:107
+#: experimental/coursebuilder/views/macros.html:108
+#: experimental/coursebuilder/views/macros.html:218
+#: experimental/coursebuilder/views/macros.html:219
+#: experimental/coursebuilder/views/macros.html:267
+#: experimental/coursebuilder/views/macros.html:268
+#: experimental/coursebuilder/views/review_dashboard.html:58
 #: experimental/coursebuilder/views/student_data_table.html:40
 msgid "Completed"
 msgstr "Завершено"
 
 #. Alt text for image representing student progress.
-#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:24
-#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:25
-#: experimental/coursebuilder/views/course.html:131
-#: experimental/coursebuilder/views/course.html:132
-#: experimental/coursebuilder/views/lesson_navbar.html:27
-#: experimental/coursebuilder/views/lesson_navbar.html:28
-#: experimental/coursebuilder/views/lesson_navbar.html:74
-#: experimental/coursebuilder/views/lesson_navbar.html:75
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:35
+#: experimental/coursebuilder/modules/assessment_tags/templates/base_assessment_tag.html:36
+#: experimental/coursebuilder/views/macros.html:119
+#: experimental/coursebuilder/views/macros.html:120
+#: experimental/coursebuilder/views/macros.html:230
+#: experimental/coursebuilder/views/macros.html:231
+#: experimental/coursebuilder/views/macros.html:279
+#: experimental/coursebuilder/views/macros.html:280
+#: experimental/coursebuilder/views/macros.html:315
+#: experimental/coursebuilder/views/macros.html:316
+#: experimental/coursebuilder/views/macros.html:343
+#: experimental/coursebuilder/views/macros.html:344
 msgid "Not yet started"
 msgstr "Ще не розпочався"
 
@@ -77,7 +113,7 @@ msgstr "Бали: %(points)s"
 #: experimental/coursebuilder/modules/assessment_tags/templates/mc_question.html:34
 #: experimental/coursebuilder/modules/assessment_tags/templates/question_group.html:20
 #: experimental/coursebuilder/modules/assessment_tags/templates/sa_question.html:41
-#: experimental/coursebuilder/views/base.html:24
+#: experimental/coursebuilder/views/base.html:19
 msgid " Check Answer "
 msgstr " Перевірити відповідь "
 
@@ -86,20 +122,62 @@ msgstr " Перевірити відповідь "
 msgid " Hint "
 msgstr " Підказка "
 
+#. Title of section on page showing certificates for course completion.
+#: experimental/coursebuilder/modules/certificate/certificate.py:173
+msgid "Certificate"
+msgstr "Сертифікат"
+
+#. Label on control to navigate to page showing certificate.
+#: experimental/coursebuilder/modules/certificate/certificate.py:180
+msgid "Click for certificate"
+msgstr "Натисніть, щоб переглянути сертифікат"
+
+#. Text indicating student has not yet completed a course.
+#: experimental/coursebuilder/modules/certificate/certificate.py:186
+msgid ""
+"You have not yet met the course requirements for a certificate of "
+"completion."
+msgstr ""
+"Ви ще не відповідаєте вимогам для отримання сертифіката про завершення "
+"курсу."
+
+#. Title on page certifying that user has satisfied the requirements of a
+#. class.
+#: experimental/coursebuilder/modules/certificate/templates/certificate.html:18
+msgid "Certificate of Completion"
+msgstr "Сертифікат про завершення курсу"
+
+#. Phrase introducing the name of a student to whom a certificate is being
+#. awarded.
+#: experimental/coursebuilder/modules/certificate/templates/certificate.html:21
+msgid "Presented to"
+msgstr "Отримує"
+
+#. Phrase signifying that a student has successfully completed a course.
+#: experimental/coursebuilder/modules/certificate/templates/certificate.html:28
+msgid "for successfully completing the"
+msgstr "за успішне завершення"
+
+#. Phrase giving the name of an instructional course.
+#: experimental/coursebuilder/modules/certificate/templates/certificate.html:32
+#, python-format
+msgid "%(course)s course"
+msgstr "курсу \"%(course)s\""
+
 #. Navbar tab.
-#: experimental/coursebuilder/modules/course_explorer/views/base_explorer.html:27
+#: experimental/coursebuilder/modules/course_explorer/views/base_explorer.html:28
 msgid "Explore Courses"
 msgstr "Огляд курсів"
 
 #. Navbar tab.
-#: experimental/coursebuilder/modules/course_explorer/views/base_explorer.html:32
-#: experimental/coursebuilder/views/base_course.html:62
+#: experimental/coursebuilder/modules/course_explorer/views/base_explorer.html:33
+#: experimental/coursebuilder/views/base_course.html:61
 msgid "My Courses"
 msgstr "Мої курси"
 
 #. Navbar tab.
-#: experimental/coursebuilder/modules/course_explorer/views/base_explorer.html:37
-#: experimental/coursebuilder/views/base_course.html:67
+#: experimental/coursebuilder/modules/course_explorer/views/base_explorer.html:38
+#: experimental/coursebuilder/views/base_course.html:66
 msgid "Profile"
 msgstr "Профіль"
 
@@ -160,7 +238,7 @@ msgstr "Курси, на які ви записалися"
 #. Text for representing student progress in a course.
 #. Navbar tab.
 #: experimental/coursebuilder/modules/course_explorer/views/profile.html:44
-#: experimental/coursebuilder/views/base_course.html:74
+#: experimental/coursebuilder/views/base_course.html:73
 msgid "Progress"
 msgstr "Перебіг"
 
@@ -173,27 +251,154 @@ msgstr "Відмовитися"
 #. Label for the input field that allows the student to change the name on
 #. his/her certificate.
 #: experimental/coursebuilder/modules/course_explorer/views/profile.html:67
-#: experimental/coursebuilder/views/student_profile.html:29
+#: experimental/coursebuilder/views/student_profile.html:40
+#: experimental/coursebuilder/views/student_profile.html:45
 msgid "New Name"
 msgstr "Нове ім’я"
 
 #. Text for a button that allows the student to save changes to his/her name
 #. for the certificate.
 #: experimental/coursebuilder/modules/course_explorer/views/profile.html:78
-#: experimental/coursebuilder/views/student_profile.html:39
+#: experimental/coursebuilder/views/student_profile.html:53
 msgid "Change Name"
 msgstr "Змінити ім’я"
 
+#. Error indicating no email addresses were submitted.
+#: experimental/coursebuilder/modules/invitation/invitation.py:263
+msgid "Error: Empty email list"
+msgstr "Помилка: порожній список електронних адрес"
+
+#. Error indicating not all invitations were sent due to
+#. exceeding the maximum number of emails allowed to be sent by
+#. this account.
+#: experimental/coursebuilder/modules/invitation/invitation.py:274
+#, python-format
+msgid ""
+"This exceeds your email cap. Number of remaining invitations: %s. No "
+"messages sent."
+msgstr ""
+"Ви надіслали максимальну дозволену кількість електронних листів. "
+"Залишилося запрошень: %s. Повідомлення не надіслано."
+
+#. Error indicating an email addresses is not well-formed.
+#: experimental/coursebuilder/modules/invitation/invitation.py:283
+#, python-format
+msgid "Error: Invalid email \"%s\""
+msgstr "Помилка: недійсна електронна адреса %s"
+
+#. Error indicating an email addresses is already known.
+#: experimental/coursebuilder/modules/invitation/invitation.py:287
+#, python-format
+msgid "Error: You have already sent an invitation email to \"%s\""
+msgstr "Помилка: ви вже надіслали запрошення на електронну адресу %s"
+
+#. Error indicating not all email messages were sent.
+#: experimental/coursebuilder/modules/invitation/invitation.py:304
+#, python-format
+msgid "Not all messages were sent (%s / %s):"
+msgstr "Надіслано не всі повідомлення (%s / %s):"
+
+#. Success message indicating number of emails sent.
+#: experimental/coursebuilder/modules/invitation/invitation.py:312
+#, python-format
+msgid "OK, %s messages sent"
+msgstr "Надіслано повідомлень: %s"
+
+#. Title encouraging user to invite friends to join a course
+#: experimental/coursebuilder/modules/invitation/invitation.py:365
+msgid "Invite Friends"
+msgstr "Запросіть друзів"
+
+#. Label on control asking user to invite friends to join.
+#: experimental/coursebuilder/modules/invitation/invitation.py:370
+msgid "Click to send invitations to family and friends"
+msgstr "Натисніть, щоб надіслати запрошення родичам і друзям"
+
+#. Inviting friends to join a course is not currently enabled.
+#: experimental/coursebuilder/modules/invitation/invitation.py:374
+msgid "Invitations not currently available"
+msgstr "Запрошення зараз недоступні"
+
+#. Control allowing user to subscribe/unsubscribe from email invitation
+#: experimental/coursebuilder/modules/invitation/invitation.py:386
+msgid "Subscribe/Unsubscribe"
+msgstr "Підписатись або скасувати підписку"
+
+#. Message - user has unsubscribed from email invitations.
+#: experimental/coursebuilder/modules/invitation/invitation.py:393
+msgid "You are currently unsubscribed from invitations."
+msgstr "Ви скасували підписку на запрошення."
+
+#. Control allowing user to re-subscribe to email invitations.
+#: experimental/coursebuilder/modules/invitation/invitation.py:397
+msgid "Click here to re-subscribe."
+msgstr "Натисніть тут, щоб знову підписатися."
+
+#. Text indicating user has opted in to email invitations.
+#: experimental/coursebuilder/modules/invitation/invitation.py:402
+msgid "You can currently receive invitations. "
+msgstr "Ви можете отримувати запрошення. "
+
+#. Control allowing user to unsubscribe from email invitations.
+#: experimental/coursebuilder/modules/invitation/invitation.py:405
+msgid "Click here to unsubscribe."
+msgstr "Натисніть тут, щоб скасувати підписку."
+
+#. Title of the course progress webpage.
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:19
+#: experimental/coursebuilder/views/student_profile.html:13
+msgid "Course Progress"
+msgstr "Перебіг курсу"
+
+#. title on page requesting user to invite friends to a course.
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:30
+msgid "Invite friends or family members to join the course"
+msgstr "Запросіть друзів і родичів приєднатися до курсу"
+
+#. Block of text inviting users to invite friends to a course.
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:33
+msgid ""
+"Do you know other people who might want to join this course? Enter their "
+"email addresses below and click \"Send\". They will receive an email from"
+" you with the text shown below."
+msgstr ""
+"Знаєте людей, які хочуть приєднатися до курсу? Введіть їхні електронні "
+"адреси нижче та натисніть \"Надіслати\". Вони отримають від вас "
+"електронний лист із наведеним нижче текстом."
+
+#. Instructions on how to fill out email addresses in a form.
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:43
+msgid ""
+"Enter recipients' email addresses separated by commas. E.g., "
+"alice@gmail.com, ben@gmail.com"
+msgstr ""
+"Введіть через кому електронні адреси отримувачів. Наприклад, "
+"alice@gmail.com, ben@gmail.com"
+
+#. Label on control submitting a form with email addresses
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:52
+msgid "Send"
+msgstr "Надіслати"
+
+#. Section title indicating an example of an email.
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:57
+msgid "Sample Email"
+msgstr "Зразок електронного листа"
+
+#. Example subject line of an email to be sent.
+#: experimental/coursebuilder/modules/invitation/templates/invitation.html:60
+msgid "Subject:"
+msgstr "Тема:"
+
 #. Displayed in search results; denotes a lesson link.
 #. Navigation breadcrumb.
-#: experimental/coursebuilder/modules/search/resources.py:341
-#: experimental/coursebuilder/views/activity.html:34
-#: experimental/coursebuilder/views/unit.html:38
+#: experimental/coursebuilder/modules/search/resources.py:349
+#: experimental/coursebuilder/views/unit.html:74
 msgid "Lesson"
 msgstr "Урок"
 
 #. Displayed in search results; denotes an announcement link.
-#: experimental/coursebuilder/modules/search/resources.py:691
+#: experimental/coursebuilder/modules/search/resources.py:715
 msgid "Announcement"
 msgstr "Оголошення"
 
@@ -237,9 +442,43 @@ msgid "No results for \"%(query)s\""
 msgstr "Немає результатів для запиту \"%(query)s\""
 
 #. Message displayed on search results page when error occurs.
-#: experimental/coursebuilder/modules/search/search.py:75
+#: experimental/coursebuilder/modules/search/search.py:74
 msgid "Search is currently unavailable."
 msgstr "Пошук зараз недоступний."
+
+#. Notification indicating that the user has subscribed to email notifications
+#. from an instructional course.
+#: experimental/coursebuilder/modules/unsubscribe/templates/resubscribe.html:17
+msgid ""
+"The following email address has been subscribed to receive emails for "
+"this course:"
+msgstr ""
+"Власник цієї електронної адреси підписався на електронні листи щодо цього"
+" курсу:"
+
+#. Indicates that a user will no longer recieve email about a course
+#: experimental/coursebuilder/modules/unsubscribe/templates/unsubscribe.html:25
+msgid ""
+"The following email address has been unsubscribed from emails for this "
+"course:"
+msgstr ""
+"Власник цієї електронної адреси скасував підписку на електронні листи "
+"щодо цього курсу:"
+
+#. After a user has unsubscribed from email notifications, indicate that
+#. re-subscribing is possible using a control lower on the page.
+#: experimental/coursebuilder/modules/unsubscribe/templates/unsubscribe.html:34
+msgid ""
+"If you prefer to continue receiving notifications, please click below to "
+"resubscribe."
+msgstr ""
+"Якщо ви хочете надалі отримувати сповіщення, натисніть нижче, щоб знову "
+"підписатися."
+
+#. Button at the bottom of the page to resubscribe to notifications.
+#: experimental/coursebuilder/modules/unsubscribe/templates/unsubscribe.html:44
+msgid "Resubscribe"
+msgstr "Підписатися"
 
 #. Message shown to the user telling them they have already submitted an item,
 #. and submitting a new item will overwrite their previous item.
@@ -277,84 +516,9 @@ msgid "Go back and try again."
 msgstr "Повернутися та повторити спробу."
 
 #. Title of the webpage.
-#. Navigation breadcrumb.
-#: experimental/coursebuilder/views/activity.html:5
-#: experimental/coursebuilder/views/activity.html:29
-#: experimental/coursebuilder/views/unit.html:5
-#: experimental/coursebuilder/views/unit.html:35
-msgid "Unit"
-msgstr "Модуль"
-
-#. Navigation breadcrumb.
-#. Title of the webpage.
-#. Navbar tab.
-#: experimental/coursebuilder/views/activity.html:25
-#: experimental/coursebuilder/views/base_course.html:7
-#: experimental/coursebuilder/views/base_course.html:39
-#: experimental/coursebuilder/views/unit.html:32
-msgid "Course"
-msgstr "Курс"
-
-#. Navigation breadcrumb.
-#. Menu item.
-#: experimental/coursebuilder/views/activity.html:36
-#: experimental/coursebuilder/views/lesson_navbar.html:85
-#: experimental/coursebuilder/views/lesson_navbar.html:89
-#: experimental/coursebuilder/views/lesson_navbar.html:121
-msgid "Activity"
-msgstr "Практична робота"
-
-#. Header text for a unit page.
-#. A row in the course schedule.
-#: experimental/coursebuilder/views/activity.html:41
-#: experimental/coursebuilder/views/course.html:142
-#: experimental/coursebuilder/views/preview.html:34
-#: experimental/coursebuilder/views/unit.html:44
-#, python-format
-msgid "Unit %(id)s - %(title)s"
-msgstr "Модуль %(id)s – %(title)s"
-
-#. Text shown for a unit that has had no lessons added to it yet.
-#: experimental/coursebuilder/views/activity.html:55
-#: experimental/coursebuilder/views/unit.html:59
-msgid "This unit does not contain any lessons."
-msgstr "У цьому модулі немає уроків."
-
-#. Link to a text version of a lesson video.
-#: experimental/coursebuilder/views/activity.html:84
-#: experimental/coursebuilder/views/unit.html:83
-msgid "Text Version"
-msgstr "Текстова версія"
-
-#. Text shown for a lesson that has not been made public.
-#: experimental/coursebuilder/views/activity.html:103
-#: experimental/coursebuilder/views/unit.html:125
-msgid "This lesson is not available."
-msgstr "Цей урок не доступний."
-
-#. Text on the navigation button at the end of a lesson page.
-#: experimental/coursebuilder/views/activity.html:114
-#: experimental/coursebuilder/views/unit.html:135
-msgid "Previous Page"
-msgstr "Попередня сторінка"
-
-#. Text on the navigation button at the end of a lesson page.
-#: experimental/coursebuilder/views/activity.html:120
-#: experimental/coursebuilder/views/unit.html:141
-msgid "Next Page"
-msgstr "Наступна сторінка"
-
-#. Text on the navigation button at the end of a lesson. It signals that the
-#. student has completed a unit (which is a series of lessons).
-#: experimental/coursebuilder/views/activity.html:123
-#: experimental/coursebuilder/views/unit.html:144
-msgid "End"
-msgstr "Кінець"
-
-#. Title of the webpage.
 #. Navbar tab.
 #: experimental/coursebuilder/views/announcements.html:5
-#: experimental/coursebuilder/views/base_course.html:35
+#: experimental/coursebuilder/views/base_course.html:39
 msgid "Announcements"
 msgstr "Повідомлення"
 
@@ -363,14 +527,9 @@ msgstr "Повідомлення"
 msgid "No announcements yet."
 msgstr "Повідомлень ще немає."
 
-#. Title of the webpage.
-#: experimental/coursebuilder/views/assessment.html:5
-msgid "Assessment"
-msgstr "Оцінювання"
-
 #. Text shown to students when they visit an assignment page for which the due
 #. date has passed.
-#: experimental/coursebuilder/views/assessment.html:44
+#: experimental/coursebuilder/views/assessment.html:32
 #, python-format
 msgid ""
 "The due date for submitting this assignment has passed. It was due on "
@@ -380,12 +539,12 @@ msgstr ""
 "%(submission_due_date)s."
 
 #. Shown to the student on the assignment page.
-#: experimental/coursebuilder/views/assessment.html:49
+#: experimental/coursebuilder/views/assessment.html:37
 msgid "Due date for this assignment: "
 msgstr "Термін для цього завдання: "
 
 #. Instructions to the student for a peer-reviewed assignment.
-#: experimental/coursebuilder/views/assessment.html:59
+#: experimental/coursebuilder/views/assessment.html:47
 msgid ""
 "You may only submit this assignment once. After you submit it, the "
 "assignment will become read-only, and you will not be able to modify your"
@@ -396,17 +555,17 @@ msgstr ""
 "учасники надаватимуть рецензії про надіслані відповіді."
 
 #. Header text for a previously-submitted assignment.
-#: experimental/coursebuilder/views/assessment.html:73
+#: experimental/coursebuilder/views/assessment.html:61
 msgid "Submitted assignment"
 msgstr "Надіслане завдання"
 
 #. Header text for the list of reviews received for an assignment.
-#: experimental/coursebuilder/views/assessment.html:88
+#: experimental/coursebuilder/views/assessment.html:76
 msgid "Reviews received"
 msgstr "Отримані рецензії"
 
 #. Text shown below a student's peer-reviewed assignment.
-#: experimental/coursebuilder/views/assessment.html:95
+#: experimental/coursebuilder/views/assessment.html:83
 msgid ""
 "After you have completed the required number of peer reviews for this "
 "assignment, the reviews you have received will appear here."
@@ -416,177 +575,175 @@ msgstr ""
 
 #. Text shown on a button that allows the student to navigate from an
 #. assignment submission page to the peer review dashboard for that assignment.
-#: experimental/coursebuilder/views/assessment.html:102
+#: experimental/coursebuilder/views/assessment.html:90
 msgid "Go to the review dashboard"
 msgstr "Перейти на інформаційну панель рецензій"
 
 #. Text shown below a student's peer-reviewed assignment.
-#: experimental/coursebuilder/views/assessment.html:107
+#: experimental/coursebuilder/views/assessment.html:95
 msgid "You have not received any peer reviews yet."
 msgstr "Ви ще не отримували рецензій від інших учасників."
 
 #. Text on the button for saving a draft answer.
-#: experimental/coursebuilder/views/assessment_html_content.html:26
-#: experimental/coursebuilder/views/base.html:40
+#: experimental/coursebuilder/views/assessment_html_content.html:32
+#: experimental/coursebuilder/views/base.html:35
 msgid " Save Draft "
 msgstr " Зберегти чернетку "
 
 #. Text on the button for submitting a peer review.
-#: experimental/coursebuilder/views/assessment_html_content.html:29
-#: experimental/coursebuilder/views/base.html:52
+#: experimental/coursebuilder/views/assessment_html_content.html:35
+#: experimental/coursebuilder/views/base.html:47
 msgid " Submit Review "
 msgstr " Надіслати рецензію "
 
 #. Text on the button for checking a set of answers.
-#: experimental/coursebuilder/views/assessment_html_content.html:37
-#: experimental/coursebuilder/views/base.html:28
+#: experimental/coursebuilder/views/assessment_html_content.html:43
+#: experimental/coursebuilder/views/base.html:23
 msgid " Check Answers "
 msgstr " Перевірити відповіді "
 
 #. Text on the button for submitting answers.
-#: experimental/coursebuilder/views/assessment_html_content.html:44
-#: experimental/coursebuilder/views/base.html:44
+#: experimental/coursebuilder/views/assessment_html_content.html:52
+#: experimental/coursebuilder/views/base.html:39
 msgid " Submit Answers "
 msgstr " Надіслати відповіді "
 
+#. Title of the webpage.
+#: experimental/coursebuilder/views/assessment_page.html:15
+msgid "Assessment"
+msgstr "Оцінювання"
+
 #. Text on the button for showing the answer to a question.
-#: experimental/coursebuilder/views/base.html:32
+#: experimental/coursebuilder/views/base.html:27
 msgid " Skip and Show Answer "
 msgstr " Пропустити й показати відповідь "
 
 #. Text on the button for saving answers to a question.
-#: experimental/coursebuilder/views/base.html:36
+#: experimental/coursebuilder/views/base.html:31
 msgid " Save Answers "
 msgstr " Зберегти відповіді "
 
 #. Text on the button for submitting a peer-reviewed assignment.
-#: experimental/coursebuilder/views/base.html:48
+#: experimental/coursebuilder/views/base.html:43
 msgid " Submit Assignment "
 msgstr " Надіслати завдання "
 
 #. Text to prompt the student to select a multiple-choice answer.
-#: experimental/coursebuilder/views/base.html:56
+#: experimental/coursebuilder/views/base.html:51
 msgid " Please click one of the buttons for your answer. "
 msgstr " Натисніть одну з кнопок, щоб відповісти. "
 
 #. Text appearing after the student has answered all questions correctly.
-#: experimental/coursebuilder/views/base.html:60
+#: experimental/coursebuilder/views/base.html:55
 msgid " All your answers are correct! "
 msgstr " Усі ваші відповіді правильні! "
 
 #. Text appearing after the student has answered all questions correctly.
-#: experimental/coursebuilder/views/base.html:64
+#: experimental/coursebuilder/views/base.html:59
 msgid " Number of questions you answered correctly "
 msgstr " Кількість запитань, на які ви відповіли правильно "
 
 #. Text appearing after the student has submitted an assessment.
-#: experimental/coursebuilder/views/base.html:68
+#: experimental/coursebuilder/views/base.html:63
 msgid " You received a score on this assessment of "
 msgstr " Ви отримали результат оцінювання "
 
 #. Text appearing after the student has checked his/her answers to an
 #. assessment.
-#: experimental/coursebuilder/views/base.html:72
+#: experimental/coursebuilder/views/base.html:67
 msgid " Here are lessons you could review to improve your score "
 msgstr " Нижче вказано уроки, які можна переглянути, щоб покращити результат "
 
 #. Text appearing after the student has checked his/her answers to an
 #. assessment.
-#: experimental/coursebuilder/views/base.html:76
+#: experimental/coursebuilder/views/base.html:71
 msgid ""
 " Congratulations! Press the \\'Submit Answers\\' button to submit your "
 "grade. "
 msgstr ""
-" Вітаємо! Натисніть кнопку \\\"Надіслати відповіді\\\", щоб надіслати "
-"свою оцінку. "
+" Вітаємо! Натисніть кнопку \"Надіслати відповіді\", щоб надіслати свою "
+"оцінку. "
 
 #. Text appearing after the student has checked his/her answers to an
 #. assessment.
-#: experimental/coursebuilder/views/base.html:80
+#: experimental/coursebuilder/views/base.html:75
 msgid ""
 " Press the \\'Submit Answers\\' button below to save your scores. You can"
 " also edit your answers above before clicking \\'Submit Answers\\'. "
 msgstr ""
-" Нижче натисніть кнопку \\\"Надіслати відповіді\\\", щоб зберегти свої "
+" Нижче натисніть кнопку \"Надіслати відповіді\", щоб зберегти свої "
 "результати. Можна також відредагувати відповіді вище, перш ніж натискати "
-"\\\"Надіслати відповіді\\\". "
+"\"Надіслати відповіді\". "
 
 #. Text appearing in a confirmation dialog after the student has tried to
 #. submit an assignment.
-#: experimental/coursebuilder/views/base.html:84
+#: experimental/coursebuilder/views/base.html:79
 msgid " Are you sure you want to submit this assignment? "
 msgstr " Справді надіслати це завдання? "
 
 #. Text appearing in a confirmation dialog after the student has tried to
 #. submit a review.
-#: experimental/coursebuilder/views/base.html:88
+#: experimental/coursebuilder/views/base.html:83
 msgid " Are you sure you want to submit this review? "
 msgstr " Справді надіслати цю рецензію? "
 
 #. Text appearing in a confirmation dialog after 'Are you sure you want to
 #. submit this assignment/review?'
-#: experimental/coursebuilder/views/base.html:92
+#: experimental/coursebuilder/views/base.html:87
 msgid " You cannot edit or delete it after you have done so. "
 msgstr " Надіславши, ви вже не зможете змінити чи видалити цей файл. "
-
-#. Confirmation text for the answer given to a question by a student.
-#: experimental/coursebuilder/views/base.html:97
-msgid " Yes, the answer is correct. "
-msgstr " Так, відповідь правильна. "
-
-#. Confirmation text for the answer given to a question by a student.
-#: experimental/coursebuilder/views/base.html:99
-msgid " No, the answer is incorrect. "
-msgstr " Ні, відповідь неправильна. "
-
-#. Confirmation text for the answer given to a question by a student.
-#: experimental/coursebuilder/views/base.html:101
-msgid " The answer is partially correct. "
-msgstr " Відповідь частково правильна. "
-
-#. Text appearing at the bottom of a lesson page after the student asks for it
-#. to be graded.
-#: experimental/coursebuilder/views/base.html:104
-msgid " Your score is: "
-msgstr " Ваш результат: "
 
 #. Text shown in parentheses next to the student's email address at the
 #. top-right of all course pages, if the student is logged in but not
 #. registered for the course he/she is currently browsing.
-#: experimental/coursebuilder/views/base.html:170
+#: experimental/coursebuilder/views/base.html:244
 msgid "Not registered"
 msgstr "ви не записалися на цей курс"
 
 #. Navbar text.
-#: experimental/coursebuilder/views/base.html:175
+#: experimental/coursebuilder/views/base.html:249
 msgid "Logout"
 msgstr "Вийти"
 
 #. Navbar text.
-#: experimental/coursebuilder/views/base.html:181
+#: experimental/coursebuilder/views/base.html:255
 msgid "Login"
 msgstr "Увійти"
 
 #. Link at the bottom of each page to the privacy and 'Terms and Conditions'
 #. pages.
-#: experimental/coursebuilder/views/base.html:218
+#: experimental/coursebuilder/views/base.html:292
 msgid "Privacy & Terms"
 msgstr "Конфіденційність і умови"
 
+#. Text describing the locale selector.
+#: experimental/coursebuilder/views/base.html:298
+msgid "Locale:"
+msgstr "Код мови:"
+
+#. Title of the webpage.
+#. Navbar tab.
+#. Navigation breadcrumb.
+#: experimental/coursebuilder/views/base_course.html:7
+#: experimental/coursebuilder/views/base_course.html:43
+#: experimental/coursebuilder/views/unit.html:65
+msgid "Course"
+msgstr "Курс"
+
 #. Navbar tab.
 #. Title of the webpage.
-#: experimental/coursebuilder/views/base_course.html:44
-#: experimental/coursebuilder/views/forum.html:5
+#: experimental/coursebuilder/views/base_course.html:48
+#: experimental/coursebuilder/views/forum.html:13
 msgid "Forum"
 msgstr "Форум"
 
 #. Navbar tab.
-#: experimental/coursebuilder/views/base_course.html:79
+#: experimental/coursebuilder/views/base_course.html:78
 msgid "Registration"
 msgstr "Реєстрація"
 
 #. This is shown to the student in a popup after registration.
-#: experimental/coursebuilder/views/course.html:6
+#: experimental/coursebuilder/views/course.html:14
 msgid ""
 "Thank you for registering for the course. Click the Announcements tab for"
 " important information."
@@ -596,45 +753,16 @@ msgstr ""
 
 #. This is shown to the student in a popup if registrations for the course are
 #. not open.
-#: experimental/coursebuilder/views/course.html:12
+#: experimental/coursebuilder/views/course.html:19
 msgid "Registrations for this course are not open."
 msgstr "Реєстрація на цей курс не відкрита."
 
 #. This should be interpreted as a noun. It is the title for the course
 #. schedule on the main contents page.
-#: experimental/coursebuilder/views/course.html:37
-#: experimental/coursebuilder/views/preview.html:22
+#: experimental/coursebuilder/views/course.html:44
+#: experimental/coursebuilder/views/preview.html:31
 msgid "Schedule"
 msgstr "Розклад"
-
-#. Alt text for image representing student progress.
-#: experimental/coursebuilder/views/course.html:55
-#: experimental/coursebuilder/views/course.html:56
-#: experimental/coursebuilder/views/course.html:89
-#: experimental/coursebuilder/views/course.html:90
-msgid "Not yet submitted"
-msgstr "Ще не надіслано"
-
-#. Alt text for image representing student progress.
-#: experimental/coursebuilder/views/course.html:83
-#: experimental/coursebuilder/views/course.html:84
-#: experimental/coursebuilder/views/course.html:125
-#: experimental/coursebuilder/views/course.html:126
-#: experimental/coursebuilder/views/lesson_navbar.html:21
-#: experimental/coursebuilder/views/lesson_navbar.html:22
-#: experimental/coursebuilder/views/lesson_navbar.html:68
-#: experimental/coursebuilder/views/lesson_navbar.html:69
-msgid "In progress"
-msgstr "Триває"
-
-#. Displayed in the course contents page. Indicates a page to which students
-#. can go to review other students' assignments.
-#. Text for the button on the assignment submission confirmation page.
-#: experimental/coursebuilder/views/course.html:100
-#: experimental/coursebuilder/views/course.html:107
-#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:30
-msgid "Review peer assignments"
-msgstr "Рецензувати завдання однокурсників"
 
 #. Error text for when a student has submitted a review after the deadline.
 #: experimental/coursebuilder/views/error.html:16
@@ -692,6 +820,66 @@ msgstr ""
 msgid "You have already submitted this review. Your latest review was not saved."
 msgstr "Ви вже надіслали цю рецензію. Вашу останню версію рецензії не збережено."
 
+#. Button at the bottom of a lesson page offering the student the opportunity
+#. to grade his/her answers.
+#: experimental/coursebuilder/views/lesson.html:10
+msgid "Grade Questions"
+msgstr "Оцінити відповіді"
+
+#. Alt text for an embedded YouTube video player.
+#: experimental/coursebuilder/views/lesson.html:23
+#: experimental/coursebuilder/views/summary.html:28
+msgid "YouTube Video Player"
+msgstr "Відеопрогравач YouTube"
+
+#. Link to a text version of a lesson video.
+#: experimental/coursebuilder/views/lesson_common.html:24
+msgid "Text Version"
+msgstr "Текстова версія"
+
+#. Text shown for a lesson that has not been made public.
+#: experimental/coursebuilder/views/lesson_common.html:44
+msgid "This lesson is not available."
+msgstr "Цей урок не доступний."
+
+#. Alt text for image representing student progress.
+#: experimental/coursebuilder/views/macros.html:35
+#: experimental/coursebuilder/views/macros.html:36
+#: experimental/coursebuilder/views/macros.html:73
+#: experimental/coursebuilder/views/macros.html:74
+msgid "Not yet submitted"
+msgstr "Ще не надіслано"
+
+#. Alt text for image representing student progress.
+#: experimental/coursebuilder/views/macros.html:67
+#: experimental/coursebuilder/views/macros.html:68
+#: experimental/coursebuilder/views/macros.html:113
+#: experimental/coursebuilder/views/macros.html:114
+#: experimental/coursebuilder/views/macros.html:224
+#: experimental/coursebuilder/views/macros.html:225
+#: experimental/coursebuilder/views/macros.html:273
+#: experimental/coursebuilder/views/macros.html:274
+msgid "In progress"
+msgstr "Триває"
+
+#. Displayed in the course contents page. Indicates a page to which students
+#. can go to review other students' assignments.
+#. Text for the button on the assignment submission confirmation page.
+#: experimental/coursebuilder/views/macros.html:83
+#: experimental/coursebuilder/views/macros.html:90
+#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:39
+msgid "Review peer assignments"
+msgstr "Рецензувати завдання однокурсників"
+
+#. Menu item.
+#. Navigation breadcrumb.
+#: experimental/coursebuilder/views/macros.html:296
+#: experimental/coursebuilder/views/macros.html:300
+#: experimental/coursebuilder/views/macros.html:358
+#: experimental/coursebuilder/views/unit.html:76
+msgid "Activity"
+msgstr "Практична робота"
+
 #. Text appearing just before an input field containing a student's answer.
 #: experimental/coursebuilder/views/readonly_assessment.html:31
 #: experimental/coursebuilder/views/readonly_assessment.html:35
@@ -699,28 +887,29 @@ msgid "Answer:"
 msgstr "Відповідь:"
 
 #. A question in the registration form.
-#: experimental/coursebuilder/views/register.html:25
+#: experimental/coursebuilder/views/register.html:42
+#: experimental/coursebuilder/views/register.html:48
 msgid "What is your name?"
 msgstr "Як вас звати?"
 
 #. Button at the end of the registration form for a course.
-#: experimental/coursebuilder/views/register.html:41
+#: experimental/coursebuilder/views/register.html:60
 msgid "Enroll"
 msgstr "Записатися"
 
 #. Title of the webpage.
-#: experimental/coursebuilder/views/review.html:5
+#: experimental/coursebuilder/views/review.html:15
 msgid "Review"
 msgstr "Рецензія"
 
 #. Link to return to the list of peer reviews.
-#: experimental/coursebuilder/views/review.html:43
+#: experimental/coursebuilder/views/review.html:53
 msgid "Back to the review dashboard."
 msgstr "Назад на інформаційну панель рецензій."
 
 #. Text shown to students when they visit a review submission page for which
 #. the due date has passed.
-#: experimental/coursebuilder/views/review.html:51
+#: experimental/coursebuilder/views/review.html:61
 #, python-format
 msgid ""
 "The due date for submitting this review has passed. It was due on "
@@ -731,13 +920,13 @@ msgstr ""
 
 #. Shown to a student who is asked to complete a peer review of another
 #. student's assignment.
-#: experimental/coursebuilder/views/review.html:56
+#: experimental/coursebuilder/views/review.html:66
 msgid "Due date for this review: "
 msgstr "Термін для цієї рецензії: "
 
 #. Instructions to a student who is asked to complete a peer review of another
 #. student's assignment.
-#: experimental/coursebuilder/views/review.html:65
+#: experimental/coursebuilder/views/review.html:75
 msgid ""
 "The scores and comments you submit here will be viewed by your peers. "
 "Once you submit your review, you may not edit it."
@@ -746,23 +935,23 @@ msgstr ""
 "рецензії не можна змінювати."
 
 #. Header text for a reviewed assignment.
-#: experimental/coursebuilder/views/review.html:73
+#: experimental/coursebuilder/views/review.html:83
 msgid "Reviewed assignment"
 msgstr "Рецензоване завдання"
 
 #. Header text for an assignment that a student still needs to review.
-#: experimental/coursebuilder/views/review.html:76
+#: experimental/coursebuilder/views/review.html:86
 msgid "Assignment to review"
 msgstr "Завдання на рецензію"
 
 #. Header text for a review the student has previously submitted.
-#: experimental/coursebuilder/views/review.html:95
+#: experimental/coursebuilder/views/review.html:106
 msgid "Submitted review"
 msgstr "Надіслана рецензія"
 
 #. Header text for a review form that a student has to complete when reviewing
 #. another student's assignment.
-#: experimental/coursebuilder/views/review.html:109
+#: experimental/coursebuilder/views/review.html:121
 msgid "Review form"
 msgstr "Автор рецензії:"
 
@@ -785,29 +974,29 @@ msgid "Back to the review dashboard"
 msgstr "Назад на інформаційну панель рецензій"
 
 #. Title of the webpage.
-#: experimental/coursebuilder/views/review_dashboard.html:5
+#: experimental/coursebuilder/views/review_dashboard.html:14
 msgid "Review Dashboard"
 msgstr "Інформаційна панель рецензій"
 
 #. Header text for a list of assignments that can be reviewed by the student.
-#: experimental/coursebuilder/views/review_dashboard.html:16
+#: experimental/coursebuilder/views/review_dashboard.html:25
 msgid "Assignments for your review"
 msgstr "Завдання вам на рецензію"
 
 #. Text shown to students when they visit their list of reviews to be done, but
 #. the due date has passed.
-#: experimental/coursebuilder/views/review_dashboard.html:22
+#: experimental/coursebuilder/views/review_dashboard.html:31
 msgid "The due date for submitting reviews has passed."
 msgstr "Термін надсилання рецензій минув."
 
 #. Instructions for a student being asked to do a review.
-#: experimental/coursebuilder/views/review_dashboard.html:30
+#: experimental/coursebuilder/views/review_dashboard.html:39
 #, python-format
 msgid "All reviews are due by %(review_due_date)s."
 msgstr "Термін для всіх рецензій: %(review_due_date)s."
 
 #. Instructions for a student being asked to do a review.
-#: experimental/coursebuilder/views/review_dashboard.html:34
+#: experimental/coursebuilder/views/review_dashboard.html:43
 msgid ""
 "In order to earn credit for this assignment, you must complete at least 1"
 " review by then."
@@ -816,7 +1005,7 @@ msgstr ""
 "принаймні 1 рецензію."
 
 #. Instructions for a student being asked to do a review.
-#: experimental/coursebuilder/views/review_dashboard.html:37
+#: experimental/coursebuilder/views/review_dashboard.html:46
 #, python-format
 msgid ""
 "In order to earn credit for this assignment, you must complete at least "
@@ -826,24 +1015,30 @@ msgstr ""
 "принаймні стільки рецензій: %(review_min_count)d."
 
 #. An item in a list of assignments.
-#: experimental/coursebuilder/views/review_dashboard.html:46
+#: experimental/coursebuilder/views/review_dashboard.html:55
 #, python-format
 msgid "Assignment %(index)s"
 msgstr "Завдання %(index)s"
 
 #. Text shown after an assignment whose review is still in draft state.
-#: experimental/coursebuilder/views/review_dashboard.html:52
+#: experimental/coursebuilder/views/review_dashboard.html:61
 msgid "Draft"
 msgstr "Чернетка"
 
 #. Button that a student can click to request a new assignment to review.
-#: experimental/coursebuilder/views/review_dashboard.html:69
+#: experimental/coursebuilder/views/review_dashboard.html:78
 msgid "Review a new assignment"
 msgstr "Рецензувати нове завдання"
 
+#. Button that a student can click to navigate back to review an assignment in
+#. a class.
+#: experimental/coursebuilder/views/review_dashboard.html:81
+msgid "Back to assignment"
+msgstr "Назад до завдання"
+
 #. Text shown after a student has asked for a new assignment to review when
 #. there are no assignments left to review.
-#: experimental/coursebuilder/views/review_dashboard.html:76
+#: experimental/coursebuilder/views/review_dashboard.html:87
 msgid ""
 "Sorry, there are no new submissions available for you to review at this "
 "time."
@@ -851,7 +1046,7 @@ msgstr "На жаль, зараз немає нових завдань, які �
 
 #. Shown on the assignment submission confirmation page when the student has
 #. submitted a duplicate assignment.
-#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:16
+#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:25
 msgid ""
 "You have already submitted this assignment. Your latest attempt has not "
 "been saved."
@@ -859,7 +1054,7 @@ msgstr "Ви вже надіслали це завдання. Вашу оста�
 
 #. Shown on the assignment submission confirmation page when the student has
 #. successfully submitted an assignment.
-#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:19
+#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:28
 msgid ""
 "Thank you for completing this assignment. Your work was successfully "
 "submitted."
@@ -867,15 +1062,15 @@ msgstr "Дякуємо, що виконали це завдання. Вашу р
 
 #. Text shown on the assignment submission confirmation page after the student
 #. has submitted a peer-reviewed assignment.
-#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:23
+#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:32
 msgid "Review your peers' assignments by clicking on the button below."
 msgstr "Щоб рецензувати завдання однокурсників, натисніть кнопку нижче."
 
 #. Text for the button on the assignment submission confirmation page.
 #. Shown after the student has submitted an assessment. This button allows the
 #. student to navigate back to the main course page.
-#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:35
-#: experimental/coursebuilder/views/test_confirmation.html:31
+#: experimental/coursebuilder/views/reviewed_assessment_confirmation.html:44
+#: experimental/coursebuilder/views/test_confirmation.html:27
 msgid "Back to Course page"
 msgstr "Назад на сторінку курсу"
 
@@ -900,72 +1095,127 @@ msgstr "Переглянути завдання"
 msgid "Overall course score"
 msgstr "Загальний результат курсу"
 
-#. Title of the course progress webpage.
-#: experimental/coursebuilder/views/student_profile.html:5
-msgid "Course Progress"
-msgstr "Перебіг курсу"
-
 #. Title of the student progress page.
-#: experimental/coursebuilder/views/student_profile.html:17
+#: experimental/coursebuilder/views/student_profile.html:26
 msgid "Student Progress"
 msgstr "Поступ слухача"
 
 #. Shown on the student profile page.
-#: experimental/coursebuilder/views/student_profile.html:46
+#: experimental/coursebuilder/views/student_profile.html:60
 msgid "To leave the course permanently, click on Unenroll"
 msgstr "Щоб назавжди залишити курс, натисніть \"Перервати навчання\""
 
 #. Button that allows the student to unenroll from a course.
-#: experimental/coursebuilder/views/student_profile.html:52
+#: experimental/coursebuilder/views/student_profile.html:66
 msgid "Unenroll"
 msgstr "Перервати навчання"
 
 #. Text shown on progress page of course to redirect student to profile page.
-#: experimental/coursebuilder/views/student_profile.html:59
+#: experimental/coursebuilder/views/student_profile.html:73
 msgid "Manage course registration from your profile"
 msgstr "Керуйте реєстрацією на курси зі свого профілю"
 
 #. Shown when the student profile cannot be found in the database.
-#: experimental/coursebuilder/views/student_profile.html:66
+#: experimental/coursebuilder/views/student_profile.html:80
 msgid "Student profile not found ..."
 msgstr "Профіль слухача не знайдено…"
 
-#. Alt text for an embedded YouTube video player.
-#: experimental/coursebuilder/views/summary.html:27
-#: experimental/coursebuilder/views/unit.html:108
-msgid "YouTube Video Player"
-msgstr "Відеопрогравач YouTube"
+#. Shown after the student has submitted an assessment.
+#: experimental/coursebuilder/views/test_confirmation_content.html:3
+#, python-format
+msgid ""
+"Thank you for taking the %(assessment_name)s. Your score for this "
+"assessment is %(score)s%%. If you wish, you may return to the assessment "
+"and take it again."
+msgstr ""
+"Дякуємо, що взяли участь в оцінюванні \"%(assessment_name)s\". Ваш "
+"результат – %(score)s%%. Якщо хочете, можете повернутись і ще раз пройти "
+"оцінювання."
+
+#. Shown after the student has submitted an assessment in a unit that contains
+#. assessments and where all unit contents are shown on a single HTML page.
+#. This button allows the student to navigate back to the unit main page.
+#: experimental/coursebuilder/views/test_confirmation_content.html:20
+msgid "Return to Unit"
+msgstr "Назад до розділу"
+
+#. Title shown on the student profile page
+#: experimental/coursebuilder/views/track_selection.html:13
+msgid "Course Tracks"
+msgstr "Звукові доріжки курсу"
+
+#. Text indicating which units will be shown for the course
+#: experimental/coursebuilder/views/track_selection.html:28
+msgid "Course Components"
+msgstr "Компоненти курсу"
+
+#. Text indicating which course tracks the student has selected
+#: experimental/coursebuilder/views/track_selection.html:59
+msgid "My Tracks"
+msgstr "Мої звукові доріжки"
+
+#. Text for a button to save selected course tracks for student.
+#: experimental/coursebuilder/views/track_selection.html:82
+msgid "Set Tracks"
+msgstr "Зберегти звукові доріжки"
 
 #. Text shown after a student has unenrolled from a course. It is followed by a
 #. course name.
-#: experimental/coursebuilder/views/unenroll_confirmation.html:16
+#: experimental/coursebuilder/views/unenroll_confirmation.html:24
 msgid "You have been unenrolled from "
 msgstr "Ви перервали навчання на курсі "
 
 #. Confirmation button, shown when a student has unenrolled from a course.
-#: experimental/coursebuilder/views/unenroll_confirmation.html:22
+#: experimental/coursebuilder/views/unenroll_confirmation.html:30
 msgid "OK"
 msgstr "OK"
 
 #. Shown when a student has asked to unenroll from a course. Followed by a
 #. course name.
-#: experimental/coursebuilder/views/unenroll_confirmation_check.html:16
+#: experimental/coursebuilder/views/unenroll_confirmation_check.html:24
 msgid "Are you sure you want to unenroll from "
 msgstr "Справді перервати навчання на курсі "
 
 #. Response option to 'Are you sure you want to unenroll from COURSE_NAME'?
-#: experimental/coursebuilder/views/unenroll_confirmation_check.html:24
+#: experimental/coursebuilder/views/unenroll_confirmation_check.html:32
 msgid "Yes"
 msgstr "Так"
 
 #. Response option to 'Are you sure you want to unenroll from COURSE_NAME'?
-#: experimental/coursebuilder/views/unenroll_confirmation_check.html:28
+#: experimental/coursebuilder/views/unenroll_confirmation_check.html:36
 msgid "No"
 msgstr "Ні"
 
-#. Button at the bottom of a lesson page offering the student the opportunity
-#. to grade his/her answers.
-#: experimental/coursebuilder/views/unit.html:97
-msgid "Grade Questions"
-msgstr "Оцінити відповіді"
+#. Label on a control to show a class schedule.
+#: experimental/coursebuilder/views/unit.html:38
+msgid "Show Schedule"
+msgstr "Показати розклад"
+
+#. Label on a control to hide a class schedule.
+#: experimental/coursebuilder/views/unit.html:42
+msgid "Hide Schedule"
+msgstr "Сховати розклад"
+
+#. Text shown for a unit that contains no assessments, lessons, header or
+#. footer.
+#: experimental/coursebuilder/views/unit.html:102
+msgid "This unit has no content."
+msgstr "У цьому розділі немає вмісту."
+
+#. Text on the navigation button at the end of a lesson page.
+#: experimental/coursebuilder/views/unit.html:123
+msgid "Previous Page"
+msgstr "Попередня сторінка"
+
+#. Text on the navigation button at the end of a lesson page.
+#: experimental/coursebuilder/views/unit.html:129
+msgid "Next Page"
+msgstr "Наступна сторінка"
+
+#. Text on the navigation button at the end of a lesson. It signals that the
+#. student has completed a unit (which is a series of lessons).
+#: experimental/coursebuilder/views/unit.html:132
+msgid "End"
+msgstr "Кінець"
+
 

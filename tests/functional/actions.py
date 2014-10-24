@@ -22,17 +22,26 @@ import logging
 import os
 import re
 import urllib
+from xml.etree import cElementTree
+
+import html5lib
+import yaml
 
 import appengine_config
+from common import utils as common_utils
 from controllers import sites
 from controllers import utils
 import main
 from models import config
+from models import courses
 from models import custom_modules
 from models import transforms
+from models import vfs
 from tests import suite
 
+from google.appengine.api import memcache
 from google.appengine.api import namespace_manager
+from google.appengine.api import users
 
 
 # All URLs referred to from all the pages.
@@ -58,9 +67,65 @@ PREVIEW_HOOK_POINTS = [
     '<!-- preview.after_main_content_ends -->']
 
 
+class MockAppContext(object):
+
+    def __init__(self, environ=None, namespace=None, slug=None):
+        self.environ = environ or {}
+        self.namespace = namespace if namespace is not None else 'namespace'
+        self.slug = slug if slug is not None else 'slug'
+        self.fs = vfs.AbstractFileSystem(
+            vfs.LocalReadOnlyFileSystem(logical_home_folder='/'))
+
+    def get_environ(self):
+        return self.environ
+
+    def get_namespace_name(self):
+        return self.namespace
+
+    def get_slug(self):
+        return self.slug
+
+
+class MockHandler(object):
+
+    def __init__(self, app_context=None, base_href=None):
+        self.app_context = app_context or MockAppContext()
+        self.base_href = base_href or 'http://mycourse.appspot.com/'
+
+    def get_base_href(self, unused_handler):
+        return self.base_href + self.app_context.slug + '/'
+
+
 class ShouldHaveFailedByNow(Exception):
     """Special exception raised when a prior method did not raise."""
     pass
+
+
+class OverriddenEnvironment(object):
+    """Override the course environment from course.yaml with values in a dict.
+
+    Usage:
+        Use the class in a with statement as follows:
+            with OverridenEnvironment({'course': {'browsable': True}}):
+                # calls to Course.get_environ will return a dictionary
+                # in which the original value of course/browsable has been
+                # shadowed.
+    """
+
+    def __init__(self, new_env):
+        self._old_get_environ = courses.Course.get_environ
+        self._new_env = new_env
+
+    def _get_environ(self, app_context):
+        return courses.deep_dict_merge(
+            self._new_env, self._old_get_environ(app_context))
+
+    def __enter__(self):
+        courses.Course.get_environ = self._get_environ
+
+    def __exit__(self, *unused_exception_info):
+        courses.Course.get_environ = self._old_get_environ
+        return False
 
 
 class TestBase(suite.AppEngineTestBase):
@@ -78,8 +143,18 @@ class TestBase(suite.AppEngineTestBase):
         if ns != appengine_config.DEFAULT_NAMESPACE_NAME:
             raise Exception('Expected default namespace, found: %s' % ns)
 
+    def get_auto_deploy(self):
+        return True
+
     def setUp(self):  # pylint: disable-msg=g-bad-name
         super(TestBase, self).setUp()
+
+        memcache.flush_all()
+        sites.ApplicationContext.clear_per_process_cache()
+
+        self.auto_deploy = sites.ApplicationContext.AUTO_DEPLOY_DEFAULT_COURSE
+        sites.ApplicationContext.AUTO_DEPLOY_DEFAULT_COURSE = (
+            self.get_auto_deploy())
 
         self.supports_editing = False
         self.assert_default_namespace()
@@ -90,6 +165,7 @@ class TestBase(suite.AppEngineTestBase):
 
     def tearDown(self):  # pylint: disable-msg=g-bad-name
         self.assert_default_namespace()
+        sites.ApplicationContext.AUTO_DEPLOY_DEFAULT_COURSE = self.auto_deploy
         super(TestBase, self).tearDown()
 
     def canonicalize(self, href, response=None):
@@ -160,16 +236,31 @@ class TestBase(suite.AppEngineTestBase):
 
         return False
 
-    def get(self, url, **kwargs):
-        url = self.canonicalize(url)
+    def parse_html_string(self, html_str):
+        """Parse the given HTML string to a XML DOM tree.
+
+        Args:
+          html_str: string. The HTML document to be parsed.
+
+        Returns:
+          An ElementTree representation of the DOM.
+        """
+        parser = html5lib.HTMLParser(
+            tree=html5lib.treebuilders.getTreeBuilder('etree', cElementTree),
+            namespaceHTMLElements=False)
+        return parser.parse(html_str)
+
+    def get(self, url, previous_response=None, **kwargs):
+        url = self.canonicalize(url, response=previous_response)
         logging.info('HTTP Get: %s', url)
         response = self.testapp.get(url, **kwargs)
         return self.hook_response(response)
 
-    def post(self, url, params, expect_errors=False):
+    def post(self, url, params, expect_errors=False, upload_files=None):
         url = self.canonicalize(url)
         logging.info('HTTP Post: %s', url)
-        response = self.testapp.post(url, params, expect_errors=expect_errors)
+        response = self.testapp.post(url, params, expect_errors=expect_errors,
+                                     upload_files=upload_files)
         return self.hook_response(response)
 
     def put(self, url, params, expect_errors=False):
@@ -178,13 +269,27 @@ class TestBase(suite.AppEngineTestBase):
         response = self.testapp.put(url, params, expect_errors=expect_errors)
         return self.hook_response(response)
 
-    def click(self, response, name):
-        logging.info('Link click: %s', name)
-        response = response.click(name)
+    def delete(self, url, expect_errors=False):
+        url = self.canonicalize(url)
+        logging.info('HTTP Delete: %s', url)
+        response = self.testapp.delete(url, expect_errors=expect_errors)
         return self.hook_response(response)
 
-    def submit(self, form):
+    def click(self, response, name, expect_errors=False):
+        links = self.parse_html_string(response.body).findall('.//a')
+        for link in links:
+            if link.text and link.text.strip() == name:
+                return self.get(link.get('href'), response,
+                                expect_errors=expect_errors)
+        complaint = 'No link with text "%s" found on page.\n' % name
+        for link in links:
+            if link.text:
+                complaint += 'Possible link text: "%s"\n' % link.text.strip()
+        raise ValueError(complaint)
+
+    def submit(self, form, previous_response=None):
         logging.info('Form submit: %s', form)
+        form.action = self.canonicalize(form.action, previous_response)
         response = form.submit()
         return self.hook_response(response)
 
@@ -199,7 +304,7 @@ class ExportTestBase(TestBase):
     def assert_blacklisted_properties_removed(self, original_model, exported):
         # Treating as module-protected. pylint: disable-msg=protected-access
         for prop in original_model._get_export_blacklist():
-            self.assertFalse(hasattr(exported, prop.name))
+            self.assertFalse(hasattr(exported, prop))
 
     def transform(self, value):
         return 'transformed_' + value
@@ -318,32 +423,37 @@ def logout():
     del os.environ['USER_IS_ADMIN']
 
 
-def register(browser, name):
+def in_course(course, url):
+    if not course:
+        return url
+    return '%s/%s' % (course, url)
+
+
+def register(browser, name, course=None):
     """Registers a new student with the given name."""
 
-    response = view_registration(browser)
-
+    response = view_registration(browser, course)
     register_form = get_form_by_action(response, 'register')
     register_form.set('form01', name)
-    response = browser.submit(register_form)
+    response = browser.submit(register_form, response)
 
     assert_equals(response.status_int, 302)
     assert_contains(
         'course#registration_confirmation', response.headers['location'])
-    check_profile(browser, name)
+    check_profile(browser, name, course)
     return response
 
 
-def check_profile(browser, name):
-    response = view_my_profile(browser)
+def check_profile(browser, name, course=None):
+    response = view_my_profile(browser, course)
     assert_contains('Email', response.body)
     assert_contains(cgi.escape(name), response.body)
     assert_contains(get_current_user_email(), response.body)
     return response
 
 
-def view_registration(browser):
-    response = browser.get('register')
+def view_registration(browser, course=None):
+    response = browser.get(in_course(course, 'register'))
     check_personalization(browser, response)
     assert_contains('What is your name?', response.body)
     assert_contains_all_of([
@@ -402,8 +512,10 @@ def view_preview(browser):
     response = browser.get('preview')
     assert_contains(' the stakes are high.', response.body)
     assert_contains(
-        '<li><p class="gcb-top-content">Pre-course assessment</p></li>',
-        response.body)
+        '<li class=\'\'><p class="gcb-top-content"> '
+        '<span class="gcb-progress-none"></span> '
+        'Pre-course assessment </p> </li>',
+        response.body, collapse_whitespace=True)
 
     assert_contains_none_of(UNIT_HOOK_POINTS, response.body)
     assert_contains_all_of(PREVIEW_HOOK_POINTS, response.body)
@@ -504,8 +616,8 @@ def view_announcements(browser):
     return response
 
 
-def view_my_profile(browser):
-    response = browser.get('student/home')
+def view_my_profile(browser, course=None):
+    response = browser.get(in_course(course, 'student/home'))
     assert_contains('Date enrolled', response.body)
     check_personalization(browser, response)
     return response
@@ -529,14 +641,31 @@ def view_assessments(browser):
 
 def submit_assessment(browser, unit_id, args, presubmit_checks=True):
     """Submits an assessment."""
-    response = browser.get('assessment?name=%s' % unit_id)
+    course = None
 
-    if presubmit_checks:
-        assert_contains(
-            '<script src="assets/js/assessment-%s.js"></script>' % unit_id,
-            response.body)
-        js_response = browser.get('assets/js/assessment-%s.js' % unit_id)
-        assert_equals(js_response.status_int, 200)
+    for app_context in sites.get_all_courses():
+        if app_context.get_slug() == browser.base:
+            course = courses.Course(None, app_context=app_context)
+            break
+
+    assert course is not None, 'browser.base must match a course'
+
+    if course.version == courses.COURSE_MODEL_VERSION_1_3:
+        parent = course.get_parent_unit(unit_id)
+        if parent is not None:
+            response = browser.get(
+                'unit?unit=%s&assessment=%s' % (parent.unit_id, unit_id))
+        else:
+            response = browser.get('assessment?name=%s' % unit_id)
+
+    elif course.version == courses.COURSE_MODEL_VERSION_1_2:
+        response = browser.get('assessment?name=%s' % unit_id)
+        if presubmit_checks:
+            assert_contains(
+                '<script src="assets/js/assessment-%s.js"></script>' % unit_id,
+                response.body)
+            js_response = browser.get('assets/js/assessment-%s.js' % unit_id)
+            assert_equals(js_response.status_int, 200)
 
     # Extract XSRF token from the page.
     match = re.search(r'assessmentXsrfToken = [\']([^\']+)', response.body)
@@ -741,3 +870,70 @@ class Permissions(object):
             browser, Permissions.get_unenrolled_student_allowed_pages())
         assert_all_fail(
             browser, Permissions.get_unenrolled_student_denied_pages())
+
+
+def update_course_config(name, settings):
+    """Merge settings into the saved course.yaml configuration.
+
+    Args:
+      name: Name of the course.  E.g., 'my_test_course'.
+      settings: A nested dict of name/value settings.  Names for items here
+          can be found in modules/dashboard/course_settings.py in
+          create_course_registry.  See below in simple_add_course()
+          for an example.
+    Returns:
+      Context object for the modified course.
+    """
+    site_type = 'course'
+    namespace = 'ns_%s' % name
+    slug = '/%s' % name
+    rule = '%s:%s::%s' % (site_type, slug, namespace)
+
+    context = sites.get_all_courses(rule)[0]
+    environ = courses.deep_dict_merge(settings,
+                                      courses.Course.get_environ(context))
+    content = yaml.safe_dump(environ)
+    with common_utils.Namespace(namespace):
+        context.fs.put(
+            context.get_config_filename(),
+            vfs.string_to_stream(unicode(content)))
+    course_config = config.Registry.test_overrides.get(
+        sites.GCB_COURSES_CONFIG.name, 'course:/:/')
+    if rule not in course_config:
+        course_config = '%s, %s' % (rule, course_config)
+        sites.setup_courses(course_config)
+    return context
+
+
+def update_course_config_as_admin(name, admin_email, settings):
+    """Log in as admin and merge settings into course.yaml."""
+
+    prev_user = users.get_current_user()
+    if not prev_user:
+        login(admin_email, is_admin=True)
+    elif prev_user.email() != admin_email:
+        logout()
+        login(admin_email, is_admin=True)
+
+    ret = update_course_config(name, settings)
+
+    if not prev_user:
+        logout()
+    elif prev_user and prev_user.email() != admin_email:
+        logout()
+        login(prev_user.email())
+    return ret
+
+
+def simple_add_course(name, admin_email, title):
+    """Convenience wrapper to add an active course."""
+
+    return update_course_config_as_admin(
+        name, admin_email, {
+            'course': {
+                'title': title,
+                'admin_user_emails': admin_email,
+                'now_available': True,
+                'browsable': True,
+                },
+            })

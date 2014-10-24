@@ -16,10 +16,12 @@
 
 __author__ = 'sll@google.com (Sean Lip)'
 
+import logging
 import os
 
 import jinja2
 
+import appengine_config
 from common import jinja_utils
 from common import schema_fields
 from common import tags
@@ -30,8 +32,9 @@ from models import transforms
 RESOURCES_PATH = '/modules/assessment_tags/resources'
 
 
+@appengine_config.timeandlog('render_question', duration_only=True)
 def render_question(
-    quid, instanceid, locale, embedded=False, weight=None, progress=None):
+    quid, instanceid, embedded=False, weight=None, progress=None):
     """Generates the HTML for a question.
 
     Args:
@@ -39,8 +42,6 @@ def render_question(
       instanceid: String. The unique reference id for the question instance
          (different instances of the same question in a page will have
          different instanceids).
-      locale: String. The locale for the Jinja environment that is used to
-          generate the question HTML.
       embedded: Boolean. Whether this question is embedded within a container
           object.
       weight: number. The weight to be used when grading the question in a
@@ -56,6 +57,7 @@ def render_question(
     try:
         question_dto = m_models.QuestionDAO.load(quid)
     except Exception:  # pylint: disable-msg=broad-except
+        logging.exception('Invalid question: %s', quid)
         return '[Invalid question]'
 
     if not question_dto:
@@ -116,7 +118,7 @@ def render_question(
     template_values['js_data'] = transforms.dumps(js_data)
 
     template = jinja_utils.get_template(
-        template_file, [os.path.dirname(__file__)], locale=locale)
+        template_file, [os.path.dirname(__file__)])
     return jinja2.utils.Markup(template.render(template_values))
 
 
@@ -138,7 +140,6 @@ class QuestionTag(tags.BaseTag):
 
     def render(self, node, handler):
         """Renders a question."""
-        locale = handler.app_context.get_environ()['course']['locale']
 
         quid = node.attrib.get('quid')
         weight = node.attrib.get('weight')
@@ -154,28 +155,30 @@ class QuestionTag(tags.BaseTag):
                     instanceid)
 
         html_string = render_question(
-            quid, instanceid, locale, embedded=False, weight=weight,
+            quid, instanceid, embedded=False, weight=weight,
             progress=progress)
         return tags.html_string_to_element_tree(html_string)
 
-    def get_schema(self, unused_handler):
+    def get_schema(self, handler):
         """Get the schema for specifying the question."""
-        questions = m_models.QuestionDAO.get_all()
-        question_list = [(
-            unicode(q.id),  # q.id is a number but the schema requires a string
-            q.description) for q in questions]
+        question_list = []
+        if handler:
+            questions = m_models.QuestionDAO.get_all()
+            question_list = [(
+                unicode(q.id),  # q.id is an int; schema requires a string
+                q.description) for q in questions]
 
-        if not question_list:
-            return self.unavailable_schema('No questions available')
+            if not question_list:
+                return self.unavailable_schema('No questions available')
 
         reg = schema_fields.FieldRegistry('Question')
         reg.add_property(
             schema_fields.SchemaField(
-                'quid', 'Question', 'string', optional=True,
+                'quid', 'Question', 'string', optional=True, i18n=False,
                 select_data=question_list))
         reg.add_property(
             schema_fields.SchemaField(
-                'weight', 'Weight', 'string', optional=True,
+                'weight', 'Weight', 'string', optional=True, i18n=False,
                 extra_schema_dict_values={'value': '1'},
                 description='The number of points for a correct answer.'))
         return reg
@@ -199,8 +202,6 @@ class QuestionGroupTag(tags.BaseTag):
 
     def render(self, node, handler):
         """Renders a question."""
-
-        locale = handler.app_context.get_environ()['course']['locale']
 
         qgid = node.attrib.get('qgid')
         group_instanceid = node.attrib.get('instanceid')
@@ -227,7 +228,7 @@ class QuestionGroupTag(tags.BaseTag):
             quid = item['question']
             question_instanceid = '%s.%s.%s' % (group_instanceid, ind, quid)
             template_values['question_html_array'].append(render_question(
-                quid, question_instanceid, locale, weight=item['weight'],
+                quid, question_instanceid, weight=item['weight'],
                 embedded=True
             ))
             js_data[question_instanceid] = item
@@ -235,25 +236,27 @@ class QuestionGroupTag(tags.BaseTag):
 
         template_file = 'templates/question_group.html'
         template = jinja_utils.get_template(
-            template_file, [os.path.dirname(__file__)], locale=locale)
+            template_file, [os.path.dirname(__file__)])
 
         html_string = template.render(template_values)
         return tags.html_string_to_element_tree(html_string)
 
-    def get_schema(self, unused_handler):
+    def get_schema(self, handler):
         """Get the schema for specifying the question group."""
-        question_groups = m_models.QuestionGroupDAO.get_all()
-        question_group_list = [(
-            unicode(q.id),  # q.id is a number but the schema requires a string
-            q.description) for q in question_groups]
+        question_group_list = []
+        if handler:
+            question_groups = m_models.QuestionGroupDAO.get_all()
+            question_group_list = [(
+                unicode(q.id),  # q.id is a number; schema requires a string
+                q.description) for q in question_groups]
 
-        if not question_group_list:
-            return self.unavailable_schema('No question groups available')
+            if not question_group_list:
+                return self.unavailable_schema('No question groups available')
 
         reg = schema_fields.FieldRegistry('Question Group')
         reg.add_property(
             schema_fields.SchemaField(
-                'qgid', 'Question Group', 'string', optional=True,
+                'qgid', 'Question Group', 'string', optional=True, i18n=False,
                 select_data=question_group_list))
         return reg
 
@@ -268,27 +271,23 @@ def register_module():
         # Register custom tags.
         tags.Registry.add_tag_binding(
             QuestionTag.binding_name, QuestionTag)
-        tags.EditorBlacklists.register(
-            QuestionTag.binding_name,
-            tags.EditorBlacklists.COURSE_SCOPE)
-
         tags.Registry.add_tag_binding(
             QuestionGroupTag.binding_name, QuestionGroupTag)
-        tags.EditorBlacklists.register(
-            QuestionGroupTag.binding_name,
-            tags.EditorBlacklists.COURSE_SCOPE)
+        for binding_name in (QuestionTag.binding_name,
+                             QuestionGroupTag.binding_name):
+            for scope in (tags.EditorBlacklists.COURSE_SCOPE,
+                          tags.EditorBlacklists.DESCRIPTIVE_SCOPE):
+                tags.EditorBlacklists.register(binding_name, scope)
 
     def when_module_disabled():
         # Unregister custom tags.
         tags.Registry.remove_tag_binding(QuestionTag.binding_name)
-        tags.EditorBlacklists.unregister(
-            QuestionTag.binding_name,
-            tags.EditorBlacklists.COURSE_SCOPE)
-
         tags.Registry.remove_tag_binding(QuestionGroupTag.binding_name)
-        tags.EditorBlacklists.unregister(
-            QuestionGroupTag.binding_name,
-            tags.EditorBlacklists.COURSE_SCOPE)
+        for binding_name in (QuestionTag, binding_name,
+                             QuestionGroupTag.binding_name):
+            for scope in (tags.EditorBlacklists.COURSE_SCOPE,
+                          tags.EditorBlacklists.DESCRIPTIVE_SCOPE):
+                tags.EditorBlacklists.unregister(binding_name, scope)
 
     # Add a static handler for icons shown in the rich text editor.
     global_routes = [(

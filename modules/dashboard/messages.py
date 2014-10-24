@@ -34,6 +34,14 @@ ABOUT_THE_COURSE_DESCRIPTION = assemble_sanitized_message("""
 This information is configured by an administrator from the Admin pages.
 """, None)
 
+ADMIN_PREFERENCES_DESCRIPTION = assemble_sanitized_message("""
+Preferences settings for individual course admins.
+""", None)
+
+ADMINISTERED_COURSES_DESCRIPTION = assemble_sanitized_message("""
+Courses for which you have administrator privileges
+""", None)
+
 ASSESSMENT_CONTENT_DESCRIPTION = assemble_sanitized_message("""
 Assessment questions and answers (JavaScript format).
 """, 'https://code.google.com/p/course-builder/wiki/CreateAssessments')
@@ -58,9 +66,15 @@ their assignment submission and any associated reviews.
 """, None)
 
 CONTENTS_OF_THE_COURSE_DESCRIPTION = assemble_sanitized_message("""
-The course.yaml file contains many course settings.  Edit it using the buttons
-at the right.
+The course.yaml file contains all course-level settings.  It can be
+modified from other settings sub-tabs, or directly edited in its
+raw form here.
 """, 'https://code.google.com/p/course-builder/wiki/CourseSettings')
+
+COURSE_ADMIN_DESCRIPTION = assemble_sanitized_message("""
+Admin settings for users who are course authors but not
+site administrators.
+""", None)
 
 COURSE_OUTLINE_DESCRIPTION = assemble_sanitized_message(
     'Build, organize and preview your course here.',
@@ -73,9 +87,15 @@ parent unit.
 """, None)
 
 COURSE_TEMPLATE_DESCRIPTION = assemble_sanitized_message("""
-The course_template.yaml file contains the common template settings
-for all courses. You can override the template settings for this
-course by editing your course.yaml file.
+The course_template.yaml file provides default values for course settings.
+These values are not dynamically editable, but you can override them
+by editing your course.yaml file directly, or by changing settings in
+the other Settings sub-tabs.
+
+You can also change the default settings for all courses by editing
+the course_template.yaml file on disk and re-pushing CourseBuilder to
+AppEngine.  Changing the defaults in the file will not erase or
+override any course-specific settings you may have made.
 """, None)
 
 DATA_FILES_DESCRIPTION = assemble_sanitized_message("""
@@ -89,6 +109,12 @@ prevent the uploading of these files.
 EDIT_SETTINGS_DESCRIPTION = assemble_sanitized_message("""
 The course.yaml file contains many course settings.
 """, 'https://code.google.com/p/course-builder/wiki/CourseSettings')
+
+EDIT_HTML_HOOK_DESCRIPTION = assemble_sanitized_message("""
+HTML hooks are snippets of HTML code that are inserted at different points on
+the pages of a course.  Editing these snippets here permits you to make
+global changes to these items.
+""", 'https://code.google.com/p/course-builder/wiki/Dashboard#Outline')
 
 IMPORT_COURSE_DESCRIPTION = assemble_sanitized_message("""
 Import the contents of another course into this course. Both courses must be on
@@ -108,9 +134,15 @@ Width of the input field, measured in columns.
 """
 
 LESSON_ACTIVITY_DESCRIPTION = assemble_sanitized_message("""
-Create an activity by entering the correct syntax above.
+Note: Activities defined in the "Activity" area are deprecated, please use the
+"Lesson Body" area instead. Old-style activities are automatically
+converted during "Import Course".
 """, ('https://code.google.com/p/course-builder/wiki/CreateActivities'
       '#Writing_activities'))
+
+LESSON_AUTO_INDEX_DESCRIPTION = """
+Assign a sequential number to this lesson automatically.
+"""
 
 LESSON_ACTIVITY_LISTED_DESCRIPTION = """
 Whether the activity should be viewable as a stand-alone item in the unit index.
@@ -118,6 +150,12 @@ Whether the activity should be viewable as a stand-alone item in the unit index.
 
 LESSON_ACTIVITY_TITLE_DESCRIPTION = """
 This appears above your activity.
+"""
+
+LESSON_MANUAL_PROGRESS_DESCRIPTION = """
+When set, the manual progress REST API permits
+users to manually mark a unit or lesson as complete,
+overriding the automatic progress tracking.
 """
 
 LESSON_OBJECTIVES_DESCRIPTION = """
@@ -157,6 +195,12 @@ REVIEWER_FEEDBACK_FORM_DESCRIPTION = assemble_sanitized_message("""
 Review form questions and answers (JavaScript format).
 """, 'https://code.google.com/p/course-builder/wiki/PeerReview')
 
+ROLES_DESCRIPTION = """
+Manage the different roles associated with your course.
+A role binds a set of permissions to a set of users. The role editor allows you
+to assign any of the permissions currently registered by the enabled modules.
+"""
+
 SETTINGS_DESCRIPTION = assemble_sanitized_message(
     None, 'https://code.google.com/p/course-builder/wiki/Dashboard#Settings')
 
@@ -188,5 +232,3 @@ REVIEW_MIN_COUNT_DESCRIPTION = assemble_sanitized_message(
 AUTO_GRADER_NAME = 'Automatic Grading'
 
 HUMAN_GRADER_NAME = 'Peer Review'
-
-PEER_MATCHER_NAME = 'Peer'

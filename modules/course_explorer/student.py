@@ -24,6 +24,7 @@ import webapp2
 import appengine_config
 from common import jinja_utils
 from controllers import sites
+from controllers.utils import ApplicationHandler
 from controllers.utils import PageInitializerService
 from controllers.utils import XsrfTokenManager
 from models import courses as Courses
@@ -35,7 +36,6 @@ from google.appengine.api import users
 
 # We want to use views file in both /views and /modules/course_explorer/views.
 DIR = appengine_config.BUNDLE_ROOT
-LOCALE = Courses.COURSE_TEMPLATE_DICT['base']['locale']
 STUDENT_RENAME_GLOBAL_XSRF_TOKEN_ID = 'rename-student-global'
 
 # Int. Maximum number of bytes App Engine's db.StringProperty can store.
@@ -43,14 +43,23 @@ _STRING_PROPERTY_MAX_BYTES = 500
 
 
 class IndexPageHandler(webapp2.RequestHandler):
-    """Handles routing of root url."""
+    """Handles routing of root URL."""
 
     def get(self):
         """Handles GET requests."""
         if course_explorer.GCB_ENABLE_COURSE_EXPLORER_PAGE.value:
             self.redirect('/explorer')
+            return
+
+        index = sites.get_course_index()
+        if index.get_all_courses():
+            course = index.get_course_for_path('/')
+            if not course:
+                course = index.get_all_courses()[0]
+            self.redirect(ApplicationHandler.canonicalize_url_for(
+                course, '/course?use_last_location=true'))
         else:
-            self.redirect('/course')
+            self.redirect('/admin?action=welcome')
 
 
 class BaseStudentHandler(webapp2.RequestHandler):
@@ -60,6 +69,10 @@ class BaseStudentHandler(webapp2.RequestHandler):
         super(BaseStudentHandler, self).__init__(*args, **kwargs)
         self.template_values = {}
         self.initialize_student_state()
+
+    def get_locale_for_user(self):
+        """Chooses locale for a user."""
+        return 'en_US'  # TODO(psimakov): choose proper locale from profile
 
     def initialize_student_state(self):
         """Initialize course information related to student."""
@@ -88,8 +101,8 @@ class BaseStudentHandler(webapp2.RequestHandler):
         """Get all the public courses."""
         public_courses = []
         for course in sites.get_all_courses():
-            info = sites.ApplicationContext.get_environ(course)
-            if info['course']['now_available']:
+            if ((course.now_available and Roles.is_user_whitelisted(course))
+                or Roles.is_course_admin(course)):
                 public_courses.append(course)
         return public_courses
 
@@ -130,7 +143,8 @@ class BaseStudentHandler(webapp2.RequestHandler):
     def initialize_page_and_get_user(self):
         """Add basic fields to template and return user."""
         self.template_values['course_info'] = Courses.COURSE_TEMPLATE_DICT
-        self.template_values['course_info']['course'] = {'locale': LOCALE}
+        self.template_values['course_info']['course'] = {
+            'locale': self.get_locale_for_user()}
         user = users.get_current_user()
         if not user:
             self.template_values['loginUrl'] = users.create_login_url('/')
@@ -146,6 +160,17 @@ class BaseStudentHandler(webapp2.RequestHandler):
         return token and XsrfTokenManager.is_xsrf_token_valid(token, action)
 
 
+class NullHtmlHooks(object):
+    """Provide a non-null callback object for pages asking for hooks.
+
+    In contexts where we have no single course to use to determine
+    hook contents, we simply return blank content.
+    """
+
+    def insert(self, unused_name):
+        return ''
+
+
 class ProfileHandler(BaseStudentHandler):
     """Global profile handler for a student."""
 
@@ -157,7 +182,15 @@ class ProfileHandler(BaseStudentHandler):
 
     def get(self):
         """Handles GET requests."""
+        if not course_explorer.GCB_ENABLE_COURSE_EXPLORER_PAGE.value:
+            self.error(404)
+            return
+
         user = self.initialize_page_and_get_user()
+        if not user:
+            self.redirect('/explorer')
+            return
+
         courses = self.get_public_courses()
         self.template_values['student'] = (
             StudentProfileDAO.get_profile_by_user_id(user.user_id()))
@@ -166,20 +199,22 @@ class ProfileHandler(BaseStudentHandler):
         self.template_values['student_edit_xsrf_token'] = (
             XsrfTokenManager.create_xsrf_token(
                 STUDENT_RENAME_GLOBAL_XSRF_TOKEN_ID))
+        self.template_values['html_hooks'] = NullHtmlHooks()
+        self.template_values['student_preferences'] = {}
 
         template = jinja_utils.get_template(
-            '/modules/course_explorer/views/profile.html', DIR, LOCALE)
+            '/modules/course_explorer/views/profile.html', DIR)
         self.response.write(template.render(self.template_values))
 
     def post(self):
         """Handles post requests."""
-        user = self.initialize_page_and_get_user()
-        if not user:
+        if not self.is_valid_xsrf_token(STUDENT_RENAME_GLOBAL_XSRF_TOKEN_ID):
             self.error(403)
             return
 
-        if not self.is_valid_xsrf_token(STUDENT_RENAME_GLOBAL_XSRF_TOKEN_ID):
-            self.error(403)
+        user = self.initialize_page_and_get_user()
+        if not user:
+            self.redirect('/explorer')
             return
 
         new_name = self.request.get('name')
@@ -197,14 +232,20 @@ class AllCoursesHandler(BaseStudentHandler):
 
     def get(self):
         """Handles GET requests."""
+        if not course_explorer.GCB_ENABLE_COURSE_EXPLORER_PAGE.value:
+            self.error(404)
+            return
+
         self.initialize_page_and_get_user()
         courses = self.get_public_courses()
 
         self.template_values['courses'] = (
             [self.get_course_info(course) for course in courses])
         self.template_values['navbar'] = {'course_explorer': True}
+        self.template_values['html_hooks'] = NullHtmlHooks()
+        self.template_values['student_preferences'] = {}
         template = jinja_utils.get_template(
-            '/modules/course_explorer/views/course_explorer.html', DIR, LOCALE)
+            '/modules/course_explorer/views/course_explorer.html', DIR)
         self.response.write(template.render(self.template_values))
 
 
@@ -213,6 +254,11 @@ class RegisteredCoursesHandler(BaseStudentHandler):
 
     def get(self):
         """Handles GET request."""
+
+        if not course_explorer.GCB_ENABLE_COURSE_EXPLORER_PAGE.value:
+            self.error(404)
+            return
+
         self.initialize_page_and_get_user()
         courses = self.get_public_courses()
         enrolled_courses = self.get_enrolled_courses(courses)
@@ -221,8 +267,10 @@ class RegisteredCoursesHandler(BaseStudentHandler):
         self.template_values['navbar'] = {'mycourses': True}
         self.template_values['can_enroll_more_courses'] = (
             len(courses) - len(enrolled_courses) > 0)
+        self.template_values['html_hooks'] = NullHtmlHooks()
+        self.template_values['student_preferences'] = {}
         template = jinja_utils.get_template(
-            '/modules/course_explorer/views/course_explorer.html', DIR, LOCALE)
+            '/modules/course_explorer/views/course_explorer.html', DIR)
         self.response.write(template.render(self.template_values))
 
 
@@ -237,6 +285,10 @@ class AssetsHandler(webapp2.RequestHandler):
 
     def get(self, path):
         """Handles GET requests."""
+        if not course_explorer.GCB_ENABLE_COURSE_EXPLORER_PAGE.value:
+            self.error(404)
+            return
+
         filename = '%s/assets/%s' % (appengine_config.BUNDLE_ROOT, path)
         with open(filename, 'r') as f:
             self.response.headers['Content-Type'] = self.get_mime_type(filename)

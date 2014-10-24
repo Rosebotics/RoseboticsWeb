@@ -18,6 +18,10 @@ FramedEditorControls.prototype = {
       value: 'Save',
       className: 'inputEx-Button inputEx-Button-Submit-Link gcb-pull-left',
       onClick: function() {
+        if (that._env.onSaveClick && that._env.onSaveClick() === false) {
+          return false;
+        }
+
         that._frameProxy.setValue(that._env.form.getValue());
         that._frameProxy.submit();
       }
@@ -31,6 +35,10 @@ FramedEditorControls.prototype = {
       value: 'Close',
       className: 'inputEx-Button inputEx-Button-Link gcb-pull-left',
       onClick: function() {
+        if (that._env.onCloseClick && that._env.onCloseClick() === false) {
+          return false;
+        }
+
         that._frameProxy.close();
       }
     };
@@ -41,6 +49,7 @@ FramedEditorControls.prototype = {
   },
 
   populateForm: function() {
+    this._frameProxy.init(this._env.schema);
     this._env.form.setValue(this._frameProxy.getValue());
     cbHideMsg();
     document.getElementById("formContainer").style.display = "block";
@@ -58,10 +67,12 @@ FramedEditorControls.prototype = {
  *     value object as a parameter
  * @param onClose a callback when the user clicks close
  */
-function FrameProxy(rootId, url, value, context, onSubmit, onClose) {
+function FrameProxy(rootId, url, getValue, context, onSubmit, onClose) {
   this._rootId = rootId;
   this._url = url;
-  this._value = value;
+  this._getValue = getValue;
+  this._schema = null;
+  this._value = null;
   this._context = context;
   this._onSubmit = onSubmit;
   this._onClose = onClose;
@@ -74,6 +85,13 @@ FrameProxy.prototype = {
     this._iframe.src = this._url;
     this._iframe.id = 'modal-editor-iframe';
     this._root.appendChild(this._iframe);
+  },
+
+  init: function(schema) {
+    this._schema = schema;
+    if (this._getValue) {
+      this._value = this._getValue(schema);
+    }
   },
 
   getValue: function() {
@@ -103,7 +121,7 @@ FrameProxy.prototype = {
   },
 
   submit: function() {
-    this._onSubmit(this._value);
+    this._onSubmit(this._value, this._schema);
     this._close();
   },
 

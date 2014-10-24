@@ -58,7 +58,6 @@ AssessmentEditorController.prototype.revertToJSAssessment = function() {
   this.hideHTMLEditors();
   this.removeButtons();
   this.showJSEditors();
-  this.showExportButton();
 };
 AssessmentEditorController.prototype.eraseHTMLContent = function() {
   this.findRte(this.inputExForm.inputs[0].inputs, 'html_content')
@@ -97,9 +96,6 @@ AssessmentEditorController.prototype.removeButtons = function() {
   this.Y.one('#cb-oeditor-form > fieldset > div.assessment-editor-button-holder')
       .remove();
 };
-AssessmentEditorController.prototype.showExportButton = function() {
-  this.showButton('Export to HTML assessment', this.exportToHTMLAssessment);
-};
 AssessmentEditorController.prototype.showRevertButton = function() {
   this.showButton('Revert to Javascript assessment', this.revertToJSAssessment);
 };
@@ -129,11 +125,7 @@ AssessmentEditorController.prototype.hasHTMLContent = function() {
 AssessmentEditorController.prototype.init = function() {
   if (this.isJSAssessment()) {
     this.hideHTMLEditors();
-    this.showExportButton();
-  } else if(this.isHTMLAssessment()) {
-    this.hideJSEditors();
   } else {
     this.hideJSEditors();
-    this.showRevertButton();
   }
 };

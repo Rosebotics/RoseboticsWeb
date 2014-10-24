@@ -22,6 +22,7 @@ import logging
 from utils import BaseHandler
 from utils import HUMAN_READABLE_DATETIME_FORMAT
 
+from controllers import lessons
 from models import courses
 from models import models
 from models import review
@@ -115,6 +116,7 @@ class AnswerHandler(BaseHandler):
         """
         self.redirect('/course')
 
+    # pylint: disable-msg=too-many-statements
     def post(self):
         """Handles POST requests."""
         student = self.personalize_page_and_get_enrolled()
@@ -211,9 +213,17 @@ class AnswerHandler(BaseHandler):
                 unit.unit_id, student.get_key(), answers)
             course.update_final_grades(student)
 
-            self.template_value['result'] = course.get_overall_result(student)
-            self.template_value['score'] = score
-            self.template_value['overall_score'] = course.get_overall_score(
-                student)
-
-            self.render('test_confirmation.html')
+            parent_unit = course.get_parent_unit(unit.unit_id)
+            if parent_unit:
+                unit_contents = lessons.UnitHandler.UnitLeftNavElements(
+                    course, parent_unit)
+                next_url = unit_contents.get_url_by(
+                    'assessment', unit.unit_id, 0) + '&confirmation'
+                self.redirect('/' + next_url)
+            else:
+                self.template_value['result'] = course.get_overall_result(
+                    student)
+                self.template_value['score'] = score
+                self.template_value['overall_score'] = course.get_overall_score(
+                    student)
+                self.render('test_confirmation.html')

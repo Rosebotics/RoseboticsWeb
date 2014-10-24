@@ -20,10 +20,13 @@ __author__ = 'Pavel Simakov (psimakov@google.com)'
 import sys
 import unittest
 import appengine_config
+from common import caching
+from common import xcontent
 from controllers import sites
 from models import config
 from models import content
 from models import courses
+from models import vfs
 from modules.review import domain
 from tests import suite
 from tools import verify
@@ -45,6 +48,41 @@ def assert_fails(function):
         raise e
     except Exception:
         pass
+
+
+class DeepDictionaryMergeTest(suite.TestBase):
+
+    def test_both_empty_merge(self):
+        tgt = {}
+        src = {}
+        r = courses.deep_dict_merge(tgt, src)
+        self.assertEqual({}, r)
+
+    def test_src_empty_merge(self):
+        tgt = {'a': {'b': 2}, 'c': None}
+        src = {}
+        r = courses.deep_dict_merge(tgt, src)
+        self.assertEqual(tgt, r)
+
+    def test_tgt_empty_merge(self):
+        tgt = {}
+        src = {'a': 1}
+        r = courses.deep_dict_merge(tgt, src)
+        self.assertEqual(src, r)
+
+    def test_non_recursive_merge(self):
+        tgt = {'a': 1, 'b': 2, 'd': 4}
+        src = {'a': 1, 'b': 22, 'c': 3}
+        r = courses.deep_dict_merge(tgt, src)
+        e = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
+        self.assertEqual(e, r)
+
+    def test_recursive_merge(self):
+        tgt = {'a': {'b': 1}}
+        src = {'a': 1, 'c': {'d': 4}}
+        r = courses.deep_dict_merge(tgt, src)
+        e = {'a': {'b': 1}, 'c': {'d': 4}}
+        self.assertEqual(e, r)
 
 
 class EtlRetryTest(suite.TestBase):
@@ -151,10 +189,13 @@ class InvokeExistingUnitTest(suite.TestBase):
 
     def test_existing_unit_tests(self):
         """Run all units tests declared elsewhere."""
+        vfs.run_all_unit_tests()
         sites.run_all_unit_tests()
         config.run_all_unit_tests()
         verify.run_all_unit_tests()
         content.run_all_unit_tests()
+        xcontent.run_all_unit_tests()
+        caching.run_all_unit_tests()
 
     def test_string_encoding(self):
         """Test our understanding of Python string encoding aspects.
@@ -250,6 +291,76 @@ class InvokeExistingUnitTest(suite.TestBase):
         default_values = {'baz': [4, 5, 6]}
         assert {'foo': [1, 2, 3], 'baz': [4, 5, 6]} == (
             courses.deep_dict_merge(real_values, default_values))
+
+    def test_app_context_equals(self):
+        # pylint: disable-msg=g-equals-none
+
+        app_context_a = sites.ApplicationContext(
+            'course', '/slug_a', '/', 'ns_a', None)
+        app_context_b = sites.ApplicationContext(
+            'course', '/slug_a', '/', 'ns_a', None)
+        app_context_c = sites.ApplicationContext(
+            'course', '/slug_c', '/', 'ns_c', None)
+        app_context_ad = sites.ApplicationContext(
+            'course', '/slug_d', '/', 'ns_a', None)
+        app_context_af = sites.ApplicationContext(
+            'course', '/slug_a', '/', 'ns_f', None)
+
+        self.assertFalse(app_context_a is app_context_b)
+
+        self.assertTrue(app_context_a == app_context_b)
+        self.assertFalse(app_context_a != app_context_b)
+
+        self.assertTrue(app_context_a != app_context_c)
+        self.assertFalse(app_context_a == app_context_c)
+
+        self.assertTrue(app_context_a != app_context_ad)
+        self.assertFalse(app_context_a == app_context_ad)
+
+        self.assertTrue(app_context_a != app_context_af)
+        self.assertFalse(app_context_a == app_context_af)
+
+        self.assertTrue(app_context_a != None)
+        self.assertFalse(app_context_a == None)
+
+    def test_app_context_affinity(self):
+        app_context_a = sites.ApplicationContext(
+            'course', '/slug_a', '/', 'ns_a', None)
+        app_context_b = sites.ApplicationContext(
+            'course', '/slug_a', '/', 'ns_a', None)
+        app_context_c = sites.ApplicationContext(
+            'course', '/slug_c', '/', 'ns_c', None)
+
+        class MySingleton(caching.RequestScopedSingleton):
+
+            def __init__(self, app_context):
+                self.app_context = app_context
+
+        # this tests creation of a fresh new singleton for an app_context
+        cache_a_1 = MySingleton.instance(app_context_a)
+        cache_a_2 = MySingleton.instance(app_context_a)
+        self.assertTrue(cache_a_1.app_context is app_context_a)
+        self.assertTrue(cache_a_2.app_context is app_context_a)
+
+        # this test finds a singleton using different instance of app_context;
+        # this app_context is compatible with the first one via __eq__()
+        cache_b_1 = MySingleton.instance(app_context_b)
+        cache_b_2 = MySingleton.instance(app_context_b)
+        self.assertTrue(cache_b_1.app_context is app_context_a)
+        self.assertTrue(cache_b_2.app_context is app_context_a)
+
+        # this raises because singleton is already bound to a specific
+        # app_context and an attempt to get the same singleton with another
+        # incompatible app_context must fail; we could handle this inside the
+        # cache, but the current decision is: this is not supported
+        with self.assertRaises(AssertionError):
+            MySingleton.instance(app_context_c)
+
+        # clear all singletons and try again; it works now
+        MySingleton.clear_all()
+        cache_c_1 = MySingleton.instance(app_context_c)
+        self.assertTrue(cache_c_1.app_context is app_context_c)
+
 
 if __name__ == '__main__':
     unittest.TextTestRunner().run(

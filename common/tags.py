@@ -17,11 +17,9 @@
 __author__ = 'John Orr (jorr@google.com)'
 
 
-import inspect
 import logging
 import mimetypes
 import os
-import pkgutil
 from xml.etree import cElementTree
 
 import html5lib
@@ -30,7 +28,6 @@ import webapp2
 
 import appengine_config
 from common import schema_fields
-from extensions import tags
 from models import config
 
 
@@ -61,6 +58,29 @@ class BaseTag(object):
     @classmethod
     def required_modules(cls):
         """Lists the inputEx modules required by the editor."""
+        return []
+
+    @classmethod
+    def extra_js_files(cls):
+        """Returns a list of JS files to be loaded in the editor lightbox."""
+        return []
+
+    @classmethod
+    def extra_css_files(cls):
+        """Returns a list of CSS files to be loaded in the editor lightbox."""
+        return []
+
+    @classmethod
+    def additional_dirs(cls):
+        """Returns a list of directories searched for files used by the editor.
+
+        These folders will be searched for files to be loaded as Jinja
+        templates by the editor, e.g., the files referenced by extra_js_files
+        and extra_css_files.
+
+        Returns:
+            List of strings.
+        """
         return []
 
     def render(self, node, handler):  # pylint: disable=W0613
@@ -114,6 +134,20 @@ SPB+uxAAAAAElFTkSuQmCC
         container. Each SchemaField has the actual attribute name as used in
         the tag, the display name for the form, and the type (usually
         string).
+
+        The schema field type of "text" plays a special role: a tag is allowed
+        to have at most one field of type "text", and this is stored in the body
+        of the tag, not as an attribute.
+
+        Args:
+          unused_handler: a request handler; if None is received, the request
+            is being made by the system and there is no user in session; the
+            minimal schema must be returned in this case; don't attempt to
+            access course, app_context, file system, datastore, etc. in this
+            case;  if a valid handler object is received, the request is being
+            made by a real user and schema can have additional data binding in
+            it; for example: 'select_data' can be computed and set by accessing
+            course, app_context, filesyste, datastore, etc.
 
         Returns:
           the list of fields to be displayed in the editor.
@@ -195,6 +229,10 @@ class ResourcesHandler(webapp2.RequestHandler):
         """Override this method to rebase the path to a different root."""
         return path
 
+    def transform_resource(self, resource_str):
+        """Override this method to apply a transforation to the resource."""
+        return resource_str
+
     def get(self):
         """Respond to HTTP GET methods."""
         path = self.rebase_path(self.request.path)
@@ -215,9 +253,16 @@ class ResourcesHandler(webapp2.RequestHandler):
             self.response.cache_control.public = 'public'
             self.response.cache_control.max_age = 600
             stream = open(resource_file)
-            self.response.write(stream.read())
+            self.response.write(self.transform_resource(stream.read()))
         except IOError:
             self.error(404)
+
+
+class JQueryHandler(ResourcesHandler):
+    """A content handler which serves jQuery scripts wrapped in $.ready()."""
+
+    def transform_resource(self, resource_str):
+        return '$(function() {%s});' % resource_str
 
 
 class EditorBlacklists(object):
@@ -225,6 +270,7 @@ class EditorBlacklists(object):
 
     COURSE_SCOPE = set()
     ASSESSMENT_SCOPE = set()
+    DESCRIPTIVE_SCOPE = set()
 
     @classmethod
     def register(cls, tag_name, editor_set):
@@ -258,28 +304,7 @@ class Registry(object):
 
 
 def get_tag_bindings():
-    """Return the bindings of tag names to implementing classes.
-
-    Tag bindings work by looking for classes which extend BaseTag and which
-    belong to packages inside extensions/tags. The tag name is then composed
-    from the package name and the class name, after lower-casing and separated
-    with a dash. E.g., the class
-        extensions.tags.gcb.YouTube
-    is bound to the tag name gcb-youtube.
-
-    Returns:
-        the bindings of tag names to implementing classes.
-    """
-
-    bindings = {}
-    for loader, name, ispkg in pkgutil.walk_packages(tags.__path__):
-        if ispkg:
-            mod = loader.find_module(name).load_module(name)
-            for name, clazz in inspect.getmembers(mod, inspect.isclass):
-                if issubclass(clazz, BaseTag):
-                    tag_name = ('%s-%s' % (mod.__name__, name)).lower()
-                    bindings[tag_name] = clazz
-    return dict(bindings.items() + Registry.get_all_tags().items())
+    return dict(Registry.get_all_tags().items())
 
 
 def html_string_to_element_tree(html_string):
@@ -289,7 +314,7 @@ def html_string_to_element_tree(html_string):
     return parser.parseFragment('<div>%s</div>' % html_string)[0]
 
 
-def html_to_safe_dom(html_string, handler):
+def html_to_safe_dom(html_string, handler, render_custom_tags=True):
     """Render HTML text as a tree of safe_dom elements."""
 
     tag_bindings = get_tag_bindings()
@@ -332,7 +357,7 @@ def html_to_safe_dom(html_string, handler):
         # Otherwise, attempt to parse this tag and all its child tags.
         original_elt = elt
         try:
-            if elt.tag in tag_bindings:
+            if render_custom_tags and elt.tag in tag_bindings:
                 tag = tag_bindings[elt.tag]()
                 if isinstance(tag, ContextAwareTag):
                     # Get or initialize a environment dict for this type of tag.
@@ -348,7 +373,9 @@ def html_to_safe_dom(html_string, handler):
                     # Render the tag
                     elt = tag.render(elt, handler)
 
-            if elt.tag.lower() == 'script':
+            if elt.tag == cElementTree.Comment:
+                out_elt = safe_dom.Comment()
+            elif elt.tag.lower() == 'script':
                 out_elt = safe_dom.ScriptElement()
             else:
                 out_elt = safe_dom.Element(elt.tag)

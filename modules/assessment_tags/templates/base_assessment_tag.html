@@ -2,6 +2,17 @@
   <link rel="stylesheet" type="text/css" href="{{resources_path}}/questions.css"/>
   <script>
     questionData['{{instanceid}}'] = JSON.parse("{{js_data | js_string}}");
+    var assessmentTagMessages = {};
+
+    {# I18N: Confirmation text for the answer given to a question by a student. #}
+    assessmentTagMessages.correctAnswer = "{{ gettext(' Yes, the answer is correct. ') }}";
+    {# I18N: Confirmation text for the answer given to a question by a student. #}
+    assessmentTagMessages.incorrectAnswer = "{{ gettext(' No, the answer is incorrect. ') }}";
+    {# I18N: Confirmation text for the answer given to a question by a student. #}
+    assessmentTagMessages.partiallyCorrectAnswer = "{{ gettext(' The answer is partially correct. ') }}";
+
+    {# I18N: Text appearing at the bottom of a lesson page after the student asks for it to be graded. #}
+    assessmentTagMessages.yourScoreIs = "{{ gettext(' Your score is: ') }}";
   </script>
   <script src="{{resources_path}}/grading_lib.js"></script>
   <script src="{{resources_path}}/grading.js"></script>
@@ -15,12 +26,12 @@
   {% if progress is defined %}
     <div class="gcb-progress-icon-holder gcb-pull-right">
       {% if progress == 1 %}
-        <img src="assets/lib/completed.png"
+        <img src="assets/img/completed.png"
           alt="{# I18N: Alt text for image representing student progress. #}{{ gettext('Completed') }}"
           title="{# I18N: Alt text for image representing student progress. #}{{ gettext('Completed') }}"
           class="gcb-progress-icon"/>
       {% elif progress == 0 %}
-        <img src="assets/lib/not_started.png"
+        <img src="assets/img/not_started.png"
           alt="{# I18N: Alt text for image representing student progress. #}{{ gettext('Not yet started') }}"
           title="{# I18N: Alt text for image representing student progress. #}{{ gettext('Not yet started') }}"
           class="gcb-progress-icon"/>

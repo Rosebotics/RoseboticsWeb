@@ -16,22 +16,35 @@
 
 __author__ = 'Mike Gainer (mgainer@google.com)'
 
+import datetime
+import re
+import urllib
+
 from mapreduce import main as mapreduce_main
 from mapreduce import parameters as mapreduce_parameters
+from mapreduce.lib.pipeline import models as pipeline_models
+from mapreduce.lib.pipeline import pipeline
 
 from common import safe_dom
 from common.utils import Namespace
+from controllers import sites
 from controllers import utils
 from models import custom_modules
+from models import data_sources
+from models import jobs
+from models import roles
+from models import transforms
 from models.config import ConfigProperty
-from modules import dashboard
 
+from google.appengine.api import files
 from google.appengine.api import users
+from google.appengine.ext import db
 
 # Module registration
 custom_module = None
 MODULE_NAME = 'Map/Reduce'
 XSRF_ACTION_NAME = 'view-mapreduce-ui'
+MAX_MAPREDUCE_METADATA_RETENTION_DAYS = 3
 
 GCB_ENABLE_MAPREDUCE_DETAIL_ACCESS = ConfigProperty(
     'gcb_enable_mapreduce_detail_access', bool,
@@ -62,38 +75,199 @@ def authorization_wrapper(self, *args, **kwargs):
 
 
 def ui_access_wrapper(self, *args, **kwargs):
-    if ((users.is_current_user_admin() or
-         utils.XsrfTokenManager.is_xsrf_token_valid(
-             self.request.get('xsrf_token'), XSRF_ACTION_NAME)) and
-        GCB_ENABLE_MAPREDUCE_DETAIL_ACCESS.value):
-        with Namespace(self.request.get('namespace')):
+    content_is_static = (
+        self.request.path.startswith('/mapreduce/ui/') and
+        (self.request.path.endswith('.css') or
+         self.request.path.endswith('.js')))
+    xsrf_token = self.request.get('xsrf_token')
+    user_is_course_admin = utils.XsrfTokenManager.is_xsrf_token_valid(
+        xsrf_token, XSRF_ACTION_NAME)
+    ui_enabled = GCB_ENABLE_MAPREDUCE_DETAIL_ACCESS.value
+
+    if ui_enabled and (content_is_static or
+                       user_is_course_admin or
+                       users.is_current_user_admin()):
+        namespace = self.request.get('namespace')
+        with Namespace(namespace):
             self.real_dispatch(*args, **kwargs)
 
-        # Most places in the pipeline UI are good about passing the
+        # Some places in the pipeline UI are good about passing the
         # URL's search string along to RPC calls back to Ajax RPCs,
         # which automatically picks up our extra namespace and xsrf
-        # tokens.  However, this one does not, and so we patch it
+        # tokens.  However, some do not, and so we patch it
         # here, rather than trying to keep up-to-date with the library.
-        # If-and-when the library gets fixed up to explicitly use
-        # 'rpc/tree' + window.location.search
-        # then our 'rpc/tree?' pattern will stop matching, and this
-        # will then be obsolete, but will not break unexpectedly.
-        if self.request.path.endswith('/status.js'):
+        params = {}
+        if namespace:
+            params['namespace'] = namespace
+        if xsrf_token:
+            params['xsrf_token'] = xsrf_token
+        extra_url_params = urllib.urlencode(params)
+        if self.request.path == '/mapreduce/ui/pipeline/status.js':
             self.response.body = self.response.body.replace(
                 'rpc/tree?',
                 'rpc/tree\' + window.location.search + \'&')
+
+        elif self.request.path == '/mapreduce/ui/pipeline/rpc/tree':
+            self.response.body = self.response.body.replace(
+                '/mapreduce/worker/detail?',
+                '/mapreduce/ui/detail?' + extra_url_params + '&')
+
+        elif self.request.path == '/mapreduce/ui/detail':
+            self.response.body = self.response.body.replace(
+                'src="status.js"',
+                'src="status.js?%s"' % extra_url_params)
+
+        elif self.request.path == '/mapreduce/ui/status.js':
+            replacement = (
+                '\'namespace\': \'%s\', '
+                '\'xsrf_token\': \'%s\', '
+                '\'mapreduce_id\':' % (
+                    namespace if namespace else '',
+                    xsrf_token if xsrf_token else ''))
+            self.response.charset = 'utf8'
+            self.response.text = self.response.body.replace(
+                '\'mapreduce_id\':', replacement)
     else:
         self.response.out.write('Forbidden')
         self.response.set_status(403)
 
 
+class CronMapreduceCleanupHandler(utils.BaseHandler):
+
+    def get(self):
+        """Clean up intermediate data items for completed or failed M/R jobs.
+
+        Map/reduce runs leave around a large number of rows in several
+        tables.  This data is useful to have around for a while:
+        - it helps diagnose any problems with jobs that may be occurring
+        - it shows where resource usage is occurring
+        However, after a few days, this information is less relevant, and
+        should be cleaned up.
+
+        The algorithm here is: for each namespace, find all the expired
+        map/reduce jobs and clean them up.  If this happens to be touching
+        the M/R job that a MapReduceJob instance is pointing at, buff up
+        the description of that job to reflect the cleanup.  However, since
+        DurableJobBase-derived things don't keep track of all runs, we
+        cannot simply use the data_sources.Registry to list MapReduceJobs
+        and iterate that way; we must iterate over the actual elements
+        listed in the database.
+        """
+
+        # Belt and suspenders.  The app.yaml settings should ensure that
+        # only admins can use this URL, but check anyhow.
+        if not roles.Roles.is_direct_super_admin():
+            self.error(400)
+            return
+
+        self._clean_mapreduce(
+            datetime.timedelta(days=MAX_MAPREDUCE_METADATA_RETENTION_DAYS))
+
+    @classmethod
+    def _collect_blobstore_paths(cls, root_key):
+        paths = set()
+        # pylint: disable-msg=protected-access
+        for model, field_name in ((pipeline_models._SlotRecord, 'value'),
+                                  (pipeline_models._PipelineRecord, 'params')):
+            prev_cursor = None
+            any_records = True
+            while any_records:
+                any_records = False
+                query = (model
+                         .all()
+                         .filter('root_pipeline =', root_key)
+                         .with_cursor(prev_cursor))
+                for record in query.run():
+                    any_records = True
+                    # The data parameters in SlotRecord and PipelineRecord
+                    # vary widely, but all are provided via this interface as
+                    # some combination of Python scalar, list, tuple, and
+                    # dict.  Rather than depend on specifics of the map/reduce
+                    # internals, crush the object to a string and parse that.
+                    try:
+                        data_object = getattr(record, field_name)
+                    except TypeError:
+                        data_object = None
+                    if data_object:
+                        text = transforms.dumps(data_object)
+                        for path in re.findall(r'"(/blobstore/[^"]+)"', text):
+                            paths.add(path)
+                prev_cursor = query.cursor()
+        return paths
+
+    @classmethod
+    def _clean_mapreduce(cls, max_age):
+        """Separated as internal function to permit tests to pass max_age."""
+        num_cleaned = 0
+
+        # If job has a start time before this, it has been running too long.
+        min_start_time_datetime = datetime.datetime.utcnow() - max_age
+        min_start_time_millis = int(
+            (min_start_time_datetime - datetime.datetime(1970, 1, 1))
+            .total_seconds() * 1000)
+
+        # Iterate over all namespaces in the installation
+        for course_context in sites.get_all_courses():
+            with Namespace(course_context.get_namespace_name()):
+
+                # Index map/reduce jobs in this namespace by pipeline ID.
+                jobs_by_pipeline_id = {}
+                for job_class in data_sources.Registry.get_generator_classes():
+                    if issubclass(job_class, jobs.MapReduceJob):
+                        job = job_class(course_context)
+                        pipe_id = jobs.MapReduceJob.get_root_pipeline_id(
+                            job.load())
+                        jobs_by_pipeline_id[pipe_id] = job
+
+                # Clean up pipelines
+                for state in pipeline.get_root_list()['pipelines']:
+                    pipeline_id = state['pipelineId']
+                    job_definitely_terminated = (
+                        state['status'] == 'done' or
+                        state['status'] == 'aborted' or
+                        state['currentAttempt'] > state['maxAttempts'])
+                    have_start_time = 'startTimeMs' in state
+                    job_started_too_long_ago = (
+                        have_start_time and
+                        state['startTimeMs'] < min_start_time_millis)
+
+                    if (job_started_too_long_ago or
+                        (not have_start_time and job_definitely_terminated)):
+                        # At this point, the map/reduce pipeline is
+                        # either in a terminal state, or has taken so long
+                        # that there's no realistic possibility that there
+                        # might be a race condition between this and the
+                        # job actually completing.
+                        if pipeline_id in jobs_by_pipeline_id:
+                            jobs_by_pipeline_id[pipeline_id].mark_cleaned_up()
+
+                        p = pipeline.Pipeline.from_id(pipeline_id)
+                        if p:
+                            # Pipeline cleanup, oddly, does not go clean up
+                            # relevant blobstore items.  They have a TODO,
+                            # but it has not been addressed as of Sep 2014.
+                            # pylint: disable-msg=protected-access
+                            root_key = db.Key.from_path(
+                                pipeline_models._PipelineRecord.kind(),
+                                pipeline_id)
+                            for path in cls._collect_blobstore_paths(root_key):
+                                files.delete(path)
+
+                            # This only enqueues a deferred cleanup item, so
+                            # transactionality with marking the job cleaned is
+                            # not terribly important.
+                            p.cleanup()
+                        num_cleaned += 1
+        return num_cleaned
+
+
 def register_module():
     """Registers this module in the registry."""
 
-    dashboard.dashboard.DashboardRegistry.add_analytics_section(
-        dashboard.analytics.QuestionScoreHandler)
+    global_handlers = [
+        ('/cron/mapreduce/cleanup', CronMapreduceCleanupHandler),
+    ]
 
-    global_handlers = []
     for path, handler_class in mapreduce_main.create_handlers_map():
         # The mapreduce and pipeline libraries are pretty casual about
         # mixing up their UI support in with their functional paths.

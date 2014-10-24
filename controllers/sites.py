@@ -1,4 +1,4 @@
-# Copyright 2012 Google Inc. All Rights Reserved.
+# Copyright 2014 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -110,6 +110,7 @@ import os
 import posixpath
 import re
 import threading
+import traceback
 import urlparse
 import zipfile
 
@@ -118,7 +119,9 @@ import webapp2
 from webapp2_extras import i18n
 
 import appengine_config
+from common import caching
 from common import safe_dom
+from models import models
 from models import transforms
 from models.config import ConfigProperty
 from models.config import ConfigPropertyEntity
@@ -129,6 +132,7 @@ from models.roles import Roles
 from models.vfs import AbstractFileSystem
 from models.vfs import DatastoreBackedFileSystem
 from models.vfs import LocalReadOnlyFileSystem
+from modules.courses import courses as courses_module
 
 from google.appengine.api import namespace_manager
 from google.appengine.api import users
@@ -153,6 +157,7 @@ GCB_INHERITABLE_FOLDER_NAMES = [
     os.path.join(GCB_ASSETS_FOLDER_NAME, 'css/'),
     os.path.join(GCB_ASSETS_FOLDER_NAME, 'img/'),
     os.path.join(GCB_ASSETS_FOLDER_NAME, 'lib/'),
+    os.path.join(GCB_ASSETS_FOLDER_NAME, 'html/'),
     GCB_VIEWS_FOLDER_NAME,
     GCB_MODULES_FOLDER_NAME]
 
@@ -166,9 +171,6 @@ DEFAULT_CACHE_CONTROL_PUBLIC = 'public'
 # default HTTP headers for dynamic responses
 DEFAULT_EXPIRY_DATE = 'Mon, 01 Jan 1990 00:00:00 GMT'
 DEFAULT_PRAGMA = 'no-cache'
-
-# enable debug output
-DEBUG_INFO = False
 
 # thread local storage for current request PATH_INFO
 PATH_INFO_THREAD_LOCAL = threading.local()
@@ -233,48 +235,8 @@ def count_stats(handler):
         if handler.response and handler.response.content_length:
             HTTP_BYTES_OUT.inc(handler.response.content_length)
     except Exception as e:  # pylint: disable-msg=broad-except
-        logging.error('Failed to count_stats(): %s.', str(e))
-
-
-def has_path_info():
-    """Checks if PATH_INFO is defined for the thread local."""
-    return hasattr(PATH_INFO_THREAD_LOCAL, 'path')
-
-
-def set_path_info(path):
-    """Stores PATH_INFO in thread local."""
-    if not path:
-        raise Exception('Use \'unset()\' instead.')
-    if has_path_info():
-        raise Exception('Expected no path set.')
-
-    PATH_INFO_THREAD_LOCAL.path = path
-    PATH_INFO_THREAD_LOCAL.old_namespace = namespace_manager.get_namespace()
-
-    namespace_manager.set_namespace(
-        ApplicationContext.get_namespace_name_for_request())
-
-
-def get_path_info():
-    """Gets PATH_INFO from thread local."""
-    return PATH_INFO_THREAD_LOCAL.path
-
-
-def unset_path_info():
-    """Removed PATH_INFO from thread local."""
-    if not has_path_info():
-        raise Exception('Expected valid path already set.')
-
-    namespace_manager.set_namespace(
-        PATH_INFO_THREAD_LOCAL.old_namespace)
-
-    del PATH_INFO_THREAD_LOCAL.old_namespace
-    del PATH_INFO_THREAD_LOCAL.path
-
-
-def debug(message):
-    if DEBUG_INFO:
-        logging.info(message)
+        logging.error(
+            'Failed to count_stats(): %s\n%s', e, traceback.format_exc())
 
 
 def _validate_appcontext_list(contexts, strict=False):
@@ -302,139 +264,6 @@ def _validate_appcontext_list(contexts, strict=False):
         if not is_root_mapped:
             raise Exception(
                 'Please add an entry with \'/\' as course URL prefix.')
-
-
-def get_all_courses(rules_text=None):
-    """Reads all course rewrite rule definitions from environment variable."""
-    # Normalize text definition.
-    if not rules_text:
-        rules_text = GCB_COURSES_CONFIG.value
-    rules_text = rules_text.replace(',', '\n')
-
-    # Use cached value if exists.
-    cached = ApplicationContext.ALL_COURSE_CONTEXTS_CACHE.get(rules_text)
-    if cached:
-        return cached
-
-    # Compute the list of contexts.
-    rules = rules_text.split('\n')
-    slugs = {}
-    namespaces = {}
-    all_contexts = []
-    for rule in rules:
-        rule = rule.strip()
-        if not rule or rule.startswith('#'):
-            continue
-        parts = rule.split(':')
-
-        # validate length
-        if len(parts) < 3:
-            raise Exception('Expected rule definition of the form '
-                            ' \'type:slug:folder[:ns]\', got %s: ' % rule)
-
-        # validate type
-        if parts[0] != SITE_TYPE_COURSE:
-            raise Exception('Expected \'%s\', found: \'%s\'.'
-                            % (SITE_TYPE_COURSE, parts[0]))
-        site_type = parts[0]
-
-        # validate slug
-        slug = parts[1]
-        slug_parts = urlparse.urlparse(slug)
-        if slug != slug_parts[2]:
-            raise Exception(
-                'Bad rule: \'%s\'. '
-                'Course URL prefix \'%s\' must be a simple URL fragment.' % (
-                    rule, slug))
-        if slug in slugs:
-            raise Exception(
-                'Bad rule: \'%s\'. '
-                'Course URL prefix \'%s\' is already defined.' % (rule, slug))
-        slugs[slug] = True
-
-        # validate folder name
-        if parts[2]:
-            folder = parts[2]
-            # pylint: disable-msg=g-long-lambda
-            create_fs = lambda unused_ns: LocalReadOnlyFileSystem(
-                logical_home_folder=folder)
-        else:
-            folder = '/'
-            # pylint: disable-msg=g-long-lambda
-            create_fs = lambda ns: DatastoreBackedFileSystem(
-                ns=ns,
-                logical_home_folder=appengine_config.BUNDLE_ROOT,
-                inherits_from=LocalReadOnlyFileSystem(logical_home_folder='/'),
-                inheritable_folders=GCB_INHERITABLE_FOLDER_NAMES)
-
-        # validate or derive namespace
-        namespace = appengine_config.DEFAULT_NAMESPACE_NAME
-        if len(parts) == 4:
-            namespace = parts[3]
-        else:
-            if folder and folder != '/':
-                namespace = '%s%s' % (GCB_BASE_COURSE_NAMESPACE,
-                                      folder.replace('/', '-'))
-        try:
-            namespace_manager.validate_namespace(namespace)
-        except Exception as e:
-            raise Exception(
-                'Error validating namespace "%s" in rule "%s"; %s.' % (
-                    namespace, rule, e))
-
-        if namespace in namespaces:
-            raise Exception(
-                'Bad rule \'%s\'. '
-                'Namespace \'%s\' is already defined.' % (rule, namespace))
-        namespaces[namespace] = True
-
-        all_contexts.append(ApplicationContext(
-            site_type, slug, folder, namespace,
-            AbstractFileSystem(create_fs(namespace)),
-            raw=rule))
-
-    _validate_appcontext_list(all_contexts)
-
-    # Cache result to avoid re-parsing over and over.
-    ApplicationContext.ALL_COURSE_CONTEXTS_CACHE = {rules_text: all_contexts}
-
-    return all_contexts
-
-
-def get_course_for_current_request():
-    """Chooses app_context that matches current request context path."""
-
-    # get path if defined
-    if not has_path_info():
-        return None
-    path = get_path_info()
-
-    # Get all rules.
-    app_contexts = get_all_courses()
-
-    # Match a path to an app_context.
-    # TODO(psimakov): linear search is unacceptable
-    for app_context in app_contexts:
-        if (path == app_context.get_slug() or
-            path.startswith('%s/' % app_context.get_slug()) or
-            app_context.get_slug() == '/'):
-            return app_context
-
-    debug('No mapping for: %s' % path)
-    return None
-
-
-def get_app_context_for_namespace(namespace):
-    """Chooses the app_context that matches the current namespace."""
-
-    app_contexts = get_all_courses()
-
-    # TODO(psimakov): linear search is unacceptable
-    for app_context in app_contexts:
-        if app_context.get_namespace_name() == namespace:
-            return app_context
-    debug('No app_context in namespace: %s' % namespace)
-    return None
 
 
 def path_join(base, path):
@@ -491,12 +320,17 @@ def set_default_response_headers(handler):
     # handlers do not have a response attribute.
     if handler.response:
         # Only set the headers for dynamic responses. This happens precisely
-        # when the handler is an instance of utils.ApplicationHandler.
-        if isinstance(handler, utils.ApplicationHandler):
-            handler.response.cache_control.no_cache = True
-            handler.response.cache_control.must_revalidate = True
-            handler.response.expires = DEFAULT_EXPIRY_DATE
-            handler.response.pragma = DEFAULT_PRAGMA
+        # when the handler is an instance of utils.ApplicationHandler and not
+        # AssetsHandler
+        if isinstance(handler, AssetHandler):
+            return
+        if not isinstance(handler, utils.ApplicationHandler):
+            return
+
+        handler.response.cache_control.no_cache = True
+        handler.response.cache_control.must_revalidate = True
+        handler.response.expires = DEFAULT_EXPIRY_DATE
+        handler.response.pragma = DEFAULT_PRAGMA
 
 
 def make_zip_handler(zipfilename):
@@ -631,7 +465,7 @@ def make_css_combo_zip_handler(zipfilename, static_file_handler):
     return CustomCssComboZipHandler
 
 
-class AssetHandler(webapp2.RequestHandler):
+class AssetHandler(utils.BaseHandler):
     """Handles serving of static resources located on the file system."""
 
     def __init__(self, app_context, filename):
@@ -651,31 +485,138 @@ class AssetHandler(webapp2.RequestHandler):
 
     def get(self):
         """Handles GET requests."""
-        debug('File: %s' % self.filename)
+        models.MemcacheManager.begin_readonly()
+        try:
+            stream = self.app_context.fs.open(self.filename)
+            if not stream:
+                self.error(404)
+                return
+            if not self._can_view(self.app_context.fs, stream):
+                self.error(403)
+                return
+            set_static_resource_cache_control(self)
+            self.response.headers['Content-Type'] = self.get_mime_type(
+                self.filename)
+            self.response.write(stream.read())
+        finally:
+            models.MemcacheManager.end_readonly()
 
-        if not self.app_context.fs.isfile(self.filename):
-            self.error(404)
-            return
 
-        stream = self.app_context.fs.open(self.filename)
-        if not self._can_view(self.app_context.fs, stream):
-            self.error(403)
-            return
+class CourseIndex(object):
+    """A list of all application contexts."""
 
-        set_static_resource_cache_control(self)
-        self.response.headers['Content-Type'] = self.get_mime_type(
-            self.filename)
-        self.response.write(stream.read())
+    CAN_USE_INDEXED_GETTER = True
+
+    @appengine_config.timeandlog('CourseIndex.init', duration_only=True)
+    def __init__(self, all_contexts):
+        self._all_contexts = all_contexts
+        self._namespace2app_context = {}
+        self._slug_parts2app_context = {}
+        self._reindex()
+
+    @classmethod
+    def _slug_to_parts(cls, path):
+        """Split slug into parts; slug parts are '/' separated."""
+        if path in ['/', '']:
+            return None
+        _parts = path.split('/')
+        assert _parts[0] == ''  # pylint: disable-msg=g-explicit-bool-comparison
+        _parts.pop(0)
+        return _parts
+
+    @classmethod
+    def _validate_and_split_path_to_parts(cls, path):
+        """Split path into parts; path parts are '/' separated."""
+        if path in ['/', '']:
+            return True, None
+        _parts = path.split('/')
+        if _parts[0] != '':  # pylint: disable-msg=g-explicit-bool-comparison
+            return False, None
+        _parts.pop(0)
+        return True, _parts
+
+    def _update_slug_parts_index(self, app_context):
+        """An index is a tree keyed by slug part."""
+        _parts = self._slug_to_parts(app_context.get_slug())
+        _parent = self._slug_parts2app_context
+        while True:
+            if not _parts:
+                _parent[None] = app_context
+                break
+            _part = _parts.pop(0)
+            _node = _parent.get(_part)
+            if not _node:
+                _node = {_part: {}}
+                _parent.update(_node)
+            _parent = _parent[_part]
+
+    def _get_course_for_path_via_index(self, path):
+        _result = None
+        _valid, _parts = self._validate_and_split_path_to_parts(path)
+        if not _valid:
+            return None
+        _parent = self._slug_parts2app_context
+        while True:
+            if not _parts:
+                if _parent:
+                    _result = _parent.get(None)
+                break
+            _part = _parts.pop(0)
+            _node = _parent.get(_part)
+            if not _node:
+                if _parent:
+                    _result = _parent.get(None)
+                break
+            _parent = _node
+        if not _result:
+            debug('No mapping for: %s' % path)
+        return _result
+
+    def _reindex(self):
+        for app_context in self._all_contexts:
+            self._update_slug_parts_index(app_context)
+            self._namespace2app_context[app_context.get_namespace_name()] = (
+                app_context)
+
+    def get_all_courses(self):
+        return self._all_contexts
+
+    def _get_course_for_path_linear(self, path):
+        for app_context in self._all_contexts:
+            if (path == app_context.get_slug() or
+                path.startswith('%s/' % app_context.get_slug()) or
+                app_context.get_slug() == '/'):
+                return app_context
+        debug('No mapping for: %s' % path)
+        return None
+
+    def get_app_context_for_namespace(self, namespace):
+        return self._namespace2app_context.get(namespace)
+
+    def get_course_for_path(self, path):
+        if CourseIndex.CAN_USE_INDEXED_GETTER:
+            return self._get_course_for_path_via_index(path)
+        else:
+            return self._get_course_for_path_linear(path)
+
+
+def debug(message):
+    if ApplicationContext.DEBUG_INFO:
+        logging.info(message)
 
 
 class ApplicationContext(object):
     """An application context for a request/response."""
 
+    # if True we auto-deploy filesystem-based default course
+    AUTO_DEPLOY_DEFAULT_COURSE = False
+
+    # enabled debug info output
+    DEBUG_INFO = False
+
     # Here we store a map of a text definition of the courses to be parsed, and
-    # a fully validated array of ApplicationContext objects that they define.
-    # This is cached in process and automatically recomputed when text
-    # definition changes.
-    ALL_COURSE_CONTEXTS_CACHE = {}
+    # a corresponding CourseIndex.
+    _COURSE_INDEX_CACHE = {}
 
     @classmethod
     def get_namespace_name_for_request(cls):
@@ -717,8 +658,43 @@ class ApplicationContext(object):
         self.namespace = namespace
         self._fs = fs
         self._raw = raw
+        self._cached_environ = None
 
+        self._locale_threadlocal = threading.local()
+
+        self.clear_per_request_cache()
         self.after_create(self)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __eq__(self, other):
+        """Two ApplicationContexts are the same if: same slug and namespace."""
+        if not isinstance(other, ApplicationContext):
+            return False
+
+        app_context_1 = self
+        app_context_2 = other
+        if app_context_1 is app_context_2:
+            return True
+        if app_context_1 and app_context_2:
+            same_ns = (
+                app_context_1.get_namespace_name() ==
+                app_context_2.get_namespace_name())
+            same_slug = app_context_1.get_slug() == app_context_2.get_slug()
+            return same_ns and same_slug
+        return False
+
+    @classmethod
+    def clear_per_process_cache(cls):
+        """Clears all objects from global in-process cache."""
+        cls._COURSE_INDEX_CACHE = {}
+        caching.ProcessScopedSingleton.clear_all()
+
+    def clear_per_request_cache(self):
+        """Clears all objects cached per request."""
+        self._cached_environ = None
+        caching.RequestScopedSingleton.clear_all()
 
     @ property
     def raw(self):
@@ -733,8 +709,36 @@ class ApplicationContext(object):
         course = self.get_environ().get('course')
         return course and course.get('now_available')
 
+    @property
+    def whitelist(self):
+        course = self.get_environ().get('course')
+        return '' if not course else course.get('whitelist', '')
+
+    def set_current_locale(self, locale):
+        old_locale = self.get_current_locale()
+        if locale != old_locale:
+            self._locale_threadlocal.locale = locale
+            self.clear_per_request_cache()
+
+    def get_current_locale(self):
+        # we cache instances of this object between requests; it's possible
+        # that new thread reuses the object and has no threadlocal initialized
+        if not hasattr(self._locale_threadlocal, 'locale'):
+            self._locale_threadlocal.locale = None
+        return self._locale_threadlocal.locale
+
+    @property
+    def default_locale(self):
+        course_settings = self.get_environ().get('course')
+        if not course_settings:
+            return None
+        return course_settings.get('locale')
+
     def get_title(self):
-        return self.get_environ()['course']['title']
+        try:
+            return self.get_environ()['course']['title']
+        except KeyError:
+            return 'UNTITLED'
 
     def get_namespace_name(self):
         return self.namespace
@@ -781,14 +785,228 @@ class ApplicationContext(object):
         jinja_environment.install_gettext_translations(i18n)
         return jinja_environment
 
+    def is_editable_fs(self):
+        return self._fs.impl.__class__ == DatastoreBackedFileSystem
 
-def _courses_config_validator(rules_text, errors):
+    def can_pick_all_locales(self):
+        return courses_module.can_pick_all_locales(self)
+
+    def get_allowed_locales(self):
+        environ = self.get_environ()
+        default_locale = environ['course'].get('locale')
+        extra_locales = environ.get('extra_locales', [])
+        return [default_locale] + [
+            loc['locale'] for loc in extra_locales
+            if loc['locale'] != default_locale and (
+                loc['availability'] == 'available'
+                or self.can_pick_all_locales())]
+
+    def get_all_locales(self):
+        """Returns _all_ locales, whether enabled or not.  Dashboard only."""
+
+        environ = self.get_environ()
+        default_locale = self.default_locale
+        extra_locales = environ.get('extra_locales', [])
+        return [default_locale] + [loc['locale'] for loc in extra_locales]
+
+
+def has_path_info():
+    """Checks if PATH_INFO is defined for the thread local."""
+    return hasattr(PATH_INFO_THREAD_LOCAL, 'path')
+
+
+def set_path_info(path):
+    """Stores PATH_INFO in thread local."""
+    if not path:
+        raise Exception('Use \'unset()\' instead.')
+    if has_path_info():
+        raise Exception('Expected no path set.')
+    try:
+        PATH_INFO_THREAD_LOCAL.path = path
+        PATH_INFO_THREAD_LOCAL.old_namespace = namespace_manager.get_namespace()
+        namespace_manager.set_namespace(
+            ApplicationContext.get_namespace_name_for_request())
+    finally:
+        try:
+            caching.RequestScopedSingleton.clear_all()
+        finally:
+            models.MemcacheManager.clear_readonly_cache()
+
+
+def get_path_info():
+    """Gets PATH_INFO from thread local."""
+    return PATH_INFO_THREAD_LOCAL.path
+
+
+def unset_path_info():
+    """Removed PATH_INFO from thread local."""
+    if not has_path_info():
+        raise Exception('Expected valid path already set.')
+    try:
+        models.MemcacheManager.clear_readonly_cache()
+    finally:
+        try:
+            caching.RequestScopedSingleton.clear_all()
+        finally:
+            try:
+                app_context = get_course_for_current_request()
+                if app_context:
+                    app_context.clear_per_request_cache()
+            finally:
+                namespace_manager.set_namespace(
+                    PATH_INFO_THREAD_LOCAL.old_namespace)
+                del PATH_INFO_THREAD_LOCAL.old_namespace
+                del PATH_INFO_THREAD_LOCAL.path
+
+
+def _build_course_list_from(rules_text, create_vfs=True):
+    """Compute the list of contexts from the text rules."""
+    if not rules_text:
+        return []
+
+    rules_text = rules_text.replace(',', '\n')
+    rules = rules_text.split('\n')
+    slugs = {}
+    namespaces = {}
+    all_contexts = []
+    for rule in rules:
+        rule = rule.strip()
+        if not rule or rule.startswith('#'):
+            continue
+        parts = rule.split(':')
+
+        # validate length
+        if len(parts) < 3:
+            raise Exception('Expected rule definition of the form '
+                            ' \'type:slug:folder[:ns]\', got %s: ' % rule)
+
+        # validate type
+        if parts[0] != SITE_TYPE_COURSE:
+            raise Exception('Expected \'%s\', found: \'%s\'.'
+                            % (SITE_TYPE_COURSE, parts[0]))
+        site_type = parts[0]
+
+        # validate slug
+        slug = parts[1]
+        slug_parts = urlparse.urlparse(slug)
+        if slug != slug_parts[2]:
+            raise Exception(
+                'Bad rule: \'%s\'. '
+                'Course URL prefix \'%s\' must be a simple URL fragment.' % (
+                    rule, slug))
+        if slug in slugs:
+            raise Exception(
+                'Bad rule: \'%s\'. '
+                'Course URL prefix \'%s\' is already defined.' % (rule, slug))
+        slugs[slug] = True
+
+        # validate folder name
+        if parts[2]:
+            folder = parts[2]
+            # pylint: disable-msg=g-long-lambda
+            create_fs = lambda unused_ns: LocalReadOnlyFileSystem(
+                logical_home_folder=folder)
+        else:
+            folder = '/'
+            # pylint: disable-msg=g-long-lambda
+            create_fs = lambda ns: DatastoreBackedFileSystem(
+                ns=ns,
+                logical_home_folder=appengine_config.BUNDLE_ROOT,
+                inherits_from=LocalReadOnlyFileSystem(logical_home_folder='/'),
+                inheritable_folders=GCB_INHERITABLE_FOLDER_NAMES)
+
+        # validate or derive namespace
+        namespace = appengine_config.DEFAULT_NAMESPACE_NAME
+        if len(parts) == 4:
+            namespace = parts[3]
+        else:
+            if folder and folder != '/':
+                namespace = '%s%s' % (GCB_BASE_COURSE_NAMESPACE,
+                                      folder.replace('/', '-'))
+        try:
+            namespace_manager.validate_namespace(namespace)
+        except Exception as e:
+            raise Exception(
+                'Error validating namespace "%s" in rule "%s"; %s.' % (
+                    namespace, rule, e))
+
+        if namespace in namespaces:
+            raise Exception(
+                'Bad rule \'%s\'. '
+                'Namespace \'%s\' is already defined.' % (rule, namespace))
+        namespaces[namespace] = True
+
+        vfs = None
+        if create_vfs:
+            vfs = AbstractFileSystem(create_fs(namespace))
+
+        all_contexts.append(ApplicationContext(
+            site_type, slug, folder, namespace, vfs, raw=rule))
+
+    _validate_appcontext_list(all_contexts)
+    return all_contexts
+
+
+def get_course_index(rules_text=None):
+    """Build course index given a text of course definition rules."""
+
+    if not rules_text:
+        rules_text = GCB_COURSES_CONFIG.value
+        if not ApplicationContext.AUTO_DEPLOY_DEFAULT_COURSE and (
+            rules_text == GCB_COURSES_CONFIG.default_value) and (
+            not Registry.get_overrides().get(GCB_COURSES_CONFIG.name)):
+            return CourseIndex([])
+
+    rules_text = rules_text.replace(',', '\n')
+
+    # pylint: disable-msg=protected-access
+    course_index = ApplicationContext._COURSE_INDEX_CACHE.get(rules_text)
+    if course_index:
+        return course_index
+
+    course_index = CourseIndex(_build_course_list_from(rules_text))
+
+    # pylint: disable-msg=protected-access
+    ApplicationContext._COURSE_INDEX_CACHE = {rules_text: course_index}
+    return course_index
+
+
+def get_app_context_for_namespace(namespace):
+    """Chooses the app_context that matches a namespace."""
+    app_context = get_course_index().get_app_context_for_namespace(namespace)
+    if not app_context:
+        debug('No app_context in namespace: %s' % namespace)
+    return app_context
+
+
+def get_course_for_path(path):
+    """Chooses app_context that matches a context path."""
+    return get_course_index().get_course_for_path(path)
+
+
+def get_course_for_current_request():
+    """Chooses app_context that matches current request context path."""
+    if not has_path_info():
+        return None
+    return get_course_for_path(get_path_info())
+
+
+def get_all_courses(rules_text=None):
+    course_index = get_course_index(rules_text)
+    return course_index.get_all_courses()
+
+
+def _courses_config_validator(rules_text, errors, expect_failures=True):
     """Validates a textual definition of courses entries."""
     try:
         _validate_appcontext_list(
-            get_all_courses(rules_text=rules_text))
+            _build_course_list_from(rules_text, create_vfs=False))
+        return True
     except Exception as e:  # pylint: disable-msg=broad-except
+        if not expect_failures:
+            logging.error('%s\n%s', e, traceback.format_exc())
         errors.append(str(e))
+        return False
 
 
 def validate_new_course_entry_attributes(name, title, admin_email, errors):
@@ -831,6 +1049,9 @@ def _add_new_course_entry_to_persistent_configuration(raw):
         entity.is_draft = False
     if not entity.value:
         entity.value = GCB_COURSES_CONFIG.value
+        if entity.value == GCB_COURSES_CONFIG.default_value:
+            entity.value = ''
+
     lines = entity.value.splitlines()
 
     # Add new entry to the rest of the entries. Since entries are matched
@@ -843,9 +1064,7 @@ def _add_new_course_entry_to_persistent_configuration(raw):
         new_lines_text = '\n'.join(new_lines)
 
         # Validate the rule list definition.
-        errors = []
-        _courses_config_validator(new_lines_text, errors)
-        if not errors:
+        if _courses_config_validator(new_lines_text, [], expect_failures=True):
             final_lines_text = new_lines_text
             break
 
@@ -913,7 +1132,7 @@ Note: this value cannot be changed after the course is created."""))
             'For example, consider the following two course entries:')
     ).append(safe_dom.Element('br')).append(
         safe_dom.Element('blockquote').add_text(
-            'course:/cs101::/ns_cs101'
+            'course:/cs101::ns_cs101'
         ).add_child(
             safe_dom.Element('br')
         ).add_text('course:/:/')
@@ -1010,7 +1229,8 @@ class ApplicationRequestHandler(webapp2.RequestHandler):
 
     def can_handle_course_requests(self, context):
         """Reject all, but authors requests, to an unpublished course."""
-        return context.now_available or Roles.is_course_admin(context)
+        return ((context.now_available and Roles.is_user_whitelisted(context))
+                or Roles.is_course_admin(context))
 
     def _get_handler_factory_for_path(self, path):
         """Picks a handler to handle the path."""
@@ -1051,8 +1271,6 @@ class ApplicationRequestHandler(webapp2.RequestHandler):
             handler.request = self.request
             handler.response = self.response
             handler.app_context = context
-
-            debug('Course asset: %s' % abs_file)
             STATIC_HANDLER_COUNT.inc()
             return handler
 
@@ -1077,57 +1295,55 @@ class ApplicationRequestHandler(webapp2.RequestHandler):
         NO_HANDLER_COUNT.inc()
         return None
 
-    def get(self, path):
+    def before_method(self, handler, verb, path):
+        if hasattr(handler, 'before_method'):
+            handler.before_method(verb, path)
+
+    def after_method(self, handler, verb, path):
+        if hasattr(handler, 'after_method'):
+            handler.after_method(verb, path)
+
+    @appengine_config.timeandlog('invoke_http_verb')
+    def invoke_http_verb(self, verb, path, no_handler):
+        """Sets up the environemnt and invokes HTTP verb on the self.handler."""
         try:
             set_path_info(path)
             handler = self.get_handler()
             if not handler:
-                self.error(404)
+                no_handler(path)
             else:
                 set_default_response_headers(handler)
-                handler.get()
+                self.before_method(handler, verb, path)
+                try:
+                    getattr(handler, verb.lower())()
+                finally:
+                    self.after_method(handler, verb, path)
         finally:
             count_stats(self)
             unset_path_info()
+
+    def _error_404(self, path):
+        """Fail with 404."""
+        self.error(404)
+
+    def _login_or_404(self, path):
+        """If no user, offer login page, otherwise fail 404."""
+        if not users.get_current_user():
+            self.redirect(users.create_login_url(path))
+        else:
+            self.error(404)
+
+    def get(self, path):
+        self.invoke_http_verb('GET', path, self._login_or_404)
 
     def post(self, path):
-        try:
-            set_path_info(path)
-            handler = self.get_handler()
-            if not handler:
-                self.error(404)
-            else:
-                set_default_response_headers(handler)
-                handler.post()
-        finally:
-            count_stats(self)
-            unset_path_info()
+        self.invoke_http_verb('POST', path, self._error_404)
 
     def put(self, path):
-        try:
-            set_path_info(path)
-            handler = self.get_handler()
-            if not handler:
-                self.error(404)
-            else:
-                set_default_response_headers(handler)
-                handler.put()
-        finally:
-            count_stats(self)
-            unset_path_info()
+        self.invoke_http_verb('PUT', path, self._error_404)
 
     def delete(self, path):
-        try:
-            set_path_info(path)
-            handler = self.get_handler()
-            if not handler:
-                self.error(404)
-            else:
-                set_default_response_headers(handler)
-                handler.delete()
-        finally:
-            count_stats(self)
-            unset_path_info()
+        self.invoke_http_verb('DELETE', path, self._error_404)
 
 
 def assert_mapped(src, dest):
@@ -1295,6 +1511,86 @@ def test_url_to_rule_mapping():
     reset_courses()
 
 
+def build_index_for_rules_text(rules_text):
+    Registry.test_overrides[GCB_COURSES_CONFIG.name] = rules_text
+    courses = get_all_courses()
+    index = get_course_index()
+    return courses, index
+
+
+def test_get_course_for_path_impl():
+    # pylint: disable-msg=protected-access
+    courses, index = build_index_for_rules_text('course:/::ns_x')
+    expected = {None: courses[0]}
+    assert expected == index._slug_parts2app_context
+    for path in ['', '/course', '/a/b']:
+        assert courses[0] == get_course_for_path(path)
+
+    courses, index = build_index_for_rules_text('course:/a::ns_x')
+    expected = {'a': {None: courses[0]}}
+    assert expected == index._slug_parts2app_context
+    for path in ['/a', '/a/course', '/a/b/c']:
+        assert courses[0] == get_course_for_path(path)
+    for path in ['', '/', '/course']:
+        assert not get_course_for_path(path)
+
+    courses, index = build_index_for_rules_text(
+        'course:/a::ns_x\ncourse:/b::ns_y')
+    expected = {'a': {None: courses[0]}, 'b': {None: courses[1]}}
+    assert expected == index._slug_parts2app_context
+    for path in ['/a', '/a/course', '/a/b/c']:
+        assert courses[0] == get_course_for_path(path)
+    for path in ['/b', '/b/course', '/b/a/c']:
+        assert courses[1] == get_course_for_path(path)
+    for path in ['', '/', '/course']:
+        assert not get_course_for_path(path)
+
+    courses, index = build_index_for_rules_text('course:/a/b::ns_x')
+    expected = {'a': {'b': {None: courses[0]}}}
+    assert expected == index._slug_parts2app_context
+    for path in ['/a/b', '/a/b/course', '/a/b/c']:
+        assert courses[0] == get_course_for_path(path)
+    for path in ['', '/a', '/a/course', '/a/c']:
+        assert not get_course_for_path(path)
+
+    courses, index = build_index_for_rules_text(
+        'course:/a/c::ns_x\ncourse:/b/d::ns_y')
+    expected = {'a': {'c': {None: courses[0]}}, 'b': {'d': {None: courses[1]}}}
+    assert expected == index._slug_parts2app_context
+    for path in ['/a/c', '/a/c/course', '/a/c/d']:
+        assert courses[0] == get_course_for_path(path)
+    for path in ['/b/d', '/b/d/course', '/b/d/c']:
+        assert courses[1] == get_course_for_path(path)
+    for path in ['', '/', '/course', '/a', '/b']:
+        assert not get_course_for_path(path)
+
+    try:
+        courses, index = build_index_for_rules_text(
+            'course:/a::ns_x\ncourse:/a/b::ns_y')
+    except Exception as e:  # pylint: disable-msg=broad-except
+        assert 'reorder course entries' in e.message
+
+    courses, index = build_index_for_rules_text(
+        'course:/a/b::ns_x\ncourse:/a::ns_y')
+    expected = {'a': {'b': {None: courses[0]}, None: courses[1]}}
+    assert expected == index._slug_parts2app_context
+    for path in ['/a/b', '/a/b/c', '/a/b/c/course', '/a/b/c/d']:
+        assert courses[0] == get_course_for_path(path)
+    for path in ['/a', '/a/c', '/a/course', '/a/c/d']:
+        assert courses[1] == get_course_for_path(path)
+    for path in ['/', '/course', '/b']:
+        assert not get_course_for_path(path)
+    # pylint: enable-msg=protected-access
+
+
+def test_get_course_for_path():
+    """Tests linear and indexed search to make sure both work the same way."""
+    CourseIndex.CAN_USE_INDEXED_GETTER = False
+    test_get_course_for_path_impl()
+    CourseIndex.CAN_USE_INDEXED_GETTER = True
+    test_get_course_for_path_impl()
+
+
 def test_url_to_handler_mapping_for_course_type():
     """Tests mapping of a URL to a handler for course type."""
 
@@ -1436,6 +1732,10 @@ def test_path_construction():
 def run_all_unit_tests():
     assert not ApplicationRequestHandler.CAN_IMPERSONATE
 
+    ApplicationContext.DEBUG_INFO = True
+    ApplicationContext.AUTO_DEPLOY_DEFAULT_COURSE = True
+
+    test_get_course_for_path()
     test_namespace_collisions_are_detected()
     test_unprefix()
     test_rule_definitions()
@@ -1445,5 +1745,4 @@ def run_all_unit_tests():
     test_rule_validations()
 
 if __name__ == '__main__':
-    DEBUG_INFO = True
     run_all_unit_tests()

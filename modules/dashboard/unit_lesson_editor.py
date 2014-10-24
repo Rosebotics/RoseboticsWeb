@@ -18,22 +18,23 @@ __author__ = 'John Orr (jorr@google.com)'
 
 import cgi
 import logging
-import random
 import urllib
-
-import filer
+from label_editor import LabelGroupsHelper
 import messages
 import yaml
 
-from common import safe_dom
 from common import tags
+from common import utils as common_utils
+from common.schema_fields import FieldArray
 from common.schema_fields import FieldRegistry
 from common.schema_fields import SchemaField
 from controllers import sites
+from controllers import utils
 from controllers.utils import ApplicationHandler
 from controllers.utils import BaseRESTHandler
 from controllers.utils import XsrfTokenManager
 from models import courses
+from models import messages as m_messages
 from models import models as m_models
 from models import review
 from models import roles
@@ -59,10 +60,35 @@ STATUS_ANNOTATION = oeditor.create_bool_select_annotation(
     PUBLISHED_TEXT, class_name='split-from-main-group')
 
 
+def generate_common_schema(title):
+    common = FieldRegistry(title)
+    common.add_property(SchemaField(
+        'key', 'ID', 'string', editable=False,
+        extra_schema_dict_values={'className': 'inputEx-Field keyHolder'}))
+    common.add_property(
+        SchemaField('type', 'Type', 'string', editable=False))
+    common.add_property(
+        SchemaField('title', 'Title', 'string', optional=True))
+    common.add_property(
+        SchemaField('description', 'Description', 'string', optional=True))
+    common.add_property(
+        FieldArray('label_groups', 'Labels',
+                   item_type=LabelGroupsHelper.make_labels_group_schema_field(),
+                   extra_schema_dict_values={
+                       'className': 'inputEx-Field label-group-list'}))
+    common.add_property(SchemaField('is_draft', 'Status', 'boolean',
+                                    select_data=[(True, DRAFT_TEXT),
+                                                 (False, PUBLISHED_TEXT)],
+                                    extra_schema_dict_values={
+                                        'className': 'split-from-main-group'}))
+    return common
+
+
 # Allowed matchers. Keys of this dict represent internal keys for the matcher
 # type, and the value represents the corresponding string that will appear in
 # the dashboard UI.
-ALLOWED_MATCHERS_NAMES = {review.PEER_MATCHER: messages.PEER_MATCHER_NAME}
+ALLOWED_MATCHERS_NAMES = {
+    review.PEER_MATCHER: m_messages.PEER_MATCHER_NAME}
 
 
 # Allowed graders. Keys of this dict represent internal keys for the grader
@@ -97,14 +123,17 @@ class CourseOutlineRights(object):
 class UnitLessonEditor(ApplicationHandler):
     """An editor for the unit and lesson titles."""
 
+    HIDE_ACTIVITY_ANNOTATIONS = [
+        (['properties', 'activity_title', '_inputex'], {'_type': 'hidden'}),
+        (['properties', 'activity_listed', '_inputex'], {'_type': 'hidden'}),
+        (['properties', 'activity', '_inputex'], {'_type': 'hidden'}),
+    ]
+
     def get_import_course(self):
         """Shows setup form for course import."""
 
         template_values = {}
         template_values['page_title'] = self.format_title('Import Course')
-        template_values['page_title_linked'] = self.format_title(
-            'Import Course')
-
         annotations = ImportCourseRESTHandler.SCHEMA_ANNOTATIONS_DICT()
         if not annotations:
             template_values['main_content'] = 'No courses to import from.'
@@ -193,13 +222,68 @@ class UnitLessonEditor(ApplicationHandler):
             'edit_assessment', key=assessment.unit_id,
             extra_args={'is_newly_created': 1}))
 
+    def post_set_draft_status(self):
+        """Sets the draft status of a course component.
+
+        Only works with CourseModel13 courses, but the REST handler
+        is only called with this type of courses.
+        """
+        key = self.request.get('key')
+        if not CourseOutlineRights.can_edit(self):
+            transforms.send_json_response(
+                self, 401, 'Access denied.', {'key': key})
+            return
+
+        course = courses.Course(self)
+        component_type = self.request.get('type')
+        if component_type == 'unit':
+            course_component = course.find_unit_by_id(key)
+        elif component_type == 'lesson':
+            course_component = course.find_lesson_by_id(None, key)
+        else:
+            transforms.send_json_response(
+                self, 401, 'Invalid key.', {'key': key})
+            return
+
+        set_draft = self.request.get('set_draft')
+        if set_draft == '1':
+            set_draft = True
+        elif set_draft == '0':
+            set_draft = False
+        else:
+            transforms.send_json_response(
+                self, 401, 'Invalid set_draft value, expected 0 or 1.',
+                {'set_draft': set_draft}
+            )
+            return
+
+        course_component.now_available = not set_draft
+        course.save()
+
+        transforms.send_json_response(
+            self,
+            200,
+            'Draft status set to %s.' % (
+                DRAFT_TEXT if set_draft else PUBLISHED_TEXT
+            ), {
+                'is_draft': set_draft
+            }
+        )
+        return
+
     def _render_edit_form_for(
-        self, rest_handler_cls, title, annotations_dict=None,
+        self, rest_handler_cls, title, schema=None, annotations_dict=None,
         delete_xsrf_token='delete-unit', page_description=None,
         extra_js_files=None):
         """Renders an editor form for a given REST handler class."""
-        if not annotations_dict:
-            annotations_dict = rest_handler_cls.SCHEMA_ANNOTATIONS_DICT
+        annotations_dict = annotations_dict or []
+        if schema:
+            schema_json = schema.get_json_schema()
+            annotations_dict = schema.get_schema_dict() + annotations_dict
+        else:
+            schema_json = rest_handler_cls.SCHEMA_JSON
+            if not annotations_dict:
+                annotations_dict = rest_handler_cls.SCHEMA_ANNOTATIONS_DICT
 
         key = self.request.get('key')
 
@@ -219,12 +303,12 @@ class UnitLessonEditor(ApplicationHandler):
 
         form_html = oeditor.ObjectEditor.get_html_for(
             self,
-            rest_handler_cls.SCHEMA_JSON,
+            schema_json,
             annotations_dict,
             key, rest_url, exit_url,
             extra_args=extra_args,
             delete_url=delete_url, delete_method='delete',
-            read_only=not filer.is_editable_fs(self.app_context),
+            read_only=not self.app_context.is_editable_fs(),
             required_modules=rest_handler_cls.REQUIRED_MODULES,
             extra_js_files=extra_js_files)
 
@@ -239,7 +323,9 @@ class UnitLessonEditor(ApplicationHandler):
         """Shows unit editor."""
         self._render_edit_form_for(
             UnitRESTHandler, 'Unit',
-            page_description=messages.UNIT_EDITOR_DESCRIPTION)
+            page_description=messages.UNIT_EDITOR_DESCRIPTION,
+            annotations_dict=UnitRESTHandler.get_annotations_dict(
+                courses.Course(self), int(self.request.get('key'))))
 
     def get_edit_link(self):
         """Shows link editor."""
@@ -256,25 +342,294 @@ class UnitLessonEditor(ApplicationHandler):
 
     def get_edit_lesson(self):
         """Shows the lesson/activity editor."""
+        key = self.request.get('key')
+        course = courses.Course(self)
+        lesson = course.find_lesson_by_id(None, key)
+        annotations_dict = (
+            None if lesson.has_activity
+            else UnitLessonEditor.HIDE_ACTIVITY_ANNOTATIONS)
+        schema = LessonRESTHandler.get_schema(course.get_units())
+        if courses.has_only_new_style_activities(self.get_course()):
+            schema.get_property('objectives').extra_schema_dict_values[
+              'excludedCustomTags'] = set(['gcb-activity'])
         self._render_edit_form_for(
             LessonRESTHandler, 'Lessons and Activities',
-            annotations_dict=LessonRESTHandler.get_schema_annotations_dict(
-                courses.Course(self).get_units()),
+            schema=schema,
+            annotations_dict=annotations_dict,
             delete_xsrf_token='delete-lesson',
-            extra_js_files=LessonRESTHandler.EXTRA_JS_FILES)
+            extra_js_files=None)
+
+
+class UnitTools(object):
+
+    def __init__(self, course):
+        self._course = course
+
+    def apply_updates(self, unit, updated_unit_dict, errors):
+        if unit.type == verify.UNIT_TYPE_ASSESSMENT:
+            self._apply_updates_to_assessment(unit, updated_unit_dict, errors)
+        elif unit.type == verify.UNIT_TYPE_LINK:
+            self._apply_updates_to_link(unit, updated_unit_dict, errors)
+        elif unit.type == verify.UNIT_TYPE_UNIT:
+            self._apply_updates_to_unit(unit, updated_unit_dict, errors)
+        else:
+            raise ValueError('Unknown unit type %s' % unit.type)
+
+    def _apply_updates_common(self, unit, updated_unit_dict, errors):
+        """Apply changes common to all unit types."""
+        unit.title = updated_unit_dict.get('title')
+        unit.description = updated_unit_dict.get('description')
+        unit.now_available = not updated_unit_dict.get('is_draft')
+
+        labels = LabelGroupsHelper.decode_labels_group(
+            updated_unit_dict['label_groups'])
+
+        if self._course.get_parent_unit(unit.unit_id):
+            track_label_ids = m_models.LabelDAO.get_set_of_ids_of_type(
+                m_models.LabelDTO.LABEL_TYPE_COURSE_TRACK)
+            if track_label_ids.intersection(labels):
+                errors.append('Cannot set track labels on entities which '
+                              'are used within other units.')
+
+        unit.labels = common_utils.list_to_text(labels)
+
+    def _apply_updates_to_assessment(self, unit, updated_unit_dict, errors):
+        """Store the updated assessment."""
+
+        entity_dict = {}
+        AssessmentRESTHandler.SCHEMA.convert_json_to_entity(
+            updated_unit_dict, entity_dict)
+
+        self._apply_updates_common(unit, entity_dict, errors)
+        try:
+            unit.weight = float(entity_dict.get('weight'))
+            if unit.weight < 0:
+                errors.append('The weight must be a non-negative integer.')
+        except ValueError:
+            errors.append('The weight must be an integer.')
+        content = entity_dict.get('content')
+        if content:
+            self._course.set_assessment_content(
+                unit, entity_dict.get('content'), errors=errors)
+
+        unit.html_content = entity_dict.get('html_content')
+        unit.html_check_answers = entity_dict.get('html_check_answers')
+
+        workflow_dict = entity_dict.get('workflow')
+        if len(ALLOWED_MATCHERS_NAMES) == 1:
+            workflow_dict[courses.MATCHER_KEY] = (
+                ALLOWED_MATCHERS_NAMES.keys()[0])
+        unit.workflow_yaml = yaml.safe_dump(workflow_dict)
+        unit.workflow.validate(errors=errors)
+
+        # Only save the review form if the assessment needs human grading.
+        if not errors:
+            if self._course.needs_human_grader(unit):
+                review_form = entity_dict.get('review_form')
+                if review_form:
+                    self._course.set_review_form(
+                        unit, review_form, errors=errors)
+                unit.html_review_form = entity_dict.get('html_review_form')
+            elif entity_dict.get('review_form'):
+                errors.append(
+                    'Review forms for auto-graded assessments should be empty.')
+
+    def _apply_updates_to_link(self, unit, updated_unit_dict, errors):
+        self._apply_updates_common(unit, updated_unit_dict, errors)
+        unit.href = updated_unit_dict.get('url')
+
+    def _is_assessment_unused(self, unit, assessment, errors):
+        parent_unit = self._course.get_parent_unit(assessment.unit_id)
+        if parent_unit and parent_unit.unit_id != unit.unit_id:
+            errors.append(
+                'Assessment "%s" is already asssociated to unit "%s"' % (
+                    assessment.title, parent_unit.title))
+            return False
+        return True
+
+    def _is_assessment_version_ok(self, assessment, errors):
+        # Here, we want to establish that the display model for the
+        # assessment is compatible with the assessment being used in
+        # the context of a Unit.  Model version 1.4 is not, because
+        # the way sets up submission is to build an entirely new form
+        # from JavaScript (independent of the form used to display the
+        # assessment), and the way it learns the ID of the assessment
+        # is by looking in the URL (as opposed to taking a parameter).
+        # This is incompatible with the URLs for unit display, so we
+        # just disallow older assessments here.
+        model_version = self._course.get_assessment_model_version(assessment)
+        if model_version == courses.ASSESSMENT_MODEL_VERSION_1_4:
+            errors.append(
+                'The version of assessment "%s" ' % assessment.title +
+                'is not compatible with use as a pre/post unit element')
+            return False
+        return True
+
+    def _is_assessment_on_track(self, assessment, errors):
+        if self._course.get_unit_track_labels(assessment):
+            errors.append(
+                'Assessment "%s" has track labels, ' % assessment.title +
+                'so it cannot be used as a pre/post unit element')
+            return True
+        return False
+
+    def _apply_updates_to_unit(self, unit, updated_unit_dict, errors):
+        self._apply_updates_common(unit, updated_unit_dict, errors)
+        unit.unit_header = updated_unit_dict['unit_header']
+        unit.unit_footer = updated_unit_dict['unit_footer']
+        unit.pre_assessment = None
+        unit.post_assessment = None
+        unit.manual_progress = updated_unit_dict['manual_progress']
+        pre_assessment_id = updated_unit_dict['pre_assessment']
+        if pre_assessment_id >= 0:
+            assessment = self._course.find_unit_by_id(pre_assessment_id)
+            if (self._is_assessment_unused(unit, assessment, errors) and
+                self._is_assessment_version_ok(assessment, errors) and
+                not self._is_assessment_on_track(assessment, errors)):
+                unit.pre_assessment = pre_assessment_id
+
+        post_assessment_id = updated_unit_dict['post_assessment']
+        if post_assessment_id >= 0 and pre_assessment_id == post_assessment_id:
+            errors.append(
+                'The same assessment cannot be used as both the pre '
+                'and post assessment of a unit.')
+        elif post_assessment_id >= 0:
+            assessment = self._course.find_unit_by_id(post_assessment_id)
+            if (assessment and
+                self._is_assessment_unused(unit, assessment, errors) and
+                self._is_assessment_version_ok(assessment, errors) and
+                not self._is_assessment_on_track(assessment, errors)):
+                unit.post_assessment = post_assessment_id
+        unit.show_contents_on_one_page = (
+            updated_unit_dict['show_contents_on_one_page'])
+
+    def unit_to_dict(self, unit, keys=None):
+        if unit.type == verify.UNIT_TYPE_ASSESSMENT:
+            return self._assessment_to_dict(unit, keys=keys)
+        elif unit.type == verify.UNIT_TYPE_LINK:
+            return self._link_to_dict(unit)
+        elif unit.type == verify.UNIT_TYPE_UNIT:
+            return self._unit_to_dict(unit)
+        else:
+            raise ValueError('Unknown unit type %s' % unit.type)
+
+    def _unit_to_dict_common(self, unit):
+        return {
+            'key': unit.unit_id,
+            'type': verify.UNIT_TYPE_NAMES[unit.type],
+            'title': unit.title,
+            'description': unit.description or '',
+            'is_draft': not unit.now_available,
+            'label_groups': LabelGroupsHelper.unit_labels_to_dict(
+                self._course, unit)}
+
+    def _get_assessment_path(self, unit):
+        return self._course.app_context.fs.impl.physical_to_logical(
+            self._course.get_assessment_filename(unit.unit_id))
+
+    def _get_review_form_path(self, unit):
+        return self._course.app_context.fs.impl.physical_to_logical(
+            self._course.get_review_filename(unit.unit_id))
+
+    def _assessment_to_dict(self, unit, keys=None):
+        """Assemble a dict with the unit data fields."""
+        assert unit.type == 'A'
+
+        content = None
+        if keys is not None and 'content' in keys:
+            path = self._get_assessment_path(unit)
+            fs = self._course.app_context.fs
+            if fs.isfile(path):
+                content = fs.get(path)
+            else:
+                content = ''
+
+        review_form = None
+        if keys is not None and 'review_form' in keys:
+            review_form_path = self._get_review_form_path(unit)
+            if review_form_path and fs.isfile(review_form_path):
+                review_form = fs.get(review_form_path)
+            else:
+                review_form = ''
+
+        workflow = unit.workflow
+
+        if workflow.get_submission_due_date():
+            submission_due_date = workflow.get_submission_due_date().strftime(
+                courses.ISO_8601_DATE_FORMAT)
+        else:
+            submission_due_date = ''
+
+        if workflow.get_review_due_date():
+            review_due_date = workflow.get_review_due_date().strftime(
+                courses.ISO_8601_DATE_FORMAT)
+        else:
+            review_due_date = ''
+
+        unit_common = self._unit_to_dict_common(unit)
+        unit_common.update({
+            'weight': str(unit.weight if hasattr(unit, 'weight') else 0),
+            'content': content,
+            'html_content': (
+                '' if unit.is_old_style_assessment(self._course)
+                else unit.html_content),
+            'html_check_answers': (
+                False if unit.is_old_style_assessment(self._course)
+                else unit.html_check_answers),
+            workflow_key(courses.SUBMISSION_DUE_DATE_KEY): (
+                submission_due_date),
+            workflow_key(courses.GRADER_KEY): workflow.get_grader(),
+            })
+        return {
+            'assessment': unit_common,
+            'review_opts': {
+                workflow_key(courses.MATCHER_KEY): workflow.get_matcher(),
+                workflow_key(courses.REVIEW_DUE_DATE_KEY): review_due_date,
+                workflow_key(courses.REVIEW_MIN_COUNT_KEY): (
+                    workflow.get_review_min_count()),
+                workflow_key(courses.REVIEW_WINDOW_MINS_KEY): (
+                    workflow.get_review_window_mins()),
+                'review_form': review_form,
+                'html_review_form': (
+                    unit.html_review_form or ''
+                    if hasattr(unit, 'html_review_form') else ''),
+                }
+            }
+
+    def _link_to_dict(self, unit):
+        assert unit.type == 'O'
+        ret = self._unit_to_dict_common(unit)
+        ret['url'] = unit.href
+        return ret
+
+    def _unit_to_dict(self, unit):
+        assert unit.type == 'U'
+        ret = self._unit_to_dict_common(unit)
+        ret['unit_header'] = unit.unit_header or ''
+        ret['unit_footer'] = unit.unit_footer or ''
+        ret['pre_assessment'] = unit.pre_assessment or -1
+        ret['post_assessment'] = unit.post_assessment or -1
+        ret['show_contents_on_one_page'] = (
+            unit.show_contents_on_one_page or False)
+        ret['manual_progress'] = unit.manual_progress or False
+        return ret
 
 
 class CommonUnitRESTHandler(BaseRESTHandler):
     """A common super class for all unit REST handlers."""
 
-    def unit_to_dict(self, unused_unit):
-        """Converts a unit to a dictionary representation."""
-        raise Exception('Not implemented')
+    # These functions are called with an updated unit object whenever a
+    # change is saved.
+    POST_SAVE_HOOKS = []
 
-    def apply_updates(
-        self, unused_unit, unused_updated_unit_dict, unused_errors):
+    def unit_to_dict(self, unit):
+        """Converts a unit to a dictionary representation."""
+        return UnitTools(self.get_course()).unit_to_dict(unit)
+
+    def apply_updates(self, unit, updated_unit_dict, errors):
         """Applies changes to a unit; modifies unit input argument."""
-        raise Exception('Not implemented')
+        UnitTools(courses.Course(self)).apply_updates(
+            unit, updated_unit_dict, errors)
 
     def get(self):
         """A GET REST method shared by all unit types."""
@@ -332,6 +687,7 @@ class CommonUnitRESTHandler(BaseRESTHandler):
             course = courses.Course(self)
             assert course.update_unit(unit)
             course.save()
+            common_utils.run_hooks(self.POST_SAVE_HOOKS, unit)
             transforms.send_json_response(self, 200, 'Saved.')
         else:
             transforms.send_json_response(self, 412, '\n'.join(errors))
@@ -362,102 +718,108 @@ class CommonUnitRESTHandler(BaseRESTHandler):
         transforms.send_json_response(self, 200, 'Deleted.')
 
 
+def generate_unit_schema():
+    schema = generate_common_schema('Unit')
+    schema.add_property(SchemaField(
+        'unit_header', 'Unit Header', 'html', optional=True,
+        extra_schema_dict_values={
+            'supportCustomTags': tags.CAN_USE_DYNAMIC_TAGS.value,
+            'excludedCustomTags': tags.EditorBlacklists.DESCRIPTIVE_SCOPE,
+            'className': 'inputEx-Field html-content'}))
+    schema.add_property(SchemaField(
+        'pre_assessment', 'Pre Assessment', 'integer', optional=True))
+    schema.add_property(SchemaField(
+        'post_assessment', 'Post Assessment', 'integer', optional=True))
+    schema.add_property(SchemaField(
+        'show_contents_on_one_page', 'Show Contents on One Page', 'boolean',
+        optional=True,
+        description='Whether to show all assessments, lessons, and activities '
+        'in a Unit on one page, or to show each on its own page.'))
+    schema.add_property(SchemaField(
+        'manual_progress', 'Manual Progress', 'boolean', optional=True,
+        description='When set, the manual progress REST API permits '
+        'users to manually mark a unit or lesson as complete, '
+        'overriding the automatic progress tracking.'))
+    schema.add_property(SchemaField(
+        'unit_footer', 'Unit Footer', 'html', optional=True,
+        extra_schema_dict_values={
+            'supportCustomTags': tags.CAN_USE_DYNAMIC_TAGS.value,
+            'excludedCustomTags': tags.EditorBlacklists.DESCRIPTIVE_SCOPE,
+            'className': 'inputEx-Field html-content'}))
+
+    return schema
+
+
 class UnitRESTHandler(CommonUnitRESTHandler):
     """Provides REST API to unit."""
 
     URI = '/rest/course/unit'
-
-    SCHEMA_JSON = """
-    {
-        "id": "Unit Entity",
-        "type": "object",
-        "description": "Unit",
-        "properties": {
-            "key" : {"type": "string"},
-            "type": {"type": "string"},
-            "title": {"optional": true, "type": "string"},
-            "is_draft": {"type": "boolean"}
-            }
-    }
-    """
-
-    SCHEMA_DICT = transforms.loads(SCHEMA_JSON)
-
-    SCHEMA_ANNOTATIONS_DICT = [
-        (['title'], 'Unit'),
-        (['properties', 'key', '_inputex'], {
-            'label': 'ID', '_type': 'uneditable'}),
-        (['properties', 'type', '_inputex'], {
-            'label': 'Type', '_type': 'uneditable'}),
-        (['properties', 'title', '_inputex'], {'label': 'Title'}),
-        STATUS_ANNOTATION]
-
+    SCHEMA = generate_unit_schema()
+    SCHEMA_JSON = SCHEMA.get_json_schema()
+    SCHEMA_DICT = SCHEMA.get_json_schema_dict()
     REQUIRED_MODULES = [
-        'inputex-string', 'inputex-select', 'inputex-uneditable']
+        'inputex-string', 'inputex-select', 'inputex-uneditable',
+        'inputex-list', 'inputex-hidden', 'inputex-number', 'inputex-integer',
+        'inputex-checkbox', 'gcb-rte']
 
-    def unit_to_dict(self, unit):
-        assert unit.type == 'U'
-        return {
-            'key': unit.unit_id,
-            'type': verify.UNIT_TYPE_NAMES[unit.type],
-            'title': unit.title,
-            'is_draft': not unit.now_available}
+    @classmethod
+    def get_annotations_dict(cls, course, this_unit_id):
+        # The set of available assesments needs to be dynamically
+        # generated and set as selection choices on the form.
+        # We want to only show assessments that are not already
+        # selected by other units.
+        available_assessments = {}
+        referenced_assessments = {}
+        for unit in course.get_units():
+            if unit.type == verify.UNIT_TYPE_ASSESSMENT:
+                model_version = course.get_assessment_model_version(unit)
+                track_labels = course.get_unit_track_labels(unit)
+                # Don't allow selecting old-style assessments, which we
+                # can't display within Unit page.
+                # Don't allow selection of assessments with parents
+                if (model_version != courses.ASSESSMENT_MODEL_VERSION_1_4 and
+                    not track_labels):
+                    available_assessments[unit.unit_id] = unit
+            elif (unit.type == verify.UNIT_TYPE_UNIT and
+                  this_unit_id != unit.unit_id):
+                if unit.pre_assessment:
+                    referenced_assessments[unit.pre_assessment] = True
+                if unit.post_assessment:
+                    referenced_assessments[unit.post_assessment] = True
+        for referenced in referenced_assessments:
+            if referenced in available_assessments:
+                del available_assessments[referenced]
 
-    def apply_updates(self, unit, updated_unit_dict, unused_errors):
-        unit.title = updated_unit_dict.get('title')
-        unit.now_available = not updated_unit_dict.get('is_draft')
+        schema = generate_unit_schema()
+        choices = [(-1, '-- None --')]
+        for assessment_id in sorted(available_assessments):
+            choices.append(
+                (assessment_id, available_assessments[assessment_id].title))
+        schema.get_property('pre_assessment').set_select_data(choices)
+        schema.get_property('post_assessment').set_select_data(choices)
+
+        return schema.get_schema_dict()
+
+
+def generate_link_schema():
+    schema = generate_common_schema('Link')
+    schema.add_property(SchemaField(
+        'url', 'URL', 'string', optional=True,
+        description=messages.LINK_EDITOR_URL_DESCRIPTION))
+    return schema
 
 
 class LinkRESTHandler(CommonUnitRESTHandler):
     """Provides REST API to link."""
 
     URI = '/rest/course/link'
-
-    SCHEMA_JSON = """
-    {
-        "id": "Link Entity",
-        "type": "object",
-        "description": "Link",
-        "properties": {
-            "key" : {"type": "string"},
-            "type": {"type": "string"},
-            "title": {"optional": true, "type": "string"},
-            "url": {"optional": true, "type": "string"},
-            "is_draft": {"type": "boolean"}
-            }
-    }
-    """
-
-    SCHEMA_DICT = transforms.loads(SCHEMA_JSON)
-
-    SCHEMA_ANNOTATIONS_DICT = [
-        (['title'], 'Link'),
-        (['properties', 'key', '_inputex'], {
-            'label': 'ID', '_type': 'uneditable'}),
-        (['properties', 'type', '_inputex'], {
-            'label': 'Type', '_type': 'uneditable'}),
-        (['properties', 'title', '_inputex'], {'label': 'Title'}),
-        (['properties', 'url', '_inputex'], {
-            'label': 'URL',
-            'description': messages.LINK_EDITOR_URL_DESCRIPTION}),
-        STATUS_ANNOTATION]
-
+    SCHEMA = generate_link_schema()
+    SCHEMA_JSON = SCHEMA.get_json_schema()
+    SCHEMA_DICT = SCHEMA.get_json_schema_dict()
+    SCHEMA_ANNOTATIONS_DICT = SCHEMA.get_schema_dict()
     REQUIRED_MODULES = [
-        'inputex-string', 'inputex-select', 'inputex-uneditable']
-
-    def unit_to_dict(self, unit):
-        assert unit.type == 'O'
-        return {
-            'key': unit.unit_id,
-            'type': verify.UNIT_TYPE_NAMES[unit.type],
-            'title': unit.title,
-            'url': unit.href,
-            'is_draft': not unit.now_available}
-
-    def apply_updates(self, unit, updated_unit_dict, unused_errors):
-        unit.title = updated_unit_dict.get('title')
-        unit.href = updated_unit_dict.get('url')
-        unit.now_available = not updated_unit_dict.get('is_draft')
+        'inputex-string', 'inputex-select', 'inputex-uneditable',
+        'inputex-list', 'inputex-hidden', 'inputex-number', 'inputex-checkbox']
 
 
 class ImportCourseRESTHandler(CommonUnitRESTHandler):
@@ -490,9 +852,11 @@ class ImportCourseRESTHandler(CommonUnitRESTHandler):
                 continue
             if acourse == sites.get_course_for_current_request():
                 continue
+
+            atitle = '%s (%s)' % (acourse.get_title(), acourse.get_slug())
+
             course_list.append({
-                'value': acourse.raw,
-                'label': cgi.escape(acourse.get_title())})
+                'value': acourse.raw, 'label': cgi.escape(atitle)})
         return course_list
 
     @classmethod
@@ -579,16 +943,9 @@ def create_assessment_registry():
     reg = FieldRegistry('Assessment Entity', description='Assessment')
 
     # Course level settings.
-    course_opts = reg.add_sub_registry('assessment', 'Assessment Config')
-    course_opts.add_property(SchemaField(
-        'key', 'ID', 'string', editable=False,
-        extra_schema_dict_values={'className': 'inputEx-Field keyHolder'}))
+    course_opts = generate_common_schema('Assessment Config')
     course_opts.add_property(
-        SchemaField('type', 'Type', 'string', editable=False))
-    course_opts.add_property(
-        SchemaField('title', 'Title', 'string', optional=True))
-    course_opts.add_property(
-        SchemaField('weight', 'Weight', 'string', optional=True))
+        SchemaField('weight', 'Weight', 'string', optional=True, i18n=False))
     course_opts.add_property(SchemaField(
         'content', 'Assessment Content', 'text', optional=True,
         description=str(messages.ASSESSMENT_CONTENT_DESCRIPTION),
@@ -612,11 +969,8 @@ def create_assessment_registry():
         SchemaField(workflow_key(courses.GRADER_KEY), 'Grading Method',
                     'string',
                     select_data=ALLOWED_GRADERS_NAMES.items()))
-    course_opts.add_property(
-        SchemaField('is_draft', 'Status', 'boolean',
-                    select_data=[(True, DRAFT_TEXT), (False, PUBLISHED_TEXT)],
-                    extra_schema_dict_values={
-                        'className': 'split-from-main-group'}))
+    reg.add_sub_registry('assessment', 'Assessment Config',
+                         registry=course_opts)
 
     review_opts = reg.add_sub_registry(
         'review_opts', 'Review Config',
@@ -661,127 +1015,18 @@ class AssessmentRESTHandler(CommonUnitRESTHandler):
 
     URI = '/rest/course/assessment'
 
-    REG = create_assessment_registry()
+    SCHEMA = create_assessment_registry()
 
-    SCHEMA_JSON = REG.get_json_schema()
+    SCHEMA_JSON = SCHEMA.get_json_schema()
 
-    SCHEMA_DICT = REG.get_json_schema_dict()
+    SCHEMA_DICT = SCHEMA.get_json_schema_dict()
 
-    SCHEMA_ANNOTATIONS_DICT = REG.get_schema_dict()
+    SCHEMA_ANNOTATIONS_DICT = SCHEMA.get_schema_dict()
 
     REQUIRED_MODULES = [
         'gcb-rte', 'inputex-select', 'inputex-string', 'inputex-textarea',
         'inputex-uneditable', 'inputex-integer', 'inputex-hidden',
-        'inputex-checkbox']
-
-    def _get_assessment_path(self, unit):
-        return self.app_context.fs.impl.physical_to_logical(
-            courses.Course(self).get_assessment_filename(unit.unit_id))
-
-    def _get_review_form_path(self, unit):
-        return self.app_context.fs.impl.physical_to_logical(
-            courses.Course(self).get_review_form_filename(unit.unit_id))
-
-    def unit_to_dict(self, unit):
-        """Assemble a dict with the unit data fields."""
-        assert unit.type == 'A'
-
-        path = self._get_assessment_path(unit)
-        fs = self.app_context.fs
-        if fs.isfile(path):
-            content = fs.get(path)
-        else:
-            content = ''
-
-        review_form_path = self._get_review_form_path(unit)
-        if review_form_path and fs.isfile(review_form_path):
-            review_form = fs.get(review_form_path)
-        else:
-            review_form = ''
-
-        workflow = unit.workflow
-
-        if workflow.get_submission_due_date():
-            submission_due_date = workflow.get_submission_due_date().strftime(
-                courses.ISO_8601_DATE_FORMAT)
-        else:
-            submission_due_date = ''
-
-        if workflow.get_review_due_date():
-            review_due_date = workflow.get_review_due_date().strftime(
-                courses.ISO_8601_DATE_FORMAT)
-        else:
-            review_due_date = ''
-
-        return {
-            'assessment': {
-                'key': unit.unit_id,
-                'type': verify.UNIT_TYPE_NAMES[unit.type],
-                'title': unit.title,
-                'weight': str(unit.weight if hasattr(unit, 'weight') else 0),
-                'content': content,
-                'html_content': unit.html_content or '',
-                'html_check_answers': unit.html_check_answers,
-                'is_draft': not unit.now_available,
-                workflow_key(courses.SUBMISSION_DUE_DATE_KEY): (
-                    submission_due_date),
-                workflow_key(courses.GRADER_KEY): workflow.get_grader(),
-                },
-            'review_opts': {
-                workflow_key(courses.MATCHER_KEY): workflow.get_matcher(),
-                workflow_key(courses.REVIEW_DUE_DATE_KEY): review_due_date,
-                workflow_key(courses.REVIEW_MIN_COUNT_KEY): (
-                    workflow.get_review_min_count()),
-                workflow_key(courses.REVIEW_WINDOW_MINS_KEY): (
-                    workflow.get_review_window_mins()),
-                'review_form': review_form,
-                'html_review_form': unit.html_review_form or ''
-                }
-            }
-
-    def apply_updates(self, unit, updated_unit_dict, errors):
-        """Store the updated assessment."""
-
-        entity_dict = {}
-        AssessmentRESTHandler.REG.convert_json_to_entity(
-            updated_unit_dict, entity_dict)
-        unit.title = entity_dict.get('title')
-
-        try:
-            unit.weight = int(entity_dict.get('weight'))
-            if unit.weight < 0:
-                errors.append('The weight must be a non-negative integer.')
-        except ValueError:
-            errors.append('The weight must be an integer.')
-
-        unit.now_available = not entity_dict.get('is_draft')
-        course = courses.Course(self)
-        content = entity_dict.get('content')
-        if content:
-            course.set_assessment_content(
-                unit, entity_dict.get('content'), errors=errors)
-
-        unit.html_content = entity_dict.get('html_content')
-        unit.html_check_answers = entity_dict.get('html_check_answers')
-
-        workflow_dict = entity_dict.get('workflow')
-        if len(ALLOWED_MATCHERS_NAMES) == 1:
-            workflow_dict[courses.MATCHER_KEY] = (
-                ALLOWED_MATCHERS_NAMES.keys()[0])
-        unit.workflow_yaml = yaml.safe_dump(workflow_dict)
-        unit.workflow.validate(errors=errors)
-
-        # Only save the review form if the assessment needs human grading.
-        if not errors:
-            if course.needs_human_grader(unit):
-                review_form = entity_dict.get('review_form')
-                if review_form:
-                    course.set_review_form(
-                        unit, review_form, errors=errors)
-                unit.html_review_form = entity_dict.get('html_review_form')
-            elif entity_dict.get('review_form'):
-                errors.append(
-                    'Review forms for auto-graded assessments should be empty.')
+        'inputex-checkbox', 'inputex-list']
 
 
 class UnitLessonTitleRESTHandler(BaseRESTHandler):
@@ -874,7 +1119,6 @@ class UnitLessonTitleRESTHandler(BaseRESTHandler):
                 'title': unit_title,
                 'id': unit.unit_id,
                 'lessons': lesson_data})
-
         transforms.send_json_response(
             self, 200, None,
             payload_dict={'outline': outline_data},
@@ -908,88 +1152,104 @@ class LessonRESTHandler(BaseRESTHandler):
 
     URI = '/rest/course/lesson'
 
-    # Note GcbRte relies on the structure of this schema. Do not change without
-    # checking the dependency.
-    SCHEMA_JSON = """
-    {
-        "id": "Lesson Entity",
-        "type": "object",
-        "description": "Lesson",
-        "properties": {
-            "key" : {"type": "string"},
-            "title" : {"type": "string"},
-            "unit_id": {"type": "string"},
-            "video" : {"type": "string", "optional": true},
-            "scored": {"type": "string"},
-            "objectives" : {
-                "type": "string", "format": "html", "optional": true},
-            "notes" : {"type": "string", "optional": true},
-            "activity_title" : {"type": "string", "optional": true},
-            "activity_listed" : {"type": "boolean", "optional": true},
-            "activity": {"type": "string", "format": "text", "optional": true},
-            "is_draft": {"type": "boolean"}
-            }
-    }
-    """
-
-    SCHEMA_DICT = transforms.loads(SCHEMA_JSON)
-
     REQUIRED_MODULES = [
         'inputex-string', 'gcb-rte', 'inputex-select', 'inputex-textarea',
-        'inputex-uneditable', 'inputex-checkbox']
-    EXTRA_JS_FILES = ['lesson_editor_lib.js', 'lesson_editor.js']
+        'inputex-uneditable', 'inputex-checkbox', 'inputex-hidden']
+
+    # These functions are called with an updated lesson object whenever a
+    # change is saved.
+    POST_SAVE_HOOKS = []
 
     @classmethod
-    def get_schema_annotations_dict(cls, units):
+    def get_schema(cls, units):
+        # Note GcbRte relies on the structure of this schema. Do not change
+        # without checking the dependency.
         unit_list = []
         for unit in units:
             if unit.type == 'U':
-                unit_list.append({
-                    'label': cgi.escape(
-                        'Unit %s - %s' % (unit.index, unit.title)),
-                    'value': unit.unit_id})
+                unit_list.append(
+                    (unit.unit_id, cgi.escape(utils.display_unit_title(unit))))
 
-        return [
-            (['title'], 'Lesson'),
-            (['properties', 'key', '_inputex'], {
-                'label': 'ID', '_type': 'uneditable',
-                'className': 'inputEx-Field keyHolder'}),
-            (['properties', 'title', '_inputex'], {'label': 'Title'}),
-            (['properties', 'unit_id', '_inputex'], {
-                'label': 'Parent Unit', '_type': 'select',
-                'choices': unit_list}),
-            (['properties', 'scored', '_inputex'], {
-                '_type': 'select',
-                'choices': [
-                    {'label': 'Questions are scored', 'value': 'scored'},
-                    {
-                        'label': 'Questions only give feedback',
-                        'value': 'not_scored'}],
-                'label': 'Scored',
-                'description': messages.LESSON_SCORED_DESCRIPTION}),
-            # TODO(sll): The internal 'objectives' property should also be
-            # renamed.
-            (['properties', 'objectives', '_inputex'], {
-                'label': 'Lesson Body',
-                'supportCustomTags': tags.CAN_USE_DYNAMIC_TAGS.value,
-                'description': messages.LESSON_OBJECTIVES_DESCRIPTION}),
-            (['properties', 'video', '_inputex'], {
-                'label': 'Video ID',
-                'description': messages.LESSON_VIDEO_ID_DESCRIPTION}),
-            (['properties', 'notes', '_inputex'], {
-                'label': 'Notes',
-                'description': messages.LESSON_NOTES_DESCRIPTION}),
-            (['properties', 'activity_title', '_inputex'], {
-                'label': 'Activity Title',
-                'description': messages.LESSON_ACTIVITY_TITLE_DESCRIPTION}),
-            (['properties', 'activity_listed', '_inputex'], {
-                'label': 'Activity Listed',
-                'description': messages.LESSON_ACTIVITY_LISTED_DESCRIPTION}),
-            (['properties', 'activity', '_inputex'], {
-                'label': 'Activity',
-                'description': str(messages.LESSON_ACTIVITY_DESCRIPTION),
-                'className': 'inputEx-Field activityHolder'}),
-            STATUS_ANNOTATION]
+        lesson = FieldRegistry('Lesson', description='Lesson')
+        lesson.add_property(SchemaField(
+            'key', 'ID', 'string', editable=False,
+             extra_schema_dict_values={'className': 'inputEx-Field keyHolder'}))
+        lesson.add_property(SchemaField(
+            'title', 'Title', 'string'))
+        lesson.add_property(SchemaField(
+            'unit_id', 'Parent Unit', 'string', i18n=False,
+            select_data=unit_list))
+        lesson.add_property(SchemaField(
+            'video', 'Video ID', 'string', optional=True,
+            description=messages.LESSON_VIDEO_ID_DESCRIPTION))
+        lesson.add_property(SchemaField(
+            'scored', 'Scored', 'string', optional=True, i18n=False,
+            description=messages.LESSON_SCORED_DESCRIPTION,
+            select_data=[
+                ('scored', 'Questions are scored'),
+                ('not_scored', 'Questions only give feedback')]))
+        lesson.add_property(SchemaField(
+            'objectives', 'Lesson Body', 'html', optional=True,
+            description=messages.LESSON_OBJECTIVES_DESCRIPTION,
+            extra_schema_dict_values={
+                'supportCustomTags': tags.CAN_USE_DYNAMIC_TAGS.value}))
+        lesson.add_property(SchemaField(
+            'notes', 'Notes', 'string', optional=True,
+            description=messages.LESSON_NOTES_DESCRIPTION))
+        lesson.add_property(SchemaField(
+            'auto_index', 'Auto Number', 'boolean',
+            description=messages.LESSON_AUTO_INDEX_DESCRIPTION))
+        lesson.add_property(SchemaField(
+            'activity_title', 'Activity Title', 'string', optional=True,
+            description=messages.LESSON_ACTIVITY_TITLE_DESCRIPTION))
+        lesson.add_property(SchemaField(
+            'activity_listed', 'Activity Listed', 'boolean', optional=True,
+            description=messages.LESSON_ACTIVITY_LISTED_DESCRIPTION))
+        lesson.add_property(SchemaField(
+            'activity', 'Activity', 'text', optional=True,
+            description=str(messages.LESSON_ACTIVITY_DESCRIPTION),
+            extra_schema_dict_values={
+                'className': 'inputEx-Field activityHolder'}))
+        lesson.add_property(SchemaField(
+            'manual_progress', 'Manual Progress', 'boolean', optional=True,
+            description=messages.LESSON_MANUAL_PROGRESS_DESCRIPTION))
+        lesson.add_property(SchemaField(
+            'is_draft', 'Status', 'boolean',
+            select_data=[(True, DRAFT_TEXT), (False, PUBLISHED_TEXT)],
+            extra_schema_dict_values={
+                'className': 'split-from-main-group'}))
+        return lesson
+
+    @classmethod
+    def get_lesson_dict(cls, app_context, lesson):
+        return cls.get_lesson_dict_for(
+            courses.Course(None, app_context=app_context), lesson)
+
+    @classmethod
+    def get_lesson_dict_for(cls, course, lesson):
+        fs = course.app_context.fs
+        path = fs.impl.physical_to_logical(course.get_activity_filename(
+            lesson.unit_id, lesson.lesson_id))
+        if lesson.has_activity and fs.isfile(path):
+            activity = fs.get(path)
+        else:
+            activity = ''
+
+        return {
+            'key': lesson.lesson_id,
+            'title': lesson.title,
+            'unit_id': lesson.unit_id,
+            'scored': 'scored' if lesson.scored else 'not_scored',
+            'objectives': lesson.objectives,
+            'video': lesson.video,
+            'notes': lesson.notes,
+            'auto_index': lesson.auto_index,
+            'activity_title': lesson.activity_title,
+            'activity_listed': lesson.activity_listed,
+            'activity': activity,
+            'manual_progress': lesson.manual_progress or False,
+            'is_draft': not lesson.now_available
+            }
 
     def get(self):
         """Handles GET REST verb and returns lesson object as JSON payload."""
@@ -1002,28 +1262,7 @@ class LessonRESTHandler(BaseRESTHandler):
         course = courses.Course(self)
         lesson = course.find_lesson_by_id(None, key)
         assert lesson
-
-        fs = self.app_context.fs
-        path = fs.impl.physical_to_logical(course.get_activity_filename(
-            lesson.unit_id, lesson.lesson_id))
-        if lesson.has_activity and fs.isfile(path):
-            activity = fs.get(path)
-        else:
-            activity = ''
-
-        payload_dict = {
-            'key': key,
-            'title': lesson.title,
-            'unit_id': lesson.unit_id,
-            'scored': 'scored' if lesson.scored else 'not_scored',
-            'objectives': lesson.objectives,
-            'video': lesson.video,
-            'notes': lesson.notes,
-            'activity_title': lesson.activity_title,
-            'activity_listed': lesson.activity_listed,
-            'activity': activity,
-            'is_draft': not lesson.now_available
-            }
+        payload_dict = self.get_lesson_dict(self.app_context, lesson)
 
         message = ['Success.']
         if self.request.get('is_newly_created'):
@@ -1057,7 +1296,8 @@ class LessonRESTHandler(BaseRESTHandler):
 
         payload = request.get('payload')
         updates_dict = transforms.json_to_dict(
-            transforms.loads(payload), self.SCHEMA_DICT)
+            transforms.loads(payload),
+            self.get_schema(course.get_units()).get_json_schema_dict())
 
         lesson.title = updates_dict['title']
         lesson.unit_id = updates_dict['unit_id']
@@ -1065,15 +1305,19 @@ class LessonRESTHandler(BaseRESTHandler):
         lesson.objectives = updates_dict['objectives']
         lesson.video = updates_dict['video']
         lesson.notes = updates_dict['notes']
+        lesson.auto_index = updates_dict['auto_index']
         lesson.activity_title = updates_dict['activity_title']
         lesson.activity_listed = updates_dict['activity_listed']
+        lesson.manual_progress = updates_dict['manual_progress']
         lesson.now_available = not updates_dict['is_draft']
 
         activity = updates_dict.get('activity', '').strip()
         errors = []
         if activity:
-            lesson.has_activity = True
-            course.set_activity_content(lesson, activity, errors=errors)
+            if lesson.has_activity:
+                course.set_activity_content(lesson, activity, errors=errors)
+            else:
+                errors.append('Old-style activities are not supported.')
         else:
             lesson.has_activity = False
             fs = self.app_context.fs
@@ -1085,6 +1329,7 @@ class LessonRESTHandler(BaseRESTHandler):
         if not errors:
             assert course.update_lesson(lesson)
             course.save()
+            common_utils.run_hooks(self.POST_SAVE_HOOKS, lesson)
             transforms.send_json_response(self, 200, 'Saved.')
         else:
             transforms.send_json_response(self, 412, '\n'.join(errors))
@@ -1113,448 +1358,3 @@ class LessonRESTHandler(BaseRESTHandler):
         course.save()
 
         transforms.send_json_response(self, 200, 'Deleted.')
-
-
-def generate_instanceid():
-    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    length = 12
-    return ''.join([random.choice(chars) for unused_i in xrange(length)])
-
-
-class CollisionError(Exception):
-    """Exception raised to show that a collision in a namespace has occurred."""
-
-
-class ImportActivityRESTHandler(BaseRESTHandler):
-    """REST handler for requests to import an activity into the lesson body."""
-
-    URI = '/rest/course/lesson/activity'
-
-    VERSION = '1.5'
-
-    def put(self):
-        """Handle REST PUT instruction to import an assignment."""
-        request = transforms.loads(self.request.get('request'))
-        key = request.get('key')
-
-        if not self.assert_xsrf_token_or_fail(request, 'lesson-edit', {}):
-            return
-
-        if not CourseOutlineRights.can_edit(self):
-            transforms.send_json_response(
-                self, 401, 'Access denied.', {'key': key})
-            return
-
-        text = request.get('text')
-
-        try:
-            content, noverify_text = verify.convert_javascript_to_python(
-                text, 'activity')
-            activity = verify.evaluate_python_expression_from_text(
-                content, 'activity', verify.Activity().scope, noverify_text)
-        except Exception:  # pylint: disable-msg=broad-except
-            transforms.send_json_response(
-                self, 412, 'Unable to parse activity.')
-            return
-
-        try:
-            verify.Verifier().verify_activity_instance(activity, 'none')
-        except verify.SchemaException:
-            transforms.send_json_response(
-                self, 412, 'Unable to validate activity.')
-            return
-
-        self.course = courses.Course(self)
-        self.lesson = self.course.find_lesson_by_id(None, key)
-        self.unit = self.course.find_unit_by_id(self.lesson.unit_id)
-        self.question_number = 0
-        self.question_descriptions = set(
-            [q.description for q in m_models.QuestionDAO.get_all()])
-        self.question_group_descriptions = set(
-            [qg.description for qg in m_models.QuestionGroupDAO.get_all()])
-
-        lesson_content = []
-        try:
-            for item in activity['activity']:
-                if isinstance(item, basestring):
-                    lesson_content.append(item)
-                else:
-                    question_tag = self.import_question(item)
-                    lesson_content.append(question_tag)
-                    self.question_number += 1
-        except CollisionError:
-            transforms.send_json_response(
-                self, 412, (
-                    'This activity has already been imported. Remove duplicate '
-                    'imported questions from the question bank in order to '
-                    're-import.'))
-            return
-        except Exception as ex:
-            transforms.send_json_response(
-                self, 412, 'Unable to convert: %s' % ex)
-            return
-
-        transforms.send_json_response(self, 200, 'OK.', payload_dict={
-            'content': '\n'.join(lesson_content)
-        })
-
-    def _get_question_description(self):
-        return (
-            'Imported from unit "%s", lesson "%s" (question #%s)' % (
-                self.unit.title, self.lesson.title, self.question_number + 1))
-
-    def _insert_question(self, question_dict, question_type):
-        question = m_models.QuestionDTO(None, question_dict)
-        question.type = question_type
-        return m_models.QuestionDAO.save(question)
-
-    def _insert_question_group(self, question_group_dict):
-        question_group = m_models.QuestionGroupDTO(None, question_group_dict)
-        return m_models.QuestionGroupDAO.save(question_group)
-
-    def import_question(self, item):
-        question_type = item['questionType']
-        if question_type == 'multiple choice':
-            question_dict = self.import_multiple_choice(item)
-            quid = self._insert_question(
-                question_dict, m_models.QuestionDTO.MULTIPLE_CHOICE)
-            return '<question quid="%s" instanceid="%s"></question>' % (
-                quid, generate_instanceid())
-        elif question_type == 'multiple choice group':
-            question_group_dict = self.import_multiple_choice_group(item)
-            qgid = self._insert_question_group(question_group_dict)
-            return (
-                '<question-group qgid="%s" instanceid="%s">'
-                '</question-group>') % (
-                    qgid, generate_instanceid())
-        elif question_type == 'freetext':
-            question_dict = self.import_freetext(item)
-            quid = self._insert_question(
-                question_dict, m_models.QuestionDTO.SHORT_ANSWER)
-            return '<question quid="%s" instanceid="%s"></question>' % (
-                quid, generate_instanceid())
-        else:
-            raise ValueError('Unknown question type: %s' % question_type)
-
-    def import_multiple_choice(self, orig_question):
-        description = self._get_question_description()
-        if description in self.question_descriptions:
-            raise CollisionError()
-
-        return {
-            'version': self.VERSION,
-            'description': description,
-            'question': '',
-            'multiple_selections': False,
-            'choices': [
-                {
-                    'text': choice[0],
-                    'score': 1.0 if choice[1].value else 0.0,
-                    'feedback': choice[2]
-                } for choice in orig_question['choices']]}
-
-    def import_multiple_choice_group(self, mc_choice_group):
-        """Import a 'multiple choice group' as a question group."""
-        description = self._get_question_description()
-        if description in self.question_group_descriptions:
-            raise CollisionError()
-
-        question_group_dict = {
-            'version': self.VERSION,
-            'description': description}
-
-        question_list = []
-        for index, question in enumerate(mc_choice_group['questionsList']):
-            question_dict = self.import_multiple_choice_group_question(
-                question, index)
-            question = m_models.QuestionDTO(None, question_dict)
-            question.type = m_models.QuestionDTO.MULTIPLE_CHOICE
-            question_list.append(question)
-
-        quid_list = m_models.QuestionDAO.save_all(question_list)
-        question_group_dict['items'] = [{
-            'question': str(quid),
-            'weight': 1.0} for quid in quid_list]
-
-        return question_group_dict
-
-    def import_multiple_choice_group_question(self, orig_question, index):
-        """Import the questions from a group as individual questions."""
-        # TODO(jorr): Handle allCorrectOutput and someCorrectOutput
-        description = (
-            'Imported from unit "%s", lesson "%s" (question #%s, part #%s)' % (
-                self.unit.title, self.lesson.title, self.question_number + 1,
-                index + 1))
-        if description in self.question_descriptions:
-            raise CollisionError()
-
-        correct_index = orig_question['correctIndex']
-        multiple_selections = not isinstance(correct_index, int)
-        if multiple_selections:
-            partial = 1.0 / len(correct_index)
-            choices = [{
-                'text': text,
-                'score': partial if i in correct_index else -1.0
-            } for i, text in enumerate(orig_question['choices'])]
-        else:
-            choices = [{
-                'text': text,
-                'score': 1.0 if i == correct_index else 0.0
-            } for i, text in enumerate(orig_question['choices'])]
-
-        return {
-            'version': self.VERSION,
-            'description': description,
-            'question': orig_question.get('questionHTML') or '',
-            'multiple_selections': multiple_selections,
-            'choices': choices}
-
-    def import_freetext(self, orig_question):
-        description = self._get_question_description()
-        if description in self.question_descriptions:
-            raise CollisionError()
-
-        return {
-            'version': self.VERSION,
-            'description': description,
-            'question': '',
-            'hint': orig_question['showAnswerOutput'],
-            'graders': [{
-                'score': 1.0,
-                'matcher': 'regex',
-                'response': orig_question['correctAnswerRegex'].value,
-                'feedback': orig_question.get('correctAnswerOutput')
-            }],
-            'defaultFeedback': orig_question.get('incorrectAnswerOutput')}
-
-
-class ExportAssessmentRESTHandler(BaseRESTHandler):
-    """REST handler for requests to export an activity into new format."""
-
-    URI = '/rest/course/asessment/export'
-
-    VERSION = '1.5'
-
-    def put(self):
-        """Handle the PUT verb to export an assessment."""
-        request = transforms.loads(self.request.get('request'))
-        key = request.get('key')
-
-        if not CourseOutlineRights.can_edit(self):
-            transforms.send_json_response(
-                self, 401, 'Access denied.', {'key': key})
-            return
-
-        if not self.assert_xsrf_token_or_fail(
-                request, 'put-unit', {'key': key}):
-            return
-
-        raw_assessment_dict = transforms.json_to_dict(
-            request.get('payload'), AssessmentRESTHandler.SCHEMA_DICT)
-
-        entity_dict = {}
-        AssessmentRESTHandler.REG.convert_json_to_entity(
-            raw_assessment_dict, entity_dict)
-
-        course = courses.Course(self)
-        self.unit = course.find_unit_by_id(key)
-        self.question_descriptions = set(
-            [q.description for q in m_models.QuestionDAO.get_all()])
-
-        # Import all the assessment context except the questions
-        new_unit = course.add_assessment()
-        errors = []
-        new_unit.title = 'Exported from %s ' % entity_dict.get('title')
-        try:
-            new_unit.weight = int(entity_dict.get('weight'))
-            if new_unit.weight < 0:
-                errors.append('The weight must be a non-negative integer.')
-        except ValueError:
-            errors.append('The weight must be an integer.')
-        new_unit.now_available = not entity_dict.get('is_draft')
-
-        workflow_dict = entity_dict.get('workflow')
-        if len(ALLOWED_MATCHERS_NAMES) == 1:
-            workflow_dict[courses.MATCHER_KEY] = (
-                ALLOWED_MATCHERS_NAMES.keys()[0])
-        new_unit.workflow_yaml = yaml.safe_dump(workflow_dict)
-        new_unit.workflow.validate(errors=errors)
-
-        if errors:
-            transforms.send_json_response(self, 412, '\n'.join(errors))
-            return
-
-        assessment_dict = self.get_assessment_dict(entity_dict.get('content'))
-        if assessment_dict is None:
-            return
-
-        if assessment_dict.get('checkAnswers'):
-            new_unit.html_check_answers = assessment_dict['checkAnswers'].value
-
-        # Import the questions in the assessment and the review questionnaire
-
-        html_content = []
-        html_review_form = []
-
-        if assessment_dict.get('preamble'):
-            html_content.append(assessment_dict['preamble'])
-
-        # prepare all the dtos for the questions in the assigment content
-        question_dtos = self.get_question_dtos(
-            assessment_dict,
-            'Imported from assessment "%s" (question #%s)')
-        if question_dtos is None:
-            return
-
-        # prepare the questions for the review questionnaire, if necessary
-        review_dtos = []
-        if course.needs_human_grader(new_unit):
-            review_str = entity_dict.get('review_form')
-            review_dict = self.get_assessment_dict(review_str)
-            if review_dict is None:
-                return
-            if review_dict.get('preamble'):
-                html_review_form.append(review_dict['preamble'])
-
-            review_dtos = self.get_question_dtos(
-                review_dict,
-                'Imported from assessment "%s" (review question #%s)')
-            if review_dtos is None:
-                return
-
-        # batch submit the questions and split out their resulting id's
-        all_dtos = question_dtos + review_dtos
-        all_ids = m_models.QuestionDAO.save_all(all_dtos)
-        question_ids = all_ids[:len(question_dtos)]
-        review_ids = all_ids[len(question_dtos):]
-
-        # insert question tags for the assessment content
-        for quid in question_ids:
-            html_content.append(
-                str(safe_dom.Element(
-                    'question',
-                    quid=str(quid), instanceid=generate_instanceid())))
-        new_unit.html_content = '\n'.join(html_content)
-
-        # insert question tags for the review questionnaire
-        for quid in review_ids:
-            html_review_form.append(
-                str(safe_dom.Element(
-                    'question',
-                    quid=str(quid), instanceid=generate_instanceid())))
-        new_unit.html_review_form = '\n'.join(html_review_form)
-
-        course.save()
-        transforms.send_json_response(
-            self, 200, (
-                'The assessment has been exported to "%s".' % new_unit.title),
-            payload_dict={'key': key})
-
-    def get_assessment_dict(self, assessment_content):
-        """Validate the assessment scipt and return as a python dict."""
-        try:
-            content, noverify_text = verify.convert_javascript_to_python(
-                assessment_content, 'assessment')
-            assessment = verify.evaluate_python_expression_from_text(
-                content, 'assessment', verify.Assessment().scope, noverify_text)
-        except Exception:  # pylint: disable-msg=broad-except
-            transforms.send_json_response(
-                self, 412, 'Unable to parse asessment.')
-            return None
-
-        try:
-            verify.Verifier().verify_assessment_instance(assessment, 'none')
-        except verify.SchemaException:
-            transforms.send_json_response(
-                self, 412, 'Unable to validate assessment')
-            return None
-
-        return assessment['assessment']
-
-    def get_question_dtos(self, assessment_dict, description_template):
-        """Convert the assessment into a list of QuestionDTO's."""
-        question_dtos = []
-        try:
-            for i, question in enumerate(assessment_dict['questionsList']):
-                description = description_template % (self.unit.title, (i + 1))
-                if description in self.question_descriptions:
-                    raise CollisionError()
-                question_dto = self.import_question(question)
-                question_dto.dict['description'] = description
-                question_dtos.append(question_dto)
-        except CollisionError:
-            transforms.send_json_response(
-                self, 412, (
-                    'This assessment has already been imported. Remove '
-                    'duplicate imported questions from the question bank in '
-                    'order to re-import.'))
-            return None
-        except Exception as ex:
-            transforms.send_json_response(
-                self, 412, 'Unable to convert: %s' % ex)
-            return None
-        return question_dtos
-
-    def import_question(self, question):
-        """Convert a single question into a QuestioDTO."""
-        if 'choices' in question:
-            question_dict = self.import_multiple_choice_question(question)
-            question_type = m_models.QuestionDTO.MULTIPLE_CHOICE
-        elif 'correctAnswerNumeric' in question:
-            question_dict = self.import_short_answer_question(
-                question.get('questionHTML'),
-                'numeric',
-                question.get('correctAnswerNumeric'))
-            question_type = m_models.QuestionDTO.SHORT_ANSWER
-        elif 'correctAnswerString' in question:
-            question_dict = self.import_short_answer_question(
-                question.get('questionHTML'),
-                'case_insensitive',
-                question.get('correctAnswerString'))
-            question_type = m_models.QuestionDTO.SHORT_ANSWER
-        elif 'correctAnswerRegex' in question:
-            question_dict = self.import_short_answer_question(
-                question.get('questionHTML'),
-                'regex',
-                question.get('correctAnswerRegex').value)
-            question_type = m_models.QuestionDTO.SHORT_ANSWER
-        else:
-            raise ValueError('Unknown question type')
-
-        question_dto = m_models.QuestionDTO(None, question_dict)
-        question_dto.type = question_type
-
-        return question_dto
-
-    def import_multiple_choice_question(self, question):
-        """Assemble the dict for a multiple choice question."""
-        question_dict = {
-            'version': self.VERSION,
-            'question': question.get('questionHTML') or '',
-            'multiple_selections': False
-        }
-        choices = []
-        for choice in question.get('choices'):
-            if isinstance(choice, basestring):
-                text = choice
-                score = 0.0
-            else:
-                text = choice.value
-                score = 1.0
-            choices.append({
-                'text': text,
-                'score': score
-            })
-        question_dict['choices'] = choices
-        return question_dict
-
-    def import_short_answer_question(self, question_html, matcher, response):
-        return {
-            'version': self.VERSION,
-            'question': question_html or '',
-            'graders': [{
-                'score': 1.0,
-                'matcher': matcher,
-                'response': response,
-            }]
-        }

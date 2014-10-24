@@ -28,6 +28,7 @@ import re
 import shutil
 import sys
 import time
+import types
 import urllib
 import zipfile
 
@@ -37,11 +38,11 @@ from actions import assert_contains_all_of
 from actions import assert_does_not_contain
 from actions import assert_equals
 from controllers_review import PeerReviewControllerTest
-from controllers_review import PeerReviewDashboardTest
+from controllers_review import PeerReviewDashboardAdminTest
 from review_stats import PeerReviewAnalyticsTest
-from webtest.app import AppError
 
 import appengine_config
+from common import crypto
 from common.utils import Namespace
 from controllers import lessons
 from controllers import sites
@@ -49,30 +50,30 @@ from controllers import utils
 from controllers.utils import XsrfTokenManager
 from models import config
 from models import courses
+from models import entities
 from models import jobs
 from models import models
+from models import student_work
 from models import transforms
 from models import vfs
 from models.courses import Course
 import modules.admin.admin
 from modules.announcements.announcements import AnnouncementEntity
 import modules.oeditor.oeditor
+from tools import verify
 from tools.etl import etl
 from tools.etl import etl_lib
 from tools.etl import examples
 from tools.etl import remote
+from tools.etl import testing
 
 from google.appengine.api import memcache
 from google.appengine.api import namespace_manager
 from google.appengine.ext import db
 
+
 # A number of data files in a test course.
 COURSE_FILE_COUNT = 70
-
-# Datastore entities that hold parts of course content. Delay-loaded.
-COURSE_CONTENT_ENTITY_FILES = [
-    'QuestionEntity.json', 'QuestionGroupEntity.json']
-
 
 # There is an expectation in our tests of automatic import of data/*.csv files,
 # which is achieved below by selecting an alternative factory method.
@@ -111,6 +112,101 @@ def _assert_identical_data_entity_exists(app_context, test_object):
 
 class InfrastructureTest(actions.TestBase):
     """Test core infrastructure classes agnostic to specific user roles."""
+
+    def test_fs_cleaned_up_when_memcache_begin_or_end_asserts(self):
+        # pylint: disable-msg=protected-access
+        config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name] = True
+        try:
+            for method in [
+                models.MemcacheManager.begin_readonly,
+                models.MemcacheManager.end_readonly]:
+                models.MemcacheManager.begin_readonly()
+                models.MemcacheManager.set('a', 'aaa')
+
+                # force error state
+                models.MemcacheManager._READONLY_REENTRY_COUNT = -1
+
+                with self.assertRaises(AssertionError):
+                    method()
+
+                self.assertEquals(None, models.MemcacheManager._LOCAL_CACHE)
+                self.assertEquals(False, models.MemcacheManager._IS_READONLY)
+                self.assertEquals(
+                    0, models.MemcacheManager._READONLY_REENTRY_COUNT)
+                self.assertEquals(
+                    None, models.MemcacheManager._READONLY_APP_CONTEXT)
+        finally:
+            del config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name]
+
+    def test_memcache_begin_end_reentrancy(self):
+        # pylint: disable-msg=protected-access
+        config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name] = True
+        try:
+            self.assertEquals(None, models.MemcacheManager._LOCAL_CACHE)
+            models.MemcacheManager.begin_readonly()
+            models.MemcacheManager.set('a', 'aaa')
+            models.MemcacheManager.begin_readonly()
+            self.assertEquals(
+                'aaa', models.MemcacheManager._LOCAL_CACHE['']['a'])
+            models.MemcacheManager.begin_readonly()
+            self.assertEquals(
+                'aaa', models.MemcacheManager._LOCAL_CACHE['']['a'])
+            models.MemcacheManager.end_readonly()
+            self.assertEquals(
+                'aaa', models.MemcacheManager._LOCAL_CACHE['']['a'])
+            models.MemcacheManager.end_readonly()
+            self.assertEquals(
+                'aaa', models.MemcacheManager._LOCAL_CACHE['']['a'])
+            models.MemcacheManager.end_readonly()
+            self.assertEquals(None, models.MemcacheManager._LOCAL_CACHE)
+        finally:
+            del config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name]
+
+    def test_memcache_fails_missmatched_begin_end(self):
+        # pylint: disable-msg=protected-access
+        config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name] = True
+        models.MemcacheManager.begin_readonly()
+        models.MemcacheManager.set('a', 'aaa')
+        models.MemcacheManager.end_readonly()
+        with self.assertRaises(AssertionError):
+            models.MemcacheManager.end_readonly()
+        self.assertEquals(None, models.MemcacheManager._LOCAL_CACHE)
+        del config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name]
+
+    def test_memcache_can_be_cleared_if_end_readonly_is_not_called(self):
+        # pylint: disable-msg=protected-access
+        config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name] = True
+        models.MemcacheManager.begin_readonly()
+        models.MemcacheManager.set('a', 'aaa')
+        models.MemcacheManager.begin_readonly()
+        models.MemcacheManager.begin_readonly()
+        self.assertEquals('aaa', models.MemcacheManager._LOCAL_CACHE['']['a'])
+        models.MemcacheManager.clear_readonly_cache()
+        del config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name]
+
+    def test_memcache_get_all_caching(self):
+        config.Registry.test_overrides[models.CAN_USE_MEMCACHE.name] = True
+        with Namespace('ns_test'):
+            for index in range(0, 100):
+                models.QuestionDAO.create_question(
+                    {'data': 'data-%s' % index},
+                    models.QuestionDTO.MULTIPLE_CHOICE)
+
+            questions_1 = models.QuestionDAO.get_all()
+            old_all = models.QuestionDAO.ENTITY.all
+            models.QuestionDAO.ENTITY.all = None
+            questions_2 = models.QuestionDAO.get_all()
+            models.QuestionDAO.ENTITY.all = old_all
+
+            self.assertEquals(100, len(questions_1))
+            self.assertEquals(100, len(questions_2))
+            for index in range(0, 100):
+                self.assertEquals(
+                      questions_1[index].dict,
+                      questions_2[index].dict)
+                self.assertEquals(
+                      questions_1[index].id,
+                      questions_2[index].id)
 
     def test_value_cached_in_one_namespace_invisible_in_another(self):
         """Value cached in one namespace is not visible in another."""
@@ -210,17 +306,31 @@ class InfrastructureTest(actions.TestBase):
         """Tests importing one course into another."""
 
         # Setup courses.
-        sites.setup_courses('course:/a::ns_a, course:/b::ns_b, course:/:/')
+        sites.setup_courses(
+            'course:/a::ns_a, course:/b::ns_b, course:/c::ns_c, course:/:/')
 
         # Validate the courses before import.
         all_courses = sites.get_all_courses()
         dst_app_context_a = all_courses[0]
         dst_app_context_b = all_courses[1]
-        src_app_context = all_courses[2]
+        dst_app_context_c = all_courses[2]
+        src_app_context = all_courses[3]
 
         dst_course_a = courses.Course(None, app_context=dst_app_context_a)
         dst_course_b = courses.Course(None, app_context=dst_app_context_b)
+        dst_course_c = courses.Course(None, app_context=dst_app_context_c)
         src_course = courses.Course(None, app_context=src_app_context)
+
+        new_course_keys = [
+            'admin_user_emails', 'announcement_list_email',
+            'announcement_list_url', 'blurb', 'forum_email',
+            'forum_embed_url', 'forum_url',
+            'google_analytics_id', 'google_tag_manager_id',
+            'instructor_details', 'main_video', 'start_date']
+        init_settings = dst_course_a.app_context.get_environ()
+        assert 'assessment_confirmations' not in init_settings
+        for key in new_course_keys:
+            assert key not in init_settings['course']
 
         assert not dst_course_a.get_units()
         assert not dst_course_b.get_units()
@@ -237,12 +347,23 @@ class InfrastructureTest(actions.TestBase):
         assert len(
             src_course_out.get_units()) == len(dst_course_out_a.get_units())
 
+        final_settings = dst_course_a.app_context.get_environ()
+        assert 'assessment_confirmations' in final_settings
+        final_course_settings = set(
+            init_settings['course'].keys()).intersection(
+            set(final_settings['course'].keys()))
+        self.assertEqual(
+            set(init_settings['course'].keys()), final_course_settings)
+        for key in new_course_keys:
+            assert key in final_settings['course']
+
         # add dependent entities so we can check they make it through the import
         dependents = []
         for dependent_entity_class in courses.COURSE_CONTENT_ENTITIES:
             dependents.append(_add_data_entity(
                 dst_course_out_a.app_context,
-                dependent_entity_class, 'Test ' % dependent_entity_class))
+                dependent_entity_class, 'Test "%s"' % str(
+                    dependent_entity_class)))
         assert dependents
 
         # Import 1.3 course into 1.3.
@@ -255,6 +376,17 @@ class InfrastructureTest(actions.TestBase):
         for dependent in dependents:
             _assert_identical_data_entity_exists(
                 dst_course_out_b.app_context, dependent)
+
+        # Import imported 1.3 course into 1.3.
+        errors = []
+        _, dst_course_out_c = dst_course_c.import_from(
+            dst_app_context_b, errors)
+        if errors:
+            raise Exception(errors)
+        assert dst_course_out_c.get_units() == dst_course_out_b.get_units()
+        for dependent in dependents:
+            _assert_identical_data_entity_exists(
+                dst_course_out_c.app_context, dependent)
 
         # Test delete.
         units_to_delete = dst_course_a.get_units()
@@ -339,7 +471,15 @@ class InfrastructureTest(actions.TestBase):
         dst_unit = dst_course.find_unit_by_id(src_unit.unit_id)
         dst_lesson = dst_course.find_lesson_by_id(
             dst_unit, src_lesson.lesson_id)
-        self.assertEqual(src_lesson.__dict__, dst_lesson.__dict__)
+        assert not dst_lesson.has_activity
+        assert not dst_lesson.activity_title
+        src_dict = copy.deepcopy(src_lesson.__dict__)
+        dst_dict = copy.deepcopy(dst_lesson.__dict__)
+        del src_dict['has_activity']
+        del src_dict['activity_title']
+        del dst_dict['has_activity']
+        del dst_dict['activity_title']
+        self.assertEqual(src_dict, dst_dict)
 
     def test_create_new_course(self):
         """Tests creating a new course."""
@@ -364,12 +504,32 @@ class InfrastructureTest(actions.TestBase):
         assert not course.find_unit_by_id(999)
 
         # Update unit.
-        unit.title = 'Test Title'
+        unit.title = 'Unit Title'
+        unit.labels = 'foo, bar'
         course.update_unit(unit)
         course.save()
-        assert 'Test Title' == course.find_unit_by_id(unit.unit_id).title
+        assert 'Unit Title' == course.find_unit_by_id(unit.unit_id).title
+        assert 'foo, bar' == course.find_unit_by_id(unit.unit_id).labels
+
+        # Update link.
+        link.title = 'Link Title'
+        link.href = 'http://google.com'
+        link.labels = 'bar, baz'
+        course.update_unit(link)
+        course.save()
+        assert 'Link Title' == course.find_unit_by_id(link.unit_id).title
+        assert 'http://google.com' == course.find_unit_by_id(link.unit_id).href
+        assert 'bar, baz' == course.find_unit_by_id(link.unit_id).labels
 
         # Update assessment.
+        assessment.title = 'Asmt. Title'
+        assessment.labels = 'a, b, c'
+        course.update_unit(assessment)
+        course.save()
+        assert 'Asmt. Title' == course.find_unit_by_id(assessment.unit_id).title
+        assert 'a, b, c' == course.find_unit_by_id(assessment.unit_id).labels
+
+        # Update assessment from file.
         assessment_content = open(os.path.join(
             appengine_config.BUNDLE_ROOT,
             'assets/js/assessment-Pre.js'), 'rb').readlines()
@@ -417,76 +577,69 @@ class InfrastructureTest(actions.TestBase):
         course.save()
 
         # Make the course available.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({'course': {'now_available': True}}):
+            # Test public/private assessment.
+            assessment_url = (
+                '/test/' + course.get_assessment_filename(assessment.unit_id))
+            assert not assessment.now_available
+            response = self.get(assessment_url, expect_errors=True)
+            assert_equals(response.status_int, 403)
+            assessment = course.find_unit_by_id(assessment.unit_id)
+            assessment.now_available = True
+            course.update_unit(assessment)
+            course.save()
+            response = self.get(assessment_url)
+            assert_equals(response.status_int, 200)
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['now_available'] = True
-            return environ
+            # Check delayed assessment deletion.
+            course.delete_unit(assessment)
+            response = self.get(assessment_url)  # note: file is still available
+            assert_equals(response.status_int, 200)
+            course.save()
+            response = self.get(assessment_url, expect_errors=True)
+            assert_equals(response.status_int, 404)
 
-        sites.ApplicationContext.get_environ = get_environ_new
+            # Test public/private activity.
+            lesson_a = course.find_lesson_by_id(None, lesson_a.lesson_id)
+            lesson_a.now_available = False
+            lesson_a.has_activity = True
+            course.update_lesson(lesson_a)
+            errors = []
+            course.set_activity_content(lesson_a, u'var activity = []', errors)
+            assert not errors
+            activity_url = (
+                '/test/' + course.get_activity_filename(
+                    None, lesson_a.lesson_id))
+            response = self.get(activity_url, expect_errors=True)
+            assert_equals(response.status_int, 403)
+            lesson_a = course.find_lesson_by_id(None, lesson_a.lesson_id)
+            lesson_a.now_available = True
+            course.update_lesson(lesson_a)
+            course.save()
+            response = self.get(activity_url)
+            assert_equals(response.status_int, 200)
 
-        # Test public/private assessment.
-        assessment_url = (
-            '/test/' + course.get_assessment_filename(assessment.unit_id))
-        assert not assessment.now_available
-        response = self.get(assessment_url, expect_errors=True)
-        assert_equals(response.status_int, 403)
-        assessment = course.find_unit_by_id(assessment.unit_id)
-        assessment.now_available = True
-        course.update_unit(assessment)
-        course.save()
-        response = self.get(assessment_url)
-        assert_equals(response.status_int, 200)
+            # Check delayed activity.
+            course.delete_lesson(lesson_a)
+            response = self.get(activity_url)  # note: file is still available
+            assert_equals(response.status_int, 200)
+            course.save()
+            response = self.get(activity_url, expect_errors=True)
+            assert_equals(response.status_int, 404)
 
-        # Check delayed assessment deletion.
-        course.delete_unit(assessment)
-        response = self.get(assessment_url)  # note: file is still available
-        assert_equals(response.status_int, 200)
-        course.save()
-        response = self.get(assessment_url, expect_errors=True)
-        assert_equals(response.status_int, 404)
-
-        # Test public/private activity.
-        lesson_a = course.find_lesson_by_id(None, lesson_a.lesson_id)
-        lesson_a.now_available = False
-        lesson_a.has_activity = True
-        course.update_lesson(lesson_a)
-        errors = []
-        course.set_activity_content(lesson_a, u'var activity = []', errors)
-        assert not errors
-        activity_url = (
-            '/test/' + course.get_activity_filename(None, lesson_a.lesson_id))
-        response = self.get(activity_url, expect_errors=True)
-        assert_equals(response.status_int, 403)
-        lesson_a = course.find_lesson_by_id(None, lesson_a.lesson_id)
-        lesson_a.now_available = True
-        course.update_lesson(lesson_a)
-        course.save()
-        response = self.get(activity_url)
-        assert_equals(response.status_int, 200)
-
-        # Check delayed activity.
-        course.delete_lesson(lesson_a)
-        response = self.get(activity_url)  # note: file is still available
-        assert_equals(response.status_int, 200)
-        course.save()
-        response = self.get(activity_url, expect_errors=True)
-        assert_equals(response.status_int, 404)
-
-        # Test deletes removes all child objects.
-        course.delete_unit(link)
-        course.delete_unit(unit)
-        assert not course.delete_unit(assessment)
-        course.save()
-        assert not course.get_units()
-        assert not course.app_context.fs.list(os.path.join(
-            course.app_context.get_home(), 'assets/js/'))
+            # Test deletes removes all child objects.
+            course.delete_unit(link)
+            course.delete_unit(unit)
+            assert not course.delete_unit(assessment)
+            course.save()
+            assert not course.get_units()
+            assert not course.app_context.fs.list(os.path.join(
+                course.app_context.get_home(), 'assets/js/'))
 
         # Clean up.
-        sites.ApplicationContext.get_environ = get_environ_old
         sites.reset_courses()
 
+    # pylint: disable-msg=too-many-statements
     def test_unit_lesson_not_available(self):
         """Tests that unavailable units and lessons behave correctly."""
 
@@ -544,111 +697,117 @@ class InfrastructureTest(actions.TestBase):
         assert [lesson_3_1] == course.get_lessons(unit_3.unit_id)
 
         # Make the course available.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({
+                'course': {
+                    'now_available': True,
+                    'browsable': False}}):
+            private_tag = 'id="lesson-title-private"'
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['now_available'] = True
-            return environ
+            # Confirm private units are suppressed for user out of session
+            response = self.get('preview')
+            assert_equals(response.status_int, 200)
+            assert_does_not_contain('Unit 1 - New Unit', response.body)
+            assert_contains('Unit 2 - New Unit', response.body)
+            assert_contains('Unit 3 - New Unit', response.body)
+            assert_contains('Unit 4 - New Unit', response.body)
+            assert_contains('Unit 5 - New Unit', response.body)
 
-        sites.ApplicationContext.get_environ = get_environ_new
+            # Simulate a student traversing the course.
+            email = 'test_unit_lesson_not_available@example.com'
+            name = 'Test Unit Lesson Not Available'
 
-        private_tag = 'id="lesson-title-private"'
+            actions.login(email, is_admin=False)
+            actions.register(self, name)
 
-        # Simulate a student traversing the course.
-        email = 'test_unit_lesson_not_available@example.com'
-        name = 'Test Unit Lesson Not Available'
+            # Accessing a unit that is not available redirects to the main page.
+            response = self.get('unit?unit=%s' % unit_1.unit_id)
+            assert_equals(response.status_int, 302)
 
-        actions.login(email, is_admin=False)
-        actions.register(self, name)
+            response = self.get('unit?unit=%s' % unit_2.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 2.1', response.body)
+            assert_contains('This lesson is not available.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        # Accessing a unit that is not available redirects to the main page.
-        response = self.get('unit?unit=%s' % unit_1.unit_id)
-        assert_equals(response.status_int, 302)
+            response = self.get('unit?unit=%s&lesson=%s' % (
+                unit_2.unit_id, lesson_2_2.lesson_id))
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 2.2', response.body)
+            assert_does_not_contain(
+                'This lesson is not available.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s' % unit_2.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 2.1', response.body)
-        assert_contains('This lesson is not available.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            response = self.get('unit?unit=%s' % unit_3.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 3.1', response.body)
+            assert_contains('This lesson is not available.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s&lesson=%s' % (
-            unit_2.unit_id, lesson_2_2.lesson_id))
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 2.2', response.body)
-        assert_does_not_contain('This lesson is not available.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            response = self.get('unit?unit=%s' % unit_4.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 4.1', response.body)
+            assert_does_not_contain(
+                'This lesson is not available.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s' % unit_3.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 3.1', response.body)
-        assert_contains('This lesson is not available.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            response = self.get('unit?unit=%s' % unit_5.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_does_not_contain('Lesson', response.body)
+            assert_contains('This unit has no content.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s' % unit_4.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 4.1', response.body)
-        assert_does_not_contain('This lesson is not available.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            actions.logout()
 
-        response = self.get('unit?unit=%s' % unit_5.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_does_not_contain('Lesson', response.body)
-        assert_contains(
-            'This unit does not contain any lessons.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            # Simulate an admin traversing the course.
+            email = 'test_unit_lesson_not_available@example.com_admin'
+            name = 'Test Unit Lesson Not Available Admin'
 
-        actions.logout()
+            actions.login(email, is_admin=True)
+            actions.register(self, name)
 
-        # Simulate an admin traversing the course.
-        email = 'test_unit_lesson_not_available@example.com_admin'
-        name = 'Test Unit Lesson Not Available Admin'
+            # The course admin can access a unit that is not available.
+            response = self.get('unit?unit=%s' % unit_1.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 1.1', response.body)
 
-        actions.login(email, is_admin=True)
-        actions.register(self, name)
+            response = self.get('unit?unit=%s' % unit_2.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 2.1', response.body)
+            assert_does_not_contain(
+                'This lesson is not available.', response.body)
+            assert_contains(private_tag, response.body)
 
-        # The course admin can access a unit that is not available.
-        response = self.get('unit?unit=%s' % unit_1.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 1.1', response.body)
+            response = self.get('unit?unit=%s&lesson=%s' % (
+                unit_2.unit_id, lesson_2_2.lesson_id))
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 2.2', response.body)
+            assert_does_not_contain(
+                'This lesson is not available.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s' % unit_2.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 2.1', response.body)
-        assert_does_not_contain('This lesson is not available.', response.body)
-        assert_contains(private_tag, response.body)
+            response = self.get('unit?unit=%s' % unit_3.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 3.1', response.body)
+            assert_does_not_contain(
+                'This lesson is not available.', response.body)
+            assert_contains(private_tag, response.body)
 
-        response = self.get('unit?unit=%s&lesson=%s' % (
-            unit_2.unit_id, lesson_2_2.lesson_id))
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 2.2', response.body)
-        assert_does_not_contain('This lesson is not available.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            response = self.get('unit?unit=%s' % unit_4.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_contains('Lesson 4.1', response.body)
+            assert_does_not_contain(
+                'This lesson is not available.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s' % unit_3.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 3.1', response.body)
-        assert_does_not_contain('This lesson is not available.', response.body)
-        assert_contains(private_tag, response.body)
+            response = self.get('unit?unit=%s' % unit_5.unit_id)
+            assert_equals(response.status_int, 200)
+            assert_does_not_contain('Lesson', response.body)
+            assert_contains('This unit has no content.', response.body)
+            assert_does_not_contain(private_tag, response.body)
 
-        response = self.get('unit?unit=%s' % unit_4.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_contains('Lesson 4.1', response.body)
-        assert_does_not_contain('This lesson is not available.', response.body)
-        assert_does_not_contain(private_tag, response.body)
+            actions.logout()
 
-        response = self.get('unit?unit=%s' % unit_5.unit_id)
-        assert_equals(response.status_int, 200)
-        assert_does_not_contain('Lesson', response.body)
-        assert_contains(
-            'This unit does not contain any lessons.', response.body)
-        assert_does_not_contain(private_tag, response.body)
-
-        actions.logout()
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
-
+    # pylint: disable-msg=too-many-statements
     def test_custom_assessments(self):
         """Tests that custom assessments are evaluated correctly."""
 
@@ -678,124 +837,117 @@ class InfrastructureTest(actions.TestBase):
         assert 2 == len(course.get_units())
 
         # Make the course available.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({'course': {'now_available': True}}):
+            first = {'score': '1.00', 'assessment_type': assessment_1.unit_id}
+            second = {'score': '3.00', 'assessment_type': assessment_2.unit_id}
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['now_available'] = True
-            return environ
+            # Update assessment 1.
+            assessment_1_content = open(os.path.join(
+                appengine_config.BUNDLE_ROOT,
+                'assets/js/assessment-Pre.js'), 'rb').readlines()
+            assessment_1_content = u''.join(assessment_1_content)
+            errors = []
+            course.set_assessment_content(
+                assessment_1, assessment_1_content, errors)
+            course.save()
+            assert not errors
 
-        sites.ApplicationContext.get_environ = get_environ_new
+            # Update assessment 2.
+            assessment_2_content = open(os.path.join(
+                appengine_config.BUNDLE_ROOT,
+                'assets/js/assessment-Mid.js'), 'rb').readlines()
+            assessment_2_content = u''.join(assessment_2_content)
+            errors = []
+            course.set_assessment_content(
+                assessment_2, assessment_2_content, errors)
+            course.save()
+            assert not errors
 
-        first = {'score': '1.00', 'assessment_type': assessment_1.unit_id}
-        second = {'score': '3.00', 'assessment_type': assessment_2.unit_id}
+            # Register.
+            actions.login(email)
+            actions.register(self, name)
 
-        # Update assessment 1.
-        assessment_1_content = open(os.path.join(
-            appengine_config.BUNDLE_ROOT,
-            'assets/js/assessment-Pre.js'), 'rb').readlines()
-        assessment_1_content = u''.join(assessment_1_content)
-        errors = []
-        course.set_assessment_content(
-            assessment_1, assessment_1_content, errors)
-        course.save()
-        assert not errors
+            # Submit assessment 1.
+            actions.submit_assessment(self, assessment_1.unit_id, first)
+            student = (
+                models.StudentProfileDAO.get_enrolled_student_by_email_for(
+                    email, app_context))
+            student_scores = course.get_all_scores(student)
 
-        # Update assessment 2.
-        assessment_2_content = open(os.path.join(
-            appengine_config.BUNDLE_ROOT,
-            'assets/js/assessment-Mid.js'), 'rb').readlines()
-        assessment_2_content = u''.join(assessment_2_content)
-        errors = []
-        course.set_assessment_content(
-            assessment_2, assessment_2_content, errors)
-        course.save()
-        assert not errors
+            assert len(student_scores) == 2
 
-        # Register.
-        actions.login(email)
-        actions.register(self, name)
+            assert student_scores[0]['id'] == str(assessment_1.unit_id)
+            assert student_scores[0]['score'] == 1
+            assert student_scores[0]['title'] == 'first'
+            assert student_scores[0]['weight'] == 0
 
-        # Submit assessment 1.
-        actions.submit_assessment(self, assessment_1.unit_id, first)
-        student = models.StudentProfileDAO.get_enrolled_student_by_email_for(
-            email, app_context)
-        student_scores = course.get_all_scores(student)
+            assert student_scores[1]['id'] == str(assessment_2.unit_id)
+            assert student_scores[1]['score'] == 0
+            assert student_scores[1]['title'] == 'second'
+            assert student_scores[1]['weight'] == 0
 
-        assert len(student_scores) == 2
+            # The overall score is None if there are no weights assigned to any
+            # of the assessments.
+            overall_score = course.get_overall_score(student)
+            assert overall_score is None
 
-        assert student_scores[0]['id'] == str(assessment_1.unit_id)
-        assert student_scores[0]['score'] == 1
-        assert student_scores[0]['title'] == 'first'
-        assert student_scores[0]['weight'] == 0
+            # View the student profile page.
+            response = self.get('student/home')
+            assert_does_not_contain('Overall course score', response.body)
 
-        assert student_scores[1]['id'] == str(assessment_2.unit_id)
-        assert student_scores[1]['score'] == 0
-        assert student_scores[1]['title'] == 'second'
-        assert student_scores[1]['weight'] == 0
+            # Add a weight to the first assessment.
+            assessment_1.weight = 10
+            overall_score = course.get_overall_score(student)
+            assert overall_score == 1
 
-        # The overall score is None if there are no weights assigned to any of
-        # the assessments.
-        overall_score = course.get_overall_score(student)
-        assert overall_score is None
+            # Submit assessment 2.
+            actions.submit_assessment(self, assessment_2.unit_id, second)
+            # We need to reload the student instance, because its properties
+            # have changed.
+            student = (
+                models.StudentProfileDAO.get_enrolled_student_by_email_for(
+                    email, app_context))
+            student_scores = course.get_all_scores(student)
 
-        # View the student profile page.
-        response = self.get('student/home')
-        assert_does_not_contain('Overall course score', response.body)
+            assert len(student_scores) == 2
+            assert student_scores[1]['score'] == 3
+            overall_score = course.get_overall_score(student)
+            assert overall_score == 1
 
-        # Add a weight to the first assessment.
-        assessment_1.weight = 10
-        overall_score = course.get_overall_score(student)
-        assert overall_score == 1
+            # Change the weight of assessment 2.
+            assessment_2.weight = 30
+            overall_score = course.get_overall_score(student)
+            assert overall_score == int((1 * 10 + 3 * 30) / 40)
 
-        # Submit assessment 2.
-        actions.submit_assessment(self, assessment_2.unit_id, second)
-        # We need to reload the student instance, because its properties have
-        # changed.
-        student = models.StudentProfileDAO.get_enrolled_student_by_email_for(
-            email, app_context)
-        student_scores = course.get_all_scores(student)
+            # Save all changes.
+            course.save()
 
-        assert len(student_scores) == 2
-        assert student_scores[1]['score'] == 3
-        overall_score = course.get_overall_score(student)
-        assert overall_score == 1
+            # View the student profile page.
+            response = self.get('student/home')
+            assert_contains('assessment-score-first">1</span>', response.body)
+            assert_contains('assessment-score-second">3</span>', response.body)
+            assert_contains('Overall course score', response.body)
+            assert_contains('assessment-score-overall">2</span>', response.body)
 
-        # Change the weight of assessment 2.
-        assessment_2.weight = 30
-        overall_score = course.get_overall_score(student)
-        assert overall_score == int((1 * 10 + 3 * 30) / 40)
+            # Submitting a lower score for any assessment does not change any of
+            # the scores, since the system records the maximum score that has
+            # ever been achieved on any assessment.
+            first_retry = {
+                'score': '0', 'assessment_type': assessment_1.unit_id}
+            actions.submit_assessment(self, assessment_1.unit_id, first_retry)
+            student = (
+                models.StudentProfileDAO.get_enrolled_student_by_email_for(
+                    email, app_context))
+            student_scores = course.get_all_scores(student)
 
-        # Save all changes.
-        course.save()
+            assert len(student_scores) == 2
+            assert student_scores[0]['id'] == str(assessment_1.unit_id)
+            assert student_scores[0]['score'] == 1
 
-        # View the student profile page.
-        response = self.get('student/home')
-        assert_contains('assessment-score-first">1</span>', response.body)
-        assert_contains('assessment-score-second">3</span>', response.body)
-        assert_contains('Overall course score', response.body)
-        assert_contains('assessment-score-overall">2</span>', response.body)
+            overall_score = course.get_overall_score(student)
+            assert overall_score == int((1 * 10 + 3 * 30) / 40)
 
-        # Submitting a lower score for any assessment does not change any of
-        # the scores, since the system records the maximum score that has ever
-        # been achieved on any assessment.
-        first_retry = {'score': '0', 'assessment_type': assessment_1.unit_id}
-        actions.submit_assessment(self, assessment_1.unit_id, first_retry)
-        student = models.StudentProfileDAO.get_enrolled_student_by_email_for(
-            email, app_context)
-        student_scores = course.get_all_scores(student)
-
-        assert len(student_scores) == 2
-        assert student_scores[0]['id'] == str(assessment_1.unit_id)
-        assert student_scores[0]['score'] == 1
-
-        overall_score = course.get_overall_score(student)
-        assert overall_score == int((1 * 10 + 3 * 30) / 40)
-
-        actions.logout()
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+            actions.logout()
 
     def test_datastore_backed_file_system(self):
         """Tests datastore-backed file system operations."""
@@ -990,12 +1142,10 @@ class AdminAspectTest(actions.TestBase):
         unused_course, course_b = course_b.import_from(src_app_context)
 
         # Rename courses.
-        dst_app_context_a.fs.put(
-            dst_app_context_a.get_config_filename(),
-            vfs.string_to_stream(u'course:\n  title: \'Course AAA\''))
-        dst_app_context_b.fs.put(
-            dst_app_context_b.get_config_filename(),
-            vfs.string_to_stream(u'course:\n  title: \'Course BBB\''))
+        with Namespace(dst_app_context_a.get_namespace_name()):
+            course_a.save_settings({'course': {'title': 'Course AAA'}})
+        with Namespace(dst_app_context_b.get_namespace_name()):
+            course_b.save_settings({'course': {'title': 'Course BBB'}})
 
         # Login.
         email = 'test_courses_page_for_multiple_courses@google.com'
@@ -1052,7 +1202,7 @@ class AdminAspectTest(actions.TestBase):
         assert_equals(response.status_int, 200)
 
         response.form.set('code', 'print "foo" + "bar"')
-        response = self.submit(response.form)
+        response = self.submit(response.form, response)
         assert_contains('foobar', response.body)
 
         # Finally, test that the console is not found when it is disabled
@@ -1281,6 +1431,7 @@ class AdminAspectTest(actions.TestBase):
 class CourseAuthorAspectTest(actions.TestBase):
     """Tests the site from the Course Author perspective."""
 
+    # pylint: disable-msg=too-many-statements
     def test_dashboard(self):
         """Test course dashboard."""
 
@@ -1303,11 +1454,8 @@ class CourseAuthorAspectTest(actions.TestBase):
         assert_contains(
             '<title>Course Builder &gt; Power Searching with Google &gt; Dash',
             response.body)
-        # Verify body does have linked breadcrumb trail.
-        assert_contains(
-            'Google &gt;<a href="%s"> Dashboard </a>&gt; Outline' %
-                self.canonicalize('dashboard'),
-            response.body)
+        # Verify body has breadcrumb trail.
+        assert_contains('Google &gt; Dashboard &gt; Outline', response.body)
 
         # Tests outline view.
         response = self.get('dashboard')
@@ -1321,31 +1469,28 @@ class CourseAuthorAspectTest(actions.TestBase):
             assert_does_not_contain('Add Assessment', response.body)
 
         # Test assets view.
-        response = self.get('dashboard?action=assets')
+        response = self.get('dashboard?action=assets&tab=css')
         # Verify title does not have link text
         assert_contains(
             '<title>Course Builder &gt; Power Searching with Google &gt; Dash',
             response.body)
-        # Verify body does have linked breadcrumb trail.
+        # Verify body has breadcrumb trail.
         assert_contains(
-            'Google &gt;<a href="%s"> Dashboard </a>&gt; Assets' %
-                self.canonicalize('dashboard'),
-            response.body)
+            'Google &gt; Dashboard &gt; Assets &gt; CSS', response.body)
         assert_contains('assets/css/main.css', response.body)
+        response = self.get('dashboard?action=assets&tab=images')
         assert_contains('assets/img/Image1.5.png', response.body)
-        assert_contains('assets/js/activity-3.2.js', response.body)
+        response = self.get('dashboard?action=assets&tab=js')
+        assert_contains('assets/lib/activity-generic-1.3.js', response.body)
 
         # Test settings view.
-        response = self.get('dashboard?action=settings')
+        response = self.get('dashboard?action=settings&tab=advanced')
         # Verify title does not have link text
         assert_contains(
             '<title>Course Builder &gt; Power Searching with Google &gt; Dash',
             response.body)
-        # Verify body does have linked breadcrumb trail.
-        assert_contains(
-            'Google &gt;<a href="%s"> Dashboard </a>&gt; Settings' %
-                self.canonicalize('dashboard'),
-            response.body)
+        # Verify body has breadcrumb trail.
+        assert_contains('Google &gt; Dashboard &gt; Settings', response.body)
         assert_contains('course.yaml', response.body)
         assert_contains(
             'title: &#39;Power Searching with Google&#39;', response.body)
@@ -1358,29 +1503,27 @@ class CourseAuthorAspectTest(actions.TestBase):
             assert_does_not_contain('create_or_edit_settings', response.body)
 
         # Tests student statistics view.
-        response = self.get('dashboard?action=analytics')
+        response = self.get('dashboard?action=analytics&tab=students')
         # Verify title does not have link text
         assert_contains(
             '<title>Course Builder &gt; Power Searching with Google &gt; Dash',
             response.body)
-        # Verify body does have linked breadcrumb trail.
+        # Verify body has breadcrumb trail.
         assert_contains(
-            'Google &gt;<a href="%s"> Dashboard </a>&gt; Analytics' %
-                self.canonicalize('dashboard'),
+            'Google &gt; Dashboard &gt; Analytics &gt; Students',
             response.body)
         assert_contains('have not been calculated yet', response.body)
 
-        compute_form = response.forms['gcb-compute-student-stats']
-        response = self.submit(compute_form)
-        assert_equals(response.status_int, 302)
-        assert len(self.taskq.GetTasks('default')) == 5
+        response = response.forms[
+            'gcb-generate-analytics-data'].submit().follow()
+        assert len(self.taskq.GetTasks('default')) == 3
 
-        response = self.get('dashboard?action=analytics')
+        response = self.get(response.request.url)
         assert_contains('is running', response.body)
 
         self.execute_all_deferred_tasks()
 
-        response = self.get('dashboard?action=analytics')
+        response = self.get(response.request.url)
         assert_contains('were last updated at', response.body)
         assert_contains('currently enrolled: 1', response.body)
         assert_contains('total: 1', response.body)
@@ -1397,13 +1540,13 @@ class CourseAuthorAspectTest(actions.TestBase):
         finally:
             namespace_manager.set_namespace(old_namespace)
 
-        response = self.get('dashboard?action=analytics')
-        compute_form = response.forms['gcb-compute-student-stats']
-        response = self.submit(compute_form)
+        response = self.get(response.request.url)
+        response = response.forms[
+            'gcb-generate-analytics-data'].submit().follow()
 
         self.execute_all_deferred_tasks()
 
-        response = self.get('dashboard?action=analytics')
+        response = self.get(response.request.url)
         assert_contains('currently enrolled: 6', response.body)
         assert_contains(
             'test-assessment: completed 5, average score 2.0', response.body)
@@ -1510,6 +1653,55 @@ class CourseAuthorAspectTest(actions.TestBase):
         assert json_dict['status'] == 404
 
 
+class CourseAuthorCourseCreationTest(actions.TestBase):
+
+    def test_course_admin_can_create_another_course(self):
+        admin_email = 'admin@foo.com'
+        author_email = 'author@foo.com'
+        actions.login(admin_email, is_admin=True)
+        actions.simple_add_course('course_one', admin_email, 'Course One')
+        actions.update_course_config('course_one', {
+            'course': {'admin_user_emails': author_email}})
+
+        # Login without super-admin authority; visit dashboard of course we
+        # may edit.
+        actions.login(author_email)
+        response = self.get('/course_one/dashboard')
+        response = self.click(response, 'Add Course')
+
+        # Ensure that clicking on add-course link does not result in a 302
+        # to '/', which would happen if we did not have access.
+        self.assertEquals(200, response.status_int)
+        self.assertEquals('http://localhost/admin?action=add_course',
+                          response.request.url)
+
+    def test_course_admin_does_not_see_courses_he_does_not_administer(self):
+        admin_email = 'admin@foo.com'
+        author_email = 'author@foo.com'
+        actions.login(admin_email, is_admin=True)
+
+        actions.simple_add_course('course_one', admin_email, 'Course One')
+        actions.simple_add_course('course_two', admin_email, 'Course Two')
+        actions.simple_add_course('course_three', admin_email, 'Course Three')
+        actions.update_course_config('course_one', {
+            'course': {'admin_user_emails': author_email}})
+        actions.update_course_config('course_two', {
+            'course': {'admin_user_emails': author_email}})
+
+        actions.login(author_email)
+
+        # Visit course_one's dashboard
+        response = self.get('/course_one/dashboard')
+
+        # Expect to be able to see peer course for which author has admin rights
+        self.assertIn('Course Two', response.body)
+        self.assertIn('/course_two', response.body)
+
+        # But not peer course for which he does not.
+        self.assertNotIn('Course Three', response.body)
+        self.assertNotIn('/course_three', response.body)
+
+
 class StudentAspectTest(actions.TestBase):
     """Test the site from the Student perspective."""
 
@@ -1561,8 +1753,16 @@ class StudentAspectTest(actions.TestBase):
 
         actions.login(email)
 
+        # Verify registration is present on /course to unregistered student.
+        response = self.get('course')
+        self.assertIn('<a href="register">Registration</a>', response.body)
+
         actions.register(self, name1)
         actions.check_profile(self, name1)
+
+        # Verify registration link is gone once registered.
+        response = self.get('course')
+        self.assertNotIn('<a href="register">Registration</a>', response.body)
 
         actions.change_name(self, name2)
         actions.unregister(self)
@@ -1586,30 +1786,20 @@ class StudentAspectTest(actions.TestBase):
         assert_equals(response.status_int, 200)
 
         # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment(
+                {'course': {'now_available': False}}):
+            # Check preview and static resources are not available to Student.
+            response = self.get('course', expect_errors=True)
+            assert_equals(response.status_int, 404)
+            response = self.get('assets/js/activity-1.3.js', expect_errors=True)
+            assert_equals(response.status_int, 404)
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['now_available'] = False
-            return environ
-
-        sites.ApplicationContext.get_environ = get_environ_new
-
-        # Check preview and static resources are not available to Student.
-        response = self.get('course', expect_errors=True)
-        assert_equals(response.status_int, 404)
-        response = self.get('assets/js/activity-1.3.js', expect_errors=True)
-        assert_equals(response.status_int, 404)
-
-        # Check preview and static resources are still available to author.
-        actions.login(email, is_admin=True)
-        response = self.get('course')
-        assert_equals(response.status_int, 200)
-        response = self.get('assets/js/activity-1.3.js')
-        assert_equals(response.status_int, 200)
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+            # Check preview and static resources are still available to author.
+            actions.login(email, is_admin=True)
+            response = self.get('course')
+            assert_equals(response.status_int, 200)
+            response = self.get('assets/js/activity-1.3.js')
+            assert_equals(response.status_int, 200)
 
     def test_registration_closed(self):
         """Test student registration when course is full."""
@@ -1617,30 +1807,25 @@ class StudentAspectTest(actions.TestBase):
         email = 'test_registration_closed@example.com'
         name = 'Test Registration Closed'
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment(
+                {'reg_form': {'can_register': False}}):
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['reg_form']['can_register'] = False
-            return environ
+            # Try to login and register.
+            actions.login(email)
+            try:
+                actions.register(self, name)
+                raise actions.ShouldHaveFailedByNow(
+                    'Expected to fail: new registrations should not be allowed '
+                    'when registration is closed.')
+            except actions.ShouldHaveFailedByNow as e:
+                raise e
+            except:
+                pass
 
-        sites.ApplicationContext.get_environ = get_environ_new
-
-        # Try to login and register.
-        actions.login(email)
-        try:
-            actions.register(self, name)
-            raise actions.ShouldHaveFailedByNow(
-                'Expected to fail: new registrations should not be allowed '
-                'when registration is closed.')
-        except actions.ShouldHaveFailedByNow as e:
-            raise e
-        except:
-            pass
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+            # Verify registration link not present on /course
+            response = self.get('course')
+            self.assertNotIn(
+                '<a href="register">Registration</a>', response.body)
 
     def test_registration_with_additional_fields(self):
         """Registers a new student with customized registration form."""
@@ -1650,45 +1835,40 @@ class StudentAspectTest(actions.TestBase):
         zipcode = '94043'
         score = '99'
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        environ = {
+            'course': {'browsable': False},
+            'reg_form': {
+                'additional_registration_fields': (
+                    '\'<!-- reg_form.additional_registration_fields -->'
+                    '<li>'
+                    '<label class="form-label" for="form02"> '
+                    'What is your zipcode?'
+                    '</label><input name="form02" type="text"></li>'
+                    '<li>'
+                    '<label class="form-label" for="form03"> '
+                    'What is your score?'
+                    '</label> <input name="form03" type="text"></li>\'')
+            }
+        }
+        with actions.OverriddenEnvironment(environ):
+            # Login and register.
+            actions.login(email)
+            actions.register_with_additional_fields(self, name, zipcode, score)
 
-        def get_environ_new(self):
-            """Insert additional fields into course.yaml."""
-            environ = get_environ_old(self)
-            environ['course']['browsable'] = False
-            environ['reg_form']['additional_registration_fields'] = (
-                '\'<!-- reg_form.additional_registration_fields -->'
-                '<li>'
-                '<label class="form-label" for="form02"> What is your zipcode?'
-                '</label><input name="form02" type="text"></li>'
-                '<li>'
-                '<label class="form-label" for="form03"> What is your score?'
-                '</label> <input name="form03" type="text"></li>\''
-                )
-            return environ
+            # Verify that registration results in capturing additional
+            # registration questions.
+            old_namespace = namespace_manager.get_namespace()
+            namespace_manager.set_namespace(self.namespace)
+            student = models.Student.get_enrolled_student_by_email(email)
 
-        sites.ApplicationContext.get_environ = get_environ_new
-
-        # Login and register.
-        actions.login(email)
-        actions.register_with_additional_fields(self, name, zipcode, score)
-
-        # Verify that registration results in capturing additional registration
-        # questions.
-        old_namespace = namespace_manager.get_namespace()
-        namespace_manager.set_namespace(self.namespace)
-        student = models.Student.get_enrolled_student_by_email(email)
-
-        # Check that two registration additional fields are populated
-        # with correct values.
-        if student.additional_fields:
-            json_dict = transforms.loads(student.additional_fields)
-            assert zipcode == json_dict[2][1]
-            assert score == json_dict[3][1]
+            # Check that two registration additional fields are populated
+            # with correct values.
+            if student.additional_fields:
+                json_dict = transforms.loads(student.additional_fields)
+                assert zipcode == json_dict[2][1]
+                assert score == json_dict[3][1]
 
         # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
         namespace_manager.set_namespace(old_namespace)
 
     def test_permissions(self):
@@ -1696,54 +1876,108 @@ class StudentAspectTest(actions.TestBase):
         email = 'test_permissions@example.com'
         name = 'Test Permissions'
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({'course': {'browsable': False}}):
+            actions.login(email)
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['browsable'] = False
-            return environ
+            actions.register(self, name)
+            actions.Permissions.assert_enrolled(self)
 
-        sites.ApplicationContext.get_environ = get_environ_new
+            actions.unregister(self)
+            actions.Permissions.assert_unenrolled(self)
 
-        actions.login(email)
-
-        actions.register(self, name)
-        actions.Permissions.assert_enrolled(self)
-
-        actions.unregister(self)
-        actions.Permissions.assert_unenrolled(self)
-
-        actions.register(self, name)
-        actions.Permissions.assert_enrolled(self)
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+            actions.register(self, name)
+            actions.Permissions.assert_enrolled(self)
 
     def test_login_and_logout(self):
         """Test if login and logout behave as expected."""
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['browsable'] = False
-            return environ
+        with actions.OverriddenEnvironment({'course': {'browsable': False}}):
+            email = 'test_login_logout@example.com'
 
-        sites.ApplicationContext.get_environ = get_environ_new
+            actions.Permissions.assert_logged_out(self)
+            actions.login(email)
 
-        email = 'test_login_logout@example.com'
+            actions.Permissions.assert_unenrolled(self)
 
-        actions.Permissions.assert_logged_out(self)
-        actions.login(email)
+            actions.logout()
+            actions.Permissions.assert_logged_out(self)
 
-        actions.Permissions.assert_unenrolled(self)
+    def assert_locale_settings(self):
+        # Locale picker shown. Chooser shows only available locales.
+        course_page = self.parse_html_string(self.get('course').body)
+        locale_options = course_page.findall(
+            './/select[@id="locale-select"]/option')
+        self.assertEqual(2, len(locale_options))
+        self.assertEquals('en_US', locale_options[0].attrib['value'])
+        self.assertEquals('el', locale_options[1].attrib['value'])
 
-        actions.logout()
-        actions.Permissions.assert_logged_out(self)
+        # Set language prefs using the REST endoint
 
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+        # A bad XSRF token is rejected
+        request = {'xsrf_token': '1234'}
+        response = transforms.loads(self.post(
+            'rest/locale', {'request': transforms.dumps(request)}).body)
+        self.assertEquals(403, response['status'])
+        self.assertIn('Bad XSRF token', response['message'])
+
+        xsrf_token = crypto.XsrfTokenManager.create_xsrf_token('locales')
+
+        # An unavailable locale is rejected
+        request = {'xsrf_token': xsrf_token, 'payload': {'selected': 'fr'}}
+        response = transforms.loads(self.post(
+            'rest/locale', {'request': transforms.dumps(request)}).body)
+        self.assertEquals(401, response['status'])
+        self.assertIn('Bad locale', response['message'])
+
+        # An available locale is accepted
+        request = {'xsrf_token': xsrf_token, 'payload': {'selected': 'el'}}
+        response = transforms.loads(self.post(
+            'rest/locale', {'request': transforms.dumps(request)}).body)
+        self.assertEquals(200, response['status'])
+        self.assertIn('OK', response['message'])
+
+        # After setting locale, visit course homepage and see new locale
+        course_page = self.parse_html_string(self.get('course').body)
+        self.assertEquals(
+            u'Εγγραφή', course_page.find('.//a[@href="register"]').text)
+
+    def test_locale_settings(self):
+
+        extra_environ = {
+            'course': {'locale': 'en_US', 'can_student_change_locale': True},
+            'extra_locales': [
+                {'locale': 'el', 'availability': 'available'},
+                {'locale': 'fr', 'availability': 'unavailable'}]}
+
+        with actions.OverriddenEnvironment(extra_environ):
+
+            # Visit course home page with no locale settings and see the default
+            # locale
+            course_page = self.parse_html_string(self.get('course').body)
+            self.assertEquals(
+                'Registration', course_page.find('.//a[@href="register"]').text)
+
+            # Visit course home page with accept-language set to an available
+            # locale
+            course_page = self.parse_html_string(
+                self.get('course', headers={'Accept-Language': 'el'}).body)
+            self.assertEquals(
+                u'Εγγραφή', course_page.find('.//a[@href="register"]').text)
+
+            # Visit course home page with accept-language set to an unavailable
+            # locale
+            course_page = self.parse_html_string(
+                self.get('course', headers={'Accept-Language': 'fr'}).body)
+            self.assertEquals(
+                u'Registration',
+                course_page.find('.//a[@href="register"]').text)
+
+            actions.login('user@place.com')
+            self.assert_locale_settings()
+
+            actions.logout()
+            self.assert_locale_settings()
+            self.assertEquals('el', self.testapp.cookies['cb-user-locale'])
 
     def test_lesson_activity_navigation(self):
         """Test navigation between lesson/activity pages."""
@@ -1767,6 +2001,86 @@ class StudentAspectTest(actions.TestBase):
         assert_does_not_contain('Next Page', response.body)
         assert_contains('End', response.body)
 
+    def test_unit_title_without_index(self):
+        """Tests display of unit/lesson titles when unit index is not shown."""
+        email = 'test_unit_title_without_index@example.com'
+        name = 'test_unit_title_without_index'
+
+        actions.login(email)
+        actions.register(self, name)
+
+        response = self.get('unit?unit=2&lesson=2')
+        assert_contains('Unit 2 - Interpreting results', response.body)
+
+        with actions.OverriddenEnvironment(
+                {'course': {'display_unit_title_without_index': True}}):
+            response = self.get('unit?unit=2&lesson=2')
+            assert_does_not_contain(
+                'Unit 2 - Interpreting results', response.body)
+            assert_contains('Interpreting results', response.body)
+
+    def test_lesson_title_without_auto_index(self):
+        """Tests display of lesson title when auto indexing is disabled."""
+        email = 'test_lesson_title_without_auto_index@example.com'
+        name = 'test_lesson_title_without_auto_index'
+
+        actions.login(email)
+        actions.register(self, name)
+
+        response = self.get('unit?unit=2&lesson=2')
+        assert_contains('2.1 When search results', response.body)
+        assert_contains('2.2 Thinking more', response.body)
+        assert_contains('2.3 Understand options', response.body)
+
+        old_load = courses.CourseModel12.load
+
+        def new_load(unused_cls, app_context):
+            """Modify auto indexing setting for one lesson."""
+            course = old_load(app_context)
+            lesson = course.get_lessons(2)[1]
+            lesson._auto_index = False  # pylint: disable=protected-access
+            return course
+
+        courses.CourseModel12.load = types.MethodType(
+            new_load, courses.CourseModel12)
+
+        response = self.get('unit?unit=2&lesson=2')
+        assert_contains('2.1 When search results', response.body)
+        assert_does_not_contain('2.2 Thinking more', response.body)
+        assert_contains('Thinking more', response.body)
+        assert_contains('2.3 Understand options', response.body)
+
+        courses.CourseModel12.load = old_load
+
+    def test_show_hide_unit_links_on_sidebar(self):
+        """Test display of unit links in side bar."""
+        email = 'test_show_hide_unit_links_on_sidebar@example.com'
+        name = 'Test Show/Hide of Unit Links on Side Bar'
+
+        actions.login(email)
+        actions.register(self, name)
+
+        text_to_check = [
+            'unit?unit=1', 'Unit 1 - ',
+            'unit?unit=3', 'Unit 3 - ',
+            'assessment?name=Mid', 'Mid-course assessment',
+            'unit?unit=1&lesson=5', 'Word order matters',
+            'unit?unit=3&lesson=4', 'OR and quotes'
+            ]
+
+        # The default behavior is to show links to other units and lessons.
+        response = self.get('unit?unit=2')
+        for item in text_to_check:
+            assert_contains(item, response.body)
+
+        with actions.OverriddenEnvironment(
+                {'unit': {'show_unit_links_in_leftnav': False}}):
+
+            # Check that now we don't have links to other units and lessons.
+            response = self.get('unit?unit=2')
+            for item in text_to_check:
+                assert_does_not_contain(item, response.body)
+
     def test_show_hide_lesson_navigation(self):
         """Test display of lesson navigation buttons."""
         email = 'test_show_hide_of_lesson_navigation@example.com'
@@ -1777,32 +2091,18 @@ class StudentAspectTest(actions.TestBase):
 
         # The default behavior is to show the lesson navigation buttons.
         response = self.get('unit?unit=2&lesson=3')
-        assert_contains(
-            '<div class="gcb-button-box" >', response.body)
-        assert_does_not_contain(
-            '<div class="gcb-button-box" style="display: none;">',
-            response.body)
+        assert_contains('<div class="gcb-prev-button">', response.body)
+        assert_contains('<div class="gcb-next-button">', response.body)
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment(
+                {'unit': {'hide_lesson_navigation_buttons': True}}):
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['unit']['hide_lesson_navigation_buttons'] = True
-            return environ
-
-        sites.ApplicationContext.get_environ = get_environ_new
-
-        # The lesson navigation buttons should now be hidden.
-        response = self.get('unit?unit=2&lesson=3')
-        assert_contains(
-            '<div class="gcb-button-box" style="display: none;">',
-            response.body)
-        assert_does_not_contain(
-            '<div class="gcb-button-box" >', response.body)
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+            # The lesson navigation buttons should now be hidden.
+            response = self.get('unit?unit=2&lesson=3')
+            assert_does_not_contain(
+                '<div class="gcb-prev-button">', response.body)
+            assert_does_not_contain(
+                '<div class="gcb-next-button">', response.body)
 
     def test_attempt_activity_event(self):
         """Test activity attempt generates event."""
@@ -1935,24 +2235,12 @@ class StudentAspectTest(actions.TestBase):
 
         actions.Permissions.assert_can_browse(self)
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({'course': {'browsable': False}}):
+            actions.Permissions.assert_logged_out(self)
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['browsable'] = False
-            return environ
-
-        sites.ApplicationContext.get_environ = get_environ_new
-
-        actions.Permissions.assert_logged_out(self)
-
-        # Check course page redirects.
-        response = self.get('course', expect_errors=True)
-        assert_equals(response.status_int, 302)
-
-        # Clean up app_context.
-        sites.ApplicationContext.get_environ = get_environ_old
+            # Check course page redirects.
+            response = self.get('course', expect_errors=True)
+            assert_equals(response.status_int, 302)
 
 
 class StudentUnifiedProfileTest(StudentAspectTest):
@@ -1988,20 +2276,23 @@ class StaticHandlerTest(actions.TestBase):
     def test_static_files_cache_control(self):
         """Test static/zip handlers use proper Cache-Control headers."""
 
-        # Check static handler.
-        response = self.get('/assets/css/main.css')
-        assert_equals(response.status_int, 200)
-        assert_contains('max-age=600', response.headers['Cache-Control'])
-        assert_contains('public', response.headers['Cache-Control'])
-        assert_does_not_contain('no-cache', response.headers['Cache-Control'])
+        def assert_response(response):
+            assert_equals(response.status_int, 200)
+            assert_contains('max-age=600', response.headers['Cache-Control'])
+            assert_contains('public', response.headers['Cache-Control'])
+            assert_does_not_contain('no-cache', str(response.headers))
+            assert_does_not_contain('must-revalidate', str(response.headers))
 
-        # Check zip file handler.
-        response = self.testapp.get(
-            '/static/inputex-3.1.0/src/inputex/assets/skins/sam/inputex.css')
-        assert_equals(response.status_int, 200)
-        assert_contains('max-age=600', response.headers['Cache-Control'])
-        assert_contains('public', response.headers['Cache-Control'])
-        assert_does_not_contain('no-cache', response.headers['Cache-Control'])
+        # static resourse on a namespaced route
+        assert_response(self.get('/assets/css/main.css'))
+
+        # static resource from the file system on a global route
+        assert_response(self.testapp.get(
+            '/modules/oeditor/resources/butterbar.js'))
+
+        # static resource from the zip file on a global route; it requires login
+        assert_response(self.testapp.get(
+            '/static/inputex-3.1.0/src/inputex/assets/skins/sam/inputex.css'))
 
 
 class ActivityTest(actions.TestBase):
@@ -2100,6 +2391,7 @@ class ActivityTest(actions.TestBase):
         finally:
             namespace_manager.set_namespace(old_namespace)
 
+    # pylint: disable-msg=too-many-statements
     def test_progress(self):
         """Test student activity progress in detail, using the sample course."""
 
@@ -2118,14 +2410,16 @@ class ActivityTest(actions.TestBase):
             assert unit_progress[key] == 0
         lesson_progress = tracker.get_lesson_progress(student, 1)
         for key in lesson_progress:
-            assert lesson_progress[key] == {'html': 0, 'activity': 0}
+            assert lesson_progress[key] == {
+                'html': 0, 'activity': 0, 'has_activity': True
+                }
 
         # The blocks in Lesson 1.2 with activities are blocks 3 and 6.
         # Submitting block 3 should trigger an in-progress update.
         tracker.put_block_completed(student, 1, 2, 3)
         assert tracker.get_unit_progress(student)['1'] == 1
         assert tracker.get_lesson_progress(student, 1)[2] == {
-            'html': 0, 'activity': 1
+            'html': 0, 'activity': 1, 'has_activity': True
         }
 
         # Submitting block 6 should trigger a completion update for the
@@ -2133,14 +2427,14 @@ class ActivityTest(actions.TestBase):
         tracker.put_block_completed(student, 1, 2, 6)
         assert tracker.get_unit_progress(student)['1'] == 1
         assert tracker.get_lesson_progress(student, 1)[2] == {
-            'html': 0, 'activity': 2
+            'html': 0, 'activity': 2, 'has_activity': True
         }
 
         # Visiting the HTML page for Lesson 1.2 completes the lesson.
         tracker.put_html_accessed(student, 1, 2)
         assert tracker.get_unit_progress(student)['1'] == 1
         assert tracker.get_lesson_progress(student, 1)[2] == {
-            'html': 2, 'activity': 2
+            'html': 2, 'activity': 2, 'has_activity': True
         }
 
         # Test a lesson with no interactive blocks in its activity. It should
@@ -2148,7 +2442,7 @@ class ActivityTest(actions.TestBase):
         tracker.put_activity_accessed(student, 2, 1)
         assert tracker.get_unit_progress(student)['2'] == 1
         assert tracker.get_lesson_progress(student, 2)[1] == {
-            'html': 0, 'activity': 2
+            'html': 0, 'activity': 2, 'has_activity': True
         }
 
         # Test that a lesson without activities (Lesson 1.1) doesn't count.
@@ -2245,6 +2539,7 @@ class AssessmentTest(actions.TestBase):
         assert_contains('70', response.body)
         assert_contains('100', response.body)
 
+    # pylint: disable-msg=too-many-statements
     def test_assessments(self):
         """Test assessment scores are properly submitted and summarized."""
 
@@ -2561,68 +2856,56 @@ class MultipleCoursesTestBase(actions.TestBase):
         self, course, first_time=True, is_admin=False, logout=True):
         """Visit a course as a Student would."""
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({'course': {'browsable': False}}):
+            # Check normal user has no access.
+            actions.login(course.email, is_admin=is_admin)
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['browsable'] = False
-            return environ
-
-        sites.ApplicationContext.get_environ = get_environ_new
-
-        # Check normal user has no access.
-        actions.login(course.email, is_admin=is_admin)
-
-        # Test schedule.
-        if first_time:
-            response = self.testapp.get('/courses/%s/preview' % course.path)
-        else:
-            response = self.testapp.get('/courses/%s/course' % course.path)
-        assert_contains(course.title, response.body)
-        assert_contains(course.unit_title, response.body)
-        assert_contains(course.head, response.body)
-
-        # Tests static resource.
-        response = self.testapp.get(
-            '/courses/%s/assets/css/main.css' % course.path)
-        assert_contains(course.css, response.body)
-
-        if first_time:
-            # Test registration.
-            response = self.get('/courses/%s/register' % course.path)
+            # Test schedule.
+            if first_time:
+                response = self.testapp.get('/courses/%s/preview' % course.path)
+            else:
+                response = self.testapp.get('/courses/%s/course' % course.path)
             assert_contains(course.title, response.body)
+            assert_contains(course.unit_title, response.body)
             assert_contains(course.head, response.body)
 
-            register_form = actions.get_form_by_action(response, 'register')
-            register_form.set('form01', course.name)
-            register_form.action = '/courses/%s/register' % course.path
-            response = self.submit(register_form)
+            # Tests static resource.
+            response = self.testapp.get(
+                '/courses/%s/assets/css/main.css' % course.path)
+            assert_contains(course.css, response.body)
 
-            assert_equals(response.status_int, 302)
-            assert_contains(
-                'course#registration_confirmation', response.headers[
-                    'location'])
+            if first_time:
+                # Test registration.
+                response = self.get('/courses/%s/register' % course.path)
+                assert_contains(course.title, response.body)
+                assert_contains(course.head, response.body)
 
-        # Check lesson page.
-        response = self.testapp.get(
-            '/courses/%s/unit?unit=1&lesson=5' % course.path)
-        assert_contains(course.title, response.body)
-        assert_contains(course.lesson_title, response.body)
-        assert_contains(course.head, response.body)
+                register_form = actions.get_form_by_action(response, 'register')
+                register_form.set('form01', course.name)
+                register_form.action = '/courses/%s/register' % course.path
+                response = self.submit(register_form)
 
-        # Check activity page.
-        response = self.testapp.get(
-            '/courses/%s/activity?unit=1&lesson=5' % course.path)
-        assert_contains(course.title, response.body)
-        assert_contains(course.lesson_title, response.body)
-        assert_contains(course.head, response.body)
+                assert_equals(response.status_int, 302)
+                assert_contains(
+                    'course#registration_confirmation', response.headers[
+                        'location'])
 
-        if logout:
-            actions.logout()
+            # Check lesson page.
+            response = self.testapp.get(
+                '/courses/%s/unit?unit=1&lesson=5' % course.path)
+            assert_contains(course.title, response.body)
+            assert_contains(course.lesson_title, response.body)
+            assert_contains(course.head, response.body)
 
-        # Clean up.
-        sites.ApplicationContext.get_environ = get_environ_old
+            # Check activity page.
+            response = self.testapp.get(
+                '/courses/%s/activity?unit=1&lesson=5' % course.path)
+            assert_contains(course.title, response.body)
+            assert_contains(course.lesson_title, response.body)
+            assert_contains(course.head, response.body)
+
+            if logout:
+                actions.logout()
 
 
 class MultipleCoursesTest(MultipleCoursesTestBase):
@@ -2705,7 +2988,7 @@ class I18NTest(MultipleCoursesTestBase):
         assert_page_contains(
             'assets', [self.course_ru.title])
         assert_page_contains(
-            'settings', [
+            '', [
                 self.course_ru.title,
                 vfs.AbstractFileSystem.normpath(self.course_ru.home)])
 
@@ -2771,6 +3054,18 @@ class VirtualFileSystemTestBase(actions.TestBase):
         # Prepare course content.
         home_folder = os.path.join(GeneratedCourse.data_home, 'data-v')
         clone_canonical_course_data(self.bundle_root, home_folder)
+
+        # we also need resources in modules
+        def ignore_pyc(unused_dir, filenames):
+            return [
+                filename for filename in filenames
+                if filename.endswith('.pyc')]
+
+        modules_home = 'modules'
+        shutil.copytree(
+            os.path.join(self.bundle_root, modules_home),
+            os.path.join(GeneratedCourse.data_home, modules_home),
+            ignore=ignore_pyc)
 
         # Configure course.
         self.namespace = 'nsv'
@@ -2852,10 +3147,22 @@ class DatastoreBackedCourseTest(actions.TestBase):
         self.app_context.fs.put(course_yaml, open(course_yaml, 'rb'))
         files_added.append(course_yaml)
 
+    def calc_course_stats(self, course):
+        assessment_count = len(course.get_assessment_list())
+        units_count = len(course.get_units())
+        activities_count = 0
+        lessons_count = 0
+        for uid in [x.unit_id for x in course.get_units()]:
+            unit_lessons = course.get_lessons(uid)
+            lessons_count += len(unit_lessons)
+            activities_count += sum(x.activity for x in unit_lessons)
+        return units_count, lessons_count, activities_count, assessment_count
+
 
 class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
     """Prepares a sample course running on datastore-backed file system."""
 
+    # pylint: disable-msg=too-many-statements
     def test_course_import(self):
         """Test importing of the course."""
 
@@ -2903,18 +3210,24 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
         assert_contains('Filter image results by color', response.body)
 
         # Check assessment is copied.
-        response = self.get('assets/js/assessment-21.js')
+        response = self.get('assessment?name=35')
         assert_equals(200, response.status_int)
         assert_contains('Humane Society website', response.body)
 
-        # Check activity is copied.
-        response = self.get('assets/js/activity-37.js')
+        # Check activity component is hidden
+        response = self.get('dashboard?key=5&action=edit_lesson')
         assert_equals(200, response.status_int)
-        assert_contains('explore ways to keep yourself updated', response.body)
+        assert 'excludedCustomTags\\\": [\\\"gcb-activity' in response.body
+
+        # Check activity is copied.
+        response = self.get('unit?unit=57&lesson=63')
+        assert_equals(200, response.status_int)
+        assert_contains(
+        'explore ways to keep yourself updated', response.body)
 
         unit_2_title = 'Unit 2 - Interpreting results'
-        lesson_2_1_title = '2.1 When search results suggest something new'
-        lesson_2_2_title = '2.2 Thinking more deeply about your search'
+        lesson_2_1_title = 'When search results suggest something new'
+        lesson_2_2_title = 'Thinking more deeply about your search'
 
         # Check units and lessons are indexed correctly.
         response = actions.register(self, name)
@@ -2926,7 +3239,7 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
         assert_contains(unit_2_title, response.body)
 
         # Unit page.
-        response = self.get('unit?unit=9')
+        response = self.get('unit?unit=14')
         # A unit title.
         assert_contains(
             unit_2_title, response.body)
@@ -2941,13 +3254,13 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
             ['Unit 2</a></li>', 'Lesson 1</li>'], response.body)
 
         # Unit page.
-        response = self.get('activity?unit=9&lesson=10')
+        response = self.get('unit?unit=14&lesson=16')
         # A unit title.
         assert_contains(
             unit_2_title, response.body)
         # An activity title.
         assert_contains(
-            'Lesson 2.1 Activity', response.body)
+            'Activity', response.body)
         # First child lesson without link.
         assert_contains(
             lesson_2_1_title, response.body)
@@ -2956,7 +3269,10 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
             lesson_2_2_title, response.body)
         # Breadcrumbs.
         assert_contains_all_of(
-            ['Unit 2</a></li>', 'Lesson 1</a></li>'], response.body)
+            ['Unit 2</a></li>',
+             '<a href="unit?unit=14&lesson=15">',
+             '<a href="unit?unit=14&lesson=17">'], response.body)
+        assert '<a href="unit?unit=14&lesson=16">' not in response.body
 
         # Clean up.
         sites.reset_courses()
@@ -2969,14 +3285,15 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
         email = 'test_get_put_file@google.com'
 
         actions.login(email, is_admin=True)
-        response = self.get('dashboard?action=settings')
+        response = self.get('dashboard?action=settings&tab=advanced')
 
         # Check course.yaml edit form.
         compute_form = response.forms['edit_course_yaml']
         response = self.submit(compute_form)
         assert_equals(response.status_int, 302)
         assert_contains(
-            'dashboard?action=edit_settings&key=%2Fcourse.yaml',
+            'dashboard?action=edit_settings&tab_title=Advanced'
+            '&tab=advanced&key=%2Fcourse.yaml',
             response.location)
         response = self.get(response.location)
         assert_contains('rest/files/item?key=%2Fcourse.yaml', response.body)
@@ -3048,24 +3365,67 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
 
     def import_sample_course(self):
         """Imports a sample course."""
-        # Setup courses.
+        # setup courses
         sites.setup_courses('course:/test::ns_test, course:/:/')
 
-        # Import sample course.
+        # check we have no questions or question gourps in neither source nor
+        # destination course
+        with Namespace(''):
+            self.assertEqual(0, len(models.QuestionGroupDAO.get_all()))
+            self.assertEqual(0, len(models.QuestionDAO.get_all()))
+        with Namespace('ns_test'):
+            self.assertEqual(0, len(models.QuestionGroupDAO.get_all()))
+            self.assertEqual(0, len(models.QuestionDAO.get_all()))
+
+        # import sample course
         dst_app_context = sites.get_all_courses()[0]
-        src_app_context = sites.get_all_courses()[1]
         dst_course = courses.Course(None, app_context=dst_app_context)
+        src_app_context = sites.get_all_courses()[1]
+        src_course = courses.Course(None, app_context=src_app_context)
 
         errors = []
-        src_course_out, dst_course_out = dst_course.import_from(
+        _, dst_course_out = dst_course.import_from(
             src_app_context, errors)
         if errors:
             raise Exception(errors)
-        assert len(
-            src_course_out.get_units()) == len(dst_course_out.get_units())
         dst_course_out.save()
 
-        # Clean up.
+        u1, l1, ac1, as1 = self.calc_course_stats(src_course)
+        u2, l2, _, as2 = self.calc_course_stats(dst_course)
+
+        # the old and the new course have same number of units each
+        self.assertEqual(12, u1)
+        self.assertEqual(12, u2)
+
+        # old course had lessons and activities
+        self.assertEqual(29, l1)
+        self.assertEqual(26, ac1)
+
+        # new course has the same number of lessons as the old one, plus one
+        # new lesson instead of each old activity
+        self.assertEqual(55, l2)
+        self.assertEqual(l1 + ac1, l2)
+
+        # both the new & the old courses have 4 assessments
+        self.assertEqual(4, as1)
+        self.assertEqual(4, as2)
+
+        # new course assessment weights are equal to 25.0
+        for x in dst_course.get_assessment_list():
+            self.assertEqual(25.0, x.weight)
+
+        # old course does not have any questions or question groups
+        with Namespace(''):
+            self.assertEqual(0, len(models.QuestionGroupDAO.get_all()))
+            self.assertEqual(0, len(models.QuestionDAO.get_all()))
+
+        # new course has new questions and question groups that used to be old
+        # style activities
+        with Namespace('ns_test'):
+            self.assertEqual(2, len(models.QuestionGroupDAO.get_all()))
+            self.assertEqual(69, len(models.QuestionDAO.get_all()))
+
+        # clean up
         sites.reset_courses()
 
     def test_imported_course_performance(self):
@@ -3081,66 +3441,61 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
         config.Registry.test_overrides[
             models.CAN_USE_MEMCACHE.name] = True
 
-        # Override course.yaml settings by patching app_context.
-        get_environ_old = sites.ApplicationContext.get_environ
+        with actions.OverriddenEnvironment({
+                'course': {
+                    'now_available': True,
+                    'browsable': False}}):
 
-        def get_environ_new(self):
-            environ = get_environ_old(self)
-            environ['course']['now_available'] = True
-            environ['course']['browsable'] = False
-            return environ
+            def custom_inc(unused_increment=1, context=None):
+                """A custom inc() function for cache miss counter."""
+                self.keys.append(context)
+                self.count += 1
 
-        sites.ApplicationContext.get_environ = get_environ_new
+            def assert_cached(url, assert_text, cache_miss_allowed=0):
+                """Checks that specific URL supports caching."""
+                memcache.flush_all()
 
-        def custom_inc(unused_increment=1, context=None):
-            """A custom inc() function for cache miss counter."""
-            self.keys.append(context)
-            self.count += 1
+                # Expect cache misses first time we load page.
+                cache_miss_before = self.count
+                response = self.get(url)
+                assert_contains(assert_text, response.body)
+                assert cache_miss_before != self.count
 
-        def assert_cached(url, assert_text, cache_miss_allowed=0):
-            """Checks that specific URL supports caching."""
-            memcache.flush_all()
+                # Expect no cache misses first time we load page.
+                self.keys = []
+                cache_miss_before = self.count
+                response = self.get(url)
+                assert_contains(assert_text, response.body)
+                cache_miss_actual = self.count - cache_miss_before
+                if cache_miss_actual != cache_miss_allowed:
+                    raise Exception(
+                        'Expected %s cache misses, got %s. Keys are:\n%s' % (
+                            cache_miss_allowed, cache_miss_actual,
+                            '\n'.join(self.keys)))
 
             self.keys = []
             self.count = 0
 
-            # Expect cache misses first time we load page.
-            cache_miss_before = self.count
-            response = self.get(url)
-            assert_contains(assert_text, response.body)
-            assert cache_miss_before != self.count
+            old_inc = models.CACHE_MISS.inc
+            models.CACHE_MISS.inc = custom_inc
 
-            # Expect no cache misses first time we load page.
-            self.keys = []
-            cache_miss_before = self.count
-            response = self.get(url)
-            assert_contains(assert_text, response.body)
-            cache_miss_actual = self.count - cache_miss_before
-            if cache_miss_actual != cache_miss_allowed:
-                raise Exception(
-                    'Expected %s cache misses, got %s. Keys are:\n%s' % (
-                        cache_miss_allowed, cache_miss_actual,
-                        '\n'.join(self.keys)))
+            # Walk the site.
+            email = 'test_units_lessons@google.com'
+            name = 'Test Units Lessons'
 
-        old_inc = models.CACHE_MISS.inc
-        models.CACHE_MISS.inc = custom_inc
-
-        # Walk the site.
-        email = 'test_units_lessons@google.com'
-        name = 'Test Units Lessons'
-
-        assert_cached('preview', 'Putting it all together')
-        actions.login(email, is_admin=True)
-        assert_cached('preview', 'Putting it all together')
-        actions.register(self, name)
-        assert_cached(
-            'unit?unit=9', 'When search results suggest something new')
-        assert_cached(
-            'unit?unit=9&lesson=12', 'Understand options for different media')
+            assert_cached('preview', 'Putting it all together')
+            actions.login(email, is_admin=True)
+            assert_cached('preview', 'Putting it all together')
+            actions.register(self, name)
+            assert_cached('course', 'Putting it all together')
+            assert_cached(
+                'unit?unit=14', 'When search results suggest something new')
+            assert_cached(
+                'unit?unit=14&lesson=19',
+                'Understand options for different media')
 
         # Clean up.
         models.CACHE_MISS.inc = old_inc
-        sites.ApplicationContext.get_environ = get_environ_old
         config.Registry.test_overrides = {}
         sites.reset_courses()
 
@@ -3172,30 +3527,90 @@ class DatastoreBackedCustomCourseTest(DatastoreBackedCourseTest):
         actions.view_announcements(self)
 
         # Check unit page without lesson specified.
-        response = self.get('unit?unit=9')
+        response = self.get('unit?unit=14')
         assert_contains('Interpreting results', response.body)
         assert_contains(
             'When search results suggest something new', response.body)
 
         # Check unit page with a lessons.
-        response = self.get('unit?unit=9&lesson=12')
+        response = self.get('unit?unit=14&lesson=19')
         assert_contains('Interpreting results', response.body)
         assert_contains(
             'Understand options for different media', response.body)
 
         # Check assesment page.
-        response = self.get('assessment?name=21')
-        assert_contains(
-            '<script src="assets/js/assessment-21.js"></script>', response.body)
+        response = self.get('assessment?name=35')
+        self.assertEqual(5, response.body.count('<div class="qt-question">'))
 
         # Check activity page.
-        response = self.get('activity?unit=9&lesson=13')
-        assert_contains(
-            '<script src="assets/js/activity-13.js"></script>',
-            response.body)
+        response = self.get('unit?unit=14&lesson=16')
+        assert_contains('Activity', response.body)
 
         # Clean up.
         sites.reset_courses()
+
+    def test_readonly_caching(self):
+        self.import_sample_course()
+
+        sites.setup_courses('course:/::ns_test')
+        self.namespace = 'ns_test'
+        course = sites.get_all_courses()[0]
+        fn = os.path.join(
+            appengine_config.BUNDLE_ROOT, 'data/course.json')
+
+        config.Registry.test_overrides[
+            models.CAN_USE_MEMCACHE.name] = True
+
+        # get the page and record hits and misses
+        hit_local_before = models.CACHE_HIT_LOCAL.value
+        hit_before = models.CACHE_HIT.value
+        miss_local_before = models.CACHE_MISS_LOCAL.value
+        miss_before = models.CACHE_MISS.value
+        course.fs.impl.get(fn)
+        hit_local_after = models.CACHE_HIT_LOCAL.value
+        hit_after = models.CACHE_HIT.value
+        miss_local_after = models.CACHE_MISS_LOCAL.value
+        miss_after = models.CACHE_MISS.value
+        self.assertEquals(hit_after, hit_before)
+        self.assertEquals(miss_after, miss_before)
+        self.assertEquals(hit_local_after, hit_local_before)
+        self.assertEquals(miss_local_after, miss_local_before)
+
+        # enable read_only caching and repeat
+        models.MemcacheManager.begin_readonly()
+        try:
+
+          # first fetch chould miss local cache, but hit memcache
+          hit_local_before = models.CACHE_HIT_LOCAL.value
+          hit_before = models.CACHE_HIT.value
+          miss_local_before = models.CACHE_MISS_LOCAL.value
+          miss_before = models.CACHE_MISS.value
+          course.fs.impl.get(fn)
+          hit_local_after = models.CACHE_HIT_LOCAL.value
+          hit_after = models.CACHE_HIT.value
+          miss_local_after = models.CACHE_MISS_LOCAL.value
+          miss_after = models.CACHE_MISS.value
+          self.assertEquals(hit_after, hit_before)
+          self.assertEquals(miss_after, miss_before)
+          self.assertEquals(hit_local_after, hit_local_before)
+          self.assertEquals(miss_local_after, miss_local_before)
+
+          # second fetch must hit local cache, and not hit memcache
+          hit_local_before = models.CACHE_HIT_LOCAL.value
+          hit_before = models.CACHE_HIT.value
+          miss_local_before = models.CACHE_MISS_LOCAL.value
+          miss_before = models.CACHE_MISS.value
+          course.fs.impl.get(fn)
+          hit_local_after = models.CACHE_HIT_LOCAL.value
+          hit_after = models.CACHE_HIT.value
+          miss_local_after = models.CACHE_MISS_LOCAL.value
+          miss_after = models.CACHE_MISS.value
+          self.assertEquals(hit_after, hit_before)
+          self.assertEquals(miss_after, miss_before)
+          self.assertEquals(hit_local_after, hit_local_before)
+          self.assertEquals(miss_local_after, miss_local_before)
+        finally:
+            models.MemcacheManager.end_readonly()
 
 
 class DatastoreBackedSampleCourseTest(DatastoreBackedCourseTest):
@@ -3254,68 +3669,75 @@ class LessonComponentsTest(DatastoreBackedCourseTest):
 
         assert self.tracker.get_unit_progress(student)[unit_id] == 0
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 0, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 0, 'activity': 0, 'has_activity': False}
 
         # Visiting the lesson page has no effect on progress, since it contains
         # trackable components.
         self.tracker.put_html_accessed(student, unit_id, lesson_id)
         assert self.tracker.get_unit_progress(student)[unit_id] == 0
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 0, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 0, 'activity': 0, 'has_activity': False}
 
         # Marking progress for a non-existent component id has no effect.
         self.tracker.put_component_completed(student, unit_id, lesson_id, 'a')
         assert self.tracker.get_unit_progress(student)[unit_id] == 0
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 0, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 0, 'activity': 0, 'has_activity': False}
 
         # Marking progress for a non-trackable component id has no effect.
         self.tracker.put_component_completed(student, unit_id, lesson_id, 'VD')
         assert self.tracker.get_unit_progress(student)[unit_id] == 0
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 0, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 0, 'activity': 0, 'has_activity': False}
 
         # Completing a trackable component marks the lesson as in-progress,
         self.tracker.put_component_completed(student, unit_id, lesson_id, 'QN')
         assert self.tracker.get_unit_progress(student)[unit_id] == 1
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 1, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 1, 'activity': 0, 'has_activity': False}
 
         # Completing the same component again has no further effect.
         self.tracker.put_component_completed(student, unit_id, lesson_id, 'QN')
         assert self.tracker.get_unit_progress(student)[unit_id] == 1
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 1, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 1, 'activity': 0, 'has_activity': False}
 
         # Completing the other trackable component marks the lesson (and unit)
         # as completed.
         self.tracker.put_component_completed(student, unit_id, lesson_id, 'QG')
         assert self.tracker.get_unit_progress(student)[unit_id] == 2
         assert self.tracker.get_lesson_progress(
-            student, unit_id)[lesson_id] == {'html': 2, 'activity': 0}
+            student, unit_id)[lesson_id] == {
+                'html': 2, 'activity': 0, 'has_activity': False}
 
 
-class FakeEnvironment(object):
-    """Temporary fake tools.etl.remote.Evironment.
+class EtlTestEntityPii(entities.BaseEntity):
+    name = db.StringProperty(indexed=False)
+    score = db.IntegerProperty(indexed=False)
 
-    Bypasses making a remote_api connection because webtest can't handle it and
-    we don't want to bring up a local server for our functional tests. When this
-    fake is used, the in-process datastore stub will handle RPCs.
+    _PROPERTY_EXPORT_BLACKLIST = [name]
 
-    TODO(johncox): find a way to make webtest successfully emulate the
-    remote_api endpoint and get rid of this fake.
-    """
-
-    def __init__(self, application_id, server, path=None):
-        self._appication_id = application_id
-        self._path = path
-        self._server = server
-
-    def establish(self):
-        pass
+    @classmethod
+    def safe_key(cls, db_key, transform_fn):
+        return db.Key.from_path(cls.kind(), transform_fn(db_key.id_or_name()))
 
 
-class EtlMainTestCase(DatastoreBackedCourseTest):
+class EtlTestEntityPiiReference(entities.BaseEntity):
+    pii = db.ReferenceProperty(EtlTestEntityPii)
+
+
+class EtlTestEntityIllegal(entities.BaseEntity):
+    score = db.IntegerProperty(indexed=False)
+    thingy = student_work.KeyProperty()
+
+
+class EtlMainTestCase(testing.EtlTestBase, DatastoreBackedCourseTest):
     """Tests tools/etl/etl.py's main()."""
 
     # Allow access to protected members under test.
@@ -3323,14 +3745,8 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
     def setUp(self):
         """Configures EtlMainTestCase."""
         super(EtlMainTestCase, self).setUp()
-        self.test_environ = copy.deepcopy(os.environ)
-        # In etl.main, use test auth scheme to avoid interactive login.
-        self.test_environ['SERVER_SOFTWARE'] = remote.TEST_SERVER_SOFTWARE
         self.archive_path = os.path.join(self.test_tempdir, 'archive.zip')
         self.new_course_title = 'New Course Title'
-        self.url_prefix = '/test'
-        self.raw = 'course:%s::ns_test' % self.url_prefix
-        self.swap(os, 'environ', self.test_environ)
         self.common_args = [
             self.url_prefix, 'myapp', 'localhost:8080']
         self.common_command_args = self.common_args + [
@@ -3344,12 +3760,8 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             [etl._MODE_DOWNLOAD] + self.common_course_args)
         self.upload_course_args = etl.PARSER.parse_args(
             [etl._MODE_UPLOAD] + self.common_course_args)
-        # Set up courses: version 1.3, version 1.2.
-        sites.setup_courses(self.raw + ', course:/:/')
 
-    def tearDown(self):
-        sites.reset_courses()
-        super(EtlMainTestCase, self).tearDown()
+        self.make_items_distinct_counter = 0
 
     def create_app_yaml(self, context, title=None):
         yaml = copy.deepcopy(courses.DEFAULT_COURSE_YAML_DICT)
@@ -3364,7 +3776,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         self.upload_all_sample_course_files([])
         self.import_sample_course()
         args = etl.PARSER.parse_args(['download'] + self.common_course_args)
-        etl.main(args, environment_class=FakeEnvironment)
+        etl.main(args, environment_class=testing.FakeEnvironment)
         sites.reset_courses()
 
     def create_archive_with_question(self, data):
@@ -3373,15 +3785,18 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         question = _add_data_entity(
             sites.get_all_courses()[1], models.QuestionEntity, data)
         args = etl.PARSER.parse_args(['download'] + self.common_course_args)
-        etl.main(args, environment_class=FakeEnvironment)
+        etl.main(args, environment_class=testing.FakeEnvironment)
         sites.reset_courses()
         return question
 
     def create_empty_course(self, raw):
         sites.setup_courses(raw)
         context = etl_lib.get_context(self.url_prefix)
-        course = etl._get_course_from(etl_lib.get_context(self.url_prefix))
+        course = etl_lib.get_course(etl_lib.get_context(self.url_prefix))
         course.delete_all()
+        # delete all other entities from data store
+        with Namespace(self.namespace):
+            db.delete(db.Query(keys_only=True))
         self.create_app_yaml(context)
 
     def import_sample_course(self):
@@ -3404,12 +3819,23 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             src_course_out.get_units()) == len(dst_course_out.get_units())
         dst_course_out.save()
 
+    def test_archive_size_can_exceed_2_gb(self):
+        # The maximum size for any file in the zipfile is 1 GB.
+        byte = '.'
+        gig = byte * (2 ** 30)
+        archive = etl._Archive(self.archive_path)
+        archive.open('w')
+        archive.add(os.path.join(self.test_tempdir, 'first'), gig)
+        archive.add(os.path.join(self.test_tempdir, 'second'), gig)
+        archive.add(os.path.join(self.test_tempdir, 'overflow'), byte)
+        archive.close()
+
     def test_delete_course_fails(self):
         args = etl.PARSER.parse_args(
             [etl._MODE_DELETE, etl._TYPE_COURSE] + self.common_args)
         self.assertRaises(
             NotImplementedError,
-            etl.main, args, environment_class=FakeEnvironment)
+            etl.main, args, environment_class=testing.FakeEnvironment)
 
     def test_delete_datastore_fails_if_user_does_not_confirm(self):
         self.swap(
@@ -3417,7 +3843,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             lambda x: 'not' + etl._DELETE_DATASTORE_CONFIRMATION_INPUT)
         self.assertRaises(
             SystemExit, etl.main, self.delete_datastore_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_delete_datastore_succeeds(self):
         """Tests delete datastore success for populated and empty datastores."""
@@ -3438,7 +3864,9 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             namespace_manager.set_namespace(old_namespace)
 
         # Delete against a datastore with contents runs successfully.
-        etl.main(self.delete_datastore_args, environment_class=FakeEnvironment)
+        etl.main(
+            self.delete_datastore_args,
+            environment_class=testing.FakeEnvironment)
 
         # Spot check that those kinds are now empty.
         try:
@@ -3449,14 +3877,17 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             namespace_manager.set_namespace(old_namespace)
 
         # Delete against a datastore without contents runs successfully.
-        etl.main(self.delete_datastore_args, environment_class=FakeEnvironment)
+        etl.main(
+            self.delete_datastore_args,
+            environment_class=testing.FakeEnvironment)
 
     def test_disable_remote_cannot_be_passed_for_mode_other_than_run(self):
         bad_args = etl.PARSER.parse_args(
             [etl._MODE_DOWNLOAD] + self.common_course_args +
             ['--disable_remote'])
         self.assertRaises(
-            SystemExit, etl.main, bad_args, environment_class=FakeEnvironment)
+            SystemExit, etl.main, bad_args,
+            environment_class=testing.FakeEnvironment)
 
     def test_download_course_creates_valid_archive(self):
         """Tests download of course data and archive creation."""
@@ -3464,7 +3895,9 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         self.import_sample_course()
         question = _add_data_entity(
             sites.get_all_courses()[0], models.QuestionEntity, 'test question')
-        etl.main(self.download_course_args, environment_class=FakeEnvironment)
+        etl.main(
+            self.download_course_args,
+            environment_class=testing.FakeEnvironment)
 
         # Don't use Archive and Manifest here because we want to test the raw
         # structure of the emitted zipfile.
@@ -3487,23 +3920,27 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         question_json = transforms.loads(
             zip_archive.open('models/QuestionEntity.json').read())
         self.assertEqual(
-            question.key().id(), question_json['rows'][0]['key.id'])
+            question.key().id(), question_json['rows'][-1]['key.id'])
         self.assertEqual(
-            'test question', question_json['rows'][0]['data'])
+            'test question', question_json['rows'][-1]['data'])
+        # 69 from the import plus the one we created in the test
+        self.assertEqual(70, len(question_json['rows']))
 
     def test_download_course_errors_if_archive_path_exists_on_disk(self):
         self.upload_all_sample_course_files([])
         self.import_sample_course()
-        etl.main(self.download_course_args, environment_class=FakeEnvironment)
+        etl.main(
+            self.download_course_args,
+            environment_class=testing.FakeEnvironment)
         self.assertRaises(
             SystemExit, etl.main, self.download_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_download_errors_if_course_url_prefix_does_not_exist(self):
         sites.reset_courses()
         self.assertRaises(
             SystemExit, etl.main, self.download_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_download_course_errors_if_course_version_is_pre_1_3(self):
         args = etl.PARSER.parse_args(
@@ -3511,7 +3948,8 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         self.upload_all_sample_course_files([])
         self.import_sample_course()
         self.assertRaises(
-            SystemExit, etl.main, args, environment_class=FakeEnvironment)
+            SystemExit, etl.main, args,
+            environment_class=testing.FakeEnvironment)
 
     def test_download_datastore_fails_if_datastore_types_not_in_datastore(self):
         download_datastore_args = etl.PARSER.parse_args(
@@ -3519,7 +3957,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             ['--datastore_types', 'missing'])
         self.assertRaises(
             SystemExit, etl.main, download_datastore_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_download_datastore_succeeds(self):
         """Test download of datastore data and archive creation."""
@@ -3542,7 +3980,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             namespace_manager.set_namespace(old_namespace)
 
         etl.main(
-            download_datastore_args, environment_class=FakeEnvironment)
+            download_datastore_args, environment_class=testing.FakeEnvironment)
         archive = etl._Archive(self.archive_path)
         archive.open('r')
         self.assertEqual(
@@ -3559,7 +3997,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         students = sorted(
             transforms.loads(archive.get(student_entity.path))['rows'],
             key=lambda d: d['key.name'])
-        entities = sorted(
+        entitiez = sorted(
             transforms.loads(archive.get(entity_entity.path))['rows'],
             key=lambda d: d['key.name'])
         # Spot check their contents.
@@ -3568,7 +4006,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             [student['key.name'] for student in students])
         self.assertEqual(
             [model.key().name() for model in [first_entity, second_entity]],
-            [entity['key.name'] for entity in entities])
+            [entity['key.name'] for entity in entitiez])
 
     def test_download_datastore_with_privacy_maintains_references(self):
         """Test download of datastore data and archive creation."""
@@ -3590,7 +4028,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             namespace_manager.set_namespace(old_namespace)
 
         etl.main(
-            download_datastore_args, environment_class=FakeEnvironment)
+            download_datastore_args, environment_class=testing.FakeEnvironment)
         archive = etl._Archive(self.archive_path)
         archive.open('r')
         self.assertEqual(
@@ -3617,11 +4055,13 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         wrong_mode = etl.PARSER.parse_args(
             [etl._MODE_UPLOAD] + self.common_datastore_args + ['--privacy'])
         self.assertRaises(
-            SystemExit, etl.main, wrong_mode, environment_class=FakeEnvironment)
+            SystemExit, etl.main, wrong_mode,
+            environment_class=testing.FakeEnvironment)
         wrong_type = etl.PARSER.parse_args(
             [etl._MODE_DOWNLOAD] + self.common_course_args + ['--privacy'])
         self.assertRaises(
-            SystemExit, etl.main, wrong_type, environment_class=FakeEnvironment)
+            SystemExit, etl.main, wrong_type,
+            environment_class=testing.FakeEnvironment)
 
     def test_privacy_secret_fails_if_not_download_datastore_with_privacy(self):
         """Tests invalid flag combinations related to --privacy."""
@@ -3630,37 +4070,42 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             ['--privacy_secret', 'foo'])
         self.assertRaises(
             SystemExit, etl.main, missing_privacy,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
         self.assertRaises(
             SystemExit, etl.main, missing_privacy,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
         wrong_mode = etl.PARSER.parse_args(
             [etl._MODE_UPLOAD] + self.common_datastore_args +
             ['--privacy_secret', 'foo', '--privacy'])
         self.assertRaises(
-            SystemExit, etl.main, wrong_mode, environment_class=FakeEnvironment)
+            SystemExit, etl.main, wrong_mode,
+            environment_class=testing.FakeEnvironment)
         wrong_type = etl.PARSER.parse_args(
             [etl._MODE_DOWNLOAD] + self.common_course_args +
             ['--privacy_secret', 'foo', '--privacy'])
         self.assertRaises(
-            SystemExit, etl.main, wrong_type, environment_class=FakeEnvironment)
+            SystemExit, etl.main, wrong_type,
+            environment_class=testing.FakeEnvironment)
 
     def test_run_fails_when_delegated_argument_parsing_fails(self):
         bad_args = etl.PARSER.parse_args(
             ['run', 'tools.etl_lib.Job'] + self.common_args +
             ['--job_args', "'unexpected_argument'"])
         self.assertRaises(
-            SystemExit, etl.main, bad_args, environment_class=FakeEnvironment)
+            SystemExit, etl.main, bad_args,
+            environment_class=testing.FakeEnvironment)
 
     def test_run_fails_when_if_requested_class_missing_or_invalid(self):
         bad_args = etl.PARSER.parse_args(
             ['run', 'a.missing.class.or.Module'] + self.common_args)
         self.assertRaises(
-            SystemExit, etl.main, bad_args, environment_class=FakeEnvironment)
+            SystemExit, etl.main, bad_args,
+            environment_class=testing.FakeEnvironment)
         bad_args = etl.PARSER.parse_args(
             ['run', 'tools.etl.etl._Archive'] + self.common_args)
         self.assertRaises(
-            SystemExit, etl.main, bad_args, environment_class=FakeEnvironment)
+            SystemExit, etl.main, bad_args,
+            environment_class=testing.FakeEnvironment)
 
     def test_run_print_memcache_stats_succeeds(self):
         """Tests examples.WriteStudentEmailsToFile prints stats to stdout."""
@@ -3674,11 +4119,11 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         stdout = cStringIO.StringIO()
         try:
             sys.stdout = stdout
-            etl.main(args, environment_class=FakeEnvironment)
+            etl.main(args, environment_class=testing.FakeEnvironment)
         finally:
             sys.stdout = old_stdout
 
-        expected = examples.PrintMemcacheStats._STATS_TEMPLATE % {
+        expected0 = examples.PrintMemcacheStats._STATS_TEMPLATE % {
             'byte_hits': 1,
             'bytes': 1,
             'hits': 1,
@@ -3686,7 +4131,16 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             'misses': 1,
             'oldest_item_age': 0,
         }
-        self.assertTrue(expected in stdout.getvalue())
+        expected1 = examples.PrintMemcacheStats._STATS_TEMPLATE % {
+            'byte_hits': 1,
+            'bytes': 1,
+            'hits': 1,
+            'items': 1,
+            'misses': 1,
+            'oldest_item_age': 1,
+        }
+        actual = stdout.getvalue()
+        self.assertTrue(expected0 in actual or expected1 in actual)
 
     def test_run_skips_remote_env_setup_when_disable_remote_passed(self):
         args = etl.PARSER.parse_args(
@@ -3711,7 +4165,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         context = etl_lib.get_context(args.course_url_prefix)
 
         self.assertFalse(context.fs.impl.get(remote_path))
-        etl.main(args, environment_class=FakeEnvironment)
+        etl.main(args, environment_class=testing.FakeEnvironment)
         self.assertEqual(contents, context.fs.impl.get(remote_path).read())
 
     def test_run_write_student_emails_to_file_succeeds(self):
@@ -3733,14 +4187,14 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         finally:
             namespace_manager.set_namespace(old_namespace)
 
-        etl.main(args, environment_class=FakeEnvironment)
+        etl.main(args, environment_class=testing.FakeEnvironment)
         self.assertEqual('%s\n%s\n' % (email1, email2), open(path).read())
 
     def test_upload_course_fails_if_archive_cannot_be_opened(self):
         sites.setup_courses(self.raw)
         self.assertRaises(
             SystemExit, etl.main, self.upload_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_upload_course_fails_if_archive_course_json_malformed(self):
         self.create_archive()
@@ -3752,7 +4206,7 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         zip_archive.close()
         self.assertRaises(
             SystemExit, etl.main, self.upload_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_upload_course_fails_if_archive_course_yaml_malformed(self):
         self.create_archive()
@@ -3764,14 +4218,14 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         zip_archive.close()
         self.assertRaises(
             SystemExit, etl.main, self.upload_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_upload_course_fails_if_course_has_non_course_yaml_contents(self):
         self.upload_all_sample_course_files([])
         self.import_sample_course()
         self.assertRaises(
             SystemExit, etl.main, self.upload_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
 
     def test_upload_course_fails_if_force_overwrite_passed_with_bad_args(self):
         self.create_archive()
@@ -3779,13 +4233,22 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             [etl._MODE_UPLOAD] + self.common_datastore_args + [
                 '--force_overwrite'])
         self.assertRaises(
-            SystemExit, etl.main, bad_args, environment_class=FakeEnvironment)
+            SystemExit, etl.main, bad_args,
+            environment_class=testing.FakeEnvironment)
 
     def test_upload_course_fails_if_no_course_with_url_prefix_found(self):
         self.create_archive()
         self.assertRaises(
             SystemExit, etl.main, self.upload_course_args,
-            environment_class=FakeEnvironment)
+            environment_class=testing.FakeEnvironment)
+
+    def _get_all_entity_files(self):
+        files = []
+        all_entities = list(courses.COURSE_CONTENT_ENTITIES) + list(
+            courses.ADDITIONAL_ENTITIES_FOR_COURSE_IMPORT)
+        for entity in all_entities:
+            files.append('%s.json' % entity.__name__)
+        return files
 
     def test_upload_course_succeeds(self):
         """Tests upload of archive contents."""
@@ -3794,21 +4257,30 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         context = etl_lib.get_context(self.upload_course_args.course_url_prefix)
         self.assertNotEqual(self.new_course_title, context.get_title())
 
-        etl.main(self.upload_course_args, environment_class=FakeEnvironment)
+        all_files_before_upload = set(
+            etl._filter_filesystem_files(etl._list_all(
+                context, include_inherited=True)))
+        etl.main(
+            self.upload_course_args, environment_class=testing.FakeEnvironment)
 
         # check archive content
         archive = etl._Archive(self.archive_path)
         archive.open('r')
         context = etl_lib.get_context(self.upload_course_args.course_url_prefix)
-        filesystem_contents = context.fs.impl.list(appengine_config.BUNDLE_ROOT)
+
+        vfs_files_after_upload = set(context.fs.impl.list(
+            appengine_config.BUNDLE_ROOT))
+
         self.assertEqual(
-            len(archive.manifest.entities),
-            len(filesystem_contents) + len(COURSE_CONTENT_ENTITY_FILES))
+            len(archive.manifest.entities)
+            - len(all_files_before_upload)  # less already-present files
+            - len(self._get_all_entity_files()),  # less entity files
+            len(vfs_files_after_upload - all_files_before_upload))
 
         # check course structure
         self.assertEqual(self.new_course_title, context.get_title())
-        units = etl._get_course_from(context).get_units()
-        spot_check_single_unit = [u for u in units if u.unit_id == 9][0]
+        units = etl_lib.get_course(context).get_units()
+        spot_check_single_unit = [u for u in units if u.unit_id == 14][0]
         self.assertEqual('Interpreting results', spot_check_single_unit.title)
         for unit in units:
             self.assertTrue(unit.title)
@@ -3816,13 +4288,13 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
         # check entities
         for entity in archive.manifest.entities:
             _, tail = os.path.split(entity.path)
-            if tail in COURSE_CONTENT_ENTITY_FILES:
+            if tail in self._get_all_entity_files():
                 continue
             full_path = os.path.join(
                 appengine_config.BUNDLE_ROOT,
                 etl._Archive.get_external_path(entity.path))
             stream = context.fs.impl.get(full_path)
-            self.assertEqual(entity.is_draft, stream.metadata.is_draft)
+            self.assertEqual(entity.is_draft, context.fs.is_draft(stream))
 
         # check uploaded question matches original
         _assert_identical_data_entity_exists(
@@ -3833,27 +4305,31 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
 
         self.upload_all_sample_course_files([])
         self.import_sample_course()
-        etl.main(self.download_course_args, environment_class=FakeEnvironment)
+        etl.main(
+            self.download_course_args,
+            environment_class=testing.FakeEnvironment)
         force_overwrite_args = etl.PARSER.parse_args(
             [etl._MODE_UPLOAD] + self.common_course_args + [
                 '--force_overwrite'])
-        etl.main(force_overwrite_args, environment_class=FakeEnvironment)
+        etl.main(
+            force_overwrite_args,
+            environment_class=testing.FakeEnvironment)
         archive = etl._Archive(self.archive_path)
         archive.open('r')
         context = etl_lib.get_context(self.upload_course_args.course_url_prefix)
         filesystem_contents = context.fs.impl.list(appengine_config.BUNDLE_ROOT)
         self.assertEqual(
             len(archive.manifest.entities),
-            len(filesystem_contents) + len(COURSE_CONTENT_ENTITY_FILES))
+            len(filesystem_contents) + len(self._get_all_entity_files()))
         self.assertEqual(self.new_course_title, context.get_title())
-        units = etl._get_course_from(context).get_units()
-        spot_check_single_unit = [u for u in units if u.unit_id == 9][0]
+        units = etl_lib.get_course(context).get_units()
+        spot_check_single_unit = [u for u in units if u.unit_id == 14][0]
         self.assertEqual('Interpreting results', spot_check_single_unit.title)
         for unit in units:
             self.assertTrue(unit.title)
         for entity in archive.manifest.entities:
             _, tail = os.path.split(entity.path)
-            if tail in COURSE_CONTENT_ENTITY_FILES:
+            if tail in self._get_all_entity_files():
                 continue
             full_path = os.path.join(
                 appengine_config.BUNDLE_ROOT,
@@ -3861,23 +4337,223 @@ class EtlMainTestCase(DatastoreBackedCourseTest):
             stream = context.fs.impl.get(full_path)
             self.assertEqual(entity.is_draft, stream.metadata.is_draft)
 
-    def test_upload_datastore_fails(self):
-        upload_datastore_args = etl.PARSER.parse_args(
-            [etl._MODE_UPLOAD] + self.common_datastore_args +
-            ['--datastore_types', 'doesnt_matter'])
-        self.assertRaises(
-            NotImplementedError, etl.main, upload_datastore_args,
-            environment_class=FakeEnvironment)
+    def test_upload_valid_encoded_string_reference(self):
+        with Namespace(self.namespace):
+            string_key = db.Key.from_path('EtlTestEntityPii', '334-44-1234')
+        self._test_upload_valid_reference(
+            string_key, ['--privacy', '--privacy_secret', 'super_seekrit'])
 
+    def test_upload_valid_encoded_numeric_reference(self):
+        with Namespace(self.namespace):
+            numeric_key = db.Key.from_path('EtlTestEntityPii', 334441234)
+        self._test_upload_valid_reference(
+            numeric_key, ['--privacy', '--privacy_secret', 'super_seekrit'])
 
-class EtlPrivacyTransformFunctionTestCase(actions.TestBase):
-    """Tests privacy transforms."""
+    def test_upload_valid_plaintext_string_reference(self):
+        with Namespace(self.namespace):
+            string_key = db.Key.from_path('EtlTestEntityPii', '334-44-1234')
+        self._test_upload_valid_reference(string_key, [])
 
-    # Testing protected functions. pylint: disable=protected-access
-    def test_hmac_sha_2_256_is_stable(self):
-        self.assertEqual(
-            etl._hmac_sha_2_256('secret', 'value'),
-            etl._hmac_sha_2_256('secret', 'value'))
+    def test_upload_valid_plaintext_numeric_reference(self):
+        with Namespace(self.namespace):
+            numeric_key = db.Key.from_path('EtlTestEntityPii', 334441234)
+        self._test_upload_valid_reference(numeric_key, [])
+
+    def _download_archive(self, extra_args=None):
+        extra_args = extra_args or []
+        etl.main(etl.PARSER.parse_args([etl._MODE_DOWNLOAD] +
+                                       self.common_datastore_args +
+                                       extra_args),
+                 environment_class=testing.FakeEnvironment)
+
+    def _clear_datastore(self):
+        self.swap(
+            etl, '_raw_input',
+            lambda x: etl._DELETE_DATASTORE_CONFIRMATION_INPUT)
+        etl.main(etl.PARSER.parse_args([etl._MODE_DELETE] +
+                                       self.common_datastore_args),
+                 environment_class=testing.FakeEnvironment)
+
+    def _upload_archive(self, extra_args=None):
+        extra_args = extra_args or []
+        etl.main(etl.PARSER.parse_args([etl._MODE_UPLOAD] +
+                                       self.common_datastore_args +
+                                       extra_args),
+                 environment_class=testing.FakeEnvironment)
+
+    def _test_upload_valid_reference(self, pii_key, download_args):
+        # Make ETL archive of item with PII in key using encoding.
+        sites.setup_courses(self.raw)
+        joes_score = 12345
+        with Namespace(self.namespace):
+            pii = EtlTestEntityPii(key=pii_key, name='Joe', score=joes_score)
+            pii.put()
+            ref = EtlTestEntityPiiReference(pii=pii)
+            ref.put()
+
+        self._download_archive(download_args)
+        self._clear_datastore()
+        self._upload_archive()
+
+        # Upload data.
+
+        with Namespace(self.namespace):
+            piis = EtlTestEntityPii.all().fetch(100)
+            refs = EtlTestEntityPiiReference.all().fetch(100)
+            self.assertEquals(1, len(piis))
+            self.assertEquals(1, len(refs))
+            self.assertEquals(joes_score, piis[0].score)
+            self.assertEquals(None, piis[0].name,
+                              'Blacklisted field should be None')
+            self.assertEquals(
+                joes_score, refs[0].pii.score,
+                'Reference by key using explicit name where key is PII')
+
+    def test_upload_null_encoded_reference(self):
+        self._test_upload_null_reference(['--privacy',
+                                          '--privacy_secret', 'super_seekrit'])
+
+    def test_upload_null_plaintext_reference(self):
+        self._test_upload_null_reference([])
+
+    def _test_upload_null_reference(self, download_args):
+        # Make ETL archive of item with PII in key using encoding.
+        sites.setup_courses(self.raw)
+        with Namespace(self.namespace):
+            ref = EtlTestEntityPiiReference(pii=None)
+            ref.put()
+
+        self._download_archive(download_args)
+        self._clear_datastore()
+        self._upload_archive()
+
+        with Namespace(self.namespace):
+            refs = EtlTestEntityPiiReference.all().fetch(100)
+            self.assertEquals(1, len(refs))
+            self.assertEquals(None, refs[0].pii)
+
+    def test_upload_unsupported_type_fails(self):
+        sites.setup_courses(self.raw)
+        with Namespace(self.namespace):
+            EtlTestEntityIllegal(score=123).put()
+        etl.main(etl.PARSER.parse_args([etl._MODE_DOWNLOAD] +
+                                       self.common_datastore_args),
+                 environment_class=testing.FakeEnvironment)
+
+        with self.assertRaises(SystemExit):
+            etl.main(etl.PARSER.parse_args([etl._MODE_UPLOAD] +
+                                           self.common_datastore_args),
+                     environment_class=testing.FakeEnvironment)
+
+    def test_upload_with_pre_existing_data(self):
+        # make archive file with one element.
+        sites.setup_courses(self.raw)
+        with Namespace(self.namespace):
+            EtlTestEntityPii(name='Fred').put()
+
+        self._download_archive()
+        # Upload that file - should fail since item still exists.
+        with self.assertRaises(SystemExit):
+            self._upload_archive()
+
+        # Upload with --force_overwrite should succeed where previous failed.
+        self._upload_archive(['--force_overwrite'])
+
+    def test_upload_empty_archive_fails(self):
+        sites.setup_courses(self.raw)
+        self._download_archive()
+        with self.assertRaises(SystemExit):
+            self._upload_archive()
+
+    def test_upload_with_no_classes_allowed_fails(self):
+        # make archive file with one element.
+        sites.setup_courses(self.raw)
+        with Namespace(self.namespace):
+            pii = EtlTestEntityPii(name='Fred')
+            pii.put()
+
+        self._download_archive()
+        self._clear_datastore()
+
+        # Upload should fail since --datastore_types does not mention
+        # only type in archive.
+        with self.assertRaises(SystemExit):
+            self._upload_archive(['--datastore_types=FooBar'])
+
+        # Upload should fail since --exclude_types names the
+        # only type in archive.
+        with self.assertRaises(SystemExit):
+            self._upload_archive(['--exclude_types=EtlTestEntityPii'])
+
+    def _build_entity_batch(self):
+        ret = []
+        for _ in xrange(etl.PARSER.get_default('batch_size')):
+            ret.append(EtlTestEntityPii(score=self.make_items_distinct_counter))
+            self.make_items_distinct_counter += 1
+        return ret
+
+    def test_upload_resumption_with_trivial_quantity(self):
+        sites.setup_courses(self.raw)
+        with Namespace(self.namespace):
+            thing_one = EtlTestEntityPii(name='Thing One')
+            thing_one.put()
+            thing_two = EtlTestEntityPii(name='Thing Two')
+            thing_two.put()
+        self._download_archive()
+        self._clear_datastore()
+
+        # Simulate 1st upload having partially succeeded.
+        with Namespace(self.namespace):
+            thing_one.put()
+
+        # Should not barf.
+        self._upload_archive(['--resume'])
+        self.assertIn('Resuming upload at item number 0 of 2.',
+                      self.get_log())
+
+        # Upload again; everything should be seen to be present.
+        self._upload_archive(['--resume'])
+        self.assertIn('All 2 entities already uploaded; skipping',
+                      self.get_log())
+
+    def test_upload_resumption_with_batch_quantity(self):
+        sites.setup_courses(self.raw)
+        with Namespace(self.namespace):
+            batch_one = self._build_entity_batch()
+            batch_two = self._build_entity_batch()
+            db.put(batch_one)
+            db.put(batch_two)
+        self._download_archive()
+
+        # Simulate 1st batch having partially succeeded, 2nd batch not at all.
+        self._clear_datastore()
+        with Namespace(self.namespace):
+            db.put([x for x in batch_one if x.score % 2])
+        self._upload_archive(['--resume'])
+        self.assertIn('Resuming upload at item number 0 of 40.',
+                      self.get_log())
+
+        # Simulate 1st batch having fully succeeded, 2nd batch not at all.
+        self._clear_datastore()
+        with Namespace(self.namespace):
+            db.put(batch_one)
+        self._upload_archive(['--resume'])
+        self.assertIn('Resuming upload at item number 20 of 40.',
+                      self.get_log())
+
+        # Simulate 1st batch having fully succeeded, 2nd batch partial
+        self._clear_datastore()
+        with Namespace(self.namespace):
+            db.put(batch_one)
+            db.put([x for x in batch_one if x.score % 2])
+        self._upload_archive(['--resume'])
+        self.assertIn('Resuming upload at item number 20 of 40.',
+                      self.get_log())
+
+        # Upload again; everything should be seen to be present.
+        self._upload_archive(['--resume'])
+        self.assertIn('All 40 entities already uploaded; skipping',
+                      self.get_log())
 
     def test_is_identity_transform_when_privacy_false(self):
         self.assertEqual(
@@ -3886,8 +4562,12 @@ class EtlPrivacyTransformFunctionTestCase(actions.TestBase):
             1, etl._get_privacy_transform_fn(False, 'other_value')(1))
 
     def test_is_hmac_sha_2_256_when_privacy_true(self):
+        # Must run etl.main() to get crypto module loaded.
+        args = etl.PARSER.parse_args(['download'] + self.common_course_args)
+        etl.main(args, environment_class=testing.FakeEnvironment)
         self.assertEqual(
-            etl._hmac_sha_2_256('secret', 'value'),
+            crypto.hmac_sha_2_256_transform('secret', 'value'),
+            # Testing protected functions. pylint: disable=protected-access
             etl._get_privacy_transform_fn(True, 'secret')('value'))
 
 
@@ -3941,6 +4621,40 @@ class MemcacheTest(MemcacheTestBase):
     """Executes all tests with memcache enabled."""
 
 
+class PiiHolder(entities.BaseEntity):
+    user_id = db.StringProperty(indexed=True)
+    age = db.IntegerProperty(indexed=False)
+    class_rank = db.IntegerProperty(indexed=False)
+    registration_date = db.DateTimeProperty(indexed=True, required=True)
+    class_goal = db.StringProperty(indexed=False, required=True)
+    albedo = db.FloatProperty(indexed=False)
+
+    _PROPERTY_EXPORT_BLACKLIST = [user_id, age]
+
+
+class TransformsEntitySchema(actions.TestBase):
+
+    def test_schema(self):
+        schema = transforms.get_schema_for_entity(PiiHolder)
+        schema = schema.get_json_schema_dict()['properties']
+        self.assertNotIn('user_id', schema)
+        self.assertNotIn('age', schema)
+        self.assertIn('class_rank', schema)
+        self.assertEquals('integer', schema['class_rank']['type'])
+        self.assertIn('optional', schema['class_rank'])
+        self.assertEquals(True, schema['class_rank']['optional'])
+        self.assertIn('registration_date', schema)
+        self.assertEquals('datetime', schema['registration_date']['type'])
+        self.assertNotIn('optional', schema['registration_date'])
+        self.assertIn('class_goal', schema)
+        self.assertEquals('string', schema['class_goal']['type'])
+        self.assertNotIn('optional', schema['class_goal'])
+        self.assertIn('albedo', schema)
+        self.assertEquals('number', schema['albedo']['type'])
+        self.assertIn('optional', schema['albedo'])
+        self.assertEquals(True, schema['albedo']['optional'])
+
+
 class TransformsJsonFileTestCase(actions.TestBase):
     """Tests for models/transforms.py's JsonFile."""
 
@@ -3989,10 +4703,108 @@ class TransformsJsonFileTestCase(actions.TestBase):
             {'rows': [self.first, self.second]}, self.reader.read())
 
 
+class ImportAssessmentTests(DatastoreBackedCourseTest):
+    """Functional tests for assessments."""
+
+    def test_assessment_old_style(self):
+
+        # test that assessment version 1.3 with empty html_content
+        # is not assessment version 1.2
+        sites.setup_courses('course:/test::ns_test, course:/:/')
+        course = courses.Course(None, app_context=sites.get_all_courses()[0])
+        a1 = course.add_assessment()
+        course.save()
+        assert course.find_unit_by_id(a1.unit_id)
+        assert not courses.has_at_least_one_old_style_assessment(course)
+        assert courses.has_only_new_style_assessments(course)
+
+        # test that assessment version 1.3 with empty html_content
+        # and js content is considered old-style assessment
+        a2 = course.add_assessment()
+        a2.title = 'Assessment 2'
+        course.update_unit(a2)
+        assessment_content = open(os.path.join(
+            appengine_config.BUNDLE_ROOT,
+            'assets/js/assessment-Pre.js'), 'rb').readlines()
+        assessment_content = u''.join(assessment_content)
+        course.set_assessment_content(a2, assessment_content, [])
+        course.save()
+        assert courses.has_at_least_one_old_style_assessment(course)
+        assert not courses.has_only_new_style_assessments(course)
+
+    def test_import_empty_assessment(self):
+        sites.setup_courses('course:/a::ns_a, course:/b::ns_b')
+        src = courses.Course(None, app_context=sites.get_all_courses()[0])
+        src.add_assessment()
+        src.save()
+        dst = courses.Course(None, app_context=sites.get_all_courses()[1])
+        errors = []
+        dst.import_from(src.app_context, errors)
+        self.assertEqual(0, len(errors))
+        self.assertEqual(1, len(dst.get_assessment_list()))
+        assert courses.has_only_new_style_assessments(dst)
+
+    def test_import_course13_w_assessment12(self):
+        """Tests importing a new-style course with old-style assessment."""
+
+        # set up the src and dst courses ver.13
+        sites.setup_courses('course:/a::ns_a, course:/b::ns_b, course:/:/')
+        src_app_ctx = sites.get_all_courses()[0]
+        src_course = courses.Course(None, app_context=src_app_ctx)
+        dst_app_ctx = sites.get_all_courses()[0]
+        dst_course = courses.Course(None, app_context=dst_app_ctx)
+
+        # add old-style assessment to the src
+        a1_title = 'Assessment content version 12'
+        a1 = src_course.add_assessment()
+        a1.title = a1_title
+        src_course.update_unit(a1)
+        assessment_content = open(os.path.join(
+            appengine_config.BUNDLE_ROOT,
+            'assets/js/assessment-Pre.js'), 'rb').readlines()
+        assessment_content = u''.join(assessment_content)
+        errors = []
+        src_course.set_assessment_content(
+            a1, assessment_content, errors)
+
+        # add new style assessment to src
+        a2_title = 'Assessment content version 13'
+        a2_html_content = 'content'
+        a2 = src_course.add_assessment()
+        a2.title = a2_title
+        a2.html_content = a2_html_content
+        a2.html_check_answers = 'check'
+        a2.html_review_form = 'review'
+        a2.workflow_yaml = 'a: 3'
+        src_course.update_unit(a2)
+
+        # save course and confirm assessments
+        src_course.save()
+        assert not errors
+        assessment_content_stored = src_course.app_context.fs.get(os.path.join(
+            src_course.app_context.get_home(),
+            src_course.get_assessment_filename(a1.unit_id)))
+        assert assessment_content == assessment_content_stored
+
+        # import course
+        dst_course.import_from(src_app_ctx, errors)
+
+        # assert old-style assessment has been ported to a new-style one
+        dst_a1 = dst_course.get_units()[0]
+        self.assertEqual('A', dst_a1.type)
+        self.assertEqual(a1_title, dst_a1.title)
+        assert dst_a1.html_content
+        dst_a2 = dst_course.get_units()[1]
+        self.assertEqual('A', dst_a1.type)
+        self.assertEqual(a2_title, dst_a2.title)
+        self.assertEqual(a2_html_content, dst_a2.html_content)
+
+        # cleaning up
+        sites.reset_courses()
+
+
 class ImportActivityTests(DatastoreBackedCourseTest):
     """Functional tests for importing legacy activities into lessons."""
-
-    URI = '/rest/course/lesson/activity'
 
     FREETEXT_QUESTION = """
 var activity = [
@@ -4039,55 +4851,215 @@ var activity = [
 
     def setUp(self):
         super(ImportActivityTests, self).setUp()
-        course = courses.Course(None, app_context=self.app_context)
-        self.unit = course.add_unit()
-        self.lesson = course.add_lesson(self.unit)
-        course.update_lesson(self.lesson)
+        self.course = courses.Course(None, app_context=self.app_context)
+        self.unit = self.course.add_unit()
+        self.lesson = self.course.add_lesson(self.unit)
+        self.old_namespace = namespace_manager.get_namespace()
+        namespace_manager.set_namespace(self.app_context.get_namespace_name())
+
+    def tearDown(self):
+        namespace_manager.set_namespace(self.old_namespace)
+        super(ImportActivityTests, self).tearDown()
+
+    def test_hide_activity(self):
+        """Tests old-style activity annotations."""
+
+        # set up a version 13 course
+        sites.setup_courses('course:/test::ns_test, course:/:/')
+        app_ctx = sites.get_all_courses()[0]
+        course = courses.Course(None, app_context=app_ctx)
+
+        # add a unit & a lesson w.o. activity
+        unit = course.add_unit()
+        course.add_lesson(unit)
         course.save()
 
-        email = 'test_admin@google.com'
-        actions.login(email, is_admin=True)
+        # admin logs in and gets the lesson for editing
+        actions.login('admin@foo.com', is_admin=True)
+        response = self.get('/test/dashboard?action=edit_lesson&key=2')
+        self.assertEqual(200, response.status_int)
 
-    def load_dto(self, dao, entity_id):
-        old_namespace = namespace_manager.get_namespace()
-        new_namespace = self.app_context.get_namespace_name()
-        try:
-            namespace_manager.set_namespace(new_namespace)
-            return dao.load(entity_id)
-        finally:
-            namespace_manager.set_namespace(old_namespace)
+        # assert that there are 3 hidden annotations
+        self.assert_num_hidden_annotations(response.body, 3)
 
-    def get_response_dict(self, activity_text):
-        request = {
-            'xsrf_token': XsrfTokenManager.create_xsrf_token('lesson-edit'),
-            'key': self.lesson.lesson_id,
-            'text': activity_text
-        }
-        response = self.testapp.put(
-            self.URI, params={'request': transforms.dumps(request)})
-        return transforms.loads(response.body)
+        # add a lesson w. old-style activity
+        lesson = course.add_lesson(unit)
+        lesson.scored = True
+        lesson.has_activity = True
+        lesson.activity_title = 'activity title'
+        lesson.activity_listed = True
+        errors = []
+        course.set_activity_content(
+            lesson, unicode(self.FREETEXT_QUESTION), errors)
+        assert not errors
+        course.save()
 
-    def get_content_from_service(self, activity_text):
-        response_dict = self.get_response_dict(activity_text)
-        self.assertEqual(response_dict['status'], 200)
-        return transforms.loads(response_dict['payload'])['content']
+        # assert that there are no hidden annotations
+        actions.login('admin@foo.com', is_admin=True)
+        response = self.get('/test/dashboard?action=edit_lesson&key=3')
+        self.assertEqual(200, response.status_int)
+        self.assert_num_hidden_annotations(response.body, 0)
 
-    def test_import_multiple_choice(self):
-        """Should be able to import a single multiple choice question."""
-        content = self.get_content_from_service(self.MULTPLE_CHOICE_QUESTION)
-        m = re.match((
-            r'^<question quid="(\d+)" instanceid="[a-zA-Z0-9]{12}">'
-            r'</question>$'), content)
-        assert m
+        # cleaning up
+        sites.reset_courses()
 
-        quid = m.group(1)
-        question = self.load_dto(models.QuestionDAO, quid)
+    def assert_num_hidden_annotations(self, body, n):
+        start_marker = 'load_schema_with_annotations = function(schema)'
+        suffix = body.split(start_marker)[1]
+        end_marker = re.compile(r'\s+}')
+        func_body = end_marker.split(suffix)[0]
+        self.assertEqual(n, func_body.count('hidden'))
+
+    def test_import_lesson13_w_activity12_to_lesson13(self):
+
+        # Setup the src and destination courses.
+        sites.setup_courses('course:/a::ns_a, course:/b::ns_b')
+        src_ctx = sites.get_all_courses()[0]
+        src_course = courses.Course(None, app_context=src_ctx)
+        dst_course = courses.Course(
+            None, app_context=sites.get_all_courses()[1])
+
+        # Add a unit & a lesson
+        title = 'activity title'
+        src_unit = src_course.add_unit()
+        src_lesson = src_course.add_lesson(src_unit)
+        src_lesson.title = 'Test Lesson'
+        src_lesson.scored = True
+        src_lesson.objectives = 'objectives'
+        src_lesson.video = 'video'
+        src_lesson.notes = 'notes'
+        src_lesson.duration = 'duration'
+        src_lesson.now_available = True
+        src_lesson.has_activity = True
+        src_lesson.activity_title = title
+        src_lesson.activity_listed = True
+        src_lesson.properties = {'key': 'value'}
+        src_course.save()
+
+        # Add an old style activity to the src lesson
+        activity = unicode(self.FREETEXT_QUESTION)
+        errors = []
+        src_course.set_activity_content(src_lesson, activity, errors)
+        assert not errors
+
+        # Import course and verify activities
+        errors = []
+        dst_course.import_from(src_ctx, errors)
+        self.assertEqual(0, len(errors))
+        u1, l1, a1, _ = self.calc_course_stats(src_course)
+        u2, l2, _, _ = self.calc_course_stats(dst_course)
+        self.assertEqual(1, l1)
+        self.assertEqual(2, l2)
+        self.assertEqual(u1, u2)
+        self.assertEqual(l1 + a1, l2)
+        new_lesson = dst_course.get_lessons('1')[1]
+        assert 'quid=' in new_lesson.objectives
+        self.assertEqual(title, new_lesson.title)
+        assert courses.has_at_least_one_old_style_activity(src_course)
+        assert courses.has_only_new_style_activities(dst_course)
+
+    def test_import_free_text_activity(self):
+        text = self.FREETEXT_QUESTION
+        content, noverify_text = verify.convert_javascript_to_python(
+            text, 'activity')
+        activity = verify.evaluate_python_expression_from_text(
+            content, 'activity', verify.Activity().scope, noverify_text)
+
+        qid, instance_id = models.QuestionImporter.import_question(
+            activity['activity'][0], self.unit, self.lesson.title, 1, ['task'])
+        assert qid and isinstance(qid, (int, long))
+        assert re.match(r'^[a-zA-Z0-9]{12}$', instance_id)
+
+        question = models.QuestionDAO.load(qid)
+        self.assertEqual(question.type, models.QuestionDTO.SHORT_ANSWER)
+        self.assertEqual(question.dict['version'], '1.5')
+        self.assertEqual(
+            question.dict['description'],
+            'Imported from unit "New Unit", lesson "New Lesson" (question #1)')
+        self.assertEqual(question.dict['question'], 'task')
+        self.assertEqual(question.dict['hint'], 'A hint.')
+        self.assertEqual(question.dict['defaultFeedback'], 'Try again.')
+        self.assertEqual(len(question.dict['graders']), 1)
+
+        grader = question.dict['graders'][0]
+        self.assertEqual(grader['score'], 1.0)
+        self.assertEqual(grader['matcher'], 'regex')
+        self.assertEqual(grader['response'], '/abc/i')
+        self.assertEqual(grader['feedback'], 'Correct.')
+
+    def test_import_free_text_with_missing_fields(self):
+        # correctAnswerOutput and incorrectAnswerOutput are missing
+        text = """
+var activity = [
+  { questionType: 'freetext',
+    correctAnswerRegex: /abc/i,
+    showAnswerOutput: "A hint."
+  }
+];
+"""
+        content, noverify_text = verify.convert_javascript_to_python(
+            text, 'activity')
+        activity = verify.evaluate_python_expression_from_text(
+            content, 'activity', verify.Activity().scope, noverify_text)
+
+        qid, instance_id = models.QuestionImporter.import_question(
+            activity['activity'][0], self.unit, self.lesson.title, 1, ['task'])
+        assert qid and isinstance(qid, (int, long))
+        assert re.match(r'^[a-zA-Z0-9]{12}$', instance_id)
+
+        question = models.QuestionDAO.load(qid)
+        self.assertEqual(question.type, models.QuestionDTO.SHORT_ANSWER)
+        self.assertEqual(question.dict['version'], '1.5')
+        self.assertEqual(
+            question.dict['description'],
+            'Imported from unit "New Unit", lesson "New Lesson" (question #1)')
+        self.assertEqual(question.dict['question'], 'task')
+        self.assertEqual(question.dict['hint'], 'A hint.')
+        self.assertEqual(question.dict['defaultFeedback'], '')
+        self.assertEqual(len(question.dict['graders']), 1)
+
+        grader = question.dict['graders'][0]
+        self.assertEqual(grader['score'], 1.0)
+        self.assertEqual(grader['matcher'], 'regex')
+        self.assertEqual(grader['response'], '/abc/i')
+        self.assertEqual(grader['feedback'], '')
+
+    def test_activity_import_unique_constraint(self):
+        text = self.FREETEXT_QUESTION
+        content, noverify_text = verify.convert_javascript_to_python(
+            text, 'activity')
+        activity = verify.evaluate_python_expression_from_text(
+            content, 'activity', verify.Activity().scope, noverify_text)
+
+        qid, _ = models.QuestionImporter.import_question(
+            activity['activity'][0], self.unit, self.lesson.title, 1, ['task'])
+        assert qid and isinstance(qid, (int, long))
+
+        self.assertRaises(models.CollisionError,
+                          models.QuestionImporter.import_question,
+                          activity['activity'][0], self.unit,
+                          self.lesson.title, 1, ['task'])
+
+    def test_import_multiple_choice_activity(self):
+        text = self.MULTPLE_CHOICE_QUESTION
+        content, noverify_text = verify.convert_javascript_to_python(
+            text, 'activity')
+        activity = verify.evaluate_python_expression_from_text(
+            content, 'activity', verify.Activity().scope, noverify_text)
+
+        verify.Verifier().verify_activity_instance(activity, 'none')
+        qid, instance_id = models.QuestionImporter.import_question(
+            activity['activity'][0], self.unit, self.lesson.title, 1, ['task'])
+        assert qid and isinstance(qid, (int, long))
+        assert re.match(r'^[a-zA-Z0-9]{12}$', instance_id)
+
+        question = models.QuestionDAO.load(qid)
         self.assertEqual(question.type, models.QuestionDTO.MULTIPLE_CHOICE)
         self.assertEqual(question.dict['version'], '1.5')
         self.assertEqual(
             question.dict['description'],
             'Imported from unit "New Unit", lesson "New Lesson" (question #1)')
-        self.assertEqual(question.dict['question'], '')
+        self.assertEqual(question.dict['question'], 'task')
         self.assertEqual(question.dict['multiple_selections'], False)
         self.assertEqual(len(question.dict['choices']), 4)
 
@@ -4100,18 +5072,20 @@ var activity = [
             self.assertEqual(choice['score'], choices_data[i][1])
             self.assertEqual(choice['feedback'], choices_data[i][2])
 
-    def test_import_multiple_choice_group(self):
-        """Should be able to import a single 'multiple choice group'."""
-        content = self.get_content_from_service(
-            self.MULTPLE_CHOICE_GROUP_QUESTION)
-        # The tag links to a question group which embeds two questions
-        m = re.match((
-            r'^<question-group qgid="(\d+)" instanceid="[a-zA-Z0-9]{12}">'
-            r'</question-group>$'), content)
-        assert m
+    def test_import_multiple_choice_group_activity(self):
+        text = self.MULTPLE_CHOICE_GROUP_QUESTION
+        content, noverify_text = verify.convert_javascript_to_python(
+            text, 'activity')
+        activity = verify.evaluate_python_expression_from_text(
+            content, 'activity', verify.Activity().scope, noverify_text)
+        verify.Verifier().verify_activity_instance(activity, 'none')
 
-        quid = m.group(1)
-        question_group = self.load_dto(models.QuestionGroupDAO, quid)
+        qid, instance_id = models.QuestionImporter.import_question(
+            activity['activity'][0], self.unit, self.lesson.title, 1, ['task'])
+        assert qid and isinstance(qid, (int, long))
+        assert re.match(r'^[a-zA-Z0-9]{12}$', instance_id)
+
+        question_group = models.QuestionGroupDAO.load(qid)
         self.assertEqual(question_group.dict['version'], '1.5')
         self.assertEqual(
             question_group.dict['description'],
@@ -4123,8 +5097,8 @@ var activity = [
         self.assertEqual(items[1]['weight'], 1.0)
 
         # The first question is multiple choice with single selection
-        quid = items[0]['question']
-        question = self.load_dto(models.QuestionDAO, quid)
+        qid = items[0]['question']
+        question = models.QuestionDAO.load(qid)
         self.assertEqual(question.type, models.QuestionDTO.MULTIPLE_CHOICE)
         self.assertEqual(question.dict['version'], '1.5')
         self.assertEqual(
@@ -4143,8 +5117,8 @@ var activity = [
         self.assertEqual(choices[1]['score'], 0.0)
 
         # The second question is multiple choice with multiple selection
-        quid = items[1]['question']
-        question = self.load_dto(models.QuestionDAO, quid)
+        qid = items[1]['question']
+        question = models.QuestionDAO.load(qid)
         self.assertEqual(question.type, models.QuestionDTO.MULTIPLE_CHOICE)
         self.assertEqual(question.dict['version'], '1.5')
         self.assertEqual(
@@ -4163,58 +5137,6 @@ var activity = [
         self.assertEqual(choices[1]['score'], 0.5)
         self.assertEqual(choices[1]['text'], 'bb')
         self.assertEqual(choices[1]['score'], 0.5)
-
-    def test_import_freetext(self):
-        """Should be able to import a single feettext question."""
-        content = self.get_content_from_service(self.FREETEXT_QUESTION)
-        m = re.match((
-            r'^<question quid="(\d+)" instanceid="[a-zA-Z0-9]{12}">'
-            r'</question>$'), content)
-        assert m
-
-        quid = m.group(1)
-        question = self.load_dto(models.QuestionDAO, quid)
-        self.assertEqual(question.type, models.QuestionDTO.SHORT_ANSWER)
-        self.assertEqual(question.dict['version'], '1.5')
-        self.assertEqual(
-            question.dict['description'],
-            'Imported from unit "New Unit", lesson "New Lesson" (question #1)')
-        self.assertEqual(question.dict['question'], '')
-        self.assertEqual(question.dict['hint'], 'A hint.')
-        self.assertEqual(question.dict['defaultFeedback'], 'Try again.')
-        self.assertEqual(len(question.dict['graders']), 1)
-
-        grader = question.dict['graders'][0]
-        self.assertEqual(grader['score'], 1.0)
-        self.assertEqual(grader['matcher'], 'regex')
-        self.assertEqual(grader['response'], '/abc/i')
-        self.assertEqual(grader['feedback'], 'Correct.')
-
-    def test_repeated_imports_are_rejected(self):
-        response_dict = self.get_response_dict(self.FREETEXT_QUESTION)
-        self.assertEqual(response_dict['status'], 200)
-        response_dict = self.get_response_dict(self.FREETEXT_QUESTION)
-        self.assertEqual(response_dict['status'], 412)
-        self.assertTrue(response_dict['message'].startswith(
-            'This activity has already been imported.'))
-
-    def test_user_must_be_logged_in(self):
-        actions.logout()
-        try:
-            self.get_response_dict(self.FREETEXT_QUESTION)
-            self.fail('Expected 404')
-        except AppError:
-            pass
-
-    def test_user_must_have_valid_xsrf_token(self):
-        request = {
-            'key': self.lesson.lesson_id,
-            'text': self.FREETEXT_QUESTION
-        }
-        response = self.testapp.put(
-            self.URI, params={'request': transforms.dumps(request)})
-        response_dict = transforms.loads(response.body)
-        self.assertEqual(response_dict['status'], 403)
 
 
 class NamespaceTest(actions.TestBase):
@@ -4242,7 +5164,7 @@ class NamespaceTest(actions.TestBase):
 ALL_COURSE_TESTS = (
     StudentAspectTest, AssessmentTest, CourseAuthorAspectTest,
     StaticHandlerTest, AdminAspectTest, PeerReviewControllerTest,
-    PeerReviewDashboardTest, PeerReviewAnalyticsTest)
+    PeerReviewDashboardAdminTest, PeerReviewAnalyticsTest)
 
 MemcacheTest.__bases__ += (InfrastructureTest,) + ALL_COURSE_TESTS
 CourseUrlRewritingTest.__bases__ += ALL_COURSE_TESTS

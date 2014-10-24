@@ -16,27 +16,35 @@
 
 __author__ = 'Saifu Angto (saifu@google.com)'
 
-import base64
-import hmac
+import datetime
+import gettext
+import HTMLParser
 import os
-import time
+import re
 import urlparse
 
+import jinja2
+import sites
 import webapp2
 
 import appengine_config
 from common import jinja_utils
+from common import locales
+from common import safe_dom
+from common import tags
+from common import utils as common_utils
+from common.crypto import XsrfTokenManager
+from models import courses
 from models import models
 from models import transforms
 from models.config import ConfigProperty
-from models.config import ConfigPropertyEntity
 from models.courses import Course
 from models.models import Student
 from models.models import StudentProfileDAO
 from models.models import TransientStudent
 from models.roles import Roles
+from modules import courses as courses_module
 
-from google.appengine.api import namespace_manager
 from google.appengine.api import users
 
 # The name of the template dict key that stores a course's base location.
@@ -45,19 +53,18 @@ COURSE_BASE_KEY = 'gcb_course_base'
 # The name of the template dict key that stores data from course.yaml.
 COURSE_INFO_KEY = 'course_info'
 
+# The name of the cookie used to store the locale prefs for users out of session
+GUEST_LOCALE_COOKIE = 'cb-user-locale'
+GUEST_LOCALE_COOKIE_MAX_AGE_SEC = 48 * 60 * 60  # 48 hours
+
 TRANSIENT_STUDENT = TransientStudent()
 
-XSRF_SECRET_LENGTH = 20
-
-XSRF_SECRET = ConfigProperty(
-    'gcb_xsrf_secret', str, (
-        'Text used to encrypt tokens, which help prevent Cross-site request '
-        'forgery (CSRF, XSRF). You can set the value to any alphanumeric text, '
-        'preferably using 16-64 characters. Once you change this value, the '
-        'server rejects all subsequent requests issued using an old value for '
-        'this variable.'),
-    'course builder XSRF secret')
-
+# Whether to output debug info into the page.
+CAN_PUT_DEBUG_INFO_INTO_PAGES = ConfigProperty(
+    'gcb_can_put_debug_info_into_pages', bool, (
+        'Whether or not to put debugging information into the web pages. '
+        'This may be useful for debugging purposes if you develop custom '
+        'Course Builder features or extensions.'), False)
 
 # Whether to record page load/unload events in a database.
 CAN_PERSIST_PAGE_EVENTS = ConfigProperty(
@@ -195,8 +202,139 @@ class ReflectiveRequestHandler(object):
         return handler()
 
 
+def _get_course_properties():
+    return Course.get_environ(sites.get_course_for_current_request())
+
+
+def display_unit_title(unit, course_properties=None):
+    """Prepare an internationalized display for the unit title."""
+    if not course_properties:
+        course_properties = _get_course_properties()
+    if course_properties['course'].get('display_unit_title_without_index'):
+        return unit.title
+    else:
+        # I18N: Message displayed as title for unit within a course.
+        return gettext.gettext('Unit %s - %s' % (unit.index, unit.title))
+
+
+def display_short_unit_title(unit, course_properties=None):
+    """Prepare a short unit title."""
+    if not course_properties:
+        course_properties = _get_course_properties()
+    if course_properties['course'].get('display_unit_title_without_index'):
+        return unit.title
+    if unit.type != 'U':
+        return unit.title
+    # I18N: Message displayed as title for unit within a course.
+    return '%s %s' % (gettext.gettext('Unit'), unit.index)
+
+
+def display_lesson_title(unit, lesson, course_properties=None):
+    """Prepare an internationalized display for the unit title."""
+    if not course_properties:
+        course_properties = _get_course_properties()
+
+    content = safe_dom.NodeList()
+    span = safe_dom.Element('span')
+    content.append(span)
+
+    if lesson.auto_index:
+        prefix = ''
+        if course_properties['course'].get('display_unit_title_without_index'):
+            prefix = '%s ' % lesson.index
+        else:
+            prefix = '%s.%s ' % (unit.index, lesson.index)
+        span.add_text(prefix)
+        _class = ''
+    else:
+        _class = 'no-index'
+
+    span.add_text(lesson.title)
+    span.set_attribute('className', _class)
+    return content
+
+
+class HtmlHooks(object):
+
+    def __init__(self, course, prefs=None):
+        self.course = course
+        self.prefs = prefs
+        if self.prefs is None:
+            self.prefs = models.StudentPreferencesDAO.load_or_create()
+
+    def _has_visible_content(self, html_text):
+
+        class VisibleHtmlParser(HTMLParser.HTMLParser):
+
+            def __init__(self, *args, **kwargs):
+                HTMLParser.HTMLParser.__init__(self, *args, **kwargs)
+                self._has_visible_content = False
+
+            def handle_starttag(self, unused_tag, unused_attrs):
+                # Not 100% guaranteed; e.g., <p> does not guarantee content,
+                # but <button> does -- even if the <button> does not contain
+                # data/entity/char.  I don't want to spend a lot of logic
+                # looking for specific cases, and this behavior is enough.
+                self._has_visible_content = True
+
+            def handle_data(self, data):
+                if data.strip():
+                    self._has_visible_content = True
+
+            def handle_entityref(self, unused_data):
+                self._has_visible_content = True
+
+            def handle_charref(self, unused_data):
+                self._has_visible_content = True
+
+            def has_visible_content(self):
+                return self._has_visible_content
+
+        parser = VisibleHtmlParser()
+        parser.feed(html_text)
+        parser.close()
+        return parser.has_visible_content()
+
+    def insert(self, name):
+        # Do we want page markup to permit course admins to edit hooks?
+        show_admin_content = False
+        if (self.prefs and self.prefs.show_hooks and
+            Roles.is_course_admin(self.course.app_context)):
+            show_admin_content = True
+        if self.course.version == courses.CourseModel12.VERSION:
+            show_admin_content = False
+
+        # Look up desired content chunk in course.yaml dict/sub-dict.
+        content = ''
+        environ = self.course.app_context.get_environ()
+        for part in name.split(':'):
+            if part in environ:
+                item = environ[part]
+                if type(item) == str:
+                    content = item
+                else:
+                    environ = item
+        if show_admin_content and not self._has_visible_content(content):
+            content += name
+
+        # Add the content to the page in response to the hook call.
+        hook_div = safe_dom.Element('div', className='gcb-html-hook',
+                                    id=re.sub('[^a-zA-Z-]', '-', name))
+        hook_div.add_child(tags.html_to_safe_dom(content, self))
+
+        # Mark up content to enable edit controls
+        if show_admin_content:
+            hook_div.add_attribute(onclick='gcb_edit_hook_point("%s")' % name)
+            hook_div.add_attribute(className='gcb-html-hook-edit')
+        return jinja2.Markup(hook_div.sanitized)
+
+
 class ApplicationHandler(webapp2.RequestHandler):
     """A handler that is aware of the application context."""
+
+    RIGHT_LINKS = []
+    EXTRA_GLOBAL_CSS_URLS = []
+    EXTRA_GLOBAL_JS_URLS = []
 
     @classmethod
     def is_absolute(cls, url):
@@ -216,37 +354,38 @@ class ApplicationHandler(webapp2.RequestHandler):
                 (parts.scheme, parts.netloc, base, None, None, None))
         return base
 
-    def __init__(self, *args, **kwargs):
-        super(ApplicationHandler, self).__init__(*args, **kwargs)
-        self.template_value = {}
+    def render_template_to_html(self, template_values, template_file,
+                                additional_dirs=None):
+        courses.Course.set_current(self.get_course())
+        models.MemcacheManager.begin_readonly()
+        try:
+            template = self.get_template(template_file, additional_dirs)
+            return jinja2.utils.Markup(
+                template.render(template_values, autoescape=True))
+        finally:
+            models.MemcacheManager.end_readonly()
+            courses.Course.clear_current()
 
-    def get_template(self, template_file, additional_dirs=None):
-        """Computes location of template files for the current namespace."""
-        self.template_value[COURSE_INFO_KEY] = self.app_context.get_environ()
-        self.template_value['is_course_admin'] = Roles.is_course_admin(
-            self.app_context)
-        self.template_value[
-            'is_read_write_course'] = self.app_context.fs.is_read_write()
-        self.template_value['is_super_admin'] = Roles.is_super_admin()
-        self.template_value[COURSE_BASE_KEY] = self.get_base_href(self)
-        template_environ = self.app_context.get_template_environ(
-            self.template_value[COURSE_INFO_KEY]['course']['locale'],
-            additional_dirs
-        )
-        template_environ.filters[
-            'gcb_tags'] = jinja_utils.get_gcb_tags_filter(self)
-        return template_environ.get_template(template_file)
+    def get_template(self, template_file, additional_dirs=None, prefs=None):
+        raise NotImplementedError()
 
-    def canonicalize_url(self, location):
+    @classmethod
+    def canonicalize_url_for(cls, app_context, location):
         """Adds the current namespace URL prefix to the relative 'location'."""
         is_relative = (
-            not self.is_absolute(location) and
-            not location.startswith(self.app_context.get_slug()))
+            not cls.is_absolute(location) and
+            not location.startswith(app_context.get_slug()))
         has_slug = (
-            self.app_context.get_slug() and self.app_context.get_slug() != '/')
+            app_context.get_slug() and app_context.get_slug() != '/')
         if is_relative and has_slug:
-            location = '%s%s' % (self.app_context.get_slug(), location)
+            location = '%s%s' % (app_context.get_slug(), location)
         return location
+
+    def canonicalize_url(self, location):
+        if hasattr(self, 'app_context'):
+            return self.canonicalize_url_for(self.app_context, location)
+        else:
+            return location
 
     def redirect(self, location, normalize=True):
         if normalize:
@@ -254,17 +393,90 @@ class ApplicationHandler(webapp2.RequestHandler):
         super(ApplicationHandler, self).redirect(location)
 
 
-class BaseHandler(ApplicationHandler):
-    """Base handler."""
+class CourseHandler(ApplicationHandler):
+    """Base handler that is aware of the current course."""
 
     def __init__(self, *args, **kwargs):
-        super(BaseHandler, self).__init__(*args, **kwargs)
+        super(CourseHandler, self).__init__(*args, **kwargs)
         self.course = None
+        self.template_value = {}
+
+    def get_user(self):
+        """Get the current user."""
+        return users.get_current_user()
+
+    def get_student(self):
+        """Get the current student."""
+        user = self.get_user()
+        if user is None:
+            return None
+        return Student.get_by_email(user.email())
+
+    def _pick_first_valid_locale_from_list(self, desired_locales):
+        available_locales = self.app_context.get_allowed_locales()
+        for lang in desired_locales:
+            for available_locale in available_locales:
+                if lang.lower() == available_locale.lower():
+                    return lang
+        return None
+
+    def get_locale_for(self, request, app_context, student=None, prefs=None):
+        """Returns a locale that should be used by this request."""
+
+        if self.get_user():
+            # check if student has any locale labels assigned
+            if student is None:
+                student = self.get_student()
+            if student and student.is_enrolled and not student.is_transient:
+                student_label_ids = student.get_labels_of_type(
+                    models.LabelDTO.LABEL_TYPE_LOCALE)
+                if student_label_ids:
+                    all_labels = models.LabelDAO.get_all_of_type(
+                        models.LabelDTO.LABEL_TYPE_LOCALE)
+                    student_locales = []
+                    for label in all_labels:
+                        if label.type != models.LabelDTO.LABEL_TYPE_LOCALE:
+                            continue
+                        if label.id in student_label_ids:
+                            student_locales.append(label.title)
+                    locale = self._pick_first_valid_locale_from_list(
+                        student_locales)
+                    if locale:
+                        return locale
+
+            # check if user preferences have been set
+            if prefs is None:
+                prefs = models.StudentPreferencesDAO.load_or_create()
+            if prefs is not None and prefs.locale is not None:
+                return prefs.locale
+
+        locale_cookie = self.request.cookies.get(GUEST_LOCALE_COOKIE)
+        if locale_cookie and (
+                locale_cookie in self.app_context.get_allowed_locales()):
+            return locale_cookie
+
+        # check if accept language has been set
+        accept_langs = request.headers.get('Accept-Language')
+        locale = self._pick_first_valid_locale_from_list(
+            [lang for lang, _ in locales.parse_accept_language(accept_langs)])
+        if locale:
+            return locale
+
+        return app_context.default_locale
 
     def get_course(self):
+        """Get current course."""
         if not self.course:
             self.course = Course(self)
         return self.course
+
+    def get_track_matching_student(self, student):
+        """Gets units whose labels match those on the student."""
+        return self.get_course().get_track_matching_student(student)
+
+    def get_progress_tracker(self):
+        """Gets the progress tracker for the course."""
+        return self.get_course().get_progress_tracker()
 
     def find_unit_by_id(self, unit_id):
         """Gets a unit with a specific id or fails with an exception."""
@@ -278,13 +490,132 @@ class BaseHandler(ApplicationHandler):
         """Gets all lessons (in order) in the specific course unit."""
         return self.get_course().get_lessons(unit_id)
 
-    def get_progress_tracker(self):
-        """Gets the progress tracker for the course."""
-        return self.get_course().get_progress_tracker()
+    @classmethod
+    def _cache_debug_info(cls, cache):
+        items = []
+        for key, entry in cache.items.iteritems():
+            updated_on = None
+            if entry:
+                updated_on = entry.updated_on()
+            items.append('entry: %s, %s' % (key, updated_on))
+        return items
 
-    def get_user(self):
-        """Get the current user."""
-        return users.get_current_user()
+    @classmethod
+    def debug_info(cls):
+        """Generates a debug info for this request."""
+
+        # we only want to run import if this method is called; most of the
+        # it is not; we also have circular import dependencies if we were to
+        # put them at the top...
+        # pylint: disable-msg=g-import-not-at-top
+        from models import vfs
+        from modules.i18n_dashboard import i18n_dashboard
+        vfs_items = cls._cache_debug_info(
+            vfs.ProcessScopedVfsCache.instance().cache)
+        rb_items = cls._cache_debug_info(
+            i18n_dashboard.ProcessScopedResourceBundleCache.instance().cache)
+        return ''.join([
+              '\nDebug Info: %s' % datetime.datetime.utcnow(),
+              '\n\nServer Environment Variables: %s' % '\n'.join([
+                  'item: %s, %s'% (key, value)
+                  for key, value in os.environ.iteritems()]),
+              '\n\nVfsCacheKeys:\n%s' % '\n'.join(vfs_items),
+              '\n\nResourceBundlesCache:\n%s' % '\n'.join(rb_items),
+              ])
+
+    def init_template_values(self, environ, prefs=None):
+        """Initializes template variables with common values."""
+        self.template_value[COURSE_INFO_KEY] = environ
+        self.template_value[
+            'page_locale'] = self.app_context.get_current_locale()
+        self.template_value['html_hooks'] = HtmlHooks(
+            self.get_course(), prefs=prefs)
+        self.template_value['is_course_admin'] = Roles.is_course_admin(
+            self.app_context)
+        self.template_value['can_see_drafts'] = (
+            courses_module.courses.can_see_drafts(self.app_context))
+        self.template_value[
+            'is_read_write_course'] = self.app_context.fs.is_read_write()
+        self.template_value['is_super_admin'] = Roles.is_super_admin()
+        self.template_value[COURSE_BASE_KEY] = self.get_base_href(self)
+        self.template_value['right_links'] = (
+            [('/admin', 'Admin')] if Roles.is_super_admin() else [])
+        for func in self.RIGHT_LINKS:
+            self.template_value['right_links'].extend(func(self.app_context))
+
+        if not prefs:
+            prefs = models.StudentPreferencesDAO.load_or_create()
+        self.template_value['student_preferences'] = prefs
+
+        if (Roles.is_course_admin(self.app_context) and
+            not appengine_config.PRODUCTION_MODE and
+            prefs and prefs.show_jinja_context):
+                @jinja2.contextfunction
+                def get_context(context):
+                    return context
+                self.template_value['context'] = get_context
+
+        if CAN_PUT_DEBUG_INFO_INTO_PAGES.value:
+            self.template_value['debug_info'] = self.debug_info()
+
+        self.template_value[
+            'extra_global_css_urls'] = self.EXTRA_GLOBAL_CSS_URLS
+        self.template_value[
+            'extra_global_js_urls'] = self.EXTRA_GLOBAL_JS_URLS
+
+        # Common template information for the locale picker (only shown for
+        # user in session)
+        can_student_change_locale = (
+            self.get_course().get_course_setting('can_student_change_locale')
+            or self.get_course().app_context.can_pick_all_locales())
+        if can_student_change_locale:
+            self.template_value['available_locales'] = [
+                {
+                    'name': locales.get_locale_display_name(loc),
+                    'value': loc
+                } for loc in self.app_context.get_allowed_locales()]
+            self.template_value['locale_xsrf_token'] = (
+                XsrfTokenManager.create_xsrf_token(
+                    StudentLocaleRESTHandler.XSRF_TOKEN_NAME))
+            self.template_value['selected_locale'] = self.get_locale_for(
+                self.request, self.app_context, prefs=prefs)
+
+    def get_template(self, template_file, additional_dirs=None, prefs=None):
+        """Computes location of template files for the current namespace."""
+
+        _p = self.app_context.get_environ()
+        self.init_template_values(_p, prefs=prefs)
+        template_environ = self.app_context.get_template_environ(
+            self.app_context.get_current_locale(), additional_dirs)
+        template_environ.filters[
+            'gcb_tags'] = jinja_utils.get_gcb_tags_filter(self)
+        template_environ.globals.update({
+            'display_unit_title': (
+                lambda unit: display_unit_title(unit, _p)),
+            'display_short_unit_title': (
+                lambda unit: display_short_unit_title(unit, _p)),
+            'display_lesson_title': (
+                lambda unit, lesson: display_lesson_title(unit, lesson, _p))})
+
+        return template_environ.get_template(template_file)
+
+
+class BaseHandler(CourseHandler):
+    """Base handler."""
+
+    def __init__(self, *args, **kwargs):
+        super(BaseHandler, self).__init__(*args, **kwargs)
+        self._old_locale = None
+
+    def before_method(self, verb, path):
+        """Modify global locale value for the duration of this handler."""
+        self._old_locale = self.app_context.get_current_locale()
+        new_locale = self.get_locale_for(self.request, self.app_context)
+        self.app_context.set_current_locale(new_locale)
+
+    def after_method(self, verb, path):
+        """Restore original global locale value."""
+        self.app_context.set_current_locale(self._old_locale)
 
     def personalize_page_and_get_user(self):
         """If the user exists, add personalized fields to the navbar."""
@@ -296,7 +627,10 @@ class BaseHandler(ApplicationHandler):
                 )['reg_form']['can_register']
 
         if user:
-            self.template_value['email'] = user.email()
+            email = user.email()
+            self.template_value['email_no_domain_name'] = (
+                email[:email.find('@')] if '@' in email else email)
+            self.template_value['email'] = email
             self.template_value['logoutUrl'] = (
                 users.create_logout_url(self.request.uri))
             self.template_value['transient_student'] = False
@@ -359,14 +693,50 @@ class BaseHandler(ApplicationHandler):
             return False
         return True
 
+    @appengine_config.timeandlog('BaseHandler.render')
     def render(self, template_file):
         """Renders a template."""
-        template = self.get_template(template_file)
-        self.response.out.write(template.render(self.template_value))
+        prefs = models.StudentPreferencesDAO.load_or_create()
+
+        courses.Course.set_current(self.get_course())
+        models.MemcacheManager.begin_readonly()
+        try:
+            template = self.get_template(template_file, prefs=prefs)
+            self.response.out.write(template.render(self.template_value))
+        finally:
+            models.MemcacheManager.end_readonly()
+            courses.Course.clear_current()
+
+        # If the page displayed successfully, save the location for registered
+        # students so future visits to the course's base URL sends the student
+        # to the most-recently-visited page.
+        # TODO(psimakov): method called render() must not have mutations
+        user = self.get_user()
+        if user:
+            student = models.Student.get_enrolled_student_by_email(
+                user.email())
+            if student:
+                prefs.last_location = self.request.path_qs
+                models.StudentPreferencesDAO.save(prefs)
+
+    def get_redirect_location(self, student):
+        if (not student.is_transient and
+            (self.request.path == self.app_context.get_slug() or
+             self.request.path == self.app_context.get_slug() + '/' or
+             self.request.get('use_last_location'))):  # happens on '/' page
+            prefs = models.StudentPreferencesDAO.load_or_create()
+            # Belt-and-suspenders: prevent infinite self-redirects
+            if (prefs.last_location and
+                prefs.last_location != self.request.path_qs):
+                return prefs.last_location
+        return None
 
 
-class BaseRESTHandler(BaseHandler):
+class BaseRESTHandler(CourseHandler):
     """Base REST handler."""
+
+    def __init__(self, *args, **kwargs):
+        super(BaseRESTHandler, self).__init__(*args, **kwargs)
 
     def assert_xsrf_token_or_fail(self, token_dict, action, args_dict):
         """Asserts that current request has proper XSRF token or fails."""
@@ -495,7 +865,9 @@ class RegisterHandler(BaseHandler):
             name = self.request.get('form01')
 
         Student.add_new_student_for_current_user(
-            name, transforms.dumps(self.request.POST.items()))
+            name, transforms.dumps(self.request.POST.items()), self,
+            labels=self.request.get('labels'))
+
         # Render registration confirmation page
         self.redirect('/course#registration_confirmation')
 
@@ -517,18 +889,39 @@ class ForumHandler(BaseHandler):
 class StudentProfileHandler(BaseHandler):
     """Handles the click to 'Progress' link in the nav bar."""
 
+    # A list of functions which will provide extra rows in the Student Progress
+    # table. Each function will be passed the current handler, student,  and
+    # course object and should return a pair of strings; the first being the
+    # title of the data and the second the value to display.
+    EXTRA_STUDENT_DATA_PROVIDERS = []
+
     def get(self):
         """Handles GET requests."""
         student = self.personalize_page_and_get_enrolled()
         if not student:
             return
 
+        track_labels = models.LabelDAO.get_all_of_type(
+            models.LabelDTO.LABEL_TYPE_COURSE_TRACK)
+
         course = self.get_course()
+        units = []
+        for unit in course.get_units():
+            # Don't show assessments that are part of units.
+            if course.get_parent_unit(unit.unit_id):
+                continue
+            units.append({
+                'unit_id': unit.unit_id,
+                'title': unit.title,
+                'labels': list(course.get_unit_track_labels(unit)),
+                })
+
         name = student.name
         profile = student.profile
         if profile:
             name = profile.nick_name
-
+        student_labels = student.get_labels_of_type(
+            models.LabelDTO.LABEL_TYPE_COURSE_TRACK)
         self.template_value['navbar'] = {'progress': True}
         self.template_value['student'] = student
         self.template_value['student_name'] = name
@@ -540,6 +933,20 @@ class StudentProfileHandler(BaseHandler):
             XsrfTokenManager.create_xsrf_token('student-edit'))
         self.template_value['can_edit_name'] = (
             not models.CAN_SHARE_STUDENT_PROFILE.value)
+        self.template_value['track_labels'] = track_labels
+        self.template_value['student_labels'] = student_labels
+        self.template_value['units'] = units
+        self.template_value['track_env'] = transforms.dumps({
+            'label_ids': [label.id for label in track_labels],
+            'units': units
+            })
+
+        # Append any extra data which is provided by modules
+        extra_student_data = []
+        for data_provider in self.EXTRA_STUDENT_DATA_PROVIDERS:
+            extra_student_data.append(data_provider(self, student, course))
+        self.template_value['extra_student_data'] = extra_student_data
+
         self.render('student_profile.html')
 
 
@@ -556,6 +963,37 @@ class StudentEditStudentHandler(BaseHandler):
             return
 
         Student.rename_current(self.request.get('name'))
+
+        self.redirect('/student/home')
+
+
+class StudentSetTracksHandler(BaseHandler):
+    """Handles submission of student tracks selections."""
+
+    def post(self):
+        student = self.personalize_page_and_get_enrolled()
+        if not student:
+            return
+        if not self.assert_xsrf_token_or_fail(self.request, 'student-edit'):
+            return
+
+        all_track_label_ids = models.LabelDAO.get_set_of_ids_of_type(
+            models.LabelDTO.LABEL_TYPE_COURSE_TRACK)
+        new_track_label_ids = set(
+            [int(label_id)
+             for label_id in self.request.get_all('labels')
+             if label_id and int(label_id) in all_track_label_ids])
+        student_label_ids = set(
+            [int(label_id)
+             for label_id in common_utils.text_to_list(student.labels)
+             if label_id])
+
+        # Remove all existing track (and only track) labels from student,
+        # then merge in selected set from form.
+        student_label_ids = student_label_ids.difference(all_track_label_ids)
+        student_label_ids = student_label_ids.union(new_track_label_ids)
+        models.Student.set_labels_for_current(
+            common_utils.list_to_text(list(student_label_ids)))
 
         self.redirect('/student/home')
 
@@ -591,105 +1029,31 @@ class StudentUnenrollHandler(BaseHandler):
         self.render('unenroll_confirmation.html')
 
 
-class XsrfTokenManager(object):
-    """Provides XSRF protection by managing action/user tokens in memcache."""
+class StudentLocaleRESTHandler(BaseRESTHandler):
+    """REST handler to manage student setting their preferred locale."""
 
-    # Max age of the token (4 hours).
-    XSRF_TOKEN_AGE_SECS = 60 * 60 * 4
+    XSRF_TOKEN_NAME = 'locales'
 
-    # Token delimiters.
-    DELIMITER_PRIVATE = ':'
-    DELIMITER_PUBLIC = '/'
-
-    # Default nickname to use if a user does not have a nickname,
-    USER_ID_DEFAULT = 'default'
-
-    @classmethod
-    def init_xsrf_secret_if_none(cls):
-        """Verifies that non-default XSRF secret exists; creates one if not."""
-
-        # Any non-default value is fine.
-        if XSRF_SECRET.value and XSRF_SECRET.value != XSRF_SECRET.default_value:
+    def post(self):
+        request = transforms.loads(self.request.get('request'))
+        if not self.assert_xsrf_token_or_fail(
+                request, self.XSRF_TOKEN_NAME, {}):
             return
 
-        # All property manipulations must run in the default namespace.
-        old_namespace = namespace_manager.get_namespace()
-        try:
-            namespace_manager.set_namespace(
-                appengine_config.DEFAULT_NAMESPACE_NAME)
+        selected = request['payload']['selected']
+        if selected not in self.app_context.get_allowed_locales():
+            transforms.send_json_response(self, 401, 'Bad locale')
+            return
 
-            # Look in the datastore directly.
-            entity = ConfigPropertyEntity.get_by_key_name(XSRF_SECRET.name)
-            if not entity:
-                entity = ConfigPropertyEntity(key_name=XSRF_SECRET.name)
-
-            # Any non-default non-None value is fine.
-            if (entity.value and not entity.is_draft and
-                (str(entity.value) != str(XSRF_SECRET.default_value))):
-                return
-
-            # Initialize to random value.
-            entity.value = base64.urlsafe_b64encode(
-                os.urandom(XSRF_SECRET_LENGTH))
-            entity.is_draft = False
-            entity.put()
-        finally:
-            namespace_manager.set_namespace(old_namespace)
-
-    @classmethod
-    def _create_token(cls, action_id, issued_on):
-        """Creates a string representation (digest) of a token."""
-        cls.init_xsrf_secret_if_none()
-
-        # We have decided to use transient tokens stored in memcache to reduce
-        # datastore costs. The token has 4 parts: hash of the actor user id,
-        # hash of the action, hash of the time issued and the plain text of time
-        # issued.
-
-        # Lookup user id.
-        user = users.get_current_user()
-        if user:
-            user_id = user.user_id()
+        prefs = models.StudentPreferencesDAO.load_or_create()
+        if prefs:
+            # Store locale in StudentPreferences for logged-in users
+            prefs.locale = selected
+            models.StudentPreferencesDAO.save(prefs)
         else:
-            user_id = cls.USER_ID_DEFAULT
+            # Store locale in cookie for out-of-session users
+            self.response.set_cookie(
+                GUEST_LOCALE_COOKIE, selected,
+                max_age=GUEST_LOCALE_COOKIE_MAX_AGE_SEC)
 
-        # Round time to seconds.
-        issued_on = long(issued_on)
-
-        digester = hmac.new(str(XSRF_SECRET.value))
-        digester.update(str(user_id))
-        digester.update(cls.DELIMITER_PRIVATE)
-        digester.update(str(action_id))
-        digester.update(cls.DELIMITER_PRIVATE)
-        digester.update(str(issued_on))
-
-        digest = digester.digest()
-        token = '%s%s%s' % (
-            issued_on, cls.DELIMITER_PUBLIC, base64.urlsafe_b64encode(digest))
-
-        return token
-
-    @classmethod
-    def create_xsrf_token(cls, action):
-        return cls._create_token(action, time.time())
-
-    @classmethod
-    def is_xsrf_token_valid(cls, token, action):
-        """Validate a given XSRF token by retrieving it from memcache."""
-        try:
-            parts = token.split(cls.DELIMITER_PUBLIC)
-            if len(parts) != 2:
-                return False
-
-            issued_on = long(parts[0])
-            age = time.time() - issued_on
-            if age > cls.XSRF_TOKEN_AGE_SECS:
-                return False
-
-            authentic_token = cls._create_token(action, issued_on)
-            if authentic_token == token:
-                return True
-
-            return False
-        except Exception:  # pylint: disable=broad-except
-            return False
+        transforms.send_json_response(self, 200, 'OK')

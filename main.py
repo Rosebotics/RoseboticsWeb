@@ -23,50 +23,28 @@ import webapp2
 # The following import is needed in order to add third-party libraries.
 import appengine_config  # pylint: disable-msg=unused-import
 
-from common import tags
 from controllers import sites
+from models import analytics
 from models import custom_modules
-from modules.activity_tag import activity_tag
-from modules.admin import admin
-from modules.announcements import announcements
-from modules.assessment_tags import questions
-from modules.course_explorer import course_explorer
-from modules.courses import courses
-from modules.dashboard import dashboard
-from modules.mapreduce import mapreduce_module
-from modules.oauth2 import oauth2
-from modules.oeditor import oeditor
-from modules.review import review
-from modules.search import search
-from modules.upload import upload
+from models import data_sources
+from models import student_labels
 
-from handlers import main_handler, course_handlers
+# Import, register, & enable modules named in app.yaml's GCB_REGISTERED_MODULES.
+appengine_config.import_and_enable_modules()
 
-# use this flag to control debug only features
-debug = not appengine_config.PRODUCTION_MODE
+# Core "module" is always present and registered.
+custom_modules.Module(
+    'Core REST services', 'A module to host core REST services',
+    analytics.get_global_handlers(),
+    analytics.get_namespaced_handlers() +
+    data_sources.get_namespaced_handlers() +
+    student_labels.get_namespaced_handlers()
+    ).enable()
 
-
-# init and enable most known modules
-activity_tag.register_module().enable()
-admin.register_module().enable()
-announcements.register_module().enable()
-questions.register_module().enable()
-course_explorer.register_module().enable()
-courses.register_module().enable()
-dashboard.register_module().enable()
-mapreduce_module.register_module().enable()
-oeditor.register_module().enable()
-review.register_module().enable()
-search.register_module().enable()
-upload.register_module().enable()
-
-# register modules that are not enabled by default.
-oauth2.register_module()
-
-# compute all possible routes
+# Collect routes (URL-matching regexes -> handler classes) for modules.
 global_routes, namespaced_routes = custom_modules.Registry.get_all_routes()
 
-# routes available at '/%namespace%/' context paths
+# Configure routes available at '/%namespace%/' context paths
 sites.ApplicationRequestHandler.bind(namespaced_routes)
 app_routes = [(r'(.*)', sites.ApplicationRequestHandler)]
 
@@ -82,24 +60,12 @@ if appengine_config.gcb_appstats_enabled():
         assert '.*' == path[:2]
         appstats_routes.append(('/admin/stats/%s' % path[3:], handler))
 
-# tag extension resource routes
-extensions_routes = [(
-    '/extensions/tags/.*/resources/.*', tags.ResourcesHandler)]
-
 # i18n configuration for jinja2
 webapp2_i18n_config = {'translations_path': os.path.join(
     appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
 
 # init application
-app = webapp2.WSGIApplication([('/', main_handler.HomePage),
-                               ('/course', main_handler.CoursePage),
-                               ('/competition', main_handler.CompetitionPage),
-                               ('/platform', main_handler.PlatformPage),
-                               ('/about', main_handler.AboutPage),
-                               ('/videos', main_handler.VideosPage),
-                               ('/contact', main_handler.ContactPage),
-                               ('/gettingstarted', main_handler.GettingStartedtPage),
-                               ('/web', course_handlers.WebCoursePage),] +
-    global_routes + extensions_routes + appstats_routes + app_routes,
+app = webapp2.WSGIApplication(
+    global_routes + appstats_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config},
-    debug=debug)
+    debug=not appengine_config.PRODUCTION_MODE)

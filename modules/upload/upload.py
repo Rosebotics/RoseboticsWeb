@@ -43,11 +43,11 @@ _XSRF_TOKEN_NAME = 'user-upload-form-xsrf'
 
 class TextFileUploadHandler(utils.BaseHandler):
 
-    def get_template(self, template_file, additional_dirs=None):
+    def get_template(self, template_file, additional_dirs=None, prefs=None):
         dirs = additional_dirs if additional_dirs else []
         dirs.append(os.path.join(os.path.dirname(__file__), 'templates'))
         return super(TextFileUploadHandler, self).get_template(
-            template_file, additional_dirs=dirs)
+            template_file, additional_dirs=dirs, prefs=prefs)
 
     def post(self):
         """Creates or updates a student submission."""
@@ -125,9 +125,7 @@ class TextFileUploadTag(tags.BaseTag):
             supports_transient_student=True)
 
         template = jinja_utils.get_template(
-            'templates/form.html', os.path.dirname(__file__),
-            locale=handler.app_context.get_environ()['course']['locale'],
-        )
+            'templates/form.html', os.path.dirname(__file__))
 
         already_submitted = False
         if not isinstance(student, models.TransientStudent):
@@ -161,6 +159,9 @@ def register_module():
         tags.EditorBlacklists.unregister(
             TextFileUploadTag.binding_name,
             tags.EditorBlacklists.COURSE_SCOPE)
+        tags.EditorBlacklists.unregister(
+            TextFileUploadTag.binding_name,
+            tags.EditorBlacklists.DESCRIPTIVE_SCOPE)
 
     def on_module_enable():
         tags.Registry.add_tag_binding(
@@ -168,6 +169,9 @@ def register_module():
         tags.EditorBlacklists.register(
             TextFileUploadTag.binding_name,
             tags.EditorBlacklists.COURSE_SCOPE)
+        tags.EditorBlacklists.register(
+            TextFileUploadTag.binding_name,
+            tags.EditorBlacklists.DESCRIPTIVE_SCOPE)
 
     global_routes = [
         (os.path.join(_RESOURCES_PATH, '.*'), tags.ResourcesHandler),

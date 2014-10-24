@@ -7,12 +7,14 @@ import os
 import subprocess
 import unittest
 
+import appengine_config
+
 
 class AllJavaScriptTests(unittest.TestCase):
 
     def karma_test(self, test_folder):
         karma_conf = os.path.join(
-            'experimental', 'coursebuilder', 'tests', 'unit',
+            appengine_config.BUNDLE_ROOT, 'tests', 'unit',
             'javascript_tests', test_folder, 'karma.conf.js')
         self.assertEqual(0, subprocess.call(['karma', 'start', karma_conf]))
 
@@ -24,6 +26,12 @@ class AllJavaScriptTests(unittest.TestCase):
 
     def test_assessment_tags(self):
         self.karma_test('modules_assessment_tags')
+
+    def test_certificate(self):
+        self.karma_test('modules_certificate')
+
+    def test_core_tags(self):
+        self.karma_test('modules_core_tags')
 
     def test_dashboard(self):
         self.karma_test('modules_dashboard')

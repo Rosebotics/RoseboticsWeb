@@ -108,3 +108,287 @@ describe('normalize scores', function() {
     });
   });
 });
+
+describe('asset table sorting', function() {
+  beforeEach(function() {
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('tests/unit/javascript_tests/modules_dashboard/' +
+      'assets_table_fixture.html');
+  });
+  it('sorts the first column in ascending order', function() {
+    var column_header = $('#x');
+    sortTable(column_header, true);
+    expect(column_header.hasClass("sort-asc")).toBe(true);
+    expect($('#b').index()).toBe(0);
+    expect($('#c').index()).toBe(1);
+    expect($('#a').index()).toBe(2);
+  });
+  it('sorts the first column in descending order', function() {
+    var column_header = $('#x');
+    sortTable(column_header, false);
+    expect(column_header.hasClass("sort-desc")).toBe(true);
+    expect($('#b').index()).toBe(2);
+    expect($('#c').index()).toBe(1);
+    expect($('#a').index()).toBe(0);
+  });
+  it('sorts the second column in ascending order', function() {
+    var column_header = $('#y');
+    sortTableByClick.call(column_header);
+    expect(column_header.hasClass("sort-asc")).toBe(true);
+    expect($('#c').index()).toBe(0);
+    expect($('#a').index()).toBe(1);
+    expect($('#b').index()).toBe(2);
+  });
+  it('sorts the second column in descending order', function() {
+    var column_header = $('#y');
+    sortTableByClick.call(column_header);
+    sortTableByClick.call(column_header);
+    expect(column_header.hasClass("sort-desc")).toBe(true);
+    expect($('#c').index()).toBe(2);
+    expect($('#a').index()).toBe(1);
+    expect($('#b').index()).toBe(0);
+  });
+  it('sorts the timestamp column in descending order', function() {
+    var column_header = $('#timestamped');
+    sortTable(column_header, false);
+    expect(column_header.hasClass("sort-desc")).toBe(true);
+    expect($('#a').index()).toBe(2);
+    expect($('#c').index()).toBe(1);
+    expect($('#b').index()).toBe(0);
+  });
+});
+
+describe('draft status toggling', function() {
+  beforeEach(function() {
+    cbShowAlert = jasmine.createSpy("cbShowAlert");
+    cbShowMsgAutoHide = jasmine.createSpy("cbShowMsgAutoHide");
+    this.oldPost = $.post;
+    $.post = jasmine.createSpy("$.post");
+    this.padlock = $("<div class='icon icon-locked'>");
+    onDraftStatusClick.call(this.padlock);
+  });
+  afterEach(function() {
+    $.post = this.oldPost;
+  });
+  it('optimistically changes the draft status icon', function() {
+    expect(this.padlock.hasClass("icon-unlocked")).toBe(true);
+    expect(this.padlock.hasClass("icon-locked")).toBe(false);
+  });
+  it('makes a POST request to the server', function() {
+    expect($.post).toHaveBeenCalledWith(
+      'dashboard',
+      {
+        action: 'set_draft_status',
+        set_draft: 0
+      },
+      jasmine.any(Function),
+      'text'
+    );
+  });
+  it('verifies the server response and shows a message', function() {
+    setDraftStatusCallback(
+      '{"status": 200, "payload":"{\\"is_draft\\":false}"}', this.padlock);
+    expect(this.padlock.hasClass("icon-unlocked")).toBe(true);
+    expect(this.padlock.hasClass("icon-locked")).toBe(false);
+    expect(cbShowMsgAutoHide).toHaveBeenCalled();
+  });
+  it('resets the draft status icon when an error is received', function() {
+    setDraftStatusCallback('{"status": 401}', this.padlock);
+    expect(this.padlock.hasClass("icon-unlocked")).toBe(false);
+    expect(this.padlock.hasClass("icon-locked")).toBe(true);
+    expect(cbShowAlert).toHaveBeenCalled();
+  });
+  it('adjusts the draft status icon upon a server inconsistency', function() {
+    setDraftStatusCallback(
+      '{"status": 200, "payload":"{\\"is_draft\\":true}"}', this.padlock);
+    expect(this.padlock.hasClass("icon-unlocked")).toBe(false);
+    expect(this.padlock.hasClass("icon-locked")).toBe(true);
+    expect(cbShowAlert).toHaveBeenCalled();
+  });
+});
+
+describe('question table filtering', function() {
+  function verifySingleRow(table, expectedId) {
+    var visibleRows = table.find("tr:visible");
+    expect(visibleRows.size()).toBe(1);
+    expect(visibleRows.attr("id")).toBe(expectedId);
+  }
+  beforeEach(function() {
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('tests/unit/javascript_tests/modules_dashboard/'
+        + 'filtering_fixture.html');
+    setUpFiltering();
+    this.form = $("#question-filter-popup form");
+    this.descriptionField = this.form.find(".description");
+    this.typeField = this.form.find(".type");
+    this.unitField = this.form.find(".unit");
+    this.lessonField = this.form.find(".lesson");
+    this.groupField = this.form.find(".group");
+    this.unusedField = this.form.find(".unused");
+  });
+  it('moves the popup into the question filter div', function() {
+    expect(this.form.closest("#question-filter").size()).toBe(1);
+  });
+  it('initializes dropdowns using data-filter attribute',function() {
+    var typeOptions = this.typeField.find("option");
+    expect(typeOptions.size()).toBe(3);
+    expect(typeOptions.eq(0).val()).toBe("");
+    expect(typeOptions.eq(1).val()).toBe("0");
+    expect(typeOptions.eq(2).val()).toBe("1");
+
+    var unitOptions = this.unitField.find("option");
+    expect(unitOptions.size()).toBe(4);
+    expect(unitOptions.eq(0).val()).toBe("");
+    expect(unitOptions.eq(1).val()).toBe("1");
+    expect(unitOptions.eq(2).val()).toBe("4");
+    expect(unitOptions.eq(3).val()).toBe("6");
+
+    var lessonOptions = this.lessonField.find("option");
+    expect(lessonOptions.size()).toBe(4);
+    expect(lessonOptions.eq(0).val()).toBe("");
+    expect(lessonOptions.eq(1).val()).toBe("2");
+    expect(lessonOptions.eq(2).val()).toBe("3");
+    expect(lessonOptions.eq(3).val()).toBe("5");
+
+    var groupOptions = this.groupField.find("option");
+    expect(groupOptions.size()).toBe(3);
+    expect(groupOptions.eq(0).val()).toBe("");
+    expect(groupOptions.eq(1).val()).toBe("1");
+    expect(groupOptions.eq(2).val()).toBe("2");
+  });
+  it('adapts the lesson field to the selected unit', function() {
+    this.unitField.val("1").trigger("change");
+    var lessonOptions = this.lessonField.find("option");
+    expect(lessonOptions.size()).toBe(3);
+    expect(lessonOptions.eq(0).val()).toBe("");
+    expect(lessonOptions.eq(1).val()).toBe("2");
+    expect(lessonOptions.eq(2).val()).toBe("3");
+
+    this.unitField.val("4").trigger("change");
+    lessonOptions = this.lessonField.find("option");
+    expect(lessonOptions.size()).toBe(2);
+    expect(lessonOptions.eq(0).val()).toBe("");
+    expect(lessonOptions.eq(1).val()).toBe("5");
+
+    this.unitField.val("6").trigger("change");
+    expect(this.lessonField.prop("disabled")).toBe(true);
+    lessonOptions = this.lessonField.find("option");
+    expect(lessonOptions.size()).toBe(1);
+    expect(lessonOptions.eq(0).val()).toBe("");
+
+    this.unitField.val("").trigger("change");
+    expect(this.lessonField.prop("disabled")).toBe(false);
+    expect(this.lessonField.find("option").size()).toBe(4);
+    expect(this.lessonField.val()).toBe("");
+  });
+  it('unchecks the unused checkbox when a unit is selected', function() {
+    this.unusedField.prop("checked", true);
+    this.unitField.val("1").trigger("change");
+    expect(this.unusedField.prop("checked")).toBe(false);
+  });
+  it('unchecks the unused checkbox when a lesson is selected', function() {
+    this.unusedField.prop("checked", true);
+    this.lessonField.val("2").trigger("change");
+    expect(this.unusedField.prop("checked")).toBe(false);
+  });
+  it('resets the unit field when the unused checkbox is checked', function() {
+    this.unitField.val("1");
+    this.unusedField.prop("checked", true).trigger("change");
+    expect(this.unitField.val()).toBe("");
+  });
+  it('resets the lesson field when the unused checkbox is checked', function() {
+    this.unitField.val("1").trigger("change");
+    this.lessonField.val("2");
+    this.unusedField.prop("checked", true).trigger("change");
+    expect(this.lessonField.prop("disabled")).toBe(false);
+    expect(this.lessonField.find("option").size()).toBe(4);
+    expect(this.lessonField.val()).toBe("");
+  });
+  it('filters the questions using the filter form data', function() {
+    var resetButton = this.form.find(".reset");
+    var table = $("#question-table");
+
+    this.unitField.val("1");
+    this.lessonField.val("2").trigger("change");
+    verifySingleRow(table, "a");
+    resetButton.trigger("click");
+
+    this.groupField.val("2").trigger("change");
+    verifySingleRow(table, "b");
+
+    this.groupField.val("1");
+    this.typeField.val("1").trigger("change");
+    verifySingleRow(table, "c");
+    resetButton.trigger("click");
+
+    this.descriptionField.val("-x-").trigger("keyup");
+    expect(table.find("tr:visible").size()).toBe(2);
+    this.unitField.val("6").trigger("change");
+    verifySingleRow(table, "d");
+    resetButton.trigger("click");
+
+    this.unusedField.prop("checked", true);
+    this.typeField.val("0").trigger("change");
+    verifySingleRow(table, "e");
+
+    this.typeField.val("1").trigger("change");
+    verifySingleRow(table, "f");
+
+    this.groupField.val("1").trigger("change");
+    expect(table.find("tr:visible").size()).toBe(1);
+    expect(table.find("tfoot tr").is(":visible")).toBe(true);
+  });
+});
+
+describe('adding a question to a question group', function() {
+  beforeEach(function() {
+    cbShowAlert = jasmine.createSpy("cbShowAlert");
+    cbShowMsgAutoHide = jasmine.createSpy("cbShowMsgAutoHide");
+    closeModal = jasmine.createSpy("closeModal");
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('tests/unit/javascript_tests/modules_dashboard/'
+        + 'add_to_group_fixture.html');
+  });
+  it('receives a successful response to add_to_question_group', function() {
+    addToGroupCallback(
+      '{"status": 200, "payload":"{\\"question-id\\": 2, \\"group-id\\": 3}"}');
+    expect($("#question-table td.groups ul:nth-child(1) li").size()).toBe(1);
+    var locations = $("#question-table td.locations ul:first-child li")
+    expect(locations.size()).toBe(3);
+    expect(locations.eq(0).data("count")).toBe(2);
+    expect(locations.eq(0).find(".count").text()).toBe(" (2)");
+    expect(locations.eq(1).data("count")).toBe(1);
+    expect(locations.eq(1).find(".count").text()).toBe("");
+    expect(locations.eq(2).data("count")).toBe(1);
+    expect(
+      $("#question-group-table td.questions ul:first-child li").size()).toBe(1);
+    expect(cbShowMsgAutoHide).toHaveBeenCalled();
+  });
+  it('receives an unsuccessful response to add_to_question_group', function() {
+    addToGroupCallback('{"status": 500, "message": "error"}');
+    expect(cbShowAlert).toHaveBeenCalledWith("Error: error");
+  });
+});
+
+describe('editing a role in the role editor', function() {
+  beforeEach(function() {
+    showNoPermissionsMessage = jasmine.createSpy("showNoPermissionsMessage");
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('tests/unit/javascript_tests/modules_dashboard/'
+        + 'role_editor_fixture.html');
+  });
+  it('it shows a message when there are no permissions available', function() {
+    $(".inputEx-ListField-childContainer").text("");
+    setUpRoleEditorForm();
+    expect(showNoPermissionsMessage).toHaveBeenCalled();
+  });
+  it('it shows no message with at least one permission', function() {
+    setUpRoleEditorForm();
+    expect(showNoPermissionsMessage).not.toHaveBeenCalled();
+  });
+  it('hides permissions modules with no permissions', function() {
+    setUpRoleEditorForm();
+    expect($("#a").is(":visible")).toBe(true);
+    expect($("#b").is(":visible")).toBe(false);
+  })
+});

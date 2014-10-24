@@ -28,6 +28,8 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
       this.fieldContainer.appendChild(this.el);
       this.isInRteMode = false;
 
+      this._replaceTextAreaWithCodeMirror();
+
       // Make a button to toggle between plain text and rich text
       var showRteText = "Rich Text";
       var hideRteText = "<HTML>";
@@ -92,7 +94,81 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
       }
     },
 
+    _replaceTextAreaWithCodeMirror: function() {
+      var that = this;
+
+      if (! env.can_highlight_code) {
+        return;
+      }
+
+      this.cmReady = false;
+
+      // note: the first calling when this.cmInstance does not exist
+      //       (by renderComponent) will not make CodeMirror ready
+      //       this is because setValue must be call after renderComponent
+      //       (to sync old value from database, "" will passed for first time)
+      //       this is why this.cmReady will be set on the else clause
+      if (! this.cmInstance) {
+        this.cmInstance = CodeMirror(this.fieldContainer,
+            {
+              value: this.el.value,
+              lineNumbers: true,
+              keyMap: "sublime",
+              mode: "htmlmixed"
+            }
+        );
+        // Reference used for testing
+        this.cmInstance.gcbCodeMirrorMonitor = this;
+
+        new Resize(this.cmInstance.getWrapperElement(),
+            {
+              handles: ['br'],
+              minHeight: 200,
+              minWidth: 200,
+              proxy: true,
+              setSize: false
+            }
+        ).on("resize", function(args) {
+          that.cmInstance.setSize(args.width, args.height);
+        });
+      } else {
+        this.cmInstance.setValue(this.el.value);
+        this.cmReady = true;
+      }
+
+      Dom.addClass(this.el, "hidden");
+      Dom.removeClass(this.cmInstance.getWrapperElement(), "hidden");
+
+      window.setTimeout(function(){
+        that.cmInstance.refresh();
+      }, 0);
+    },
+
+    _syncTextAreaWithCodeMirror: function() {
+      if (! env.can_highlight_code) {
+        return;
+      }
+
+      this.el.value = this.cmInstance.getValue();
+    },
+
+    _replaceCodeMirrorWithTextArea: function() {
+      if (! env.can_highlight_code) {
+        return;
+      }
+
+      if (this.cmInstance) {
+        this._syncTextAreaWithCodeMirror();
+        this.cmReady = false;
+
+        Dom.removeClass(this.el, "hidden");
+        Dom.addClass(this.cmInstance.getWrapperElement(), "hidden");
+      }
+    },
+
     showNewRte: function() {
+      this._replaceCodeMirrorWithTextArea();
+
       var that = this;
       var options = this.options;
       var _def = {
@@ -162,7 +238,8 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
                 new FrameProxyOpener(window),
                 {
                   getAddUrl: function() {
-                    return getAddCustomTagUrl(env);
+                    return getAddCustomTagUrl(
+                        env, null, that.options.excludedCustomTags);
                   },
                   getEditUrl: function(tagName) {
                     return getEditCustomTagUrl(env, tagName);
@@ -181,13 +258,11 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
     },
 
     showExistingRte: function() {
+      this._replaceCodeMirrorWithTextArea();
+
       var editor = this.editor,
           textArea = this.el;
           rteDiv = textArea.previousSibling;
-
-      if (this._cbGetValue) {
-        this.getValue = this._cbGetValue;
-      }
 
       this._addResize();
 
@@ -212,11 +287,6 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
       this._customTagManager.removeMarkerTags();
       editor.saveHTML();
 
-      this._cbGetValue = this.getValue;
-      this.getValue = function() {
-        return textArea.value;
-      };
-
       this._removeResize();
 
       Dom.setStyle(rteDiv, 'position', 'absolute');
@@ -228,6 +298,8 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
       Dom.setStyle(textArea, 'left', '');
       Dom.setStyle(textArea, 'position', 'static');
       Dom.addClass(textArea, 'raw-text-editor');
+
+      this._replaceTextAreaWithCodeMirror();
     },
 
     setValue: function(value, sendUpdatedEvt) {
@@ -235,6 +307,7 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
         this.editor.setEditorHTML(value);
       } else {
         this.el.value = value;
+        this._replaceTextAreaWithCodeMirror();
       }
       if(sendUpdatedEvt !== false) {
         this.fireUpdatedEvt();
@@ -242,13 +315,14 @@ function getGcbRteDefs(env, Dom, Editor, Resize) {
     },
 
     getValue: function() {
-      if (this.editor) {
+      if (this.isInRteMode) {
         // Clean the editor text before saving, and then restore markers
         this._customTagManager.removeMarkerTags();
         var value = this.editor.saveHTML();
         this._customTagManager.insertMarkerTags();
         return value;
       } else {
+        this._syncTextAreaWithCodeMirror();
         return this.el.value;
       }
     }
@@ -264,12 +338,12 @@ function FrameProxyOpener(win) {
   this._win = win;
 }
 
-FrameProxyOpener.prototype.open = function(url, value, context, submit,
+FrameProxyOpener.prototype.open = function(url, getValue, context, submit,
     cancel) {
   if (this._win.frameProxy) {
     this._win.frameProxy.close();
   }
-  this._win.frameProxy = new FrameProxy('modal-editor', url, value, context,
+  this._win.frameProxy = new FrameProxy('modal-editor', url, getValue, context,
       submit, cancel);
   this._win.frameProxy.open();
 };
@@ -332,6 +406,44 @@ CustomTagManager.prototype = {
     }
   },
 
+  _setTextContent: function(node, value) {
+    if (document.body.textContent) {
+      node.textContent = value;
+    } else {
+      node.innerText = value;
+    }
+  },
+
+  _populateTagNode: function(node, properties, value) {
+    for (var name in properties) {
+      if (properties.hasOwnProperty(name)) {
+        if (properties[name].type === "text") {
+          this._setTextContent(node, value[name]);
+        } else {
+          node.setAttribute(name, value[name]);
+        }
+      }
+    }
+  },
+
+  _getValueFromTagNode: function(properties, node) {
+    var value = {};
+    for (var name in properties) {
+      if (properties.hasOwnProperty(name)) {
+        if (properties[name].type === "text") {
+          value[name] = node.textContent || node.innerText;
+        }
+      }
+    }
+
+    for (var i = 0; i < node.attributes.length; i++) {
+      var name = node.attributes[i].name;
+      value[name] = node.attributes[i].value;
+    }
+
+    return value;
+  },
+
   addCustomTag: function() {
     var that = this;
     this._insertInsertionPointTag();
@@ -339,8 +451,8 @@ CustomTagManager.prototype = {
       this._serviceUrlProvider.getAddUrl(),
       null,
       {excludedCustomTags: this._excludedCustomTags}, // context object
-      function(value) { // on submit
-        that._insertCustomTag(value);
+      function(value, schema) { // on submit
+        that._insertCustomTag(value, schema);
       },
       function () { // on cancel
         that._removeInsertionPointTag();
@@ -348,17 +460,14 @@ CustomTagManager.prototype = {
     );
   },
 
-  _insertCustomTag: function(value) {
-    var el = this._win.document.createElement(value.type.tag);
-    for (var name in value.attributes) {
-      if (value.attributes.hasOwnProperty(name)) {
-        el.setAttribute(name, value.attributes[name]);
-      }
-    }
-    el.setAttribute('instanceid', this._getNewInstanceId());
+  _insertCustomTag: function(value, schema) {
+    var node = this._win.document.createElement(value.type.tag);
+    this._populateTagNode(
+        node, schema.properties.attributes.properties, value.attributes);
+    node.setAttribute('instanceid', this._getNewInstanceId());
 
     var insertionPoint = this._win.document.querySelector('.gcbInsertionPoint');
-    insertionPoint.parentNode.replaceChild(el, insertionPoint);
+    insertionPoint.parentNode.replaceChild(node, insertionPoint);
 
     this._refreshMarkerTags();
   },
@@ -367,21 +476,17 @@ CustomTagManager.prototype = {
    * When a custom tag is double-clicked, open up a sub-editor in a lightbox.
    */
   _editCustomTag: function(node) {
-    var value = {};
-    for (var i = 0; i < node.attributes.length; i++) {
-      value[node.attributes[i].name] = node.attributes[i].value;
-    }
+    var that = this;
+
     this._frameProxyOpener.open(
       this._serviceUrlProvider.getEditUrl(node.tagName.toLowerCase()),
-      value,
+      function(schema) { // callback for tag values
+        return that._getValueFromTagNode(schema.properties, node);
+      },
       {excludedCustomTags: this._excludedCustomTags}, // context object
-      function(newValue) { // on submit
+      function(value, schema) { // on submit
         var instanceid = node.getAttribute('instanceid');
-        for (var name in newValue) {
-          if (newValue.hasOwnProperty(name)) {
-            node.setAttribute(name, newValue[name]);
-          }
-        }
+        that._populateTagNode(node, schema.properties, value);
         node.setAttribute('instanceid', instanceid);
       },
       function () { /* on cancel */ }

@@ -16,44 +16,73 @@
 
 __author__ = 'Pavel Simakov (psimakov@google.com)'
 
-import base64
 import datetime
+import itertools
 import json
+import types
 from xml.etree import ElementTree
 
-import entities
+import transforms_constants
 import yaml
 
 from google.appengine.api import datastore_types
 from google.appengine.ext import db
 
-JSON_DATE_FORMAT = '%Y/%m/%d'
-JSON_DATETIME_FORMAT = '%Y/%m/%d %H:%M'
+# Leave tombstones pointing to moved functions
+# pylint: disable-msg=unused-import,g-bad-import-order
+from entity_transforms import dict_to_entity
+from entity_transforms import entity_to_dict
+from entity_transforms import get_schema_for_entity
+
+ISO_8601_DATE_FORMAT = '%Y-%m-%d'
+ISO_8601_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S.%fZ'
+_LEGACY_DATE_FORMAT = '%Y/%m/%d'
+_JSON_DATE_FORMATS = [
+    ISO_8601_DATE_FORMAT,
+    _LEGACY_DATE_FORMAT,
+]
+_JSON_DATETIME_FORMATS = [
+    ISO_8601_DATETIME_FORMAT
+] + [
+    ''.join(parts) for parts in itertools.product(
+        # Permutations of reasonably-expected permitted variations on ISO-8601.
+        # The first item in each tuple indicates the preferred choice.
+        _JSON_DATE_FORMATS,
+        ('T', ' '),
+        ('%H:%M:%S', '%H:%M'),
+        ('.%f', ',%f', ''),  # US/Euro decimal separator
+        ('Z', ''),  # Be explicit about Zulu timezone.  Blank implies local.
+    )
+]
 JSON_TYPES = ['string', 'date', 'datetime', 'text', 'html', 'boolean',
               'integer', 'number', 'array', 'object']
 # Prefix to add to all JSON responses to guard against XSSI. Must be kept in
 # sync with modules/oeditor/oeditor.html.
-_JSON_XSSI_PREFIX = ")]}'\n"
-SIMPLE_TYPES = (int, long, float, bool, dict, basestring, list)
-SUPPORTED_TYPES = (
-    datastore_types.Key,
-    datetime.date,
-    db.GeoPt,
-)
+JSON_XSSI_PREFIX = ")]}'\n"
+
+# Modules can extends the range of objects which can be JSON serialized by
+# adding custom JSON encoder functions to this list. The function will be called
+# with a single argument which is an object to be encoded. If the encoding
+# function wants to encode this object, it should return a serializable
+# representation of the object, or return None otherwise. The first function
+# that can encode the object wins, so modules should not override the encodings
+# of standard type (list, string, number, etc.
+CUSTOM_JSON_ENCODERS = []
 
 
 def dict_to_json(source_dict, unused_schema):
     """Converts Python dictionary into JSON dictionary using schema."""
     output = {}
     for key, value in source_dict.items():
-        if value is None or isinstance(value, SIMPLE_TYPES):
+        if value is None or isinstance(value,
+                                       transforms_constants.SIMPLE_TYPES):
             output[key] = value
         elif isinstance(value, datastore_types.Key):
             output[key] = str(value)
         elif isinstance(value, datetime.datetime):
-            output[key] = value.strftime(JSON_DATETIME_FORMAT)
+            output[key] = value.strftime(ISO_8601_DATETIME_FORMAT)
         elif isinstance(value, datetime.date):
-            output[key] = value.strftime(JSON_DATE_FORMAT)
+            output[key] = value.strftime(ISO_8601_DATE_FORMAT)
         elif isinstance(value, db.GeoPt):
             output[key] = {'lat': value.lat, 'lon': value.lon}
         else:
@@ -78,20 +107,27 @@ def dumps(*args, **kwargs):
         string. The converted JSON.
     """
 
-    class SetAsListJSONEncoder(json.JSONEncoder):
+    def set_encoder(obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return None
+
+    class CustomJSONEncoder(json.JSONEncoder):
 
         def default(self, obj):
-            if isinstance(obj, set):
-                return list(obj)
-            return super(SetAsListJSONEncoder, self).default(obj)
+            for f in CUSTOM_JSON_ENCODERS + [set_encoder]:
+                value = f(obj)
+                if value is not None:
+                    return value
+            return super(CustomJSONEncoder, self).default(obj)
 
     if 'cls' not in kwargs:
-        kwargs['cls'] = SetAsListJSONEncoder
+        kwargs['cls'] = CustomJSONEncoder
 
     return json.dumps(*args, **kwargs)
 
 
-def loads(s, prefix=_JSON_XSSI_PREFIX, strict=True, **kwargs):
+def loads(s, prefix=JSON_XSSI_PREFIX, strict=True, **kwargs):
     """Wrapper around json.loads that handles XSSI-protected responses.
 
     To prevent XSSI we insert a prefix before our JSON responses during server-
@@ -118,11 +154,42 @@ def loads(s, prefix=_JSON_XSSI_PREFIX, strict=True, **kwargs):
         return yaml.safe_load(s, **kwargs)
 
 
-def json_to_dict(source_dict, schema):
+def _json_to_datetime(value, date_only=False):
+    DNMF = 'does not match format'
+    if date_only:
+        formats = _JSON_DATE_FORMATS
+    else:
+        formats = _JSON_DATETIME_FORMATS
+
+    exception = None
+    for format_str in formats:
+        try:
+            value = datetime.datetime.strptime(value, format_str)
+            if date_only:
+                value = value.date()
+            return value
+        except ValueError as e:
+            # Save first exception so as to preserve the error message that
+            # describes the most-preferred format, unless the new error
+            # message is something other than "does-not-match-format", (and
+            # the old one is) in which case save that, because anything other
+            # than DNMF is more useful/informative.
+            if not exception or (DNMF not in str(e) and DNMF in str(exception)):
+               exception = e
+
+    # We cannot get here without an exception.
+    # The linter thinks we might still have 'None', but is mistaken.
+    # pylint: disable-msg=raising-bad-type
+    raise exception
+
+
+def json_to_dict(source_dict, schema, permit_none_values=False):
     """Converts JSON dictionary into Python dictionary using schema."""
 
     def convert_bool(value, key):
-        if isinstance(value, bool):
+        if isinstance(value, types.NoneType):
+            return False
+        elif isinstance(value, bool):
             return value
         elif isinstance(value, basestring):
             value = value.lower()
@@ -135,9 +202,18 @@ def json_to_dict(source_dict, schema):
     output = {}
     for key, attr in schema['properties'].items():
         # Skip schema elements that don't exist in source.
+
         if key not in source_dict:
-            if 'true' != attr.get('optional'):
+            is_optional = convert_bool(attr.get('optional'), 'optional')
+            if not is_optional:
                 raise ValueError('Missing required attribute: %s' % key)
+            continue
+
+        # Reifying from database may provide "null", which translates to
+        # None.  As long as the field is optional (checked above), set
+        # value to None directly (skipping conversions below).
+        if permit_none_values and source_dict[key] is None:
+            output[key] = None
             continue
 
         attr_type = attr['type']
@@ -145,14 +221,13 @@ def json_to_dict(source_dict, schema):
             raise ValueError('Unsupported JSON type: %s' % attr_type)
         if attr_type == 'object':
             output[key] = json_to_dict(source_dict[key], attr)
-        elif attr_type == 'datetime':
-            output[key] = datetime.datetime.strptime(
-                source_dict[key], JSON_DATETIME_FORMAT)
-        elif attr_type == 'date':
-            output[key] = datetime.datetime.strptime(
-                source_dict[key], JSON_DATE_FORMAT).date()
+        elif attr_type == 'datetime' or attr_type == 'date':
+            output[key] = _json_to_datetime(source_dict[key],
+                                            attr_type == 'date')
         elif attr_type == 'number':
             output[key] = float(source_dict[key])
+        elif attr_type == 'integer':
+            output[key] = int(source_dict[key]) if source_dict[key] else 0
         elif attr_type == 'boolean':
             output[key] = convert_bool(source_dict[key], key)
         elif attr_type == 'array':
@@ -164,55 +239,6 @@ def json_to_dict(source_dict, schema):
         else:
             output[key] = source_dict[key]
     return output
-
-
-def entity_to_dict(entity, force_utf_8_encoding=False):
-    """Puts model object attributes into a Python dictionary."""
-    output = {}
-    for_export = isinstance(entity, entities.ExportEntity)
-    properties = entity.properties()
-
-    if for_export:
-        for name in entity.instance_properties():
-            properties[name] = getattr(entity, name)
-
-    for key, prop in properties.iteritems():
-        value = getattr(entity, key)
-        if value is None or isinstance(value, SIMPLE_TYPES) or isinstance(
-                value, SUPPORTED_TYPES):
-            output[key] = value
-
-            # some values are raw bytes; force utf-8 or base64 encoding
-            if force_utf_8_encoding and isinstance(value, basestring):
-                try:
-                    output[key] = value.encode('utf-8')
-                except UnicodeDecodeError:
-                    output[key] = {
-                        'type': 'binary',
-                        'encoding': 'base64',
-                        'content': base64.urlsafe_b64encode(value)}
-
-        else:
-            raise ValueError('Failed to encode: %s' % prop)
-
-    # explicitly add entity key as a 'string' attribute
-    output['key'] = str(entity.safe_key) if for_export else str(entity.key())
-
-    if for_export:
-        output.pop('safe_key')
-
-    return output
-
-
-def dict_to_entity(entity, source_dict):
-    """Sets model object attributes from a Python dictionary."""
-    for key, value in source_dict.items():
-        if value is None or isinstance(value, SIMPLE_TYPES) or isinstance(
-                value, SUPPORTED_TYPES):
-            setattr(entity, key, value)
-        else:
-            raise ValueError('Failed to encode: %s' % value)
-    return entity
 
 
 def string_to_value(string, value_type):
@@ -286,7 +312,7 @@ def send_json_response(
         response['payload'] = dumps(payload_dict)
     if xsrf_token:
         response['xsrf_token'] = xsrf_token
-    handler.response.write(_JSON_XSSI_PREFIX + dumps(response))
+    handler.response.write(JSON_XSSI_PREFIX + dumps(response))
 
 
 def send_file_upload_response(
@@ -489,3 +515,41 @@ def convert_json_rows_file_to_xml(json_fn, xml_fn):
         xml_file.write('\n')
     xml_file.write('</rows>')
     xml_file.close()
+
+
+def nested_lists_as_string_to_dict(stringified_list_of_lists):
+    """Convert list of 2-item name/value lists to dict.
+
+    This is for converting Student.additional_fields.  When creating a
+    Student, the raw HTML form content is just added to additional_fields
+    without first converting into a dict.  Thus we have a very dict-like
+    thing which is actually expressed as a stringified list-of-lists.
+    E.g., '[["age", "27"], ["gender", "female"], ["course_goal", "dabble"]]
+
+    Args:
+      stringified_list_of_lists: String as example above
+    Returns:
+      dict version of the list-of-key/value 2-tuples
+    """
+
+    if not isinstance(stringified_list_of_lists, basestring):
+        return None
+    try:
+        items = json.loads(stringified_list_of_lists)
+        if not isinstance(items, list):
+            return None
+        for item in items:
+            if not isinstance(item, list):
+                return False
+            if len(item) != 2:
+                return False
+            if not isinstance(item[0], basestring):
+                return False
+        return {item[0]: item[1] for item in items}
+    except ValueError:
+        return None
+
+
+def dict_to_nested_lists_as_string(d):
+    """Convert a dict to stringified list-of-2-tuples format."""
+    return json.dumps([[a, b] for a, b in d.items()])

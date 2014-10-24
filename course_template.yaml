@@ -27,15 +27,15 @@
 
 institution:
   # Name of your institution
-  name: 'Rose-Hulman'
+  name: 'Add Your Institution Here'
 
   # URL of your institution's webpage
-  url: 'http://www.rose-hulman.edu'
+  url: 'LINK_TO_YOUR_INSTITUTION_HERE'
 
   # Link and alt text for the logo of the course or your institution
   logo:
-    url: 'assets/img/roselogosmall.png'
-    alt_text: Rose-Hulman Logo
+    url: 'assets/img/your_logo_here.png'
+    alt_text: YOUR_LOGO_HERE
 
 
 ####################
@@ -71,14 +71,10 @@ base:
   before_body_tag_ends: '<!-- base.before_body_tag_ends -->'
 
   # Whether to show a G+ button on the header of all pages.
-  show_gplus_button: False
+  show_gplus_button: True
 
   # Header phrase for the main navigation bar
-  nav_header: 'ROSEbotics'
+  nav_header: 'Search Education'
 
   # Link to your privacy policy and terms of service
-  privacy_terms_url: 'http://www.rose-hulman.edu/TSC/policies' # TODO: Update!
-
-  # Locale for internationalization of explorer pages. See
-  # modules/i18n/resources/locale for available locales.
-  locale: 'en_US'
+  privacy_terms_url: 'PRIVACY_POLICY_AND_TERMS_OF_SERVICE'

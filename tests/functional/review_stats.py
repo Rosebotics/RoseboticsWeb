@@ -19,7 +19,6 @@ __author__ = 'Sean Lip'
 
 import actions
 from actions import assert_contains
-from actions import assert_equals
 from controllers_review import get_review_payload
 from controllers_review import get_review_step_key
 from controllers_review import LEGACY_REVIEW_UNIT_ID
@@ -28,6 +27,7 @@ from controllers_review import LEGACY_REVIEW_UNIT_ID
 class PeerReviewAnalyticsTest(actions.TestBase):
     """Tests the peer review analytics page on the Course Author dashboard."""
 
+    # pylint: disable-msg=too-many-statements
     def test_peer_review_analytics(self):
         """Test analytics page on course dashboard."""
 
@@ -54,29 +54,23 @@ class PeerReviewAnalyticsTest(actions.TestBase):
 
         # The admin looks at the analytics page on the dashboard.
         actions.login(email, is_admin=True)
-        response = self.get('dashboard?action=analytics')
+        response = self.get('dashboard?action=analytics&tab=peer_review')
         assert_contains(
-            'Google &gt;<a href="%s"> Dashboard </a>&gt; Analytics' %
-                self.canonicalize('dashboard'),
+            'Google &gt; Dashboard &gt; Analytics &gt; Peer Review',
             response.body)
         assert_contains('have not been calculated yet', response.body)
 
-        compute_form = response.forms['gcb-compute-student-stats']
-        response = self.submit(compute_form)
-        assert_equals(response.status_int, 302)
-        assert len(self.taskq.GetTasks('default')) == 5
+        response = response.forms[
+            'gcb-generate-analytics-data'].submit().follow()
+        assert len(self.taskq.GetTasks('default')) == 1
 
-        response = self.get('dashboard?action=analytics')
         assert_contains('is running', response.body)
 
         self.execute_all_deferred_tasks()
 
-        response = self.get('dashboard?action=analytics')
+        response = self.get(response.request.url)
         assert_contains('were last updated at', response.body)
-        assert_contains('currently enrolled: 2', response.body)
-        assert_contains('total: 2', response.body)
-
-        assert_contains('Peer Review Statistics', response.body)
+        assert_contains('Peer Review', response.body)
         assert_contains('Sample peer review assignment', response.body)
         # JSON code for the completion statistics.
         assert_contains('"[{\\"stats\\": [2]', response.body)
@@ -97,18 +91,17 @@ class PeerReviewAnalyticsTest(actions.TestBase):
         actions.logout()
 
         actions.login(email, is_admin=True)
-        response = self.get('dashboard?action=analytics')
+        response = self.get('dashboard?action=analytics&tab=peer_review')
         assert_contains(
-            'Google &gt;<a href="%s"> Dashboard </a>&gt; Analytics' %
-                self.canonicalize('dashboard'),
+            'Google &gt; Dashboard &gt; Analytics &gt; Peer Review',
             response.body)
 
-        compute_form = response.forms['gcb-compute-student-stats']
-        response = self.submit(compute_form)
+        response = response.forms[
+            'gcb-generate-analytics-data'].submit().follow()
         self.execute_all_deferred_tasks()
 
-        response = self.get('dashboard?action=analytics')
-        assert_contains('Peer Review Statistics', response.body)
+        response = self.get(response.request.url)
+        assert_contains('Peer Review', response.body)
         # JSON code for the completion statistics.
         assert_contains('"[{\\"stats\\": [1, 1]', response.body)
         actions.logout()
