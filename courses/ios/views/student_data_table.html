@@ -59,4 +59,13 @@
       </td>
     </tr>
   {% endif %}
+
+  {% for header, value in extra_student_data %}
+    {% if header or value %}
+      <tr>
+        <th align="left">{{ header }}</th>
+        <td>{{ value }}</td>
+      </tr>
+    {% endif %}
+  {% endfor %}
 </table>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{course_info.course.locale}}">
+<html lang="{{page_locale}}"
+    class="{{ gcb_html_element_class }}">
   <head>
     <base href="{{ gcb_course_base }}" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -10,12 +11,6 @@
     <!-- The following translated strings are used in activity-generic.js and should be
     declared before that file is imported. -->
     <script>
-      // import JSON for older browsers like IE 7
-      if (typeof JSON == 'undefined') {
-        document.write(
-            '<script src="assets/lib/json2-2012.10.08.min.js"></' + 'script>');
-      }
-
       // inline translations
       var trans = {};
 
@@ -90,22 +85,18 @@
       {# I18N: Text appearing in a confirmation dialog after 'Are you sure you want to submit this assignment/review?' #}
       trans.CONFIRMATION_EXPLANATION =
           "{{ gettext(' You cannot edit or delete it after you have done so. ') }}";
-
-      var assessmentTagMessages = {};
-
-      {# I18N: Confirmation text for the answer given to a question by a student. #}
-      assessmentTagMessages.correctAnswer = "{{ gettext(' Yes, the answer is correct. ') }}";
-      {# I18N: Confirmation text for the answer given to a question by a student. #}
-      assessmentTagMessages.incorrectAnswer = "{{ gettext(' No, the answer is incorrect. ') }}";
-      {# I18N: Confirmation text for the answer given to a question by a student. #}
-      assessmentTagMessages.partiallyCorrectAnswer = "{{ gettext(' The answer is partially correct. ') }}";
-
-      {# I18N: Text appearing at the bottom of a lesson page after the student asks for it to be graded. #}
-      assessmentTagMessages.yourScoreIs = "{{ gettext(' Your score is: ') }}";
     </script>
 
     {% block assets %}
     {% endblock %}
+
+    {% for url in extra_global_css_urls %}
+      <link rel="stylesheet" href="{{url}}" type="text/css">
+    {% endfor %}
+
+    {% for url in extra_global_js_urls %}
+      <script src="{{url}}" type="text/javascript"></script>
+    {% endfor %}
 
     <script>
       var eventXsrfToken = '{{ event_xsrf_token }}';
@@ -130,12 +121,62 @@
       <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
     {% endif %}
 
-    {{course_info.base.before_head_tag_ends | safe}}
+    <script>
+      function gcb_edit_hook_point(key) {
+        window.location=('dashboard?action=edit_html_hook&key=' +
+            encodeURIComponent(key));
+      }
+      $(function() {
+        function parseJson(s) {
+          var xssiPrefix = ")]}'";
+          return JSON.parse(s.replace(xssiPrefix, ''));
+        }
+
+        $("#locale-select").change(function() {
+          var localeSelect = $("#locale-select");
+          var request = JSON.stringify({
+            xsrf_token: localeSelect.data("xsrf-token"),
+            payload: {
+              selected: localeSelect.val()
+            }
+          });
+          $.ajax({
+            url: "rest/locale",
+            type: "POST",
+            data: {request: request},
+            dataType: "text",
+            success: function(data) {
+              data = parseJson(data);
+              if (data.status == 200) {
+                window.location.reload();
+              }
+            }
+          });
+        });
+      });
+    </script>
+
+    {% if course_info.course.google_analytics_id %}
+      <!-- Google Analytics.  This  boilerplate code is as emitted from
+           the Analytics page, except that IDs are templated and the
+           hostname is taken from the current page, not hardcoded. -->
+      <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '{{ course_info.course.google_analytics_id }}', window.location.hostname);
+      ga('send', 'pageview');
+      </script>
+    {% endif %}
+
+    {{ course_info.base.before_head_tag_ends | safe}}
   </head>
 
-  <body>
+  <body data-gcb-page-locale="{{ page_locale }}">
 
-    {{course_info.base.after_body_tag_begins | safe}}
+    {{ html_hooks.insert('base:after_body_tag_begins') }}
 
     <script>
       // Course-Builder specific setup for Google Tag Manager.  Iff
@@ -155,21 +196,6 @@
       {% block gcb_page_info %}
       {% endblock %}
     </script>
-
-    {% if course_info.course.google_analytics_id %}
-        <!-- Google Analytics.  This  boilerplate code is as emitted from
-             the Analytics page, except that IDs are templated and the
-             hostname is taken from the current page, not hardcoded. -->
-        <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', '{{ course_info.course.google_analytics_id }}', window.location.hostname);
-        ga('send', 'pageview');
-        </script>
-    {% endif %}
 
     {% if course_info.course.google_tag_manager_id %}
         <!-- Google Tag Manager.  This boilerplate code is as generated by the
@@ -194,7 +220,7 @@
 
     <!-- logo bar -->
     <div id="gcb-header" role="banner">
-      <div class="gcb-aux">
+      <div class="gcb-aux clearfix">
         <p class="gcb-course-image">
           <a href="./">
             <img src="{{course_info.institution.logo.url}}"
@@ -239,11 +265,11 @@
     <div class="is-wrapper">
       <div class="gcb-aux">
         {% block top_content %}{% endblock %}
-        {{course_info.base.after_top_content_ends | safe}}
+        {{ html_hooks.insert('base:after_top_content_ends') }}
 
         <!-- main section -->
         {% block main_content %}{% endblock %}
-        {{course_info.base.after_main_content_ends | safe}}
+        {{ html_hooks.insert('base:after_main_content_ends') }}
       </div>
     </div>
 
@@ -258,18 +284,45 @@
         <div class="gcb-aux">
           <ul>
             <li>
-              <a href="{{course_info.institution.url}}">{{course_info.institution.name}}</a>
+              <a href="{{course_info.institution.url}}" target="_blank">{{course_info.institution.name}}</a>
             </li>
             <li>
-              <a href="{{course_info.base.privacy_terms_url}}">
+              <a href="{{course_info.base.privacy_terms_url}}" target="_blank">
                 {# I18N: Link at the bottom of each page to the privacy and 'Terms and Conditions' pages. #}
                 {{ gettext('Privacy & Terms') }}
               </a>
             </li>
+            {% if available_locales %}
+              <li>
+                {# I18N: Text describing the locale selector. #}
+                {{ gettext('Locale:') }}
+                <select id="locale-select" data-xsrf-token="{{ locale_xsrf_token}}">
+                  {% for locale in available_locales %}
+                    <option value="{{ locale.value }}"
+                      {% if locale.value == selected_locale %}selected{% endif %}>
+                      {{ locale.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </li>
+            {% endif %}
           </ul>
         </div>
       </div>
     </div>
-    {{course_info.base.before_body_tag_ends | safe}}
+    {{ html_hooks.insert('base:before_body_tag_ends') }}
+
+    {% if context %}
+      <div class="gcb-jinja-context">
+      {% for key, value in context() | dictsort %}
+          <p>{{ key }}: {{ value | forceescape }}<p>
+      {% endfor %}
+      </div>
+    {% endif %}
+    {% if debug_info %}
+<!-- gcb-debug-info-begin
+{{ debug_info }}
+gcb-debug-info-end //-->
+{% endif %}
  </body>
 </html>
