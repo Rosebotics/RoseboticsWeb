@@ -29,6 +29,8 @@ from models import custom_modules
 from models import data_sources
 from models import student_labels
 
+from handlers import main_handler, course_handlers
+
 # Import, register, & enable modules named in app.yaml's GCB_REGISTERED_MODULES.
 appengine_config.import_and_enable_modules()
 
@@ -64,8 +66,18 @@ if appengine_config.gcb_appstats_enabled():
 webapp2_i18n_config = {'translations_path': os.path.join(
     appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
 
+rosebotics_routes = [('/', main_handler.HomePage),
+                     ('/course', main_handler.CoursePage),
+                     ('/competition', main_handler.CompetitionPage),
+                     ('/platform', main_handler.PlatformPage),
+                     ('/about', main_handler.AboutPage),
+                     ('/videos', main_handler.VideosPage),
+                     ('/contact', main_handler.ContactPage),
+                     ('/gettingstarted', main_handler.GettingStartedtPage),
+                     ('/web', course_handlers.WebCoursePage),]
+
 # init application
 app = webapp2.WSGIApplication(
-    global_routes + appstats_routes + app_routes,
+    rosebotics_routes + global_routes + appstats_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config},
     debug=not appengine_config.PRODUCTION_MODE)
