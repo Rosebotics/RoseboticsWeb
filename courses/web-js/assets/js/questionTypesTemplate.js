@@ -45,6 +45,7 @@ var activity = [
 
 		'<img src="assets/img/lcd_code.png" alt="LCD code"><br>',
 		
+		"<ul><li></li><li></li><li></li><li></li></ul>"
 		<a target='_blank' href=''></a>
 		
 		'<code style="font-weight: bold; padding: 5px; background: rgb(234, 248, 248); display: inline-block;">if (x == 7) {<br>&nbsp; &nbsp;printf("x is 7\\n");<br>}<br></code>',
