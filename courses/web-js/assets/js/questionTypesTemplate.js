@@ -14,8 +14,7 @@ var activity = [
 					},
 					{
 						questionHTML : '<b>c.</b> Question C',
-						choices : [ 'Brushed gearhead DC motor',
-								'Stepper motor', 'Servo motor' ],
+						choices : [ 'Brushed gearhead DC motor', 'Stepper motor', 'Servo motor' ],
 						correctIndex : 0
 					}, {
 						questionHTML : '<b>d.</b> Question D',
@@ -47,6 +46,7 @@ var activity = [
 		
 		"<ul><li></li><li></li><li></li><li></li></ul>"
 		<a target='_blank' href=''></a>
+		<li style='margin-left: 30px;'><b></b> - </li>
 		
 		'<code style="font-weight: bold; padding: 5px; background: rgb(234, 248, 248); display: inline-block;">if (x == 7) {<br>&nbsp; &nbsp;printf("x is 7\\n");<br>}<br></code>',
 ];

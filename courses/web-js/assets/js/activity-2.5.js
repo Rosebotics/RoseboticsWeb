@@ -30,13 +30,56 @@
 
 var activity = [
 
-'<b>1.</b> Did you finish the Color Converter Lab then deploy your work? (and submit your URL if doing this work for a grade)<br>',
+'<b>1.</b> What method did we use in the video to do a page reload?<br>',
+
+{
+  questionType : 'freetext',
+  correctAnswerRegex : /window.location.reload\(\)/i,
+  correctAnswerOutput : 'Correct!',
+  incorrectAnswerOutput : 'Please try again.',
+  showAnswerOutput : 'Here is the answer: window.location.reload();'
+},
+
+'<br><br><b>2.</b> Eventually we\'ll be creating a <b>new DiceGameController</b> in main, but for now we\'ll make a <b>new DiceRoundController</b>.  After we implement the DiceRoundController we\'ll move onto the DiceGameController.',
+'  Which parts of the screen shown below do you think are managed by the Dice<b>Round</b>Controller?<br>',
+'<img src="assets/img/dwf_sections.png" alt="DWF Sections"><br>',
+
+
+{
+  questionType : 'multiple choice group',
+  questionsList : [
+      {
+        questionHTML : '',
+        choices : [ 'A', 'B', 'C', 'D', 'E' ],
+        correctIndex : [2,3,4]
+      }],
+  allCorrectOutput : 'Well done!',
+  someIncorrectOutput : 'Please try again. Hints: None of the stuff on top.',
+},
+
+'<br><br><b>3.</b> Which part of the screen is managed by the dwf_play_main.js file?<br>',
 
 {
   questionType : 'multiple choice',
   choices : [
-      ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
-      ['Not so much.', false, 'Well... you should fix that. :)' ] ]
+      ['A', true, 'Correct!' ],
+      ['B', false, 'Please try again.' ],
+      ['C', false, 'Please try again.' ],
+      ['D', false, 'Please try again.' ],
+      ['E', false, 'Please try again.' ] ]
 },
-		
+
+
+'<br><br><b>4.</b> So which part of the screen does that leave for the DiceGameController to manage (later)?<br>',
+
+{
+  questionType : 'multiple choice',
+  choices : [
+      ['A', false, 'Please try again.' ],
+      ['B', true, 'Correct!' ],
+      ['C', false, 'Please try again.' ],
+      ['D', false, 'Please try again.' ],
+      ['E', false, 'Please try again.' ] ]
+},
+
 ];
