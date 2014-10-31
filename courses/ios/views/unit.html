@@ -62,7 +62,7 @@
 
   <ul id="gcb-breadcrumb" class="gcb-breadcrumb">
     {# I18N: Navigation breadcrumb. #}
-    <li><a href="course">{{ gettext('Course') }}</a></li>
+    <li><a href="course">{{ course_info.course.title }}</a></li>
     <li><a href="unit?unit={{ unit.unit_id }}">
       {{ display_short_unit_title(unit) }}</a></li>
     {% if lesson %}
