@@ -80,6 +80,12 @@ th, td {
   width: 14.1104296%;
 }
 
+#gcb-nav-y.gcb-nav-full {
+  width: auto; 
+}
+
+
+
 #gcb-nav-y ul {
   list-style: none;
   margin: 0;
@@ -255,7 +261,7 @@ th, td {
 }
 
 .gcb-button-box {
-  text-align: center;
+/*  text-align: center; */
   overflow: hidden;
 }
 
