@@ -210,7 +210,7 @@ def display_unit_title(unit, course_properties=None):
     """Prepare an internationalized display for the unit title."""
     if not course_properties:
         course_properties = _get_course_properties()
-    if course_properties['course'].get('display_unit_title_without_index'):
+    if True:
         return unit.title
     else:
         # I18N: Message displayed as title for unit within a course.
@@ -221,7 +221,7 @@ def display_short_unit_title(unit, course_properties=None):
     """Prepare a short unit title."""
     if not course_properties:
         course_properties = _get_course_properties()
-    if course_properties['course'].get('display_unit_title_without_index'):
+    if True:
         return unit.title
     if unit.type != 'U':
         return unit.title
@@ -244,7 +244,7 @@ def display_lesson_title(unit, lesson, course_properties=None):
             prefix = '%s ' % lesson.index
         else:
             prefix = '%s.%s ' % (unit.index, lesson.index)
-        span.add_text(prefix)
+#        span.add_text("prefix")
         _class = ''
     else:
         _class = 'no-index'

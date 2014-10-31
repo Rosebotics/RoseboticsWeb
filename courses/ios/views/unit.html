@@ -71,7 +71,7 @@
         <a href="unit?unit={{ unit.unit_id }}&lesson={{ lesson.lesson_id }}">
         {% endif %}
           {# I18N: Navigation breadcrumb. #}
-          {{ gettext('Lesson') }} {{ lesson.index }}{% if activity %}</a>{% endif %}</li>
+          {{ lesson.title }}{% if activity %}</a>{% endif %}</li>
       {% if activity %}
         <li>{# I18N: Navigation breadcrumb. #} {{ gettext('Activity') }}</li>
       {% endif %}
