@@ -30,40 +30,35 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> The instance <b>bob</b> has the same prototype object as the BankAccount class (i.e. the constructor function).  Additionally it has two instance variables.  What are they?",
+	"<b>1.</b> In this video we took care of the <b>this</b> is not <b>this</b> anymore problem by doing the fix once and then making a function call.  With that approach can you use <b>this</b> in the function that is called?<br>",
 
-  {
-    questionType : 'multiple choice group',
-    questionsList : [
-        {
-          questionHTML : '',
-          choices : [ 'toString', 'name', 'account', 'balance' ],
-          correctIndex : [1,3]
-        },],
-    allCorrectOutput : 'Well done!',
-    someIncorrectOutput : 'Please try again. Hints: There are two.',
-  },
-
-
-
-  "<br><br><b>2.</b> When you make a constructor for a class is there anything special about that function (added keywords like <b>constructor</b>) or is it just a function that looks like any other function?<br>",
 
   {
     questionType : 'multiple choice',
     choices : [
-        ['It\'s just a function.  Any function could be used as a constructor<br><i>(although it\'d end up working out badly if you weren\'t planning for it to be a constructor).</i>', true, 'Correct!' ],
-        ['You have to add the special keyword to the function so that it can be used as a constructor',  false, 'Please try again.'] ]
+        ['Nope.  In that other function <b>this</b> would still be the HTML element (or whatever it was).', false, 'Please try again.' ],
+        ['Yep.  Since you called the function on an instance of the class, <b>this</b> will be what you expect in that function.  Use <b>this</b> like normal',  true, 'Correct!'] ]
   },
 
-  "<br><br><b>3.</b> What is the special keyword you use when <b>making</b> an instance (where the real magic happens)?<br>",
+  
+  "<br><br><b>2.</b> (same question as prior lesson) We fixed the <b>this</b> is not <b>this</b> anymore problem, but using a closure (making another variable be <b>this</b>).  Are there other solutions to the problem? For example with <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call'>.call</a>, <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind'>.bind</a>, or the <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply'>.apply</a> function.<br>",
 
   {
-    questionType : 'freetext',
-    correctAnswerRegex : /new/i,
-    correctAnswerOutput : 'Correct!',
-    incorrectAnswerOutput : 'Please try again.',
-    showAnswerOutput : 'Here is the answer: new'
+    questionType : 'multiple choice',
+    choices : [
+        ['Yep.  There are other solutions out there that work in most situations.  Feel free to explore!', true, 'Correct!' ],
+        ['No.  The way we did it is the only way to fix the problem.',  false, 'Please try again.'] ]
   },
+
+
+  "<br><br><b>3.</b> Did you get your game keeping score and round number?<br>",
+
+  {
+    questionType : 'multiple choice',
+    choices : [
+        ['Yep.  Ready to keep moving!  Let\'s add the Fastest Finish feature.', true, 'Great!' ],
+        ['Not so much', false, 'Well... darn!  See if you can fix that. If it\'s just not working out you are still allowed to watch the next video. :)' ] ]
+  },    
 
 
 ];

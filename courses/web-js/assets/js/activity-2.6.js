@@ -31,15 +31,46 @@
 
 var activity = [
 
-'<b>1.</b> Did you finish the Baby Class Exercise then deploy your work? (and submit both the BankAccount and Baby URLs if doing this work for a grade)<br>',
+'<b>1.</b> What is the value of <b>this</b> in a jQuery callback function for a <b>click</b>?<br>',
 
 {
   questionType : 'multiple choice',
   choices : [
-      ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
-      ['Not so much.', false, 'Well... you should fix that. :)' ] ]
+      ['window', false, 'Please try again.' ],
+      ['document', false, 'Please try again.' ],
+      ['The HTML element that was clicked', true, 'Correct' ],
+      ['The instance variable for whatever class you are in', false, 'Please try again.' ] ]
 },
-    
+
+'<br><br><b>2.</b> Stated more generally, what is the value of <b>this</b> within a function?<br>',
+
+{
+  questionType : 'multiple choice',
+  choices : [
+      ['window', false, 'Please try again.' ],
+      ['document', false, 'Please try again.' ],
+      ['Whatever object fired the event / caused the function to be called (most of the time)', true, 'Correct' ],
+      ['The instance variable for whatever class you are in', false, 'Please try again.' ] ]
+},    
+
+
+"<br><br><b>3.</b> We fixed the <b>this</b> is not <b>this</b> anymore problem, but using a closure (making another variable be <b>this</b>).  Are there other solutions to the problem? For example with <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/call'>.call</a>, <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind'>.bind</a>, or the <a target='_blank' href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply'>.apply</a> function.<br>",
+
+{
+  questionType : 'multiple choice',
+  choices : [
+      ['Yep.  There are other solutions out there that work in most situations.  Feel free to explore!', true, 'Correct!' ],
+      ['No.  The way we did it is the only way to fix the problem.',  false, 'Please try again.'] ]
+},
+
+'<br><br><b>4.</b> Do your Roll Again and Stop buttons work now?  (well stop at least resets the round)<br>',
+
+{
+  questionType : 'multiple choice',
+  choices : [
+      ['Yep.  Ready to keep moving!  Let\'s keep a total score already.', true, 'Great!' ],
+      ['Not so much', false, 'Well... darn!  See if you can fix that. If it\'s just not working out you are still allowed to watch the next video. :)' ] ]
+},    
 
 ];
 
