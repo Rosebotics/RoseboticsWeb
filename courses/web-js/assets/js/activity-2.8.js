@@ -31,52 +31,30 @@
 
 var activity = [
 
-'<b>1.</b> Let\'s review the purpose of each JavaScript file.<br>',
+'<b>1.</b> If you attempt to read a value from localStorage for the key <b>bob</b>, via localStorage.bob, but there is no value for the key bob, what gets returned?<br>',
 
 {
-  questionType : 'multiple choice group',
-  questionsList : [
-      {
-        questionHTML : '<b>a.</b> Which two files are 100% all about model objects.',
-        choices : [ 'dwf_play_main.js', 'Die.js', 'DiceRound.js', 'DiceRoundController.js', 'DiceGameController.js' ],
-        correctIndex : [1,2]
-      },
-      {
-        questionHTML : '<b>b.</b> Which one is a cheater class that is mainly a controller, but actually contains two variables that are clearly models.',
-        choices : [ 'dwf_play_main.js', 'Die.js', 'DiceRound.js', 'DiceRoundController.js', 'DiceGameController.js' ],
-        correctIndex : 4
-      },
-      {
-        questionHTML : '<b>c.</b> Which file serves as the main function to create an instance that starts the ball rolling.',
-        choices : [ 'dwf_play_main.js', 'Die.js', 'DiceRound.js', 'DiceRoundController.js', 'DiceGameController.js' ],
-        correctIndex : 0
-      }, {
-        questionHTML : '<b>d.</b> Which file is 100% all about a controller object.',
-        choices : [ 'dwf_play_main.js', 'Die.js', 'DiceRound.js', 'DiceRoundController.js', 'DiceGameController.js' ],
-        correctIndex : 3
-      } ],
-  allCorrectOutput : 'Well done!',
-  someIncorrectOutput : 'Please try again. Hints: Every file is used once.',
+  questionType : 'multiple choice',
+  choices : [
+      ['nothing', false, 'Please try again.' ],
+      ['unknown', false, 'Please try again.' ],
+      ['undefined', true, 'Correct!' ],
+      ['null', false, 'Please try again.' ] ]
 },
 
-'<br><br><b>2.</b> We\'ll pick some portions of this project to write together so that we can observe a few details of using classes.<br>',
+
+'<br><br><b>2.</b> localStorage is really only meant for simple storage not complex data structures.  Additionally there is a limitation about what can be stored.  What is that limitation?<br>',
 
 
 {
-  questionType : 'multiple choice group',
-  questionsList : [
-      {
-        questionHTML : '<b>a.</b> Which files will we modify? (Hint, everything except for the two model objects)',
-        choices : [ 'play.html', 'dwf_play_main.js', 'Die.js', 'DiceRound.js', 'DiceRoundController.js', 'DiceGameController.js' ],
-        correctIndex : [0,1,4,5]
-      }, {
-        questionHTML : '<b>b.</b> In fact one file we\'ll write completely from scratch.  What file is that?  (Hint, <b>Controller</b> that keeps the total score and round) ',
-        choices : [ 'play.html', 'dwf_play_main.js', 'Die.js', 'DiceRound.js', 'DiceRoundController.js', 'DiceGameController.js' ],
-        correctIndex : 5
-      }, ],
-  allCorrectOutput : 'Well done!',
-  someIncorrectOutput : 'Please try again. Hints: We\'ll modify every file except for Die.js and DiceRound.js, then we\'ll write DiceGameController.js from scratch.',
+  questionType : 'multiple choice',
+  choices : [
+      ['There is no limitation.', false, 'Please try again.' ],
+      ['You can only store 512 KB of data total. (See <a target="_blank" href="http://stackoverflow.com/questions/2989284/what-is-the-max-size-of-localstorage-values">this stakesverflow question</a> if you want more info)', false, 'Please try again.' ],
+      ['You can only store numbers (for example the number of rounds to finish the game)', false, 'Please try again.'],
+      ['All values must be serialize and de-serialize to/from string values', true, 'Correct!'  ] ]
 },
+
 
 
 ];

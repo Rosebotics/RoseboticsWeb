@@ -30,46 +30,14 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-'<b>1.</b> Did you successfully implement the <b>interestRate</b> instance variable and the <b>accumulateInterest</b> method?<br>',
 
-{
-	questionType : 'multiple choice',
-	choices : [
-			['Yep (I think so).  Ready to go!', true, 'Great!  Click next.' ],
-			['Tried but need help.', true, 'Ok.  Click next.' ],
-      ['Not so much.', false, 'Please try again.' ] ]
-},
-
-
-'<br><br><b>2.</b> Fill in the blank rh.objectbasics.BankAccount._________.deposit = function(amount) {...};<br>',
-
-{
-  questionType : 'freetext',
-  correctAnswerRegex : /prototype/i,
-  correctAnswerOutput : 'Correct!',
-  incorrectAnswerOutput : 'Please try again.',
-  showAnswerOutput : 'Here is the answer: prototype'
-},
-
-
-'<br><br><b>3.</b> Before the video began we used the toString method on the instance <b>bob</b> and it did something (printed [object Object]).  That shows that the method toString existed.  How did it do that?<br>',
+'<b>1.</b> Did you finish the Lights Out (JavaScript) Lab? (and submit your URL if doing this work for a grade)<br>',
 
 {
   questionType : 'multiple choice',
   choices : [
-      ['The object bob hasOwnProperty of toString and it used it.', false, 'Please try again.' ],
-      ['The object bob did not have the toString function, so Chrome checked bob\'s prototype, rh.objectbasics.BankAccount, which DOES have a toString method, so it used that function.', false, 'Please try again.' ],
-      ['The object bob did not have the toString function, bob\'s prototype rh.objectbasics.BankAccount id not have it either, however rh.objectbasics.BankAccount\'s prototype of Object DOES have a toString method, so it used that function.', true, 'Correct!' ] ]
+      ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
+      ['Not so much.', false, 'Well... you should fix that. :)' ] ]
 },
-
-'<br><br><b>4.</b> During the video our toString started to return values like: "Name: Bob   Balance: $100.00".  How did it do that?<br>',
-
-{
-  questionType : 'multiple choice',
-  choices : [
-      ['The object bob hasOwnProperty of toString and it used it.', false, 'Please try again.' ],
-      ['The object bob did not have the toString function, so Chrome checked bob\'s prototype, rh.objectbasics.BankAccount, which DOES have a toString method, so it used that function.', true, 'Correct!' ],
-      ['The object bob did not have the toString function, bob\'s prototype rh.objectbasics.BankAccount id not have it either, however rh.objectbasics.BankAccount\'s prototype of Object DOES have a toString method, so it used that function.', false, 'Please try again.' ] ]
-},
-
+    
 ];
