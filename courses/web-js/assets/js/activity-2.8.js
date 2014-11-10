@@ -50,7 +50,7 @@ var activity = [
   questionType : 'multiple choice',
   choices : [
       ['There is no limitation.', false, 'Please try again.' ],
-      ['You can only store 512 KB of data total. (See <a target="_blank" href="http://stackoverflow.com/questions/2989284/what-is-the-max-size-of-localstorage-values">this stakesverflow question</a> if you want more info)', false, 'Please try again.' ],
+      ['You can only store 512 KB of data total. (See <a target="_blank" href="http://stackoverflow.com/questions/2989284/what-is-the-max-size-of-localstorage-values">this stackoverflow question</a> if you want more info)', false, 'Please try again.' ],
       ['You can only store numbers (for example the number of rounds to finish the game)', false, 'Please try again.'],
       ['All values must be serialize and de-serialize to/from string values', true, 'Correct!'  ] ]
 },
