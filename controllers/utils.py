@@ -11,20 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Handlers that are not directly related to course content."""
 
-__author__ = 'Saifu Angto (saifu@google.com)'
-
+import HTMLParser
 import datetime
 import gettext
-import HTMLParser
 import os
 import re
 import urlparse
 
+from google.appengine.api import users
 import jinja2
-import sites
 import webapp2
 
 import appengine_config
@@ -44,8 +41,14 @@ from models.models import StudentProfileDAO
 from models.models import TransientStudent
 from models.roles import Roles
 from modules import courses as courses_module
+import sites
 
-from google.appengine.api import users
+
+__author__ = 'Saifu Angto (saifu@google.com)'
+
+
+
+
 
 # The name of the template dict key that stores a course's base location.
 COURSE_BASE_KEY = 'gcb_course_base'
@@ -517,7 +520,7 @@ class CourseHandler(ApplicationHandler):
         return ''.join([
               '\nDebug Info: %s' % datetime.datetime.utcnow(),
               '\n\nServer Environment Variables: %s' % '\n'.join([
-                  'item: %s, %s'% (key, value)
+                  'item: %s, %s' % (key, value)
                   for key, value in os.environ.iteritems()]),
               '\n\nVfsCacheKeys:\n%s' % '\n'.join(vfs_items),
               '\n\nResourceBundlesCache:\n%s' % '\n'.join(rb_items),
@@ -585,6 +588,9 @@ class CourseHandler(ApplicationHandler):
 
         _p = self.app_context.get_environ()
         self.init_template_values(_p, prefs=prefs)
+        # Added in order to support moving many instances of 
+        # courses/*/views to a single /templates/views
+        additional_dirs = ["templates/views/"] 
         template_environ = self.app_context.get_template_environ(
             self.app_context.get_current_locale(), additional_dirs)
         template_environ.filters[
