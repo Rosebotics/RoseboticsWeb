@@ -59,7 +59,7 @@ var activity = [
   choices : [
       ['The object bob hasOwnProperty of toString and it used it.', false, 'Please try again.' ],
       ['The object bob did not have the toString function, so Chrome checked bob\'s prototype, rh.objectbasics.BankAccount, which DOES have a toString method, so it used that function.', false, 'Please try again.' ],
-      ['The object bob did not have the toString function, bob\'s prototype rh.objectbasics.BankAccount id not have it either, however rh.objectbasics.BankAccount\'s prototype of Object DOES have a toString method, so it used that function.', true, 'Correct!' ] ]
+      ['The object bob did not have the toString function, bob\'s prototype rh.objectbasics.BankAccount did not have it either, however rh.objectbasics.BankAccount\'s prototype of Object DOES have a toString method, so it used that function.', true, 'Correct!' ] ]
 },
 
 '<br><br><b>4.</b> During the video our toString started to return values like: "Name: Bob   Balance: $100.00".  How did it do that?<br>',
@@ -69,7 +69,7 @@ var activity = [
   choices : [
       ['The object bob hasOwnProperty of toString and it used it.', false, 'Please try again.' ],
       ['The object bob did not have the toString function, so Chrome checked bob\'s prototype, rh.objectbasics.BankAccount, which DOES have a toString method, so it used that function.', true, 'Correct!' ],
-      ['The object bob did not have the toString function, bob\'s prototype rh.objectbasics.BankAccount id not have it either, however rh.objectbasics.BankAccount\'s prototype of Object DOES have a toString method, so it used that function.', false, 'Please try again.' ] ]
+      ['The object bob did not have the toString function, bob\'s prototype rh.objectbasics.BankAccount did not have it either, however rh.objectbasics.BankAccount\'s prototype of Object DOES have a toString method, so it used that function.', false, 'Please try again.' ] ]
 },
 
 ];

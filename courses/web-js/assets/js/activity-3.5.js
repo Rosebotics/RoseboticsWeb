@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -31,7 +30,7 @@
 
 var activity = [
 
-'<b>1.</b> Did you finish the Lights Out (JavaScript) Lab? (and submit your URL if doing this work for a grade)<br>',
+'<b>1.</b> Did you finish the Server Time example then deploy your work? (and submit your URL if doing this work for a grade)<br>',
 
 {
   questionType : 'multiple choice',
@@ -39,5 +38,5 @@ var activity = [
       ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
       ['Not so much.', false, 'Well... you should fix that. :)' ] ]
 },
-    
+		
 ];

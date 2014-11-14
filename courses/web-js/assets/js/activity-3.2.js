@@ -30,14 +30,37 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-
-'<b>1.</b> Did you finish the Lights Out (JavaScript) Lab? (and submit your URL if doing this work for a grade)<br>',
+                
+'<b>1.</b> What was the path we decided to send our GET to? (we will need to implement this in the next video)<br>',
 
 {
   questionType : 'multiple choice',
   choices : [
-      ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
-      ['Not so much.', false, 'Well... you should fix that. :)' ] ]
+      ['localhost:8080', false, 'Please try again.' ],
+      ['/ajax', false, 'Please try again.' ],
+      ['/servertime', true, 'Correct!  We\'ll implement that shortly.' ],
+      ['/jquery', false, 'Please try again.' ] ]
 },
-    
+
+'<br><br><b>2.</b> When reading the fields off the JSON object, once it has been received, what key name did we use on the JSON object to get the server time message?<br>',
+
+{
+  questionType : 'multiple choice',
+  choices : [
+      ['It was <b>message</b> because it always has to be <b>message</b>.', false, 'Please try again.' ],
+      ['It was <b>message</b>, because that\'s what we plan to call that key when we get to the backend code.  We could\'ve picked anything', true, 'Correct!' ],
+      ['It was <b>servertime</b>', false, 'Please try again.' ],
+      ['It was <b>stringify</b>', false, 'Please try again.' ] ]
+},
+
+                
+'<br><br><b>3.</b> Did you get the the getJSON call added to server_time.js?<br>',
+
+{
+	questionType : 'multiple choice',
+	choices : [
+			['Yep.  Ready to go!', true, 'Great!  Click next.' ],
+			['Not so much.', false, 'Please try again.' ] ]
+},
+
 ];

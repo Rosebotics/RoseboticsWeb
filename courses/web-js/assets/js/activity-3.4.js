@@ -31,13 +31,13 @@
 
 var activity = [
 
-'<b>1.</b> Did you finish the Lights Out (JavaScript) Lab? (and submit your URL if doing this work for a grade)<br>',
+'<b>1.</b> The jQuery <b>.post()</b> method sends your parameters as if they were values from a form.  So why do this at all?  What is different vs just submitting the form?<br>',
 
 {
-  questionType : 'multiple choice',
-  choices : [
-      ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
-      ['Not so much.', false, 'Well... you should fix that. :)' ] ]
+	questionType : 'multiple choice',
+	choices : [			
+			['There is no difference.  It\'s just another way to do the same thing we\'ve always done to submit forms.', false, 'Please try again.' ],
+			['The rest of the page doesn\'t need to reload when you use AJAX.  Here the difference is COMPLETELY trivial, but in big pages with lots of images you can see value in avoiding a full page refresh.  There AJAX = Do the same thing, but avoid reloading other page elements.', true, 'Correct!' ]]
 },
-    
+
 ];
