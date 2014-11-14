@@ -75,6 +75,8 @@ base:
 
   # Header phrase for the main navigation bar
   nav_header: 'ROSEbotics'
+  nav_header_url: 'http://www.rosebotics.org'
+  
 
   # Link to your privacy policy and terms of service
   privacy_terms_url: 'http://www.rose-hulman.edu/TSC/policies' # TODO: Update!
