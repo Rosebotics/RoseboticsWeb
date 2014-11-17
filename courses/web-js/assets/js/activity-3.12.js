@@ -31,34 +31,14 @@
 
 var activity = [
 
+'<b>1.</b> Did you finish and deploy the Tic-Tac-Toe Lab? (and submit your URL if doing this work for a grade)<br>',
 
-  "<b>1.</b> As you typed thing like <b>this.quizQuestionController</b> and <b>this.quizStatController</b> were you worried that <b>this</b> was not <b>this</b> anymore?<br>",
-
-  {
+{
   questionType : 'multiple choice',
   choices : [
-      ['Yep.  I\'m starting to expect that with JavaScript Object programming inside function callbacks.', true, 'Great!' ],
-      ['Nope.  I was caught completely off gaurd yet again. :(', false, 'Well mark the other answer anyway. :)' ]]
+      ['Yep.  Visit anytime!', true, 'Great!  Keep rockin!' ],
+      ['Not so much.', false, 'Well... you should fix that. :)' ] ]
 },
-
-
-  "<br><br><b>2.</b> What was the jQuery function we used to scoll to the top of the page?<br>",
-
-  {
-    questionType : 'freetext',
-    correctAnswerRegex : /scrollTop/i,
-    correctAnswerOutput : 'Correct!  Specifically it was .scrollTop(0) that we called.  Note that .scrollTop() without a parameter would just return the vertical offset value and not set anything.',
-    incorrectAnswerOutput : 'Please try again.',
-    showAnswerOutput : 'Here is the answer: .scrollTop(0)'
-  },
-  "<br><br><b>3.</b> Why didn't the quiz question quotes display to the screen?<br>",
-
-  {
-    questionType : 'multiple choice',
-    choices : [
-        ['Because the QuizQuestionController class isn\'t 100% finished yet.', true, 'Correct!  Let\'s go fix that!' ],
-        ['We haven\'t written the backend yet.', false, 'Please try again.' ],
-        ['No idea!', false, 'Please try again.' ] ]
-  },
+    
 
 ];
