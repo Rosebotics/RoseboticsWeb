@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -31,48 +30,38 @@
 
 var activity = [
 
-  '<b>1.</b> Match the Google Cloud tool to the description<br>',
-  
-	{
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : '<b>a.</b> Used to create JSON APIs to allow iOS and Android apps to communicate with an AppEngine backend',
-					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
-					correctIndex : 6
-				},
-				{
-					questionHTML : '<b>b.</b> Primary tool we\'ll use for storing data in AppEngine',
-					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
-					correctIndex : 3
-				},
-				{
-					questionHTML : '<b>c.</b> Tool that allows you to build and run backends on Google\'s infrastructure using Java, Python, Go, or PHP (we\'ll use Python)',
-					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
-					correctIndex : 0
-				}, {
-					questionHTML : '<b>d.</b> Tool you\'d use to save files, like images, in the cloud using Google\'s infrastructure',
-					choices : [ 'App Engine', 'Compute Engine', 'Cloud Storage', 'Cloud Datastore', 'Cloud SQL', 'BigQuery', 'Cloud Endpoints'],
-					correctIndex : 2
-				} ],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again. Hints: Don\'t use the answers Computer Engine, Cloud SQL, or BigQuery.',
-	},
-	
+		'<b>1.</b> Modifications in this video were made to the main.Storyboard with what tool?<br>',
 
-  '<br><br><b>2.</b> If you were to visit the website <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a> does that site use AppEngine?<br>',
+		{
+			questionType : 'multiple choice',
+			choices : [
+					[ 'Eclipse', false, 'Please try again' ],
+					[ 'Swift in Xcode', false, 'Please try again' ],
+					[ 'Objective-C in Xcode', false, 'Please try again' ],
+					[ 'Interface Builder in Xcode', true, 'Correct!'] ]
+		},
 
-  { questionType: 'multiple choice',
-    choices: [['Nope.  That URL does not end in .appspot.com so that site does not use AppEngine', false, 'Please try again'],
-              ['There is no good way to know unless you happen to know the creators.  Given that Dr. Fisher made that site it probably does though.', true, 'Correct!  If you are curious www.rosebotics.org is setup as the Custom Domain, but the default AppEngine URL also works.']]},
+		'<br><br><b>2.</b> Which template did this demo start with?<br>',
 
-  '<br><br><b>3.</b> If the AppEngine App ID for <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a> was say... <b>roseboticsweb</b> (it is) what site would load the same content as <a target="_blank" href="http://www.rosebotics.org/">http://www.rosebotics.org</a>?<br><i>Hint: If you get stuck try clicking on that link.<i><br>',
+		{
+			questionType : 'multiple choice',
+			choices : [
+					['Single View Application', false, 'Try again.' ],
+					['Master-Detail Application', true, 'Correct!' ],
+					['Page-Based Application', false, 'Try again.' ],
+					['Tabbed Application', false, 'Try again.' ],
+					['Game', false, 'Try again.' ] ]
+		},
 
-  { questionType: 'multiple choice',
-    choices: [['<a target="_blank" href="http://rosebotics.appspot.com/">http://rosebotics.appspot.com</a>', false, 'Try again.'],
-              ['<a target="_blank" href="http://roseboticsweb.appspot.org/">http://roseboticsweb.appspot.org</a>', false, 'Try again.'],
-              ['<a target="_blank" href="http://rosebotics.appspot.org/">http://rosebotics.appspot.org</a>', false, 'Try again.'],
-              ['<a target="_blank" href="http://roseboticsweb.appspot.com/">http://roseboticsweb.appspot.com</a>', true, 'Correct!']]},
+		'<br><br><b>3.</b> What are the three view controllers we\'re going to implement in this demo?<br>',
+
+		{
+			questionType : 'multiple choice',
+			choices : [
+						['Master-Detail Application, Tabbed Application, and Single View Application', false, 'Try again.' ],
+						['A Swift Introduction, Table Based Navigation, and Google Cloud Endpoints', false, 'Try again.' ],
+						['Buttons and Labels, Touches, and Tables', true, 'Correct!' ],
+						['Core Data, Navigation controllers, and Dialogs', false, 'Try again.' ]]
+		},
 
 ];
-

@@ -29,11 +29,29 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-    '<b>1.</b> Did you get all of the tools installed and URL submited for your install test?<br>',
+    'The real goal of this <b>rapid paced</b> demo was to show how iOS uses connections between a graphical tool (Interface Builder in Xcode) to code (Swift in this case).  So let\'s <b>only</b> ask questions about connections.',
+    '<br><br><b>1.</b> How did we connect the <b>View Controller classes</b> in code to the Storyboard view controllers?<br>',
 
     { questionType: 'multiple choice',
-      choices: [['Yep!  It works and I submitted the link.  Visit anytime.', true, 'Great!  Nice work'],
-                ['Nope.  Task not complete.', false, 'Well darn.  That needs to be fixed before you can do any future lessons.  Don\'t kill yourself trying over and over tonight.  Take a break today and come back fresh tomorrow to fix problems.']]
+      choices: [['We told each Storyboard view controller which custom class it used by setting the name in the Identity Inspector', true, 'Correct!'],
+                ['We created an Interface Builder Outlet (@IBOutlet)', false, 'Please try again.'],
+                ['We created an Interface Builder Action (@IBAction)', false, 'Please try again.'],
+                ['None of the above', false, 'Please try again.']]
     },
+    '<br><br><b>2.</b> How did we connect the <b>Label</b> in the Storyboard to code?<br>',
 
+    { questionType: 'multiple choice',
+        choices: [['We told each Storyboard view controller which custom class it used by setting the name in the Identity Inspector', false, 'Please try again.'],
+                  ['We created an Interface Builder Outlet (@IBOutlet)', true, 'Correct!'],
+                  ['We created an Interface Builder Action (@IBAction)', false, 'Please try again.'],
+                  ['None of the above', false, 'Please try again.']]
+    },
+    '<br><br><b>3.</b> How did we connect the <b>button</b> handlers in the Storyboard to code?<br>',
+
+    { questionType: 'multiple choice',
+        choices: [['We told each Storyboard view controller which custom class it used by setting the name in the Identity Inspector', false, 'Please try again.'],
+                  ['We created an Interface Builder Outlet (@IBOutlet)', false, 'Please try again.'],
+                  ['We created an Interface Builder Action (@IBAction)', true, 'Correct!'],
+                  ['None of the above', false, 'Please try again.']]
+    },
 ];
