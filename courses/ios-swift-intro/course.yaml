@@ -29,11 +29,11 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'iOS Development'
+  title: 'iOS Development - A Swift Intro'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    Welcome to iOS Development.
+    Welcome the iOS Development track - A Swift Intro.  Yes, I'm using the word Swift here as a pun because the Swift intro WILL be about Swift, but we'll also cover some Objective-C.  So really this track is a swift (quick) introduction, not just a Swift introduction.
 
   # Information about the instructor to display on the main page.
   instructor_details: 'Dr. David Fisher<br>Rose-Hulman'
@@ -43,7 +43,7 @@ course:
   # priority. The image alt text allows the image to be understood by text-only
   # screen readers.
   main_video:
-    url: https://www.youtube.com/embed/cAlLdpmXAzM?rel=0
+    url: https://www.youtube.com/embed/QkqFEciBQuw?rel=0
   main_image:
     url: /assets/img/roselogo.png
     alt_text: Rose-Hulman logo
@@ -184,4 +184,3 @@ unit:
 
   # Whether to show the unit links in the side bar.
   show_unit_links_in_leftnav: False
-  
