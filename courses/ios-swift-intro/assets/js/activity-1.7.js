@@ -1,6 +1,6 @@
 var activity = [
 
-    "<b>1.</b> Did you complete the Xcode installation, create a Hello World app, and run it in the simulator (and submit it on Moodel if taking this course for credit)?<br>",
+    "<b>1.</b> Did you complete the Xcode installation, create a Hello World app, and run it in the simulator (and submit it on Moodle if taking this course for credit)?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
