@@ -1,6 +1,6 @@
 var activity = [
 
-    "<b>1.</b> Did you complete the Lights Out Universal App lab (and submit it on Moodle if taking this course for credit)?<br>",
+    "<b>1.</b> Did you complete the ScoreKeeper Objective-C Lab (and submit it on Moodle if taking this course for credit)?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [

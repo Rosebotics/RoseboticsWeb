@@ -37,7 +37,7 @@ var activity = [
 					choices : [ "Swift", "Objective-C", "Both", "Neither" ],
 					correctIndex : 1
 				}, {
-					questionHTML : "<b>f.</b> Uses [ ] to create objects and call functions",
+					questionHTML : "<b>f.</b> Uses some unique syntax, like [ ] to create objects and call functions, or @ symbols at the start of Strings (both a bit weird).",
 					choices : [ "Swift", "Objective-C", "Both", "Neither" ],
 					correctIndex : 1
 				}, {
