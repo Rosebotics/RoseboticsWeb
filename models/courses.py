@@ -498,7 +498,7 @@ class Lesson12(object):
     @property
     def has_activity(self):
         # pylint: disable-msg=g-explicit-bool-comparison
-        return self.activity != ''
+        return self.activity
 
     @property
     def manual_progress(self):
