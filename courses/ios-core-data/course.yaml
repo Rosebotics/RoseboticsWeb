@@ -29,11 +29,11 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'iOS Development - A Swift Intro'
+  title: 'iOS Development - Core Data'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    Welcome to the iOS Development track - A Swift Intro.  Yes, I'm using the word Swift here as a pun because the Swift intro WILL be about Swift, but we'll also cover some Objective-C.  So really this track is a swift (quick) introduction, not just a Swift introduction.
+    Welcome to the iOS Development track - Core Data.  This is a relatively short unit.  Our goal is to learn about Table based navigation, UI skills such as alert views, and Core Data, Apple's mechanism for saving data within your app.  We will start with simple Core Data models then build up to data models that have many relationships.  Have fun!
 
   # Information about the instructor to display on the main page.
   instructor_details: 'Dr. David Fisher<br>Rose-Hulman'
