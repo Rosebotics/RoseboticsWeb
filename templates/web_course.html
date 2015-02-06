@@ -64,9 +64,17 @@
 			<li><a href = "/web-appengine">Web development - AppEngine Track</a></li>
 			<li><a href = "/web-css">Web development - CSS Track</a></li>
 			<li><a href = "/web-js">Web development - JavaScript Track</a></li>
-			<!-- <li><a href = "/web-endpoints">Web development - Endpoints, Angular, Ajax Track</a> (Coming someday)</li>  -->
+      <!-- <li><a href = "/web-endpoints">Web development - Endpoints, Angular, Ajax Track</a> (Coming someday)</li>  -->
 			</ol>
       </div>
+
+      <div>Overall = {{progress.overall}}</div>
+      <ol>
+      {% for track in progress.tracks %}
+      <li>Track = {{track}}</li>  
+      {% endfor %}
+      </ol>
+
       
 		<!-- 16:9 aspect ratio -->
 		<div class="embed-responsive embed-responsive-16by9">

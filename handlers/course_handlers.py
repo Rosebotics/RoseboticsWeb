@@ -1,3 +1,5 @@
+import logging
+
 from handlers import base_handler
 
 
@@ -9,6 +11,9 @@ class WebCoursePage(base_handler.BasePage):
   def page_title(self, player, values):
     return "Web Development"
 
+  def update_values(self, student, values):
+    logging.info("Student=" + str(student))
+    values["progress"] = {"overall": .071, "tracks": [0.6, 0, 0]}
 
 class IosCoursePage(base_handler.BasePage):
   def template_file(self):
@@ -16,3 +21,6 @@ class IosCoursePage(base_handler.BasePage):
 
   def page_title(self, player, values):
     return "iOS Development"
+
+  def update_values(self, student, values):
+    pass
