@@ -46,11 +46,11 @@ var activity = [
     questionsList : [
         {
           questionHTML : '',
-          choices : [ 'We got the Authorizer via the sign-in web view', 'We set the Authoizer on the service (within _setAuthorizer)', 'We created the Service', 'We saved the users password', 'We took care of using a saved Authorizer if available, so a users wouldn\'t need to sign in again.' ],
+          choices : [ 'We got the Authorizer via the sign-in web view', 'We set the Authoizer on the service (within _setAuthorizer)', 'We created the Service', 'We saved the user\'s password', 'We took care of using a saved Authorizer if available, so a users wouldn\'t need to sign in again.' ],
           correctIndex : [1,2,4]
         }],
     allCorrectOutput : 'Well done!',
-    someIncorrectOutput : 'Please try again. Hints: We never have access to the user\'s password (that is the whole point of OAuth) and we got the Authorizer last time',
+    someIncorrectOutput : 'Please try again. Hints: We got the Authorizer via the sign-in web view LAST TIME and we never have access to the user\'s password (that is the whole point of OAuth).',
   },
 
     '<br><br><b>3.</b> In preparation for the second time a user launches the app, what function did we call to know if we have a user is signed in already?  Fill in this blank if ([RHOAuthUtils ___]) {...perform segue...}?<br>',
