@@ -4,7 +4,7 @@ from google.appengine.api import users
 from google.appengine.ext import ndb
 import webapp2
 
-from models.models import Student
+
 from settings import jinja_env
 
 
@@ -45,18 +45,15 @@ class BasePage(webapp2.RequestHandler):
       logging.info("current user = " + str(user.email()))
       if not user:
         self.redirect(users.create_login_url(self.request.referer))
-      
-      student = Student.get_by_email(user.email())
-      
       values = {"logout_url": users.create_logout_url("/")}
-      self.update_values(student, values)
+      self.update_values(user, values)
       template = jinja_env.get_template(self.template_file())
       self.response.out.write(template.render(values))
     except Exception, e:
       logging.exception(e)
       self.redirect("/")
-  
-  def update_values(self, student, values):
+
+  def update_values(self, user, values):
     pass #raise Exception("Subclasses must override this method")
-  
+
 
