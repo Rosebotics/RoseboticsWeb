@@ -902,10 +902,7 @@ class UnitLessonCompletionTracker(object):
         return result
 
     def get_lesson_breakdown(self, student, progress=None):
-        """Returns a dict with the number of task complete (*2) and total number of tasks (*2) for each unit."""
-        if student.is_transient:
-            return {}
-
+        """Returns a dict with the number of tasks complete (*2) and total number of tasks (*2) for each unit."""
         units = self._get_course().get_units()
         if progress is None:
             progress = self.get_or_create_progress(student)
