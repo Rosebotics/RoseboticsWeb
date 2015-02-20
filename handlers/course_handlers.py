@@ -9,7 +9,7 @@ from models.models import Student
 
 
 ### PAGES ###
-class WebCoursePage(base_handler.BasePage):
+class WebCoursePage(base_handler.OAuthBasePage):
   def template_file(self):
     return "templates/web_course.html"
 
@@ -21,7 +21,7 @@ class WebCoursePage(base_handler.BasePage):
     values["progress"] = get_progress_for_course(user, "web")
 
 
-class IosCoursePage(base_handler.BasePage):
+class IosCoursePage(base_handler.OAuthBasePage):
   def template_file(self):
     return "templates/ios_course.html"
 

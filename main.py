@@ -67,7 +67,7 @@ webapp2_i18n_config = {'translations_path': os.path.join(
     appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
 
 rosebotics_routes = [('/', main_handler.HomePage),
-                     ('/course', main_handler.CoursePage),
+                     ('/courses', main_handler.CoursesPage),
                      ('/competition', main_handler.CompetitionPage),
                      ('/platform', main_handler.PlatformPage),
                      ('/about', main_handler.AboutPage),

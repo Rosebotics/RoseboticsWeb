@@ -36,15 +36,25 @@ class NeedsCreateAccessException(Exception):
   def __str__(self):
     return 'Create access required'
 
-
 class BasePage(webapp2.RequestHandler):
-  """ALL page handlers should inherit from this one."""
+  """ All pages that require login should inherit from this one."""
+  def get(self):
+    values = {}
+    self.update_values(values)
+    template = jinja_env.get_template(self.template_file())
+    self.response.out.write(template.render(values))
+
+  def update_values(self, values):
+    pass
+
+
+class OAuthBasePage(webapp2.RequestHandler):
+  """ All pages that require login should inherit from this one."""
   def get(self):
     try:
       user = users.get_current_user()
-      logging.info("current user = " + str(user.email()))
       if not user:
-        self.redirect(users.create_login_url(self.request.referer))
+        self.redirect(users.create_login_url(self.request.uri))
       values = {"logout_url": users.create_logout_url("/")}
       self.update_values(user, values)
       template = jinja_env.get_template(self.template_file())
@@ -54,6 +64,6 @@ class BasePage(webapp2.RequestHandler):
       self.redirect("/")
 
   def update_values(self, user, values):
-    pass #raise Exception("Subclasses must override this method")
+    pass
 
 
