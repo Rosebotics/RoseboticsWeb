@@ -901,7 +901,20 @@ class UnitLessonCompletionTracker(object):
 
         return result
 
-    def get_lesson_breakdown(self, student, progress=None):
+    def get_task_total(self):
+      """ Returns the total number of tasks for this track """
+      total_tasks = 0
+      units = self._get_course().get_units()
+      for unit in units:
+        if unit.type == verify.UNIT_TYPE_UNIT:
+          lessons = self._get_course().get_lessons(unit.unit_id)
+          for lesson in lessons:
+            total_tasks += 2
+            if lesson.has_activity:
+              total_tasks += 2
+      return total_tasks
+
+    def get_task_progress(self, student, progress=None):
         """Returns a dict with the number of tasks complete (*2) and total number of tasks (*2) for each unit."""
         units = self._get_course().get_units()
         if progress is None:

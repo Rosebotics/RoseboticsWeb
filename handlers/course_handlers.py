@@ -48,11 +48,10 @@ def get_progress_for_course(user, course_prefix):
       continue
     namespace_manager.set_namespace(course_app_context.namespace)
     student = Student.get_by_email(user.email())
+    course = CourseModel12.load(course_app_context)
+    tracker = progress.UnitLessonCompletionTracker(course)
     if student:
-      course = CourseModel12.load(course_app_context)
-      tracker = progress.UnitLessonCompletionTracker(course)
-      lesson_breakdown = tracker.get_lesson_breakdown(student)
-      logging.info("Lesson progress in " + url_path + " = " + str(lesson_breakdown))
+      lesson_breakdown = tracker.get_task_progress(student)
       track_tasks_completed = 0
       total_track_tasks = 0
       for unit_tasks_completed, total_unit_tasks in lesson_breakdown.values():
@@ -61,8 +60,10 @@ def get_progress_for_course(user, course_prefix):
       track_progress.append(track_tasks_completed/float(total_track_tasks))
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
+      logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed, total_track_tasks))
     else:
-      logging.info("No student found in " + url_path)
       track_progress.append(0)
-      total_course_tasks += 100 # TODO: Modify get_lesson_breakdown so it doesn't require a student so we can get total_track_tasks for those
+      total_track_tasks = tracker.get_task_total()
+      total_course_tasks += total_track_tasks
+      logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
