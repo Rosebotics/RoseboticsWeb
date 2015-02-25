@@ -91,7 +91,7 @@ var activity = [
     questionType : 'multiple choice group',
     questionsList : [
         {
-            questionHTML : 'What are the 2 best tricks (shown in the video) in Terminal to make it easier to type the magic commands again.',
+            questionHTML : 'What are 2 great tricks in Terminal to make it easier to type the magic commands again using Terminal\'s built in memory of what you\'ve typed before.',
             choices : [ 'Tab',
                         'Up arrow',
                         'Crtl R',

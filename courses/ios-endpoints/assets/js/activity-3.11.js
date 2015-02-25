@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // Usage instructions: Create a single array variable named 'activity'. This
 // represents explanatory text and one or more questions to present to the
 // student. Each element in the array should itself be either
@@ -30,29 +29,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
+    '<b>1.</b> In this video we don\'t even look at the <b>GTLMoviequotesMovieQuote* returnedMovieQuote</b> variable in the response.  However if we added an <b>NSLog(@"quote = %@", returnedMovieQuote.quote);</b> what word would get printed?  (might need to open your movie_quotes_api.py to find the answer.<br>',
+    {
+      questionType : 'freetext',
+      correctAnswerRegex : /deleted/i,
+      correctAnswerOutput : 'Correct!  Yep, we were required by Endpoints Proto Datastore to return a MovieQuote from a @MovieQuote.method so we made one (that is not stored anywhere) that had quote=deleted.  We could check that property, but we choose not to bother.  Checking only the error variable should be safe.',
+      incorrectAnswerOutput : 'Looking for deleted',
+      outputHeight : '60px'
+    }
 
-                '<b>1.</b> My Weatherpics client app can perform the following tasks:<br>',
-
-            {
-              questionType : 'multiple choice group',
-              questionsList : [
-                  {
-                    questionHTML : '',
-                    choices : [ 'Works with the deployed app',
-                                'Shows Loading Weatherpics with spinner before initial data load (might be VERY brief)',
-                                'Displays a list of Weatherpic captions on load',
-                                'Does a refresh of the Weatherpic captions on a table pull down (refresh control)',
-                                'Displays a detail view of the Weatherpic to show the image',
-                                'Works with localhost as well',
-                                'Shows No Weatherpics if there are none (good test for localhost)',
-                                'Can create a new Weatherpic by typing in an imageUrl',
-                                'Can create a new Weatherpic by typing leaving the imageUrl blank to get a random image url',
-                                'Can delete a Weatherpic',
-                                'Can edit a caption of a Weatherpic',
-                                'Displays the iOS Create, Delete, and Edit actions on the web app (localhost or deployed)' ],
-                    correctIndex : [0,1,2,3,4,5,6,7,8,9,10,11]
-                  }],
-              allCorrectOutput : 'Nice work finishing this lab!  It was a big task!',
-              someIncorrectOutput : 'Needs to be able to perform all of the requests.',
-            }
 ];

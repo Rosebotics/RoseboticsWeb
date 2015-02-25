@@ -30,7 +30,19 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> What was the compiler flag you had to add to the GTL Client Library?',
+                '<b>1.</b> What frameworks had to be added?',
+                {
+                  questionType : 'multiple choice group',
+                  questionsList : [
+                      {
+                        questionHTML : '',
+                        choices : [ 'CoreGraphics', 'SystemConfiguration', 'AVFoundation', 'Security' ],
+                        correctIndex : [1, 3]
+                      }],
+                  allCorrectOutput : 'Well done!',
+                  someIncorrectOutput : 'Please try again.',
+                },
+                '<br><br><b>2.</b> What was the compiler flag you had to add to the GTL Client Library?',
 
                 { questionType: 'freetext',
                   correctAnswerRegex: /-fno-objc-arc/i,

@@ -30,33 +30,39 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-  '<b>1.</b> Which MovieQuotes API method does update use?<br>',
-  '<img src="assets/img/moviequotes_api.png" alt="Moviequotes API methods"><br>',
+  '<b>1.</b> In order to create the query object for adding a quote, we used a class method on GTLQueryMoviequotes.  What was the name of that method?<br>',
+
+  {
+    questionType : 'multiple choice',
+    choices : [
+        [ 'queryForMoviequoteList', false, 'Please try again.' ],
+        [ 'queryForMoviequoteInsertWithObject:', true, 'Correct!  For the backend we made a list, insert, and delete API method.  This time we\'re using the *List* method.'],
+        [ 'queryForMoviequoteDeleteWithEntityKey:', false, 'Please try again.' ],
+        [ 'queryForMoviequoteSomethingElse', false, 'Please try again. ' ] ]
+  },
+  '<br><br><b>2.</b> Under the hood the moviequotes.moviequote.insert method uses what type of RESTful API method?  Here is an explaination of each:<br>',
+  '<img width="90%" src="assets/img/restful_api_methods.png" alt="RESTful API Methods"><br>',
+  '<i>Image from <a href="http://en.wikipedia.org/wiki/Representational_state_transfer">http://en.wikipedia.org/wiki/Representational_state_transfer</a></i><br>',
+  { questionType: 'multiple choice',
+    choices: [['GET', false, 'Please try again.'],
+              ['PUT', false, 'Please try again.'],
+              ['POST', true, 'Correct! POST request aren\'t quite as easy to manually make as GET request, but if you want to practice you can always use the API Explorer. '],
+              ['DELETE', false, 'Please try again.']]},
+
+  '<br><br><b>3.</b> We had to make a silly hack for localhost.  Why did we have to do that again?<br>',
 
   { questionType: 'multiple choice',
-    choices: [['moviequotes.moviequote.delete', false, 'Please try again'],
-              ['moviequotes.moviequote.insert', true, 'Correct.  Same method we used when adding a quote.'],
-              ['moviequotes.moviequote.list', false, 'Please try again']]
-  },
+    choices: [['Because localhost uses http instead of https', false, 'Please try again. That is a true statement. You are right about it being true, but it is not the answer here.'],
+            ['Because when you use Endpoints the POST body is actually sent in a zipped format instead of plain text that only the deployed version unzips automatically.', true, 'Correct!  Seems like they could just implement that same behavior for localhost right?  Oh well.'],
+            ['Because localhost is talking to your computer and not actually sendinging data out to the web', false, 'Please try again. That is a true statement. You are right about it being true, but it is not the answer here.']]},
 
-  '<br><br><b>2.</b> To play with adding and updating quotes I did these three queries to http://fisherds-movie-quotes.appspot.com/_ah/api/explorer What will the end result be?<br>',
-  '<br><h2>Insert #1</h2>',
-  '<img src="assets/img/explorer_adding_a_quote.png" alt="Moviequotes API explorer"><br>',
-  'That response gave me an entityKey that I used in Query #2 (assume I copy pasted it correctly)<br>',
-  '<br><h2>Insert #2</h2>',
-  '<img src="assets/img/explorer_updating_a_quote.png" alt="Moviequotes API explorer"><br>',
-  '<br><h2>Insert #3</h2>',
-  '<img src="assets/img/explorer_updating_a_quote_missing_field.png" alt="Moviequotes API explorer"><br>',
+  '<br><br>Two videos ago when we did queryForQuotes, the moviequotes.moviequote.list response was converted to a GTLMoviequotesMovieQuoteCollection<br>',
+  '<b>4.</b> In this video, the moviequotes.moviequote.insert response was converted to a ...<br>',
+  { questionType: 'multiple choice',
+    choices: [['GTLMoviequotesMovieQuoteCollection', false, 'Please try again.'],
+              ['GTLQueryMoviequotes', false, 'Please try again.'],
+              ['GTLMoviequotesMovieQuote', true, 'Correct! The response is a single GTLMoviequotesMovieQuote (the one that was just added)'],
+              ['GTLServiceMoviequotes', false, 'Please try again.']]},
 
-    { questionType: 'multiple choice',
-      choices: [['You\'d now have 3 quotes.', false, 'Please try again'],
-                ['You\'d now have 2 quotes', false, 'Please try again'],
-                ['You\'d now have 1 quote with quote = "My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "Princess Bride"', false, 'Please try again'],
-                ['You\'d now have 1 quote with quote = "My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "The Princess Bride"', false, 'Please try again'],
-                ['You\'d now have 1 quote with quote = "Hello. My name is Inigo Montoya. You killed my father. Prepare to die." and have no movie title', false, 'Please try again. When you leave out a field it remains unchanged.'],
-                ['You\'d now have 1 quote with quote = "Hello. My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "The Princess Bride"', true, 'Correct! When you leave out a field it remains unchanged.']]},
-
-   '<br>Note, if the image showed the response from the server you\'d know the answer right away. :)'
 
 ];
-
