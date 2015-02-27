@@ -30,33 +30,25 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-  '<b>1.</b> Which MovieQuotes API method does update use?<br>',
-  '<img src="assets/img/moviequotes_api.png" alt="Moviequotes API methods"><br>',
+                '<b>1.</b> Which MovieQuotes API method does update use?<br>',
+                '<img src="assets/img/moviequotes_api.png" alt="Moviequotes API methods"><br>',
 
-  { questionType: 'multiple choice',
-    choices: [['moviequotes.moviequote.delete', false, 'Please try again'],
-              ['moviequotes.moviequote.insert', true, 'Correct.  Same method we used when adding a quote.'],
-              ['moviequotes.moviequote.list', false, 'Please try again']]
-  },
+                { questionType: 'multiple choice',
+                  choices: [['moviequotes.moviequote.delete', false, 'Please try again'],
+                            ['moviequotes.moviequote.insert', true, 'Correct.  Same method we used when adding a quote.'],
+                            ['moviequotes.moviequote.list', false, 'Please try again']]
+                },
 
-  '<br><br><b>2.</b> To play with adding and updating quotes I did these three queries to http://fisherds-movie-quotes.appspot.com/_ah/api/explorer What will the end result be?<br>',
-  '<br><h2>Insert #1</h2>',
-  '<img src="assets/img/explorer_adding_a_quote.png" alt="Moviequotes API explorer"><br>',
-  'That response gave me an entityKey that I used in Query #2 (assume I copy pasted it correctly)<br>',
-  '<br><h2>Insert #2</h2>',
-  '<img src="assets/img/explorer_updating_a_quote.png" alt="Moviequotes API explorer"><br>',
-  '<br><h2>Insert #3</h2>',
-  '<img src="assets/img/explorer_updating_a_quote_missing_field.png" alt="Moviequotes API explorer"><br>',
+                '<br><br><b>2.</b> What is the name of the property on the GTLMoviequotesMovieQuote that makes the <b>insert</b> query perform an <b>Update</b> instead of a <b>Create</b>?<br>',
 
-    { questionType: 'multiple choice',
-      choices: [['You\'d now have 3 quotes.', false, 'Please try again'],
-                ['You\'d now have 2 quotes', false, 'Please try again'],
-                ['You\'d now have 1 quote with quote = "My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "Princess Bride"', false, 'Please try again'],
-                ['You\'d now have 1 quote with quote = "My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "The Princess Bride"', false, 'Please try again'],
-                ['You\'d now have 1 quote with quote = "Hello. My name is Inigo Montoya. You killed my father. Prepare to die." and have no movie title', false, 'Please try again. When you leave out a field it remains unchanged.'],
-                ['You\'d now have 1 quote with quote = "Hello. My name is Inigo Montoya. You killed my father. Prepare to die." and movie = "The Princess Bride"', true, 'Correct! When you leave out a field it remains unchanged.']]},
+        		{
+        			questionType : "freetext",
+        			correctAnswerRegex : /entityKey/i,
+        			correctAnswerOutput : "Correct!",
+        			incorrectAnswerOutput : "Please try again.",
+        			showAnswerOutput : "Here is the answer: entityKey"
+        		},
 
-   '<br>Note, if the image showed the response from the server you\'d know the answer right away. :)'
 
 ];
 
