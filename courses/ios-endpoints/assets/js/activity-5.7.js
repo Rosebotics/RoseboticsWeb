@@ -30,7 +30,7 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                '<b>1.</b> NO real questions.  Did you get the app to communicate with localhost?<br>',
+                '<b>1.</b> I\'m curious if you were successful.  Did you get the app to communicate with localhost?<br>',
 
             {
               questionType : 'multiple choice',
@@ -39,5 +39,13 @@ var activity = [
                   ['I installed PyCrypto but it still didn\'t work', true, 'Well darn.  Thanks for trying.  Maybe next time things will go better. :)' ],
                   ['Didn\'t try', false, 'Please try again.' ] ]
             },
+
+            "<br><br><b>2.</b> Regardless of you localhost test you should submit your finished GradeRecorder app (that at least works with the deployed version).  Did you complete the GradeRecorder (Objective-C) follow along (and submit it on Moodle if taking this course for credit)?<br>",
+        	{
+        		questionType : "multiple choice",
+        		choices : [
+        				["Yep.  All set!", true, "Great!" ],
+        				["No so much.", false, "Well ya kinda need to get that done.  Take a break and work on it tomorrow." ] ]
+        	},
 ];
 
