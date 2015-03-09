@@ -10,12 +10,12 @@ class HomePage(base_handler.BasePage):
     return 'ROSEbotics'
 
 
-class CoursePage(base_handler.BasePage):
+class CoursesPage(base_handler.OAuthBasePage):
   def template_file(self):
     return 'templates/courses.html'
 
   def page_title(self, player, values):
-    return 'Course'
+    return 'Courses'
 
 
 class CompetitionPage(base_handler.BasePage):

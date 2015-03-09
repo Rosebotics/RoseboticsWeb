@@ -901,6 +901,44 @@ class UnitLessonCompletionTracker(object):
 
         return result
 
+    def get_task_total(self):
+      """ Returns the total number of tasks for this track """
+      total_tasks = 0
+      units = self._get_course().get_units()
+      for unit in units:
+        if unit.type == verify.UNIT_TYPE_UNIT:
+          lessons = self._get_course().get_lessons(unit.unit_id)
+          for lesson in lessons:
+            total_tasks += 2
+            if lesson.has_activity:
+              total_tasks += 2
+      return total_tasks
+
+    def get_task_progress(self, student, progress=None):
+        """Returns a dict with the number of tasks complete (*2) and total number of tasks (*2) for each unit."""
+        units = self._get_course().get_units()
+        if progress is None:
+            progress = self.get_or_create_progress(student)
+
+        result = {}
+        for unit in units:
+            num_tasks_completed = 0
+            total_num_tasks = 0
+            if unit.type == verify.UNIT_TYPE_ASSESSMENT:
+                result[unit.unit_id] = self.is_assessment_completed(
+                    progress, unit.unit_id)
+            elif unit.type == verify.UNIT_TYPE_UNIT:
+                unit_progress = self.get_lesson_progress(student, unit.unit_id, progress)
+                for lesson_number in unit_progress:
+                  status_dict = unit_progress[lesson_number]
+                  if status_dict["has_activity"]:
+                    total_num_tasks += 4
+                  else:
+                    total_num_tasks += 2
+                  num_tasks_completed += status_dict["html"] + status_dict["activity"]
+                result[unit.unit_id] = (num_tasks_completed, total_num_tasks)
+        return result
+
     def get_unit_percent_complete(self, student):
         """Returns a dict with each unit's completion in [0.0, 1.0]."""
         if student.is_transient:
