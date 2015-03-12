@@ -1,0 +1,25 @@
+{% if rosebotics_student %}
+  <div class="text-right rosebotics-name">Your name | <a data-toggle="modal" data-target="#confirm-signout-modal" href="#">Sign out</a></div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="confirm-signout-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-info">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Confirm sign out</h4>
+        </div>
+        <div class="modal-body">
+          <p>This will sign you out of all sites that you have open that use the same Google sign in.</p>
+          <p>To only stop using ROSEbotics, click Cancel and close the ROSEbotics tab.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a href="{{ logout_url }}" class="btn btn-primary">Sign out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+

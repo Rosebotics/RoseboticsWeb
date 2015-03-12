@@ -2,39 +2,12 @@ import logging
 
 from controllers import sites
 from google.appengine.api import namespace_manager
-from handlers import base_handler
 from models import progress
 from models.courses import CourseModel12
 from models.models import Student
 
 
-### PAGES ###
-class WebCoursePage(base_handler.OAuthBasePage):
-  def template_file(self):
-    return "templates/web_course.html"
-
-  def page_title(self, user, values):
-    return "Web Development"
-
-  def update_values(self, user, values):
-    """ Updates the values passed to Jinja to add the progress in each track and the overall course """
-    values["progress"] = get_progress_for_course(user, "web")
-
-
-class IosCoursePage(base_handler.OAuthBasePage):
-  def template_file(self):
-    return "templates/ios_course.html"
-
-  def page_title(self, user, values):
-    return "iOS Development"
-
-  def update_values(self, user, values):
-    """ Updates the values passed to Jinja to add the progress in each track and the overall course """
-    values["progress"] = get_progress_for_course(user, "ios")
-
-
 ### Helper methods ###
-
 def get_progress_for_course(user, course_prefix):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track
       percentages (in the order they appear in app.yaml) for the given course-prefix. """

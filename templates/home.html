@@ -1,47 +1,8 @@
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Rosebotics home page">
-    <meta name="author" content="Dave Fisher">
-
-    <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-    .subtitle {
-      font-style:italic;
-      font-size:22px;
-    }
-    .warning {
-      color: red;
-      font-size:18px;
-      margin: 0px;
-      padding: 0px;
-    }
-    .underline {
-      font-style:bold;;
-      text-decoration:underline;
-    }
-    </style>
-
-<title>ROSEbotics</title>
-
-    <!-- Custom styles for this template -->
-    <link href="/static/css/justified-nav.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
+  {% include "templates/head.html" %}
   <body>
     <div class="container">
+      {% include "templates/user_toolbar.html" %}
       <div class="masthead">
         <h3 class="text-muted">Learning about robotics and entrepreneurial opportunity with Rose-Hulman</h3>
         <ul class="nav nav-justified">
@@ -71,17 +32,17 @@
 		<p>Visit our <b>series of courses</b> to see what ROSEbotics offers. Currently, we have a complete course in <b>Android development</b>, <b>Web development</b>, and </b>iOS development</b>.  New content is added every day.
 <!--  The next sentence will be true once all the course material is created. -->
 <!-- 		The courses are designed for Rose-Hulman alumni from any major so they assume no prior knowledge in programming if you start at the beginning.  The courses build on one another beginning with Python, moving into Arduino, and then finishing with iOS and Android integration for your robots!  Coming by the summer of 2015.</p> -->
-          <p><a class="btn btn-primary" href="/course" role="button">View details »</a></p>
+          <p><a class="btn btn-primary" href="/course" role="button">View details</a></p>
         </div>
         <div class="col-lg-4">
           <h2>Competition</h2>
           <p>There is an <b>annual competition</b> planned to take place at Rose-Hulman Homecoming beginning the Homecoming 2015.  The competition will be available only to Rose-Hulman students, alumni, and their families.  This is a great way to get your kids excited about robotics.</p>
-          <p><a class="btn btn-primary" href="/competition" role="button">View details »</a></p>
+          <p><a class="btn btn-primary" href="/competition" role="button">View details</a></p>
        </div>
         <div class="col-lg-4">
           <h2>Platform</h2>
           <p>Both the <b>courses</b> and the <b>competition</b> make use of the ROSEbotics <b>platform</b>.  The platform will update every few years, but the current platform uses a <a href="http://www.dfrobot.com/index.php?route=product/product&filter_name=bluno%20nano&product_id=1122#.U2EwMvldV8E">Bluno Nano</a>, <a href="http://www.pololu.com/product/1551">Rover 5 tank base</a>, and <a href="http://www.dagurobot.com/search.php?encode=YToyOntzOjg6ImtleXdvcmRzIjtzOjg6ImV4cGxvcmVyIjtzOjE4OiJzZWFyY2hfZW5jb2RlX3RpbWUiO2k6MTM5ODg3ODMzMzt9">Explorer PCB kit</a>.  The next generation will likely use an Intel Edison and MiniQ. The Rosebotics platform will be available as soon as possible :) (no promises on a date at present).</p>
-          <p><a class="btn btn-primary" href="/platform" role="button">View details »</a></p>
+          <p><a class="btn btn-primary" href="/platform" role="button">View details</a></p>
         </div>
       </div>
 
@@ -94,9 +55,5 @@
     </div> <!-- /container -->
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
-
+  {% include "templates/load_scripts.html" %}
 </body></html>
