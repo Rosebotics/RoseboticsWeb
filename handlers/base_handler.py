@@ -3,7 +3,7 @@ import logging
 from google.appengine.api import users
 import webapp2
 
-from models.rosebotics_models import RoseboticsStudent 
+from models.rosebotics_models import RoseboticsStudent
 from settings import jinja_env
 
 class BasePage(webapp2.RequestHandler):
@@ -14,7 +14,7 @@ class BasePage(webapp2.RequestHandler):
     if user:
       rosebotics_student = RoseboticsStudent.get_by_id(user.email().lower())
       if rosebotics_student is None:
-        rosebotics_student = RoseboticsStudent()
+        rosebotics_student = RoseboticsStudent(id=user.email().lower())
         rosebotics_student.put()
       values["logout_url"] = users.create_logout_url("/")
       values["rosebotics_student"] = rosebotics_student
@@ -23,7 +23,7 @@ class BasePage(webapp2.RequestHandler):
       return
     else:
       values["login_url"] = users.create_login_url("/courses")
-    
+
     self.update_values(user, values)
     template = jinja_env.get_template(self.template_file())
     self.response.out.write(template.render(values))

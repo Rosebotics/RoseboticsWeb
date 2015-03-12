@@ -17,7 +17,7 @@ class CoursesPage(base_handler.BasePage):
     if not user:
       return
     # TODO: get progress for all courses
-    
+
 
 
 class CompetitionPage(base_handler.BasePage):
@@ -34,14 +34,6 @@ class PlatformPage(base_handler.BasePage):
 
   def page_title(self, player, values):
     return 'Platform'
-
-
-class VideosPage(base_handler.BasePage):
-  def template_file(self):
-    return 'templates/underconstruction.html'
-
-  def page_title(self):
-    return 'Videos'
 
 
 class AboutPage(base_handler.BasePage):
