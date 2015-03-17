@@ -1,0 +1,15 @@
+{% set navigation_bar = [
+    ('/', 'home', 'Home'),
+    ('/courses', 'courses', 'Courses'),
+    ('/competition', 'competition', 'Competition'),
+    ('/platform', 'platform', 'Platform'),
+    ('/contact', 'contact', 'Contact')
+] -%}
+      <div class="masthead">
+        <h3 class="text-muted">Learning about robotics and entrepreneurial opportunity with Rose-Hulman</h3>
+        <ul class="nav nav-justified">
+			{% for href, id, caption in navigation_bar %}
+  				<li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+			{% endfor %}
+        </ul>
+      </div>
