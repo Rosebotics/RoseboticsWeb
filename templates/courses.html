@@ -2,9 +2,11 @@
   {% include "templates/head.html" %}
   <body>
     <div class="container">
+      {% include "templates/user_toolbar.html" %}
       {% set active_page = "courses" %}
 	  {% include 'templates/navbar.html' %}
-      <!-- Example row of columns -->
+      <div class="row">
+      {% if rosebotics_student %}
       <div class="row">
           <h2>Courses</h2>
       We currently offer four courses, in various stages of development:
