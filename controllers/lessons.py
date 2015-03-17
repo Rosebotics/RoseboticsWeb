@@ -11,26 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Handlers for generating various frontend pages."""
-
-__author__ = 'Saifu Angto (saifu@google.com)'
 
 import copy
 import datetime
+import logging
 import urllib
 import urlparse
 
-from utils import BaseHandler
-from utils import BaseRESTHandler
-from utils import CAN_PERSIST_ACTIVITY_EVENTS
-from utils import CAN_PERSIST_PAGE_EVENTS
-from utils import CAN_PERSIST_TAG_EVENTS
-from utils import HUMAN_READABLE_DATETIME_FORMAT
-from utils import TRANSIENT_STUDENT
-from utils import XsrfTokenManager
-
 from common import jinja_utils
+from google.appengine.ext import db
 from models import courses
 from models import models
 from models import student_work
@@ -43,8 +33,21 @@ from models.student_work import StudentWorkUtils
 from modules import courses as courses_module
 from modules.review import domain
 from tools import verify
+from utils import BaseHandler
+from utils import BaseRESTHandler
+from utils import CAN_PERSIST_ACTIVITY_EVENTS
+from utils import CAN_PERSIST_PAGE_EVENTS
+from utils import CAN_PERSIST_TAG_EVENTS
+from utils import HUMAN_READABLE_DATETIME_FORMAT
+from utils import TRANSIENT_STUDENT
+from utils import XsrfTokenManager
 
-from google.appengine.ext import db
+
+__author__ = 'Saifu Angto (saifu@google.com)'
+
+
+
+
 
 COURSE_EVENTS_RECEIVED = PerfCounter(
     'gcb-course-events-received',
@@ -274,6 +277,7 @@ class CourseHandler(BaseHandler):
                     user.user_id())
                 self.template_value['has_global_profile'] = profile is not None
                 if not student:
+                    logging.info("Enroll the student using their roseboticsStudent account.")
                     student = TRANSIENT_STUDENT
 
             if (student.is_transient and
