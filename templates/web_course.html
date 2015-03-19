@@ -44,11 +44,9 @@
   </head>
 
   <body>
+    {% set active_page = "courses" %}
+	{% include 'templates/navbar.html' %}
     <div class="container">
-      {% include "templates/user_toolbar.html" %}
-      {% set active_page = "courses" %}
-	  {% include 'templates/navbar.html' %}
-
       <!-- Example row of columns -->
       <div class="row">
           <h2>Tracks</h2>

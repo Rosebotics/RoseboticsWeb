@@ -1,10 +1,10 @@
 <html lang="en">
   {% include "templates/head.html" %}
   <body>
+    {% set active_page = "courses" %}
+	{% include 'templates/navbar.html' %}
     <div class="container">
-      {% include "templates/user_toolbar.html" %}
-      {% set active_page = "courses" %}
-	  {% include 'templates/navbar.html' %}
+
       <div class="row">
       {% if rosebotics_student %}
       <div class="row">
