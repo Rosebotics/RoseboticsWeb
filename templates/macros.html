@@ -1,0 +1,28 @@
+{#  An example call to render dialog 
+
+	{% call render_dialog(id='confirm-signout-modal', title='Confirm Sign Out', action_name='Sign Out', action_url='/signout') %}
+    	<p>Are you sure you want to sign out? </p>
+	{% endcall %} 
+#}
+
+{% macro render_dialog(id, title, action_name, action_url) %}
+    <!-- Modal -->
+  <div class="modal fade" id="{{ id }}" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-info">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">{{ title }}</h4>
+        </div>
+        <div class="modal-body">
+          {{ caller() }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a href="{{ action_url }}" class="btn btn-primary">{{ action_name }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endmacro %}
+
