@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from models.rosebotics_models import RoseboticsStudent
 """Handlers that are not directly related to course content."""
 
 import HTMLParser
@@ -650,6 +651,14 @@ class BaseHandler(CourseHandler):
                 CAN_PERSIST_ACTIVITY_EVENTS.value)
             self.template_value['event_xsrf_token'] = (
                 XsrfTokenManager.create_xsrf_token('event-post'))
+            ## ROSEbotics ##
+            rosebotics_student = RoseboticsStudent.get_by_id(email.lower())
+            if rosebotics_student is None:
+              rosebotics_student = RoseboticsStudent(id=user.email().lower())
+              rosebotics_student.put()
+            self.template_value["logout_url"] = users.create_logout_url("/")
+            self.template_value["rosebotics_student"] = rosebotics_student
+            ## END ##
         else:
             self.template_value['loginUrl'] = users.create_login_url(
                 self.request.uri)
@@ -669,7 +678,7 @@ class BaseHandler(CourseHandler):
             if not student:
                 self.template_value['transient_student'] = True
                 student = TRANSIENT_STUDENT
-
+                
         if student.is_transient:
             if supports_transient_student and (
                     self.app_context.get_environ()['course']['browsable']):

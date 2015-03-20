@@ -210,7 +210,7 @@
         <!-- End Google Tag Manager -->
     {% endif %}
 
-    <!-- ButterBar -->
+    <!-- 
     <div class="gcb-butterbar-container">
       <div id="gcb-butterbar-top" class="gcb-butterbar" style="margin-top:50px" aria-live="polite">
         <p id="gcb-butterbar-message"></p>
@@ -218,7 +218,7 @@
       </div>
     </div>
 
-    <!-- logo bar -->
+    
     <div id="gcb-header" role="banner">
       <div class="gcb-aux clearfix">
         <p class="gcb-course-image">
@@ -257,8 +257,11 @@
         {% endif %}
       </div>
     </div>
-
+     -->
     {% block navbar %}
+    {% include 'common/css_js_for_navbar.html' %}
+    {% set active_page = 'courses' %}
+    {% include 'common/navbar.html' %}
     {% endblock %}
 
     <!-- top section -->

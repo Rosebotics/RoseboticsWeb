@@ -1,0 +1,80 @@
+<!-- This is the template for a navbar. Make sure to set the active_page variable before calling includes! -->
+{% set navigation_bar = [
+    ('/courses', 'courses', 'Courses'),
+    ('/competition', 'competition', 'Competition'),
+    ('/platform', 'platform', 'Platform'),
+] -%}
+
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">
+        <img class="logo-r" width="20" height="20" src="/static/images/r.png">
+        <div class="logo-text">ROSEbotics</div>
+      </a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+      {% for href, id, caption in navigation_bar %}
+        <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+      {% endfor %}
+
+      </ul>
+{% if rosebotics_student %}
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Courses <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/android">Android</a></li>
+            <li><a href="/ios">iOS</a></li>
+            <li><a href="/web">Web</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Manage Courses</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Username <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Settings</a></li>
+            <li><a data-toggle="modal" data-target="#confirm-signout-modal" href="#">Sign Out</a></li>
+          </ul>
+        </li>
+      </ul>
+{% endif %}
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+{% if rosebotics_student %}
+    <!-- Modal -->
+  <div class="modal fade" id="confirm-signout-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-info">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Confirm Sign Out</h4>
+        </div>
+        <div class="modal-body">
+            <p>This will sign you out of all sites that you have open that use the same Google sign in.</p>
+     		<p>To only stop using ROSEbotics, click Cancel and close the ROSEbotics tab.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a href="{{ logout_url }}" class="btn btn-primary">Sign Out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+      
+

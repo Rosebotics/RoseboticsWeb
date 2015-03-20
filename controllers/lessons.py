@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from models.rosebotics_models import RoseboticsStudent
+from google.appengine.api import users
 """Handlers for generating various frontend pages."""
 
 import copy
@@ -270,6 +272,7 @@ class CourseHandler(BaseHandler):
         try:
             user = self.personalize_page_and_get_user()
             if user is None:
+                self.redirect('/../courses')
                 student = TRANSIENT_STUDENT
             else:
                 student = Student.get_enrolled_student_by_email(user.email())
@@ -279,7 +282,8 @@ class CourseHandler(BaseHandler):
                 if not student:
                     logging.info("Enroll the student using their roseboticsStudent account.")
                     student = TRANSIENT_STUDENT
-
+                
+                
             if (student.is_transient and
                 not self.app_context.get_environ()['course']['browsable']):
                 self.redirect('/preview')

@@ -14,6 +14,7 @@ class CoursesPage(base_handler.BasePage):
     return "Courses"
 
   def update_values(self, user, values):
+    values['active_page'] = 'courses'
     if not user:
       return
     # TODO: get progress for all courses

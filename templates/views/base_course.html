@@ -21,7 +21,7 @@
   <script src="/static/assets/lib/butterbar.js"></script>
   <link href="/static/assets/css/butterbar.css" rel="stylesheet" type="text/css">
 {% endblock %}
-
+{#
 {% block navbar %}
   <!-- nav bar -->
   <div class="gcb-nav gcb-complex" id="gcb-nav-x">
@@ -31,16 +31,16 @@
         <!-- left-aligned links in order -->
         {{ html_hooks.insert('base:after_navbar_begins') }}
         <li {% if navbar.announcements %}class='active'{% endif %}>
-          {# I18N: Navbar tab. #}
+          
           <a href="announcements">{{ gettext('Announcements') }}</a>
         </li>
         <li {% if navbar.course %}class='active'{% endif %}>
-          {# I18N: Navbar tab. #}
+          
           <a href="course">{{ gettext('Course') }}</a>
         </li>
         {% if course_info.course.forum_embed_url %}
           <li {% if navbar.forum %}class='active'{% endif %}>
-            {# I18N: Navbar tab. #}
+            
             <a href="forum">{{ gettext('Forum') }}</a>
           </li>
         {% endif %}
@@ -53,24 +53,24 @@
         {% endfor %}
         {% if show_course_explorer_tab and logoutUrl %}
           <li class="gcb-pull-right">
-            {# I18N: Navbar tab. #}
+           
             <a href="/explorer/courses">{{ gettext('My Courses') }}</a>
           </li>
           {% if has_global_profile %}
             <li class="gcb-pull-right">
-              {# I18N: Navbar tab. #}
+             
               <a href="/explorer/profile">{{ gettext('Profile') }}</a>
             </li>
           {% endif %}
         {% endif %}
         {% if not transient_student %}
           <li {% if navbar.progress %}class='active'{% endif %}>
-            {# I18N: Navbar tab. #}
+           
             <a href="student/home">{{ gettext('Progress') }}</a>
           </li>
         {% elif can_register %}
           <li {% if navbar.registration %}class='active'{% endif %}>
-            {# I18N: Navbar tab. #}
+            
             <a href="register">{{ gettext('Registration') }}</a>
           </li>
         {% endif %}
@@ -79,3 +79,4 @@
     </div>
   </div>
 {% endblock %}
+#}

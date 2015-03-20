@@ -1,11 +1,5 @@
-<html lang="en">
-  {% include "templates/head.html" %}
-  <body>
-   
-   {% set active_page = "home" %}
-   {% include 'templates/navbar.html' %}
-   <div class="container">
-
+{% extends 'templates/base.html' %}
+{% block content %}
       <!-- Jumbotron -->
       <div class="jumbotron">
         <h1>ROSEbotics</h1>
@@ -38,14 +32,5 @@
         </div>
       </div>
 
-      <!-- Site footer -->
-      <div class="footer">
-        <p>This site has been made possible by the students, faculty, and staff of the <a href="http://www.rose-hulman.edu/robotics">Multidiciplinary Minor in Robotics</a> available at <a href="http://www.rose-hulman.edu">Rose-Hulman</a></p>
-      </div>
 
-
-    </div> <!-- /container -->
-
-
-  {% include "templates/load_scripts.html" %}
-</body></html>
+{% endblock %}
