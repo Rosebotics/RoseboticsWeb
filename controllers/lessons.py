@@ -280,10 +280,13 @@ class CourseHandler(BaseHandler):
                     user.user_id())
                 self.template_value['has_global_profile'] = profile is not None
                 if not student:
-                    logging.info("Enroll the student using their roseboticsStudent account.")
-                    student = TRANSIENT_STUDENT
-                
-                
+                    logging.info("Student enrolled using their roseboticsStudent account.")
+                    ## Enrolling the student using their roseboticsStudent account ##
+                    roseboticsStudent = self.template_value['rosebotics_student']
+                    Student.add_new_student_for_current_user(roseboticsStudent.name, None, None, labels=None)
+                    student = Student.get_enrolled_student_by_email(user.email())
+                    profile = StudentProfileDAO.get_profile_by_user_id(user.user_id())
+
             if (student.is_transient and
                 not self.app_context.get_environ()['course']['browsable']):
                 self.redirect('/preview')
