@@ -272,7 +272,7 @@ class CourseHandler(BaseHandler):
         try:
             user = self.personalize_page_and_get_user()
             if user is None:
-                self.redirect('/../courses')
+                self.redirect("/../courses")
                 student = TRANSIENT_STUDENT
             else:
                 student = Student.get_enrolled_student_by_email(user.email())
@@ -283,7 +283,7 @@ class CourseHandler(BaseHandler):
                     logging.info("Student enrolled using their roseboticsStudent account.")
                     ## Enrolling the student using their roseboticsStudent account ##
                     roseboticsStudent = self.template_value['rosebotics_student']
-                    Student.add_new_student_for_current_user(roseboticsStudent.name, None, None, labels=None)
+                    Student.add_new_student_for_current_user(roseboticsStudent.nickname, None, None, labels=None)
                     student = Student.get_enrolled_student_by_email(user.email())
                     profile = StudentProfileDAO.get_profile_by_user_id(user.user_id())
 
