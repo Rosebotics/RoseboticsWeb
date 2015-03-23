@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from models.rosebotics_models import RoseboticsStudent
+from rosebotics_utils import progress_utils
+import logging
 """Handlers that are not directly related to course content."""
 
 import HTMLParser
@@ -21,7 +23,7 @@ import os
 import re
 import urlparse
 
-from google.appengine.api import users
+from google.appengine.api import users, namespace_manager
 import jinja2
 import webapp2
 
@@ -652,12 +654,21 @@ class BaseHandler(CourseHandler):
             self.template_value['event_xsrf_token'] = (
                 XsrfTokenManager.create_xsrf_token('event-post'))
             ## ROSEbotics ##
+            namespace = namespace_manager.get_namespace()
+            namespace_manager.set_namespace('')
             rosebotics_student = RoseboticsStudent.get_by_id(email.lower())
             if rosebotics_student is None:
               rosebotics_student = RoseboticsStudent(id=user.email().lower())
+              rosebotics_student.name = user.nickname()
               rosebotics_student.put()
+            progress_utils.set_recent_track(rosebotics_student.key, self.request.path_qs)
+            most_recent_course = progress_utils.get_most_recent_course(rosebotics_student.key)
+            if most_recent_course is not None:
+              self.template_value["most_recent_track"] = most_recent_course
+            self.template_value.update(progress_utils.get_recent_tracks(rosebotics_student.key))
             self.template_value["logout_url"] = users.create_logout_url("/")
             self.template_value["rosebotics_student"] = rosebotics_student
+            namespace_manager.set_namespace(namespace)
             ## END ##
         else:
             self.template_value['loginUrl'] = users.create_login_url(

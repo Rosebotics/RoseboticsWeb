@@ -6,3 +6,8 @@ class RoseboticsStudent(ndb.Model):
   username = ndb.StringProperty()
   nickname = ndb.StringProperty()
   details = ndb.TextProperty()
+
+class RecentTrack(ndb.Model):
+  # Parent key of Rosebotics Student
+  # id of track name (i.e. Android, iOS, or Web)
+  path = ndb.StringProperty(indexed=False)

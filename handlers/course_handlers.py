@@ -1,7 +1,7 @@
 import logging
 
 from handlers import base_handler
-from utils import progress_utils
+from rosebotics_utils import progress_utils
 
 
 ### PAGES ###
