@@ -120,7 +120,10 @@
     {% if course_info.base.show_gplus_button %}
       <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
     {% endif %}
-
+	  <!-- We sadly cannot import the javascript last because of GCB code is structured. -->
+	 {% include "common/common_js.html" %}
+	 {% block javascript %}
+	 {% endblock %}
     <script>
       function gcb_edit_hook_point(key) {
         window.location=('dashboard?action=edit_html_hook&key=' +
@@ -259,10 +262,12 @@
     </div>
      -->
     {% block navbar %}
-    {% include 'common/css_js_for_navbar.html' %}
+    {% include 'common/common_css.html' %}
     {% set active_page = 'courses' %}
     {% include 'common/navbar.html' %}
     {% endblock %}
+
+
 
     <!-- top section -->
     <div class="is-wrapper">

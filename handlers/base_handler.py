@@ -17,6 +17,7 @@ class BasePage(webapp2.RequestHandler):
       if rosebotics_student is None:
         rosebotics_student = RoseboticsStudent(id=user.email().lower())
         rosebotics_student.name = user.nickname()
+        rosebotics_student.nickname = user.nickname()
         rosebotics_student.put()
       values["logout_url"] = users.create_logout_url("/")
       values["rosebotics_student"] = rosebotics_student

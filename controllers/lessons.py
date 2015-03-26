@@ -273,7 +273,7 @@ class CourseHandler(BaseHandler):
             user = self.personalize_page_and_get_user()
             if user is None:
                 self.redirect("/../courses")
-                student = TRANSIENT_STUDENT
+                return
             else:
                 student = Student.get_enrolled_student_by_email(user.email())
                 profile = StudentProfileDAO.get_profile_by_user_id(

@@ -10,6 +10,8 @@ from models.rosebotics_models import RecentTrack
 
 
 MOST_RECENT_TRACK_ID = 'most_recent'
+# To track the progress of a course, add the slug below 
+# (make sure the jinja2 template is expecting the right value)
 COURSE_IDS = ['android', 'ios', 'web']
 
 ### Helper methods ###

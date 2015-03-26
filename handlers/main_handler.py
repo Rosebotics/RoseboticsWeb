@@ -1,4 +1,8 @@
 from handlers import base_handler
+import webapp2
+from google.appengine.api import users
+from models.rosebotics_models import RoseboticsStudent
+import json
 
 ### PAGES ###
 class HomePage(base_handler.BasePage):
@@ -59,3 +63,20 @@ class GettingStartedtPage(base_handler.BasePage):
 
   def page_title(self):
     return 'Get Started'
+
+class AccountHandler(webapp2.RequestHandler):
+  def post(self):
+    user = users.get_current_user()
+    if user is None:
+      self.redirect(self.request.referer)
+      return
+    rosebotics_student = RoseboticsStudent.get_by_id(user.email().lower())
+    if rosebotics_student is None:
+      self.redirect(self.request.referer)
+      return
+    rosebotics_student.name = self.request.get('name')
+    rosebotics_student.nickname = self.request.get('nickname')
+    rosebotics_student.username = self.request.get('username')
+    rosebotics_student.details = self.request.get('connection')
+    rosebotics_student.put()
+    self.redirect(self.request.referer)

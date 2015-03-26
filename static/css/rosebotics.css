@@ -1,0 +1,53 @@
+.subtitle {
+	font-style: italic;
+	font-size: 22px;
+}
+
+.warning {
+	color: red;
+	font-size: 18px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.underline {
+	font-style: bold;
+	text-decoration: underline;
+}
+
+.logo-r {
+	float: left;
+}
+
+.logo-text {
+	float: left;
+	margin-left: 10px;
+}
+
+.modal-header {
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+}
+
+.required-asterisk {
+	color: #F00;
+}
+
+input.with-help {
+	width: 95%;
+	margin-bottom: 0px;
+}
+
+textarea.with-help {
+	resize: none;
+	width: 95%;
+	margin-bottom: 0px;
+}
+
+textarea.with-help + .help-icon {
+	top: -45px;
+}
+
+input.with-help + .help-icon {
+	top: -24px;
+}
