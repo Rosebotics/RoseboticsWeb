@@ -70,12 +70,9 @@ rosebotics_routes = [('/', main_handler.HomePage),
                      ('/courses', main_handler.CoursesPage),
                      ('/competition', main_handler.CompetitionPage),
                      ('/platform', main_handler.PlatformPage),
-                     ('/about', main_handler.AboutPage),
-                     ('/videos', main_handler.VideosPage),
-                     ('/contact', main_handler.ContactPage),
-                     ('/gettingstarted', main_handler.GettingStartedtPage),
                      ('/web', course_handlers.WebCoursePage),
-                     ('/ios', course_handlers.IosCoursePage),]
+                     ('/ios', course_handlers.IosCoursePage),
+                     ('/editprofile', main_handler.EditProfileAction),]
 
 # init application
 app = webapp2.WSGIApplication(

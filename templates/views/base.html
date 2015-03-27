@@ -120,7 +120,10 @@
     {% if course_info.base.show_gplus_button %}
       <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
     {% endif %}
-
+	  <!-- We sadly cannot import the javascript last because of GCB code is structured. -->
+	 {% include "common/common_js.html" %}
+	 {% block javascript %}
+	 {% endblock %}
     <script>
       function gcb_edit_hook_point(key) {
         window.location=('dashboard?action=edit_html_hook&key=' +
@@ -210,7 +213,7 @@
         <!-- End Google Tag Manager -->
     {% endif %}
 
-    <!-- ButterBar -->
+    <!-- 
     <div class="gcb-butterbar-container">
       <div id="gcb-butterbar-top" class="gcb-butterbar" style="margin-top:50px" aria-live="polite">
         <p id="gcb-butterbar-message"></p>
@@ -218,7 +221,7 @@
       </div>
     </div>
 
-    <!-- logo bar -->
+    
     <div id="gcb-header" role="banner">
       <div class="gcb-aux clearfix">
         <p class="gcb-course-image">
@@ -257,9 +260,14 @@
         {% endif %}
       </div>
     </div>
-
+     -->
     {% block navbar %}
+    {% include 'common/common_css.html' %}
+    {% set active_page = 'courses' %}
+    {% include 'common/navbar.html' %}
     {% endblock %}
+
+
 
     <!-- top section -->
     <div class="is-wrapper">

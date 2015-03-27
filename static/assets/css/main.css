@@ -29,7 +29,7 @@ html {
   color: #444;
   font-size: 13px;
   line-height: 1.54;
-  padding: 0 15px;
+  /*padding: 0 15px;*/
 }
 
 html, input, textarea {
@@ -523,6 +523,17 @@ a.gcb-button-action, button.gcb-button-action {
   -webkit-transition: all .218s ease-in;
   transition: all .218s ease-in;
 }
+
+.gcb-next-button > a, .gcb-prev-button > a {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+.gcb-next-button > a:hover, .gcb-prev-button > a:hover {
+  text-decoration: none;
+  color: #444;
+}
+
 .gcb-next-button {
   -moz-border-radius: 10px 0px 0px 10px;
   -webkit-border-radius: 10px 0px 0px 10px;

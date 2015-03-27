@@ -11,26 +11,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from models.rosebotics_models import RoseboticsStudent
+from google.appengine.api import users
 """Handlers for generating various frontend pages."""
-
-__author__ = 'Saifu Angto (saifu@google.com)'
 
 import copy
 import datetime
+import logging
 import urllib
 import urlparse
 
-from utils import BaseHandler
-from utils import BaseRESTHandler
-from utils import CAN_PERSIST_ACTIVITY_EVENTS
-from utils import CAN_PERSIST_PAGE_EVENTS
-from utils import CAN_PERSIST_TAG_EVENTS
-from utils import HUMAN_READABLE_DATETIME_FORMAT
-from utils import TRANSIENT_STUDENT
-from utils import XsrfTokenManager
-
 from common import jinja_utils
+from google.appengine.ext import db
 from models import courses
 from models import models
 from models import student_work
@@ -43,8 +35,21 @@ from models.student_work import StudentWorkUtils
 from modules import courses as courses_module
 from modules.review import domain
 from tools import verify
+from utils import BaseHandler
+from utils import BaseRESTHandler
+from utils import CAN_PERSIST_ACTIVITY_EVENTS
+from utils import CAN_PERSIST_PAGE_EVENTS
+from utils import CAN_PERSIST_TAG_EVENTS
+from utils import HUMAN_READABLE_DATETIME_FORMAT
+from utils import TRANSIENT_STUDENT
+from utils import XsrfTokenManager
 
-from google.appengine.ext import db
+
+__author__ = 'Saifu Angto (saifu@google.com)'
+
+
+
+
 
 COURSE_EVENTS_RECEIVED = PerfCounter(
     'gcb-course-events-received',
@@ -267,14 +272,20 @@ class CourseHandler(BaseHandler):
         try:
             user = self.personalize_page_and_get_user()
             if user is None:
-                student = TRANSIENT_STUDENT
+                self.redirect("/../courses")
+                return
             else:
                 student = Student.get_enrolled_student_by_email(user.email())
                 profile = StudentProfileDAO.get_profile_by_user_id(
                     user.user_id())
                 self.template_value['has_global_profile'] = profile is not None
                 if not student:
-                    student = TRANSIENT_STUDENT
+                    logging.info("Student enrolled using their roseboticsStudent account.")
+                    ## Enrolling the student using their roseboticsStudent account ##
+                    roseboticsStudent = self.template_value['rosebotics_student']
+                    Student.add_new_student_for_current_user(roseboticsStudent.nickname, None, None, labels=None)
+                    student = Student.get_enrolled_student_by_email(user.email())
+                    profile = StudentProfileDAO.get_profile_by_user_id(user.user_id())
 
             if (student.is_transient and
                 not self.app_context.get_environ()['course']['browsable']):
