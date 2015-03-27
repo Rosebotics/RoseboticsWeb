@@ -97,13 +97,13 @@
 		<div class="form-group">
         	<label for="student_key" class="col-sm-3 control-label">Name<span class="required-asterisk">*</span></label>
             <div class="col-sm-9">
-            <input type="text" name="name" class="form-control" value="{{ rosebotics_student.name }}"/>
+            <input type="text" id="edit-student-details-modal-name-field" name="name" class="form-control" value="{{ rosebotics_student.name if rosebotics_student.name }}"/>
             </div>
         </div>
         <div class="form-group">
         	<label for="student_key" class="col-sm-3 control-label">Preferred Name<span class="required-asterisk">*</span></label>
             <div class="col-sm-9">
-            <input type="text" name="nickname" class="form-control with-help" value="{{ rosebotics_student.nickname }}"/>
+            <input type="text" name="nickname" class="form-control with-help" value="{{ rosebotics_student.nickname if rosebotics_student.nickname }}"/>
             <span class="glyphicon glyphicon-question-sign help-icon pull-right"aria-hidden="true" data-toggle="tooltip" data-placement="right" title="<div style='width:150px'>This is the name that will appear in the upper-right hand corner</div>"></span>
             </div>
         </div>
