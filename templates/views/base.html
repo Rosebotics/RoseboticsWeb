@@ -120,10 +120,6 @@
     {% if course_info.base.show_gplus_button %}
       <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
     {% endif %}
-	  <!-- We sadly cannot import the javascript last because of GCB code is structured. -->
-	 {% include "common/common_js.html" %}
-	 {% block javascript %}
-	 {% endblock %}
     <script>
       function gcb_edit_hook_point(key) {
         window.location=('dashboard?action=edit_html_hook&key=' +
@@ -332,5 +328,11 @@
 {{ debug_info }}
 gcb-debug-info-end //-->
 {% endif %}
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script>
+$(function () {
+	  $('[data-toggle="tooltip"]').tooltip({'html':true})
+	})
+</script>
  </body>
 </html>
