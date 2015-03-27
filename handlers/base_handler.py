@@ -16,8 +16,6 @@ class BasePage(webapp2.RequestHandler):
       rosebotics_student = RoseboticsStudent.get_by_id(user.email().lower())
       if rosebotics_student is None:
         rosebotics_student = RoseboticsStudent(id=user.email().lower())
-        rosebotics_student.name = user.nickname()
-        rosebotics_student.nickname = user.nickname()
         rosebotics_student.put()
       values["logout_url"] = users.create_logout_url("/")
       values["rosebotics_student"] = rosebotics_student
@@ -44,3 +42,19 @@ class BasePage(webapp2.RequestHandler):
   def requires_oauth(self):
     return False
 
+class BaseAction(webapp2.RequestHandler):
+  
+  def post(self):
+    user = users.get_current_user()
+    if user is None:
+      self.redirect(self.request.referer)
+      return
+    rosebotics_student = RoseboticsStudent.get_by_id(user.email().lower())
+    if rosebotics_student is None:
+      self.redirect(self.request.referer)
+      return
+    self.handle_post(rosebotics_student)
+    self.redirect(self.request.referer)
+  
+  def handle_post(self, rosebotics_student):
+    pass

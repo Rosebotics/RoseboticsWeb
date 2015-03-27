@@ -12,6 +12,15 @@
 {% block assets %}
   <meta name="viewport" content="width=device-width, user-scalable=no">
   <link rel="icon" href="assets/img/favicon.ico" />
+  
+  <!-- JQuery Should be imported first -->
+  
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  
+   <script src="/static/assets/lib/activity-generic-1.3.js"></script>
+
+  <script src="/static/assets/lib/butterbar.js"></script>
+  
   <link href="/static/assets/css/main.css" rel="stylesheet" type="text/css">
   <link href="/static/assets/css/butterbar.css" rel="stylesheet" type="text/css">
 {% endblock %}
@@ -74,9 +83,3 @@
   </div>
 {% endblock %}
 #}
-{% block javascript %}
-
-  <script src="/static/assets/lib/activity-generic-1.3.js"></script>
-
-  <script src="/static/assets/lib/butterbar.js"></script>
-{% endblock %}
