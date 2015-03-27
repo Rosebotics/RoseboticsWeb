@@ -659,8 +659,6 @@ class BaseHandler(CourseHandler):
             rosebotics_student = RoseboticsStudent.get_by_id(email.lower())
             if rosebotics_student is None:
               rosebotics_student = RoseboticsStudent(id=user.email().lower())
-              rosebotics_student.name = user.nickname()
-              rosebotics_student.nickname = user.nickname()
               rosebotics_student.put()
             progress_utils.set_recent_track(rosebotics_student.key, self.request.path_qs)
             most_recent_course = progress_utils.get_most_recent_course(rosebotics_student.key)

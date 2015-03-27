@@ -259,7 +259,6 @@
      -->
     {% block navbar %}
     {% include 'common/common_css.html' %}
-    {% set active_page = 'courses' %}
     {% include 'common/navbar.html' %}
     {% endblock %}
 
@@ -329,6 +328,7 @@
 gcb-debug-info-end //-->
 {% endif %}
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="/static/js/rosebotics.js"></script>
 <script>
 $(function () {
 	  $('[data-toggle="tooltip"]').tooltip({'html':true})
