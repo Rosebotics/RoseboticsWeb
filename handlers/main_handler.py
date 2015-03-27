@@ -2,7 +2,7 @@ from handlers import base_handler
 import webapp2
 from google.appengine.api import users
 from models.rosebotics_models import RoseboticsStudent
-import json
+
 
 ### PAGES ###
 class HomePage(base_handler.BasePage):
@@ -37,34 +37,12 @@ class PlatformPage(base_handler.BasePage):
   def template_file(self):
     return 'templates/underconstruction.html'
 
-  def page_title(self, player, values):
+  def page_title(self):
     return 'Platform'
 
 
-class AboutPage(base_handler.BasePage):
-  def template_file(self):
-    return 'templates/underconstruction.html'
-
-  def page_title(self):
-    return 'About'
-
-
-class ContactPage(base_handler.BasePage):
-  def template_file(self):
-    return 'templates/underconstruction.html'
-
-  def page_title(self):
-    return 'Contact'
-
-
-class GettingStartedtPage(base_handler.BasePage):
-  def template_file(self):
-    return 'templates/underconstruction.html'
-
-  def page_title(self):
-    return 'Get Started'
-
-class AccountHandler(webapp2.RequestHandler):
+### PAGES ###
+class EditProfileAction(webapp2.RequestHandler):
   def post(self):
     user = users.get_current_user()
     if user is None:
