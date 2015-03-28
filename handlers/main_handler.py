@@ -1,5 +1,5 @@
-from google.appengine.api import users
 from handlers import base_handler
+from rosebotics_utils import progress_utils
 
 
 ### PAGES ###
@@ -40,6 +40,15 @@ class PlatformPage(base_handler.BasePage):
 
 
 ### PAGES ###
+
+class ResumeRedirect(base_handler.BaseRedirect):
+    def handle_redirect(self, rosebotics_student):
+      track = progress_utils.get_most_recent_course(rosebotics_student.key)
+      if track is None:
+        self.redirect("/courses")
+      else:
+        self.redirect(track.path)
+
 class EditProfileAction(base_handler.BaseAction):
 
   def handle_post(self, rosebotics_student):
