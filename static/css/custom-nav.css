@@ -1,6 +1,33 @@
+.navbar {
+  font-family: "brandon-grotesque",sans-serif;    
+}
+
+.navbar-brand {
+  font-family: Ubuntu,sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+}
+
+.navbar-right {
+  font-size: 0.95em;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+
+
+.container-fluid {
+	padding-right: 70px;
+	padding-left: 70px;
+}
+
 .navbar-default {
   background-color: #ffffff;
   border-color: #ffffff;
+  background-image: none;
+  padding: 10px;
 }
 .navbar-default .navbar-brand {
   color: #4f4f4f;
