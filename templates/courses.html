@@ -1,10 +1,5 @@
-<html lang="en">
-  {% include "templates/head.html" %}
-  <body>
-    {% set active_page = "courses" %}
-	{% include 'templates/navbar.html' %}
-    <div class="container">
-
+{% extends 'templates/base.html' %}
+{% block content %}
       <div class="row">
       {% if rosebotics_student %}
       <div class="row">
@@ -24,19 +19,4 @@
         <div class="jumbotron"><a href="{{ login_url }}" class="btn btn-lg btn-success">Sign in with Google</a></div>
       {% endif %}
       </div>
-
-
-
-
-
-
-
-      <!-- Site footer -->
-      <div class="footer">
-        <p>Made by students, faculty, and staff in the <a href="http://www.rose-hulman.edu/robotics">Multidiciplinary Minor in Robotics</a> available at <a href="http://www.rose-hulman.edu">Rose-Hulman</a></p>
-      </div>
-
-    </div> <!-- /container -->
-
-    {% include "templates/load_scripts.html" %}
-</body></html>
+{% endblock %}

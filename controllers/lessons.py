@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from models.rosebotics_models import RoseboticsStudent
+from google.appengine.api import users
 """Handlers for generating various frontend pages."""
 
 import copy
@@ -270,15 +272,20 @@ class CourseHandler(BaseHandler):
         try:
             user = self.personalize_page_and_get_user()
             if user is None:
-                student = TRANSIENT_STUDENT
+                self.redirect("/../courses")
+                return
             else:
                 student = Student.get_enrolled_student_by_email(user.email())
                 profile = StudentProfileDAO.get_profile_by_user_id(
                     user.user_id())
                 self.template_value['has_global_profile'] = profile is not None
                 if not student:
-                    logging.info("Enroll the student using their roseboticsStudent account.")
-                    student = TRANSIENT_STUDENT
+                    logging.info("Student enrolled using their roseboticsStudent account.")
+                    ## Enrolling the student using their roseboticsStudent account ##
+                    roseboticsStudent = self.template_value['rosebotics_student']
+                    Student.add_new_student_for_current_user(roseboticsStudent.nickname, None, None, labels=None)
+                    student = Student.get_enrolled_student_by_email(user.email())
+                    profile = StudentProfileDAO.get_profile_by_user_id(user.user_id())
 
             if (student.is_transient and
                 not self.app_context.get_environ()['course']['browsable']):

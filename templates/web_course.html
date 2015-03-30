@@ -1,52 +1,5 @@
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Rosebotics home page">
-    <meta name="author" content="Dave Fisher">
-
-    <!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-
-    <style type="text/css">
-    .subtitle {
-      font-style:italic;
-      font-size:22px;
-    }
-    .warning {
-      color: red;
-      font-size:18px;
-      margin: 0px;
-      padding: 0px;
-    }
-    .underline {
-      font-style:bold;;
-      text-decoration:underline;
-    }
-    </style>
-
-<title>ROSEbotics Courses</title>
-
-    <!-- Custom styles for this template -->
-    <link href="/static/css/justified-nav.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-    {% set active_page = "courses" %}
-	{% include 'templates/navbar.html' %}
-    <div class="container">
+{% extends 'templates/base.html' %}
+{% block content %}
       <!-- Example row of columns -->
       <div class="row">
           <h2>Tracks</h2>
@@ -58,30 +11,17 @@
       <!-- <li><a href = "/web-endpoints">Web development - Endpoints, Angular, Ajax Track</a> (Coming someday)</li>  -->
 			</ol>
       </div>
-
+	<!-- 
       <div>Overall progress = {{progress.course}}</div>
       <ol>
 	    {% for track in progress.tracks %}
 	      <li>Track = {{track}}</li>
 	    {% endfor %}
       </ol>
-
+ 	-->
 		<!-- 16:9 aspect ratio -->
 		<div class="embed-responsive embed-responsive-16by9">
 		  <iframe class="embed-responsive-item" src="//www.youtube.com/embed/PLN-oI858ZA"></iframe>
 		</div>
 
-      <!-- Site footer -->
-      <div class="footer">
-        <p>Made by students, faculty, and staff in the <a href="http://www.rose-hulman.edu/robotics">Multidiciplinary Minor in Robotics</a> available at <a href="http://www.rose-hulman.edu">Rose-Hulman</a></p>
-      </div>
-
-    </div> <!-- /container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
-
-</body></html>
+{% endblock %}
