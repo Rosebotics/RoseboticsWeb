@@ -12,6 +12,6 @@ var showAccountDetailsIfNone = function() {
 	}
 }
 
-$(function(){
+$(function() {
 	showAccountDetailsIfNone();
 })

@@ -58,3 +58,19 @@ class BaseAction(webapp2.RequestHandler):
   
   def handle_post(self, rosebotics_student):
     pass
+
+class BaseRedirect(webapp2.RedirectHandler):
+    
+    def get(self):
+      user = users.get_current_user()
+      if user is None:
+        self.redirect("/courses")
+        return
+      rosebotics_student = RoseboticsStudent.get_by_id(user.email().lower())
+      if rosebotics_student is None:
+        self.redirect("/courses")
+        return
+      self.handle_redirect(rosebotics_student)
+  
+    def handle_redirect(self, rosebotics_student):
+      pass
