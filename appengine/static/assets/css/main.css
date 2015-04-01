@@ -522,6 +522,7 @@ a.gcb-button-action, button.gcb-button-action {
   -moz-transition: all .218s ease-in;
   -webkit-transition: all .218s ease-in;
   transition: all .218s ease-in;
+  
 }
 
 .gcb-next-button > a, .gcb-prev-button > a {
@@ -540,6 +541,7 @@ a.gcb-button-action, button.gcb-button-action {
   border-radius: 10px 0px 0px 10px;
   float: right;
   margin: 5px 40px 5px 0;
+  margin-bottom: 50px;
 }
 .gcb-prev-button {
   -moz-border-radius: 0px 10px 10px 0px;
@@ -547,6 +549,7 @@ a.gcb-button-action, button.gcb-button-action {
   border-radius: 0px 10px 10px 0px;
   float: left;
   margin: 5px 0 5px 40px;
+  margin-bottom: 50px;
 }
 
 /* Styles for the course title shown at the top of all student-facing pages. */

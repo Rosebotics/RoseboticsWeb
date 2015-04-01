@@ -670,8 +670,8 @@ class BaseHandler(CourseHandler):
             namespace_manager.set_namespace(namespace)
             ## END ##
         else:
-            self.template_value['loginUrl'] = users.create_login_url(
-                self.request.uri)
+            self.template_value['loginUrl'] = users.create_login_url(self.request.uri)
+            self.template_value["login_url"] = users.create_login_url(self.request.uri)
             self.template_value['transient_student'] = True
             return None
 
@@ -788,6 +788,8 @@ class PreviewHandler(BaseHandler):
 
     def get(self):
         """Handles GET requests."""
+        self.redirect('/course')
+        return
         user = self.personalize_page_and_get_user()
         if user is None:
             student = TRANSIENT_STUDENT
