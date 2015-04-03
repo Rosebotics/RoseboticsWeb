@@ -1,4 +1,4 @@
-<!-- This is the template for a navbar. Make sure to set the active_page variable before calling includes! -->
+<!-- This is the template for a navbar. -->
 {% set navigation_bar = [
     ('/courses', 'courses', 'Courses'),
     ('/competition', 'competition', 'Competition'),
@@ -26,7 +26,7 @@
       
       <ul class="nav navbar-nav navbar-right">
         {% for href, id, caption in navigation_bar %}
-        <li{% if id == active_page %} class="active"{% endif %}><a href="{{ href|e }}">{{ caption|e }}</a></li>
+        <li><a href="{{ href|e }}">{{ caption|e }}</a></li>
       {% endfor %}
       {% if rosebotics_student %}
 
@@ -56,6 +56,8 @@
             <li><a data-toggle="modal" data-target="#confirm-signout-modal" href="#">Sign Out</a></li>
           </ul>
         </li>
+        {% else %}
+        <li><a href="{{ login_url }}">Sign In</a></li>
         {% endif %}
       </ul>
 
@@ -96,7 +98,7 @@
 		<div class="form-group">
         	<label for="student_key" class="col-sm-3 control-label">Name<span class="required-asterisk">*</span></label>
             <div class="col-sm-9">
-            <input type="text" id="edit-student-details-modal-name-field" name="name" class="form-control" value="{{ rosebotics_student.name if rosebotics_student.name }}"/>
+            <input type="text" id="edit-student-details-modal-name-field" name="name" class="form-control with-help" value="{{ rosebotics_student.name if rosebotics_student.name }}"/>
             </div>
         </div>
         <div class="form-group">
