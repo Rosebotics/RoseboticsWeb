@@ -12,12 +12,10 @@ class RoseboticsStudent(ndb.Model):
 TEAM_VISIBLITIES = ['ALL_MEMBERS', 'TEAM_LEADER', 'NOT_CHOSEN']
 
 class RoseboticsTeamMember(ndb.Model):
-  # parent of Rosebotics student (easy query of my teams)
-  # id of..? team name?
-  email = ndb.StringProperty()
+  email = ndb.StringProperty() # user's email address
   visibility = ndb.StringProperty(default='NOT_CHOSEN', choices=TEAM_VISIBLITIES)
 
 class RoseboticsTeam(ndb.Model):
   # parent of team leader RoseboticsStudent
-  # id of team name
-  members = ndb.KeyProperty(kind=RoseboticsTeamMember, repeated=True)
+  # id of team name, unique?
+  members = ndb.StructuredProperty(RoseboticsTeamMember, repeated=True)
