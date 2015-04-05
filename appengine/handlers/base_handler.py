@@ -43,7 +43,7 @@ class BasePage(webapp2.RequestHandler):
     return False
 
 class BaseAction(webapp2.RequestHandler):
-  
+
   def post(self):
     user = users.get_current_user()
     if user is None:
@@ -55,12 +55,12 @@ class BaseAction(webapp2.RequestHandler):
       return
     self.handle_post(rosebotics_student)
     self.redirect(self.request.referer)
-  
+
   def handle_post(self, rosebotics_student):
     pass
 
 class BaseRedirect(webapp2.RedirectHandler):
-    
+
     def get(self):
       user = users.get_current_user()
       if user is None:
@@ -71,6 +71,6 @@ class BaseRedirect(webapp2.RedirectHandler):
         self.redirect("/courses")
         return
       self.handle_redirect(rosebotics_student)
-  
+
     def handle_redirect(self, rosebotics_student):
       pass
