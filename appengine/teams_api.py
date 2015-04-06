@@ -28,7 +28,21 @@ class TeamApi(remote.Service):
       if old_team.leader != user_email:
           raise endpoints.BadRequestException('You are not the leader of this team!')
       old_team.name = team.name
-      # TODO: implement the ability to add members after creation
+      for member in team.members:
+        member_in_team = None
+        for old_member in old_team.members:
+          if member.username == old_member.username:
+            member_in_team = old_member
+        if member_in_team:
+          member.visibility = member_in_team.visibility
+        else:       
+          student = RoseboticsStudent.query(username = RoseboticsStudent.username).fetch(1)
+          member.email = student.key.string_id()
+          if member.email == user_email:
+            member.visibility = TeamVisibility.ALL_MEMBERS
+          else:
+            member.visibility = TeamVisibility.NOT_CHOSEN
+      old_team.members = team.members
       old_team.put()
       team = old_team
     else:
@@ -65,7 +79,7 @@ class TeamApi(remote.Service):
     """ Gets the teams that you are a member of but are not the leader of """
     user_email = get_user_email()
     # Can you think of a way to exclude your own teams with leader being the ancestor?
-    query = query.filter(ndb.AND(RoseboticsTeam.leader != user_email, RoseboticsTeam.members.email == user_email))
+    query = query.filter(ndb.AND(RoseboticsTeam.members.email == user_email, RoseboticsTeam.leader != user_email))
     # From: http://stackoverflow.com/questions/12449197/badargumenterror-multiquery-with-cursors-requires-key-order-in-ndb
     query = query.order(RoseboticsTeam.leader, RoseboticsTeam.key)
     return query
