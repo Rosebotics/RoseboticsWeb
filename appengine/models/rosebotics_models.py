@@ -1,6 +1,4 @@
 from google.appengine.ext import ndb
-from protorpc.messages import Enum
-from google.appengine.ext.ndb import msgprop
 from endpoints_proto_datastore.ndb.model import EndpointsModel
 
 class RoseboticsStudent(ndb.Model):
@@ -15,20 +13,28 @@ class RecentTrack(ndb.Model):
   # id of track name (i.e. Android, iOS, or Web)
   path = ndb.StringProperty(indexed=False)
 
-class TeamVisibility(Enum):
-    ALL_MEMBERS = 1 # Show my progress to everyone in team
-    TEAM_LEADER = 2 # Show my progress to Team Leader only
-    NOT_CHOSEN = 3 # Waiting for response from member
-    REJECT_INVITE = 4 # For message purposes only
+
+class TeamVisibility():
+  # I could not use this on an enum, because it was within a StructuredProperty,
+  # and for whatever reason querying 
+  ALL_MEMBERS = "ALL_MEMBERS" # Show my progress to everyone in team
+  TEAM_LEADER = "TEAM_LEADER" # Show my progress to Team Leader only
+  NOT_CHOSEN = "NOT_CHOSEN" # Waiting for response from member
+  REJECT_INVITE = "REJECT_INVITE" # For message purposes only
+  
+  values = [ALL_MEMBERS, TEAM_LEADER, NOT_CHOSEN, REJECT_INVITE]
 
 class RoseboticsTeamMember(EndpointsModel):
+  _message_fields_schema = ("username", "email",  "visibility")
   email = ndb.StringProperty() # user's email address
-  visibility = msgprop.EnumProperty(TeamVisibility, default=TeamVisibility.NOT_CHOSEN)
+  username = ndb.StringProperty()
+  visibility = ndb.StringProperty(choices=TeamVisibility.values, default=TeamVisibility.NOT_CHOSEN)
 
 class RoseboticsTeam(EndpointsModel):
+  _message_fields_schema = ("entityKey", "name", "leader", "members")
   # parent of team leader RoseboticsStudent (who may or may not be in the members)
-  _message_fields_schema = ("entityKey", "name", "members")
   name = ndb.StringProperty() # Name for the team
+  leader = ndb.StringProperty() # email address of leader...
   members = ndb.StructuredProperty(RoseboticsTeamMember, repeated=True)
 
 class TeamInvite(EndpointsModel):
@@ -37,34 +43,43 @@ class TeamInvite(EndpointsModel):
   team_leader_name = ndb.StringProperty()
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   team_name = ndb.StringProperty()
-  response = msgprop.EnumProperty(TeamVisibility)
+  response = ndb.StringProperty(choices=TeamVisibility.values, default=TeamVisibility.NOT_CHOSEN)
 
-class Progress(EndpointsModel):
+class TeamInvites(EndpointsModel):
+  """ Class for message purposes only """
+  _message_fields_schema = ("invites",)
+  invites = ndb.LocalStructuredProperty(TeamInvite, repeated=True)
+
+class UnitProgress(EndpointsModel):
   """ Class for message purposes only """
   _message_fields_schema = ("name", "progress")
   name = ndb.StringProperty()
   progress = ndb.FloatProperty()
 
+class TrackProgress(EndpointsModel):
+  """ Class for message purposes only """
+  _message_fields_schema = ("name", "progress", "unit_progress")
+  name = ndb.StringProperty()
+  progress = ndb.FloatProperty()
+  unit_progress = ndb.LocalStructuredProperty(UnitProgress, repeated=True)  
+
+class CourseProgress(EndpointsModel):
+  """ Class for message purposes only """
+  _message_fields_schema = ("name", "progress", "track_progress")
+  name = ndb.StringProperty()
+  progress = ndb.FloatProperty()
+  track_progress = ndb.LocalStructuredProperty(TrackProgress, repeated=True)
+
 class MemberProgress(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("display_name", "progress")
-  display_name = ndb.StringProperty() # user name, name or email?
-  progress = ndb.LocalStructuredProperty(Progress, repeated=True)
-        
+  _message_fields_schema = ("display_name", "course_progress")
+  display_name = ndb.StringProperty() # username
+  email = ndb.StringProperty()
+  course_progress = ndb.LocalStructuredProperty(CourseProgress, repeated=True)
+
 class TotalTeamProgress(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("team_key", "name", "progress_fields", "members")
+  _message_fields_schema = ("team_key", "name", "members_progress")
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
-  name = ndb.StringProperty()
-  progress_fields = ndb.StringProperty(repeated=True)
-  members = ndb.LocalStructuredProperty(MemberProgress, repeated=True)
-  
-class CourseTeamProgress(TotalTeamProgress):
-  """ Class for message purposes only """
-  _message_fields_schema = ("team_key", "course", "name", "progress_fields", "members")
-  course = ndb.StringProperty()
-  
-class TrackTeamProgress(CourseTeamProgress):
-  """ Class for message purposes only """
-  _message_fields_schema = ("team_key", "course", "track", "name", "progress_fields", "members")
-  track = ndb.StringProperty()
+  name = ndb.StringProperty() # Name of the team
+  members_progress = ndb.LocalStructuredProperty(MemberProgress, repeated=True)

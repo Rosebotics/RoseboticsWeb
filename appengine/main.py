@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import endpoints
-from teams_api import TeamApi
+import teams_api
 
 """Course Builder web application entry point."""
 
@@ -84,4 +84,4 @@ app = webapp2.WSGIApplication(
     debug=not appengine_config.PRODUCTION_MODE)
 
 # init api
-api = endpoints.api_server([TeamApi], restricted = False)
+api = endpoints.api_server([teams_api.TeamApi], restricted = False)
