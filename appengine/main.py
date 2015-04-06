@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import endpoints
+from teams_api import TeamApi
 
 """Course Builder web application entry point."""
 
@@ -80,3 +82,6 @@ app = webapp2.WSGIApplication(
     rosebotics_routes + global_routes + appstats_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config},
     debug=not appengine_config.PRODUCTION_MODE)
+
+# init api
+api = endpoints.api_server([TeamApi], restricted = False)
