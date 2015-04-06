@@ -65,7 +65,9 @@ class TeamApi(remote.Service):
     """ Gets the teams that you are a member of but are not the leader of """
     user_email = get_user_email()
     # Can you think of a way to exclude your own teams with leader being the ancestor?
-    query = query.filter(ndb.AND(RoseboticsTeam.members.email == user_email, RoseboticsTeam.leader != user_email))
+    query = query.filter(ndb.AND(RoseboticsTeam.leader != user_email, RoseboticsTeam.members.email == user_email))
+    # From: http://stackoverflow.com/questions/12449197/badargumenterror-multiquery-with-cursors-requires-key-order-in-ndb
+    query = query.order(RoseboticsTeam.leader, RoseboticsTeam.key)
     return query
 
   @RoseboticsTeam.query_method(user_required=True, query_fields=('limit', 'pageToken'),
