@@ -117,6 +117,14 @@ class TeamApi(remote.Service):
     allowed_visibilies = [TeamVisibility.ALL_MEMBERS]
     if rosebotics_team.leader == user_email:
       allowed_visibilies.append(TeamVisibility.TEAM_LEADER)
+    else:
+      is_user_not_in_team = True
+      for member in rosebotics_team.members:
+        if member.email == user_email:
+          is_user_not_in_team = False
+          break
+      if is_user_not_in_team:
+        raise endpoints.BadRequestException("You are not allowed to view this team!")
     for member in rosebotics_team.members:
       if member.visibility in allowed_visibilies:
         members_progress.append(MemberProgress(email=member.email, display_name=member.username))        
@@ -138,7 +146,10 @@ def create_course_progress(course_name, progress):
   
 def create_track_progress(track_name, progress):
   track_progress = TrackProgress(name=track_name, progress=progress["track"])
-  for index, unit_progress in progress["units"].items():
+  units = progress["units"]
+  units = sorted(units.items(), key=lambda pair:int(pair[0]))
+  units = map(lambda pair:pair[1], units)
+  for index, unit_progress in enumerate(units):
     unit_name = "Unit " + str(index)
     unit = UnitProgress(name=unit_name, progress=unit_progress)
     track_progress.unit_progress.append(unit)
