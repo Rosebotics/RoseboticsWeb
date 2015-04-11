@@ -15,27 +15,43 @@ class RecentTrack(ndb.Model):
 
 
 class TeamVisibility():
-  # I could not use this on an enum, because it was within a StructuredProperty,
-  # and for whatever reason querying 
+  # I could not use this as an enum, because it was within a StructuredProperty,
+  # and for whatever reason querying via enum did not work
   ALL_MEMBERS = "ALL_MEMBERS" # Show my progress to everyone in team
   TEAM_LEADER = "TEAM_LEADER" # Show my progress to Team Leader only
   NOT_CHOSEN = "NOT_CHOSEN" # Waiting for response from member
   REJECT_INVITE = "REJECT_INVITE" # For message purposes only
-  
   values = [ALL_MEMBERS, TEAM_LEADER, NOT_CHOSEN, REJECT_INVITE]
 
 class RoseboticsTeamMember(EndpointsModel):
-  _message_fields_schema = ("username", "email",  "visibility")
-  email = ndb.StringProperty() # user's email address
-  username = ndb.StringProperty()
-  visibility = ndb.StringProperty(choices=TeamVisibility.values, default=TeamVisibility.NOT_CHOSEN)
+  _message_fields_schema = ("email", "username", "visibility")
+  # parent of RoseboticsTeam
+  # user's email address as id
+  email = ndb.StringProperty()
+  username = ndb.StringProperty(indexed=False)
+  visibility = ndb.StringProperty(choices=TeamVisibility.values, default=TeamVisibility.NOT_CHOSEN, indexed=False)
+  
+  def get_email(self):
+    return self.key.string_id()
 
 class RoseboticsTeam(EndpointsModel):
-  _message_fields_schema = ("entityKey", "name", "leader", "members")
-  # parent of team leader RoseboticsStudent (who may or may not be in the members)
+  _message_fields_schema = ("entityKey", "name", "leader")
+  name = ndb.StringProperty(indexed=False) # Name for the team
+  leader = ndb.StringProperty() # email address of leader
+
+### Endpoints Messaging Classes ###
+class Team(EndpointsModel):
+  """ Class for message purposes only """
+  _message_fields_schema = ("team_key", "name", "leader", "members")
+  team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   name = ndb.StringProperty() # Name for the team
   leader = ndb.StringProperty() # email address of leader...
   members = ndb.StructuredProperty(RoseboticsTeamMember, repeated=True)
+
+class Teams(EndpointsModel):
+  """ Class for message purposes only """
+  _message_fields_schema = ("teams",)
+  teams = ndb.LocalStructuredProperty(Team, repeated=True)
 
 class TeamInvite(EndpointsModel):
   """ Class for message purposes only """
