@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>ROSEbotics Teams</title> 
-{% include 'templates/views/common/common_css.html' %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/static/css/rosebotics.css">
+<link rel="stylesheet" href="/static/css/custom-nav.css">   
 <link href="/static/css/justified-nav.css" rel="stylesheet">
 <link href="/static/teams/css/app.css" rel="stylesheet">
 
-<script	src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.3/angular.js"></script>
-<script	src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
 <script src="/static/teams/js/base.js"></script>
 <script src="/static/teams/js/app.js"></script>
 <script src="/static/teams/js/controllers.js"></script>
@@ -17,7 +20,7 @@
 <script src="//apis.google.com/js/client.js?onload=init"></script>
 </head>
 <body>
-	{% include 'templates/views/common/navbar.html' %}
+	{% include 'templates/views/common/angular_navbar.html' %}
 	{# http://jinja.pocoo.org/docs/dev/templates/#escaping #}
 	{% raw %}
 	<div class="container hidden" ng-controller="MainCtrl as main">
