@@ -15,13 +15,15 @@
 	text-decoration: underline;
 }
 
-.logo-r {
-	float: left;
+.navbar-brand {
+	position: relative;
 }
 
-.logo-text {
+.logo-r {
 	float: left;
-	margin-left: 10px;
+	position: absolute;
+  	top: 50%;
+  	transform: translate(0, -50%);
 }
 
 .modal-header {
