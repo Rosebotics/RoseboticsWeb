@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ROSEbotics Teams</title> 
+{% include 'templates/views/common/common_css.html' %}
+<link href="/static/css/justified-nav.css" rel="stylesheet">
+<link href="/static/teams/css/app.css" rel="stylesheet">
+
+<script	src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.3/angular.js"></script>
+<script	src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
+<script src="/static/teams/js/base.js"></script>
+<script src="/static/teams/js/app.js"></script>
+<script src="/static/teams/js/controllers.js"></script>
+<script src="/static/teams/js/services.js"></script>
+<!-- Endpoints Library, call the init function when it's done loading -->
+<script src="//apis.google.com/js/client.js?onload=init"></script>
+</head>
+<body>
+	{% include 'templates/views/common/navbar.html' %}
+	{# http://jinja.pocoo.org/docs/dev/templates/#escaping #}
+	{% raw %}
+	<div class="container hidden" ng-controller="MainCtrl as main">
+		{{ main.greeting }}
+		<div class="footer">
+			<p>
+				This site has been made possible by the students, faculty, and staff of the 
+				<a href="http://www.rose-hulman.edu/robotics">Multidiciplinary Minor in Robotics</a>
+				available at <a href="http://www.rose-hulman.edu">Rose-Hulman</a>
+			</p>
+		</div>
+	</div>
+	<div class="spinner">
+		  <div class="spinner-container container1">
+		    <div class="circle1"></div>
+		    <div class="circle2"></div>
+		    <div class="circle3"></div>
+		    <div class="circle4"></div>
+		  </div>
+		  <div class="spinner-container container2">
+		    <div class="circle1"></div>
+		    <div class="circle2"></div>
+		    <div class="circle3"></div>
+		    <div class="circle4"></div>
+		  </div>
+		  <div class="spinner-container container3">
+		    <div class="circle1"></div>
+		    <div class="circle2"></div>
+		    <div class="circle3"></div>
+		    <div class="circle4"></div>
+		  </div>
+		  <h1>Loading...</h1>
+		</div>
+	{% endraw %}
+</body>
+</html>
