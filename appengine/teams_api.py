@@ -157,8 +157,8 @@ class TeamApi(remote.Service):
 
 def create_course_progress(course_name, progress):
   course_progress = CourseProgress(name=course_name, progress=progress["course"])
-  for index, track in enumerate(progress["tracks"]):
-    track_name = "Track " + str(index)
+  for track in progress["tracks"]:
+    track_name = track['name']
     track_progress = create_track_progress(track_name, track)
     course_progress.track_progress.append(track_progress)
   return course_progress

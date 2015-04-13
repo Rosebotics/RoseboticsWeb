@@ -34,12 +34,12 @@ def get_total_progress_for_course(email, course_prefix):
         track_tasks_completed += unit[0]
         total_track_tasks += unit[1]
         units[unit_id] = unit[0]/float(unit[1])
-      track_progress.append({'track': track_tasks_completed/float(total_track_tasks), 'units': units})
+      track_progress.append({'name': course_app_context.get_title(), 'track': track_tasks_completed/float(total_track_tasks), 'units': units})
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
       logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed, total_track_tasks))
     else:
-      track_progress.append({'track': 0, 'units': {}})
+      track_progress.append({'name': course_app_context.get_title(), 'track': 0, 'units': {}})
       total_track_tasks = tracker.get_task_total()
       total_course_tasks += total_track_tasks
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
