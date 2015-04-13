@@ -15,17 +15,6 @@
 	text-decoration: underline;
 }
 
-.navbar-brand {
-	position: relative;
-}
-
-.logo-r {
-	float: left;
-	position: absolute;
-  	top: 50%;
-  	transform: translate(0, -50%);
-}
-
 .modal-header {
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
