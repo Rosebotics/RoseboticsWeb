@@ -24,11 +24,10 @@ class TeamVisibility():
   values = [ALL_MEMBERS, TEAM_LEADER, NOT_CHOSEN, REJECT_INVITE]
 
 class RoseboticsTeamMember(EndpointsModel):
-  _message_fields_schema = ("email", "username", "visibility")
+  _message_fields_schema = ("email", "visibility")
   # parent of RoseboticsTeam
   # user's email address as id
   email = ndb.StringProperty()
-  username = ndb.StringProperty(indexed=False)
   visibility = ndb.StringProperty(choices=TeamVisibility.values, default=TeamVisibility.NOT_CHOSEN, indexed=False)
   
   def get_email(self):
@@ -89,8 +88,8 @@ class CourseProgress(EndpointsModel):
 class MemberProgress(EndpointsModel):
   """ Class for message purposes only """
   _message_fields_schema = ("display_name", "course_progress")
-  display_name = ndb.StringProperty() # username
-  email = ndb.StringProperty()
+  display_name = ndb.StringProperty()
+  username = ndb.StringProperty()
   course_progress = ndb.LocalStructuredProperty(CourseProgress, repeated=True)
 
 class TotalTeamProgress(EndpointsModel):

@@ -8,7 +8,8 @@
 <link href="/static/css/justified-nav.css" rel="stylesheet">
 <link href="/static/teams/css/app.css" rel="stylesheet">
 <!-- JS Files -->
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.min.js"></script>
 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
 <script src="/static/teams/js/base.js"></script>
 <script src="/static/teams/js/app.js"></script>
@@ -22,7 +23,25 @@
 	{# http://jinja.pocoo.org/docs/dev/templates/#escaping #}
 	{% raw %}
 	<div class="container hidden" ng-controller="MainCtrl as main">
-		{{ main.greeting }}
+		<div class="row">
+			<section class="list-group col-sm-3 col-md-2">
+        <a href="#" class="list-group-item active">
+    			Overview
+  			</a>
+  			<a href="#" class="list-group-item">
+  				Teams
+  			</a>
+  			<a href="#" class="list-group-item">
+  				Invites <span class="badge">2</span>
+  			</a>
+  			<a href="#" class="list-group-item">
+  				Manage
+  			</a>
+       </section>
+       <section class="col-sm-9 col-md-10">
+        {{ main.greeting }}
+       </section>
+		</div>	
 		<div class="footer">
 			<p>
 				This site has been made possible by the students, faculty, and staff of the 

@@ -1,20 +1,24 @@
+/*
+* Spinner
+*/
+
 .spinner {
   margin: 100px auto;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   position: relative;
   left: -80px;
 }
 
 .spinner>h1 {
 	position: relative;
-	left: 60px;
-  top: -10px;
+	left: 50px;
+  top: -15px;
 }
 
 .container1 > div, .container2 > div, .container3 > div {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   background-color: #B50939;
 
   border-radius: 100%;
