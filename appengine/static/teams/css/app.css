@@ -3,12 +3,13 @@
   width: 40px;
   height: 40px;
   position: relative;
-  left: -40px;
+  left: -80px;
 }
 
 .spinner>h1 {
 	position: relative;
-	left: 52px;
+	left: 60px;
+  top: -10px;
 }
 
 .container1 > div, .container2 > div, .container3 > div {
