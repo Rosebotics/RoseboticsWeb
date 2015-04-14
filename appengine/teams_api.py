@@ -43,6 +43,8 @@ class TeamApi(remote.Service):
           new_member = RoseboticsTeamMember(key=member_key)
           new_member.username = student.username
           new_member.email = student_email
+          if new_member.email == user_email:
+            new_member.visibility = TeamVisibility.ALL_MEMBERS
           new_member.put()
       # if old username is NOT in new_members remove old member
       for old_member in old_members:
@@ -59,6 +61,8 @@ class TeamApi(remote.Service):
         new_member = RoseboticsTeamMember(key=member_key)
         new_member.username = student.username
         new_member.email = student_email
+        if new_member.email == user_email:
+          new_member.visibility = TeamVisibility.ALL_MEMBERS
         new_member.put()
     return team
 
@@ -74,15 +78,18 @@ class TeamApi(remote.Service):
     team.team_key.delete()
     return RoseboticsTeam(name='deleted')
 
-  @Teams.method(user_required=True, request_fields=(), name='list.member', 
-                path='list/member', http_method='GET')
-  def get_my_teams(self, empty):
-    """ Gets the teams that you are a member of but are not the leader of """
+  @Teams.method(user_required=True, request_fields=(), name='list', 
+                path='list', http_method='GET')
+  def get_teams(self, empty):
+    """ Gets the teams that you are a member or leader of """
     user_email = get_user_email()
     response = Teams()
     query = RoseboticsTeamMember.query(RoseboticsTeamMember.email==user_email)
-    team_keys = [member.key.parent() for member in query]
-    response.teams = [to_team_from_rosebotics(team_key.get()) for team_key in team_keys]
+    teams = [key.parent().get() for key in query.iter(keys_only=True)]
+    query = RoseboticsTeam.query(RoseboticsTeam.leader==user_email)
+    teams += [team for team in query]
+    teams = remove_model_duplicates(teams)
+    response.teams = [to_team_from_rosebotics(team_key) for team_key in teams]
     return response
 
   @Teams.method(user_required=True, request_fields=(), name='list.leader', 
@@ -188,3 +195,15 @@ def to_team_from_rosebotics(rosebotics_team):
   members = RoseboticsTeamMember.query(ancestor=rosebotics_team.key)
   team.members = [member for member in members] # iterate through them to get them all
   return team
+
+def remove_model_duplicates(seq):
+  """ removes model duplicates by doing string comp on urlsafe of key """ 
+  urlsafes = []
+  checked = []
+  for e in seq:
+    urlsafe = e.key.urlsafe()
+    if urlsafe not in urlsafes:
+      urlsafes.append(urlsafe)
+      checked.append(e)
+  return checked
+
