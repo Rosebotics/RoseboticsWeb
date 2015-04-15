@@ -1,5 +1,9 @@
 angular.module('TeamServices', [])
-.factory('factory', function() {
+.factory('routes', function() {
+	return [{name:'Overview', href:'#/overview/'}, 
+	        {name:'Teams', href:'#/teams/'}, 
+	        {name:'Invites', href:'#/invites/'}, 
+	        {name:'Manage', href:'#/manage/'}];
 })
 .service('oAuth', function ($q) {
   this.doCall = function() {

@@ -15,6 +15,7 @@
 <script src="/static/teams/js/app.js"></script>
 <script src="/static/teams/js/controllers.js"></script>
 <script src="/static/teams/js/services.js"></script>
+<script src="/static/teams/js/directives.js"></script>
 <!-- Endpoints Library, call the init function when it's done loading -->
 <script src="//apis.google.com/js/client.js?onload=init"></script>
 </head>
@@ -22,24 +23,17 @@
 	{% include 'templates/views/common/angular_navbar.html' %}
 	{# http://jinja.pocoo.org/docs/dev/templates/#escaping #}
 	{% raw %}
-	<div class="container hidden" ng-controller="MainCtrl as main">
+	<div class="container hidden">
 		<div class="row">
-			<section class="list-group col-sm-3 col-md-2">
-        <a href="#" class="list-group-item active">
-    			Overview
-  			</a>
-  			<a href="#" class="list-group-item">
-  				Teams
-  			</a>
-  			<a href="#" class="list-group-item">
-  				Invites <span class="badge">2</span>
-  			</a>
-  			<a href="#" class="list-group-item">
-  				Manage
+			<section class="list-group col-sm-3 col-md-2" ng-controller="SidebarCtrl as sidebar">
+        <a ng-repeat="route in sidebar.routes"  
+        		href="{{ route.href }}" 
+        		class="list-group-item" 
+        		ng-class="{active: sidebar.isActive(route.href)}">
+    			{{ route.name }}
   			</a>
        </section>
-       <section class="col-sm-9 col-md-10">
-        {{ main.greeting }}
+       <section class="col-sm-9 col-md-10" ng-view>
        </section>
 		</div>	
 		<div class="footer">

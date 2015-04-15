@@ -1,7 +1,21 @@
 angular.module('TeamControllers', [])
-.controller('MainCtrl', function() {
-  this.greeting = "Hello World!";
-});
+.controller('SidebarCtrl', function(routes, $location, $log) {
+	this.routes = routes;
+	this.isActive = function(routeUrl) {
+		var path = $location.path();
+		routeUrl = routeUrl.substring(1);
+		return path.startsWith(routeUrl);
+	}
+})
+.controller('OverviewCtrl', function() {
+})
+.controller('TeamsCtrl', function() {
+})
+.controller('InvitesCtrl', function() {
+	this.team = {name:'Test Team', leader:'Tyler Rockwood'};
+})
+.controller('ManageCtrl', function() {
+})
 
 angular.module('ModalControllers', [])
 .controller('ModalToggleCtrl', function($modal) {
