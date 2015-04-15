@@ -19,7 +19,7 @@ class TeamApi(remote.Service):
 
   @Team.method(user_required=True, name='insert', path='insert', http_method='POST')
   def insert_team(self, team):
-    """ Creates or updates a team that you own (Currently only supports usernames) """
+    """ Creates or updates a team that you own """
     user_email = get_user_email()
     if team.team_key:
       old_team = team.team_key.get()
@@ -29,37 +29,30 @@ class TeamApi(remote.Service):
       old_team.name = team.name
       old_team.put()
       old_members = RoseboticsTeamMember.query(ancestor=team.team_key)
-      old_usernames = [m.username for m in old_members]
-      new_usernames = []
-      # if new username is NOT in old_members: add new_username
+      new_emails = []
+      old_emails = [member.email for member in old_members]
+      # if new email is NOT in old_members: add new email
       for member in team.members:
-        new_usernames.append(member.username)
-        if member.username not in old_usernames:
-          student = RoseboticsStudent.query(RoseboticsStudent.username==member.username).get()
-          if student is None:
-            continue
-          student_email = student.key.string_id()
-          member_key = get_member_key(team.team_key, student_email)
+        new_emails.append(member.email)
+        if member.email not in old_emails:
+          member_key = get_member_key(team.team_key, member.email)
           new_member = RoseboticsTeamMember(key=member_key)
-          new_member.username = student.username
-          new_member.email = student_email
+          new_member.email = member.email
           if new_member.email == user_email:
             new_member.visibility = TeamVisibility.ALL_MEMBERS
           new_member.put()
       # if old username is NOT in new_members remove old member
       for old_member in old_members:
-        if old_member.username not in new_usernames:
+        if old_member.email not in new_emails:
           old_member.key.delete()
     else:
       new_team = RoseboticsTeam(leader=user_email, name=team.name)
       team.team_key = new_team.put()
-      usernames = [member.username for member in team.members]
-      student_query = RoseboticsStudent.query(RoseboticsStudent.username.IN(usernames))
-      for student in student_query:
-        student_email = student.key.string_id()
+      emails = [member.email for member in team.members]
+      for email in emails:
+        student_email = email
         member_key = get_member_key(team.team_key, student_email)
         new_member = RoseboticsTeamMember(key=member_key)
-        new_member.username = student.username
         new_member.email = student_email
         if new_member.email == user_email:
           new_member.visibility = TeamVisibility.ALL_MEMBERS
@@ -123,7 +116,8 @@ class TeamApi(remote.Service):
     for team_member in query:
       team = team_member.key.parent().get()
       invite = TeamInvite()
-      invite.team_leader_name = team.leader
+      team_leader = RoseboticsStudent.get_by_id(team.leader)
+      invite.team_leader_name = team_leader.name
       invite.team_key = team.key
       invite.team_name = team.name
       invite.response = team_member.visibility
@@ -151,14 +145,17 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
+    courses = ['iOS', 'Web'] #, 'Android'] # TODO: add 'Android'
     for member in members:
       if member.visibility in allowed_visibilies:
-        members_progress.append(MemberProgress(email=member.email, display_name=member.username))        
-    courses = ['ios', 'web'] # TODO: add android when it is broken into tracks
-    for member in members_progress:
-      for course in courses:
-        progress = get_total_progress_for_course(member.email, course)
-        member.course_progress.append(create_course_progress(course, progress))
+        mp = MemberProgress()
+        student = RoseboticsStudent.get_by_id(member.email)
+        mp.display_name = student.name
+        mp.username = student.username
+        for course in courses:
+          progress = get_total_progress_for_course(member.email, course.lower())
+          mp.course_progress.append(create_course_progress(course, progress))
+        members_progress.append(mp)     
     team_progress.members_progress = members_progress          
     return team_progress
 

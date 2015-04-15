@@ -87,7 +87,7 @@ class CourseProgress(EndpointsModel):
 
 class MemberProgress(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("display_name", "course_progress")
+  _message_fields_schema = ("display_name","username" ,"course_progress")
   display_name = ndb.StringProperty()
   username = ndb.StringProperty()
   course_progress = ndb.LocalStructuredProperty(CourseProgress, repeated=True)
