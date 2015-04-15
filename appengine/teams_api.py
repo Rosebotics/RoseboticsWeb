@@ -82,7 +82,7 @@ class TeamApi(remote.Service):
     query = RoseboticsTeam.query(RoseboticsTeam.leader==user_email)
     teams += [team for team in query]
     teams = remove_model_duplicates(teams)
-    response.teams = [to_team_from_rosebotics(team_key) for team_key in teams]
+    response.teams = [to_team_from_rosebotics(team_key, get_members=False) for team_key in teams]
     return response
 
   @Teams.method(user_required=True, request_fields=(), name='list.leader', 
@@ -147,7 +147,7 @@ class TeamApi(remote.Service):
         raise endpoints.BadRequestException("You are not allowed to view this team!")
     courses = ['iOS', 'Web'] #, 'Android'] # TODO: add 'Android'
     for member in members:
-      if member.visibility in allowed_visibilies:
+      if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
         student = RoseboticsStudent.get_by_id(member.email)
         mp.display_name = student.name
@@ -184,13 +184,14 @@ def get_user_email():
 def get_member_key(team_key, email):
   return ndb.Key(RoseboticsTeamMember, email, parent=team_key)
 
-def to_team_from_rosebotics(rosebotics_team):
+def to_team_from_rosebotics(rosebotics_team, get_members=True):
   team = Team()
   team.name = rosebotics_team.name
   team.leader = rosebotics_team.leader
   team.team_key = rosebotics_team.key
-  members = RoseboticsTeamMember.query(ancestor=rosebotics_team.key)
-  team.members = [member for member in members] # iterate through them to get them all
+  if get_members:
+    members = RoseboticsTeamMember.query(ancestor=rosebotics_team.key)
+    team.members = [member for member in members] # iterate through them to get them all
   return team
 
 def remove_model_duplicates(seq):

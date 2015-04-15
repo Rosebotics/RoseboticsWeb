@@ -17,6 +17,18 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'TeamServices'
         templateUrl: '/static/teams/partials/teams.html',
         controller: 'TeamsCtrl as teams'
       })
+      .when('/teams/:team_key/courses', {
+        templateUrl: '/static/teams/partials/teams_course.html',
+        controller: 'TeamsCourseCtrl as courses'
+      })
+      .when('/teams/:team_key/courses/:course_name', {
+        templateUrl: '/static/teams/partials/teams_track.html',
+        controller: 'TeamsTrackCtrl as tracks'
+      })
+      .when('/teams/:team_key/courses/:course_name/tracks/:track_name', {
+        templateUrl: '/static/teams/partials/teams_unit.html',
+        controller: 'TeamsUnitCtrl as units'
+      })
       .when('/invites/', {
         templateUrl: '/static/teams/partials/invites.html',
         controller: 'InvitesCtrl as invites'
@@ -24,6 +36,10 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'TeamServices'
       .when('/manage/', {
         templateUrl: '/static/teams/partials/manage.html',
         controller: 'ManageCtrl as manage'
+      })
+      .when('/manage/:team_key', {
+        templateUrl: '/static/teams/partials/manage_team.html',
+        controller: 'ManageTeamCtrl as manage'
       })
       .otherwise({
         redirectTo: '/overview/'

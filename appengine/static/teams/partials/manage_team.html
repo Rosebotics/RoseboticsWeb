@@ -1,0 +1,26 @@
+<form class="form-horizontal">
+	<fieldset>
+		<legend>
+			<team-title team="manage.team"></team-title>
+		</legend>
+		<div class="form-group">
+			<label for="inputName" class="col-lg-2 control-label">Name</label>
+			<div class="col-lg-10">
+				<input type="text" class="form-control" id="inputName"
+					placeholder="Team Name" ng-model="manage.team.name">
+			</div>
+		</div>
+		<div class="form-group">
+      <label for="members" class="col-lg-2 control-label">Member Emails</label>
+      <div class="col-lg-10">
+        <textarea class="form-control" rows="3" id="textArea">{{manage.memberEmails}}</textarea>
+        <span class="help-block">These are the members that are apart of the team.</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-lg-10 col-lg-offset-2">
+        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+      </div>
+    </div>
+	</fieldset>
+</form>

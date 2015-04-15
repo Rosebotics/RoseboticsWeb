@@ -5,6 +5,15 @@ angular.module('TeamServices', [])
 	        {name:'Invites', href:'#/invites/'}, 
 	        {name:'Manage', href:'#/manage/'}];
 })
+.factory('testing', function() {
+	return [{	team_key:'abc123', 
+				name:'Test Team', 
+				leader:'Tyler Rockwood', 
+				members:[
+				         {email:'rockwotj@gmail.com', visibility:'ALL_MEMBERS'}, 
+				         {email:'test@example.com', visibility:'ALL_MEMBERS'}
+				        ]}];
+})
 .service('oAuth', function ($q) {
   this.doCall = function() {
 	  var p = $q.defer();
