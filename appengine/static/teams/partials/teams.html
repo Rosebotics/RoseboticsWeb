@@ -1,5 +1,9 @@
-<p> These are the teams your on. Click one to view the team progress
-<ul>
+<div class="row">
+<p class="col-sm-10"> 
+Below are the teams you are on. Click the button to the right to create a new team.
+</p>
+<button class="btn btn-primary col-sm-2" ng-click="teams.toggleCreateTeamModal()">Create</button>
+</div> 
+<ul class="teams-list">
 	<li><a href="#/teams/{{teams.team.team_key}}/courses">{{teams.team.name}}</a></li>
 </ul>
-</p>

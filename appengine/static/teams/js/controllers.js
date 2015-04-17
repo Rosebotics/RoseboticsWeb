@@ -9,16 +9,30 @@ angular.module('TeamControllers', [])
 })
 .controller('OverviewCtrl', function() {
 })
-.controller('TeamsCtrl', function(testing) {
+.controller('TeamsCtrl', function($modal, testing) {
 	this.team = testing[0];
+	this.toggleCreateTeamModal = function() {
+		var modalInstance = $modal.open({
+		  templateUrl: '/static/teams/partials/modals/create_team_modal.html',
+		  controller: 'SimpleModalInstanceCtrl',
+		  controllerAs: 'modal'
+		});
+	};
 })
-.controller('TeamsCourseCtrl', function($routeParams, testing) {
+.controller('TeamsCourseCtrl', function($routeParams, $modal, testing) {
 	for(var i = 0; i < testing.length; i++) {
 		if(testing[i].team_key == $routeParams.team_key) {
 			this.team = testing[i];
 			break;
 		}
 	}
+	this.toggleExportProgressModal = function() {
+		var modalInstance = $modal.open({
+		  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
+		  controller: 'SimpleModalInstanceCtrl',
+		  controllerAs: 'modal'
+		});
+	};
 })
 .controller('TeamsTrackCtrl', function($routeParams, testing) {
 	this.course = $routeParams.course_name;
@@ -42,24 +56,37 @@ angular.module('TeamControllers', [])
 .controller('InvitesCtrl', function(testing) {
 	this.team = testing[0];
 })
-.controller('ManageCtrl', function(testing) {
+.controller('ManageCtrl', function($modal, testing) {
 	this.team = testing[0];
-	
+	this.toggleCreateTeamModal = function() {
+		var modalInstance = $modal.open({
+		  templateUrl: '/static/teams/partials/modals/create_team_modal.html',
+		  controller: 'SimpleModalInstanceCtrl',
+		  controllerAs: 'modal'
+		});
+	};
 })
-.controller('ManageTeamCtrl', function($routeParams, testing) {
+.controller('ManageTeamCtrl', function($routeParams, $modal, testing) {
 	for(var i = 0; i < testing.length; i++) {
 		if(testing[i].team_key == $routeParams.team_key) {
 			this.team = testing[i];
 			break;
 		}
 	}
-	this.memberEmails = ""
-	for(var i = 0; i < this.team.members.length; i++){
-		this.memberEmails += ", " + this.team.members[i].email;
-	}
-	if(this.memberEmails.length > 0) {
-		this.memberEmails = this.memberEmails.substring(2);
-	}
+	this.toggleDeleteTeamModal = function() {
+		var modalInstance = $modal.open({
+		  templateUrl: '/static/teams/partials/modals/delete_team_modal.html',
+		  controller: 'SimpleModalInstanceCtrl',
+		  controllerAs: 'modal'
+		});
+	};
+	this.toggleCreateMemberModal = function() {
+		var modalInstance = $modal.open({
+		  templateUrl: '/static/teams/partials/modals/create_member_modal.html',
+		  controller: 'SimpleModalInstanceCtrl',
+		  controllerAs: 'modal'
+		});
+	};
 })
 angular.module('ModalControllers', [])
 .controller('ModalToggleCtrl', function($modal) {
@@ -83,4 +110,3 @@ angular.module('ModalControllers', [])
     $modalInstance.close('cancel');
   };
 });
-

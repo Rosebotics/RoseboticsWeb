@@ -2,7 +2,12 @@
 	<fieldset>
 		<legend>
 			<team-title team="manage.team"></team-title>
+			<button class="btn btn-danger pull-right" ng-click="manage.toggleDeleteTeamModal()">Delete Team</button>
 		</legend>
+		<div class="alert alert-dismissible alert-warning" ng-init="alertShow = true"  ng-show="alertShow">
+		  <button type="button" class="close" data-dismiss="alert" ng-click="alertShow = false">x</button>
+		  <p><strong>Warning!</strong> You must press submit to finalize changes to a team.</p>
+		</div>
 		<div class="form-group">
 			<label for="inputName" class="col-lg-2 control-label">Name</label>
 			<div class="col-lg-10">
@@ -12,14 +17,26 @@
 		</div>
 		<div class="form-group">
       <label for="members" class="col-lg-2 control-label">Member Emails</label>
-      <div class="col-lg-10">
-        <textarea class="form-control" rows="3" id="textArea">{{manage.memberEmails}}</textarea>
-        <span class="help-block">These are the members that are apart of the team.</span>
+      <div class="col-lg-9 col-xs-11" id="manage-member-list" ng-init="editing = false;">
+        <p>
+        	<button class="btn btn-danger" ng-show="editing"><span class="glyphicon glyphicon-trash"></span></button>
+        	rockwotj@gmail.com <span class="label label-success">Progress visible by all members</span>
+        </p>
+        <p>
+          <button class="btn btn-danger" ng-show="editing"><span class="glyphicon glyphicon-trash"></span></button>
+        	test@example.com <span class="label label-warning">Not Responded</span>
+        </p>
+      </div>
+      <div class="col-lg-1 col-xs-1">
+        <button class="btn btn-primary" ng-click="manage.toggleCreateMemberModal()"><span class="glyphicon glyphicon-plus"></span></button>
+        <br>
+        <br>
+        <button class="btn btn-primary" ng-click="editing = !editing;"><span class="glyphicon glyphicon-pencil"></span></button>
       </div>
     </div>
     <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
-        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+        <button class="btn btn-primary pull-right">Submit</button>
       </div>
     </div>
 	</fieldset>

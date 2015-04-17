@@ -1,6 +1,34 @@
 textarea {
 	resize: none;
 }
+
+span.select-span {
+	font-size: 16px;
+	position: relative;
+	top: 5px;
+}
+ul.teams-list {
+		font-size: 20px;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+ul.teams-list>li {
+    background-image: url("/static/images/ic_group_18px.svg");
+    background-repeat: no-repeat;
+    background-position: 0px center; 
+    padding-left: 30px;
+}
+#manage-member-list>p{
+		font-size: 14px;
+}
+#manage-member-list>p>button{
+		margin-right: 10px;
+}
+legend>button {
+	position: relative;
+	top: -5px;
+}
 /*
 * Spinner
 */

@@ -1,0 +1,23 @@
+<form class="form-horizontal">
+
+	<fieldset>
+		<div class="modal-header bg-info">
+			<button type="button" class="close" ng-click="modal.cancel()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<h4 class="modal-title">Delete Team</h4>
+		</div>
+		<div class="modal-body">
+			<p>Are you sure you want to delete this team?</p>
+		</div>
+		<div class="modal-footer">
+			<div class="form-group">
+				<div class="col-lg-10 col-lg-offset-2">
+					<button type="button" class="btn btn-default"
+						ng-click="modal.cancel()">Cancel</button>
+					<button type="submit" class="btn btn-primary pull-right">Remove</button>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</form>

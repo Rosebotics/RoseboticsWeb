@@ -42,8 +42,11 @@ RESPONSE_TYPE = 'token id_token';
  */
 init = function() {
 	var apisToLoad;
-	// TODO: change this to https appspot domain for deployment.
 	var apiRoot = '//' + window.location.host + '/_ah/api';
+	// Change to https appspot domain for deployment.
+	if (window.location.host.indexOf("localhost") == -1) {
+		apiRoot = "https://roseboticsweb.appspot.com/_ah/api"
+	}
 	var callback = function() {
 		if (--apisToLoad == 0) {
 			// bootstrap manually angularjs after our api are loaded
