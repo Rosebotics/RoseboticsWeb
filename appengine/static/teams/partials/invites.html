@@ -42,7 +42,10 @@
           <span class="select-span" ng-show="!editing">All Members can see my progress</span>
       </div>
       <div class="col-lg-2">
-        <button class="btn btn-primary" ng-click="editing = !editing"><span class="glyphicon glyphicon-pencil"></span></button>
+        <button class="btn btn-primary" ng-click="editing = !editing">
+        	<span ng-show="!editing" class="glyphicon glyphicon-pencil"></span>
+        	<span ng-show="editing" class="glyphicon glyphicon-remove"></span>
+        </button>
         <button class="btn btn-success" ng-show="editing" ng-click="editing = !editing" tooltip="Submit change" tooltip-trigger="mouseenter" tooltip-placement="bottom"><span class="glyphicon glyphicon-ok"></span></button>
       </div>
     </div>

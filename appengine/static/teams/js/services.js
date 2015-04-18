@@ -15,30 +15,41 @@ angular.module('TeamServices', [])
 				        ]}];
 })
 .service('oAuth', function ($q) {
-  this.doCall = function() {
-	  var p = $q.defer();
-	  apiCallInProgress = true;
-	  gapi.auth.authorize({
-	    client_id: CLIENT_ID,
-	    scope: SCOPES,
-	    immediate: true
-	  }, function(){
-	    var request = gapi.client.oauth2.userinfo.get().execute(function(resp) {
-	      if (!resp.code) {
-	        p.resolve(gapi);
-	      } else {
-	        p.reject(gapi);
-	      }
-	    });
-	  });
-	  return p.promise;
-  };
-
   this.signin = function(immediate, callback) {
     gapi.auth.authorize({
       client_id: CLIENT_ID,
       scope: SCOPES,
       immediate: immediate
     }, callback);
+  };
+})
+.service('api', function ($q) {
+  this.deleteTeam = function(team) {
+	  var p = $q.defer();
+	  return p.promise;
+  };
+  this.createTeam = function(name, memberEmails) {
+	  var p = $q.defer();
+	  return p.promise;
+  };
+  this.get_invites = function() {
+	  var p = $q.defer();
+	  return p.promise;
+  };
+  this.edit_invite = function(invite) {
+	  var p = $q.defer();
+	  return p.promise;
+  };
+  this.get_teams = function() {
+	  var p = $q.defer();
+	  return p.promise;
+  };
+  this.get_lead_teams = function() {
+	  var p = $q.defer();
+	  return p.promise;
+  };
+  this.get_progress = function(team) {
+	  var p = $q.defer();
+	  return p.promise;
   };
 });
