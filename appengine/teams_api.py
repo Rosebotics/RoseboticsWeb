@@ -68,11 +68,14 @@ class TeamApi(remote.Service):
     if team.leader != user_email:
       raise endpoints.BadRequestException('You are not the leader of this team!')
       return  
-    team.team_key.delete()
-    return RoseboticsTeam(name='deleted')
+    members = RoseboticsTeamMember.query(ancestor=team.key)
+    for member in members:
+      member.key.delete()
+    team.key.delete()
+    return Team(name='deleted')
 
-  @Teams.method(user_required=True, request_fields=(), name='list', 
-                path='list', http_method='GET')
+  @Teams.method(user_required=True, request_fields=(), name='list.all', 
+                path='list/all', http_method='GET')
   def get_teams(self, empty):
     """ Gets the teams that you are a member or leader of """
     user_email = get_user_email()
@@ -145,7 +148,7 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = ['iOS', 'Web'] #, 'Android'] # TODO: add 'Android'
+    courses = ['iOS', 'Web', 'Android']
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
@@ -199,6 +202,8 @@ def remove_model_duplicates(seq):
   urlsafes = []
   checked = []
   for e in seq:
+    if e is None:
+      continue
     urlsafe = e.key.urlsafe()
     if urlsafe not in urlsafes:
       urlsafes.append(urlsafe)

@@ -5,5 +5,7 @@ Below are your teams. Click the button to the right to create a new team.
 <button class="btn btn-primary col-sm-2" ng-click="manage.toggleCreateTeamModal()">Create</button>
 </div> 
 <ul class="teams-list">
-	<li><a href="#/manage/{{manage.team.team_key}}">{{manage.team.name}}</a></li>
+	<li ng-repeat="team in manage.items">
+		<a href="#/manage/{{team.team_key}}">{{team.name}}</a>
+	</li>
 </ul>

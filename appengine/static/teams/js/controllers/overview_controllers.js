@@ -19,10 +19,10 @@ angular.module('OverviewControllers', [])
 .controller('SidebarCtrl', function(sidebar, $location, $scope) {
 	this.routes = sidebar.routes;
 	this.show = sidebar.show.get();
-	var sidebarCtrl = this;
-	$scope.$watch(function () { return sidebar.show.get(); }, 
-			function (value) { sidebarCtrl.show = value; });
-	
+	var self = this;
+	$scope.$watch(function () { return sidebar.show.get(); },
+			function (value) { self.show = value; });
+
 	this.isActive = function(routeUrl) {
 		var path = $location.path();
 		routeUrl = routeUrl.substring(1);

@@ -1,11 +1,27 @@
 angular.module('TeamControllers', [])
-.controller('TeamsCtrl', function($modal, testing) {
-	this.team = testing[0];
+.controller('TeamsCtrl', function($modal, teams) {
+	this.items = teams["teams"];
+	var self = this;
 	this.toggleCreateTeamModal = function() {
 		var modalInstance = $modal.open({
 		  templateUrl: '/static/teams/partials/modals/create_team_modal.html',
-		  controller: 'SimpleModalInstanceCtrl',
+		  controller: 'CreateTeamModalInstanceCtrl',
 		  controllerAs: 'modal'
+		});
+		modalInstance.result.then(function(newTeam) {
+			snackbar.create("Creating team...", 1);
+			api.insertTeam(newTeam).then(function(result) {
+				snackbar.remove(1);
+				snackbar.createWithTimeout("<b>Success!</b> Team created");
+				if (teams["teams"] == undefined) {
+					teams["teams"] = [];
+					self.items = teams["teams"];
+				}
+				teams["teams"].push(result);
+			}, function(error) {
+				snackbar.remove(1);
+				snackbar.createWithTimeout("<b>Error!</b> Team not created");
+			});
 		});
 	};
 })

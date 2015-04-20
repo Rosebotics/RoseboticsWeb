@@ -6,4 +6,4 @@ h4 {
 	top: 3px;
 }
 </style>
-<h4>{{team.name}}</h4><span class="label label-default">by {{team.leader}}</span>
+<h4>{{team.name || team.team_name}}</h4><span class="label label-default">by {{team.leader || team.team_leader_name}}</span>

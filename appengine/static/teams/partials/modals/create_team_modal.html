@@ -12,14 +12,20 @@
 				<label for="inputName" class="col-lg-2 control-label">Name</label>
 				<div class="col-lg-10">
 					<input type="text" class="form-control" id="inputName"
-						placeholder="Team Name">
+						placeholder="Team Name" ng-model="modal.teamName">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="checkbox col-lg-10 col-lg-offset-2">
+					<label> <input type="checkbox" ng-model="modal.includeLeader"> Include my own progress in this team
+					</label>
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="members" class="col-lg-2 control-label">Member
 					Emails</label>
 				<div class="col-lg-10">
-					<textarea class="form-control" rows="3" id="textArea"></textarea>
+					<textarea class="form-control" rows="3" id="textArea" ng-model="modal.teamMembers"></textarea>
 					<span class="help-block">Please enter a comma delimited list
 						of emails.</span>
 				</div>
@@ -28,8 +34,8 @@
 		<div class="modal-footer">
 			<div class="form-group">
 				<div class="col-lg-10 col-lg-offset-2">
-				<button type="button" class="btn btn-default" ng-click="modal.cancel()">Cancel</button>
-					<button type="submit" class="btn btn-primary pull-right">Submit</button>
+				<button class="btn btn-default" ng-click="modal.cancel()">Cancel</button>
+					<button class="btn btn-primary pull-right" ng-click="modal.add()">Submit</button>
 				</div>
 			</div>
 		</div>

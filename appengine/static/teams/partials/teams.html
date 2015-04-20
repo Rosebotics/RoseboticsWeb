@@ -1,9 +1,16 @@
 <div class="row">
-<p class="col-sm-10"> 
+<p class="col-sm-10">
 Below are the teams you are on. Click the button to the right to create a new team.
 </p>
 <button class="btn btn-primary col-sm-2" ng-click="teams.toggleCreateTeamModal()">Create</button>
-</div> 
+</div>
+<style>
+h4 {
+  display: inline;
+}
+</style>
 <ul class="teams-list">
-	<li><a href="#/teams/{{teams.team.team_key}}/courses">{{teams.team.name}}</a></li>
+	<li ng-repeat="team in teams.items">
+		<a style="color: #000" href="#/teams/{{team.team_key}}/courses"><h4>{{team.name}}</h4></a> <span class="label label-default">by {{team.leader}}</span>
+	</li>
 </ul>
