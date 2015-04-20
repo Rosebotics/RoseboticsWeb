@@ -1,9 +1,20 @@
 angular.module('TeamServices', [])
-.factory('routes', function() {
-	return [{name:'Overview', href:'#/overview/'}, 
-	        {name:'Teams', href:'#/teams/'}, 
-	        {name:'Invites', href:'#/invites/'}, 
-	        {name:'Manage', href:'#/manage/'}];
+.factory('sidebar', function() {
+	var isShowing = true;
+	return { routes :
+				[{name:'Overview', href:'#/overview/'}, 
+		        {name:'Teams', href:'#/teams/'}, 
+		        {name:'Invites', href:'#/invites/'}, 
+		        {name:'Manage', href:'#/manage/'}],
+		     show: 
+		    	 { get: function() {
+		    		 	return isShowing;
+		    	 	},
+		    	   set: function(showing) {
+		    		   isShowing = showing;
+		    	   }
+		    	 }
+			};
 })
 .factory('testing', function() {
 	return [{	team_key:'abc123', 
@@ -14,7 +25,7 @@ angular.module('TeamServices', [])
 				         {email:'test@example.com', visibility:'ALL_MEMBERS'}
 				        ]}];
 })
-.service('oAuth', function ($q) {
+.service('oAuth', function ($q, $location, sidebar, $rootScope) {
   this.signin = function(immediate, callback) {
     gapi.auth.authorize({
       client_id: CLIENT_ID,
@@ -22,6 +33,17 @@ angular.module('TeamServices', [])
       immediate: immediate
     }, callback);
   };
+  this.check = function() {
+	this.signin(true, function(authResult) {
+	  if (authResult.error) {
+		$location.path('/preview');
+		sidebar.show.set(false);
+	  } else if($location.path().startsWith('/preview')) {
+		  $location.path('/overview');
+	  }
+	  $rootScope.$apply();
+	});
+  }
 })
 .service('api', function ($q) {
   this.deleteTeam = function(team) {

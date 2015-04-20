@@ -1,17 +1,17 @@
 'use strict';
 
-angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'TeamServices', 
-                           'ui.bootstrap', 'ngRoute', 'TeamDirectives'])
-.run(function() {
-  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
-  angular.element(document.querySelector("div.spinner")).addClass("hidden");
-})
+angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewControllers', 'ManageControllers', 
+                           'TeamServices',  'InviteControllers', 'ui.bootstrap', 'ngRoute', 'TeamDirectives'])
 .config(['$routeProvider',
   function($routeProvider) {
     $routeProvider
       .when('/overview/', {
         templateUrl: '/static/teams/partials/overview.html',
         controller: 'OverviewCtrl as overview'
+      })
+      .when('/preview/', {
+        templateUrl: '/static/teams/partials/preview.html',
+        controller: 'PreviewCtrl as preview'
       })
       .when('/teams/', {
         templateUrl: '/static/teams/partials/teams.html',
@@ -44,4 +44,9 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'TeamServices'
       .otherwise({
         redirectTo: '/overview/'
       });
-  }]);
+  }])
+  .run(function($rootScope, oAuth) {
+	  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
+	  angular.element(document.querySelector("div.spinner")).addClass("hidden");
+	  oAuth.check();
+	});
