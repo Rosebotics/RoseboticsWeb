@@ -1,5 +1,16 @@
 $(document).ready(function(){
 
+    $('#resume-btn').hover(
+        function(){
+            console.log('resume mouse in');
+            $('#resume-icon').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        },
+        function(){
+            console.log('resume mouse out');
+            $('#resume-icon').removeClass('glyphicon-play').addClass('glyphicon-pause');
+        }
+    );
+
     $('#video-btn').magnificPopup({type:'iframe'});
     
     $("#android-course").hover(
