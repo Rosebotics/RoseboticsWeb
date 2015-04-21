@@ -15,28 +15,28 @@
 
 /**
  * Client ID of the application (from the APIs Console).
- * 
+ *
  * @type {string}
  */
 // Below is for the deployed and localhost.
 CLIENT_ID = '963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0@developer.gserviceaccount.com';
 /**
  * Scopes used by the application.
- * 
+ *
  * @type {string}
  */
 SCOPES = 'https://www.googleapis.com/auth/userinfo.email';
 
 /**
  * Response type of the auth token.
- * 
+ *
  * @type {string}
  */
 RESPONSE_TYPE = 'token id_token';
 
 /**
  * Initializes the application. It loads asynchronously all needed libraries
- * 
+ *
  * @param {string}
  *            apiRoot Root of the API's path.
  */

@@ -44,9 +44,9 @@
         	<span ng-show="!editing" class="glyphicon glyphicon-pencil"></span>
         	<span ng-show="editing" class="glyphicon glyphicon-remove"></span>
         </button>
-        <button class="btn btn-success" ng-show="editing" ng-click="editing = !editing"
+        <button class="btn btn-success" ng-show="editing"
          tooltip="Submit change" tooltip-trigger="mouseenter" tooltip-placement="bottom"
-         ng-click="invites.editInvite(invite, newResponse)"><span class="glyphicon glyphicon-ok"></span></button>
+         ng-click="editing = !editing; invites.editInvite(invite, newResponse)"><span class="glyphicon glyphicon-ok"></span></button>
       </div>
     </div>
   </fieldset>

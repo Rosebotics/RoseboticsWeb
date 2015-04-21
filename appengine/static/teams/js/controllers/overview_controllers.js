@@ -1,7 +1,7 @@
 angular.module('OverviewControllers', [])
 .controller('OverviewCtrl', function() {
 })
-.controller('PreviewCtrl', function(oAuth, $location, sidebar, $rootScope) {
+.controller('PreviewCtrl', function(oAuth, $location, sidebar, $rootScope, snackbar) {
 	oAuth.check();
 	this.signup = function() {
 		oAuth.signin(false, function(authResult) {
@@ -10,7 +10,7 @@ angular.module('OverviewControllers', [])
 				$location.path('/overview');
 				sidebar.show.set(true);
 			} else {
-				// TODO: Show error to user.
+				snackbar.createWithTimeout("<b>Error!</b> Sign up failed");
 			}
 			$rootScope.$apply();
 		});

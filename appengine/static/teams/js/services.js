@@ -46,7 +46,6 @@ angular.module('TeamServices', [])
 			immediate : true
 		}, function() {
 			apiMethod.execute(function(resp) {
-				console.log(resp);
 				if (!resp.code) {
 					p.resolve(resp.result);
 				} else {
@@ -77,19 +76,43 @@ angular.module('TeamServices', [])
 		};
 	};
 	this.deleteTeam = function(team) {
-		var p = $q.defer();
-		oAuth.execute(gapi.client.teams.delete(team))
-		.then(function(resp) {
-			p.resolve(resp);
-		}, function(error) {
-			p.reject(error);
-		});
-		return p.promise;
+		if (cache["get_teams"] != undefined) {
+			var teams = cache["get_teams"]["teams"];
+			for(var i = 0; i < teams.length; i++) {
+				if(team.team_key == teams[i].team_key) {
+					teams.splice(i, 1);
+					break;
+				}
+			}
+		}
+		return oAuth.execute(gapi.client.teams.delete(team));
 	};
 	this.insertTeam = function(team) {
 		var p = $q.defer();
+		var updateCache = cache["get_teams"] != undefined;
+		var teams = undefined;
+		var newTeam = team.team_key == undefined;
+		if (updateCache) {
+			teams = cache["get_teams"]["teams"];
+			if(teams == undefined) {
+				cache["get_teams"]["teams"] = [];
+				teams = cache["get_teams"]["teams"];
+			}
+		}
 		oAuth.execute(gapi.client.teams.insert(team))
 		.then(function(resp) {
+			if(updateCache) {
+				if(newTeam) {
+					teams.push(resp)
+				} else {
+					for(var i = 0; i < teams.length; i++) {
+						if(resp.team_key === teams[i].team_key) {
+							teams[i] = resp;
+							break;
+						}
+					}
+				}
+			}
 			p.resolve(resp);
 		}, function(error) {
 			p.reject(error);
@@ -98,18 +121,23 @@ angular.module('TeamServices', [])
 	};
 	this.getInvites = cachedApiCall("get_invites", gapi.client.teams.invites.list());
 	this.editInvite = function(invite) {
+		return oAuth.execute(gapi.client.teams.invites.respond(invite));
+	};
+	this.getTeams = cachedApiCall("get_teams", gapi.client.teams.list.all());
+	this.getLeadTeams = cachedApiCall("get_lead_teams", gapi.client.teams.list.leader());
+	this.getProgress = function(team) {
 		var p = $q.defer();
-		oAuth.execute(gapi.client.teams.invites.respond(invite))
+		if(cache[team.team_key] != undefined) {
+			p.resolve(cache[team.team_key]);
+			return p.promise;
+		}
+		oAuth.execute(gapi.client.teams.progress(team))
 		.then(function(resp) {
+			cache[team.team_key] = resp;
 			p.resolve(resp);
 		}, function(error) {
 			p.reject(error);
 		});
 		return p.promise;
-	};
-	this.getTeams = cachedApiCall("get_teams", gapi.client.teams.list.all());
-	this.getLeadTeams = cachedApiCall("get_lead_teams", gapi.client.teams.list.leader());
-	this.getProgress = function(team) {
-
 	};
 });

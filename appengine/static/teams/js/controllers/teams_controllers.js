@@ -25,11 +25,13 @@ angular.module('TeamControllers', [])
 		});
 	};
 })
-.controller('TeamsCourseCtrl', function($routeParams, $modal, testing) {
-	for(var i = 0; i < testing.length; i++) {
-		if(testing[i].team_key == $routeParams.team_key) {
-			this.team = testing[i];
-			break;
+.controller('TeamsCourseCtrl', function($modal, team) {
+  this.team = team;
+	this.courses = [];
+	if (team.members_progress.length > 0) {
+		courses = team.members_progress[0].course_progress;
+		for (var i = 0; i < courses.length; i++) {
+			this.courses.push(courses[i].name);
 		}
 	}
 	this.toggleExportProgressModal = function() {
@@ -40,22 +42,12 @@ angular.module('TeamControllers', [])
 		});
 	};
 })
-.controller('TeamsTrackCtrl', function($routeParams, testing) {
+.controller('TeamsTrackCtrl', function($routeParams, team) {
+	this.team = team;
 	this.course = $routeParams.course_name;
-	for(var i = 0; i < testing.length; i++) {
-		if(testing[i].team_key == $routeParams.team_key) {
-			this.team = testing[i];
-			break;
-		}
-	}
 })
-.controller('TeamsUnitCtrl', function($routeParams, testing) {
+.controller('TeamsUnitCtrl', function($routeParams, team) {
+	this.team = team;
 	this.course = $routeParams.course_name;
 	this.track = $routeParams.track_name;
-	for(var i = 0; i < testing.length; i++) {
-		if(testing[i].team_key == $routeParams.team_key) {
-			this.team = testing[i];
-			break;
-		}
-	}
 });

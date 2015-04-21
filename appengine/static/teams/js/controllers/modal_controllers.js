@@ -25,6 +25,10 @@ angular.module('ModalControllers', [])
 	this.email = "";
 	this.addMember = function(email) {
 		email = email.trim();
+		if (email.length === 0) {
+			$modalInstance.dismiss('cancel');
+			return;
+		}
 		if (email.indexOf('@') < 0) {
 			email += '@gmail.com';
 		}
@@ -46,8 +50,11 @@ angular.module('ModalControllers', [])
 	this.add = function() {
 		var newTeam = {name: self.teamName, leader: userEmail, members:[]};
 		var members = self.teamMembers.split(',');
-		for(var i = 0; i < members.length; i++) {
+		for (var i = 0; i < members.length; i++) {
 			var email = members[i].trim();
+			if (email.length === 0) {
+				continue;
+			}
 			if (email.indexOf('@') < 0) {
 				email += '@gmail.com';
 			}

@@ -29,7 +29,7 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'Android Development'
+  title: 'Android Development - SQLite'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |

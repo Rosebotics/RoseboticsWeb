@@ -25,15 +25,30 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
       })
       .when('/teams/:team_key/courses', {
         templateUrl: '/static/teams/partials/teams_course.html',
-        controller: 'TeamsCourseCtrl as courses'
+        controller: 'TeamsCourseCtrl as courses',
+        resolve: {
+          team: function(api, $route) {
+            return api.getProgress($route.current.params);
+          }
+        }
       })
       .when('/teams/:team_key/courses/:course_name', {
         templateUrl: '/static/teams/partials/teams_track.html',
-        controller: 'TeamsTrackCtrl as tracks'
+        controller: 'TeamsTrackCtrl as tracks',
+        resolve: {
+          team: function(api, $route) {
+            return api.getProgress($route.current.params);
+          }
+        }
       })
       .when('/teams/:team_key/courses/:course_name/tracks/:track_name', {
         templateUrl: '/static/teams/partials/teams_unit.html',
-        controller: 'TeamsUnitCtrl as units'
+        controller: 'TeamsUnitCtrl as units',
+        resolve: {
+          team: function(api, $routeParams) {
+            return api.getProgress($route.current.params);
+          }
+        }
       })
       .when('/invites/', {
         templateUrl: '/static/teams/partials/invites.html',
