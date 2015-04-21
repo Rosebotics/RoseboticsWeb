@@ -148,11 +148,13 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = [ 'Android', 'iOS', 'Web']
+    courses = ['Android', 'iOS', 'Web']
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
         student = RoseboticsStudent.get_by_id(member.email)
+        if student is None:
+          continue
         mp.display_name = student.name
         mp.username = student.username
         for course in courses:

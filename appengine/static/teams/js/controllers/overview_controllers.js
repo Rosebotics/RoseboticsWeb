@@ -1,24 +1,23 @@
 angular.module('OverviewControllers', [])
 .controller('OverviewCtrl', function() {
 })
-.controller('PreviewCtrl', function(oAuth, $location, sidebar, $rootScope, snackbar) {
+.controller('PreviewCtrl', function(oAuth, $location, sidebar, $rootScope, snackbar, userEmail) {
 	oAuth.check().then(function() {
 		$location.path('/overview');
 		sidebar.show.set(true);
 		$rootScope.$apply();
 	});
 	this.signup = function() {
-		oAuth.signin(false, function(authResult) {
-			console.log(authResult);
-			//TODO: Check if email is the same that the server has...
-			//TODO: Change this to a promise
-			if (!authResult.error) {
-				$location.path('/overview');
-				sidebar.show.set(true);
-			} else {
-				snackbar.createWithTimeout("<b>Error!</b> Sign up failed");
-			}
-			$rootScope.$apply();
+		oAuth.signup().then(function() {
+			oAuth.getUserEmail().then(function(userInfo) {
+				if(userInfo.email !== userEmail) {
+					snackbar.createWithTimeout("<b>Danger!</b> Signing up for teams with another account may cause errors!", 6000);
+				}
+			});
+			$location.path('/overview');
+			sidebar.show.set(true);
+		}, function() {
+			snackbar.createWithTimeout("<b>Error!</b> Sign up failed");
 		});
 	};
 })

@@ -32,7 +32,7 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
           }
         }
       })
-      .when('/teams/:team_key/courses/:course_name', {
+      .when('/teams/:team_key/courses/:course_name/tracks', {
         templateUrl: '/static/teams/partials/teams_track.html',
         controller: 'TeamsTrackCtrl as tracks',
         resolve: {
@@ -41,11 +41,11 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
           }
         }
       })
-      .when('/teams/:team_key/courses/:course_name/tracks/:track_name', {
+      .when('/teams/:team_key/courses/:course_name/tracks/:track_name/units', {
         templateUrl: '/static/teams/partials/teams_unit.html',
         controller: 'TeamsUnitCtrl as units',
         resolve: {
-          team: function(api, $routeParams) {
+          team: function(api, $route) {
             return api.getProgress($route.current.params);
           }
         }
@@ -85,7 +85,7 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
 	  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
 	  angular.element(document.querySelector("div.spinner")).addClass("hidden");
 	  oAuth.check().then(null, function() {
-		$location.path('/preview');
-		sidebar.show.set(false);
+  		$location.path('/preview');
+  		sidebar.show.set(false);
 	  });
 	});

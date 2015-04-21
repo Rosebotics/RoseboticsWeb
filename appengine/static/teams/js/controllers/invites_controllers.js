@@ -21,7 +21,15 @@ angular.module('InviteControllers', [])
 			}
 			self.accepted.push(invite);
 		}
-		invite.response = newResponse
+		if (invite.response === "REJECT_INVITE") {
+			for(var i = 0; i < self.accepted.length; i++) {
+				if (self.accepted[i].team_key === invite.team_key) {
+					self.pending.splice(i, 1);
+					break;
+				}
+			}
+		}
+		invite.response = newResponse;
 		snackbar.create("Sending response...", 4);
 		api.editInvite(invite).then(function() {
 			snackbar.remove(4);

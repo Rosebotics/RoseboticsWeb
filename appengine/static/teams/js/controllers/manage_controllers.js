@@ -98,4 +98,7 @@ angular.module('ManageControllers', [])
 			self.team.members.push(newMember);
 		});
 	};
+	this.visibilityOptions = {"NOT_CHOSEN" : "No Response",
+														"ALL_MEMBERS" : "Progress visible by everyone",
+														"TEAM_LEADER": "Progress visible to leader only"};
 });

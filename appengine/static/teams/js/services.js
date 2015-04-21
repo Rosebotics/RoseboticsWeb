@@ -7,40 +7,39 @@ angular.module('TeamServices', [])
 		{name:'Invites', href:'#/invites/'},
 		{name:'Manage', href:'#/manage/'}],
 		show:
-		{ get: function() {
-			return isShowing;
-		},
-		set: function(showing) {
-			isShowing = showing;
+		{
+			get: function() {
+				return isShowing;
+			},
+			set: function(showing) {
+				isShowing = showing;
+			}
 		}
-	}
-};
+	};
 })
 .factory('userEmail', function($rootScope) {
 	return $rootScope.userEmail;
 })
-.service('oAuth', function ($q, $location, $rootScope) {
-	this.signin = function(immediate, callback) {
-		gapi.auth.authorize({
-			client_id: CLIENT_ID,
-			scope: SCOPES,
-			immediate: immediate
-		}, gapi.client.oauth2.userinfo.get().execute(function(resp) {
-			callback(resp);
-		}));
+.service('oAuth', function ($q, $location) {
+	var signin = function(immediate) {
+		return function() {
+			var p = $q.defer();
+			gapi.auth.authorize({
+				client_id: CLIENT_ID,
+				scope: SCOPES,
+				immediate: immediate
+			}, function(authResult) {
+				if (authResult.error) {
+					p.reject(authResult);
+				} else {
+					p.resolve(authResult);
+				}
+			});
+			return p.promise;
+		}
 	};
-	this.check = function() {
-		var p = $q.defer();
-		this.signin(true, function(authResult) {
-			if (authResult.error) {
-				p.reject(authResult);
-			} else {
-				p.resolve(authResult);
-			}
-			$rootScope.$apply();
-		});
-		return p.promise;
-	}
+	this.signup = signin(false);
+	this.check = signin(true);
 	this.execute = function(apiMethod) {
 		var p = $q.defer();
 		gapi.auth.authorize({
@@ -57,6 +56,9 @@ angular.module('TeamServices', [])
 			});
 		});
 		return p.promise;
+	};
+	this.getUserEmail = function() {
+		return this.execute(gapi.client.oauth2.userinfo.get());
 	};
 })
 .service('api', function (oAuth, $q) {

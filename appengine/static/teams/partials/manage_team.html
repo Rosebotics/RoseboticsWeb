@@ -16,7 +16,7 @@
       <div class="col-lg-9 col-xs-11" id="manage-member-list" ng-init="editing = false;">
         <p ng-repeat="member in manage.team.members">
         	<button class="btn btn-danger" ng-show="editing" ng-click="manage.deleteMember(member)"><span class="glyphicon glyphicon-trash"></span></button>
-        	{{member.email}} <span class="label label-{{ member.visibility !== 'NOT_CHOSEN' ? 'success' : 'warning' }}">{{member.visibility}}</span>
+        	{{member.email}} <span class="label label-{{ member.visibility !== 'NOT_CHOSEN' ? 'success' : 'warning' }}">{{manage.visibilityOptions[member.visibility]}}</span>
         </p>
       </div>
       <div class="col-lg-1 col-xs-1">

@@ -45,9 +45,52 @@ angular.module('TeamControllers', [])
 .controller('TeamsTrackCtrl', function($routeParams, team) {
 	this.team = team;
 	this.course = $routeParams.course_name;
+	this.tracks = [];
+	if (team.members_progress.length > 0) {
+		var courses = team.members_progress[0].course_progress;
+		for (var i = 0; i < courses.length; i++) {
+			if (courses[i].name === this.course) {
+				this.courseNum = i;
+				var courseTracks = courses[i].track_progress;
+				for (var j = 0; j < courseTracks.length; j++) {
+					this.tracks.push(courseTracks[j].name);
+				}
+				break;
+			}
+		}
+	}
+	var self = this;
+	this.getProgressForMemberTrack = function(member, trackNum) {
+		return member.course_progress[self.courseNum].track_progress[trackNum].progress;
+	}
 })
 .controller('TeamsUnitCtrl', function($routeParams, team) {
 	this.team = team;
 	this.course = $routeParams.course_name;
 	this.track = $routeParams.track_name;
+	this.units = [];
+	if (team.members_progress.length > 0) {
+		var courses = team.members_progress[0].course_progress;
+		for (var i = 0; i < courses.length; i++) {
+			if (courses[i].name === this.course) {
+				this.courseNum = i;
+				var tracks = courses[i].track_progress;
+				for (var j = 0; j < tracks.length; j++) {
+					if (tracks[j].name === this.track) {
+						this.trackNum = j;
+						var trackUnits = tracks[j].unit_progress;
+						for (var k = 0; k < trackUnits.length; k++) {
+							this.units.push(trackUnits[k].name);
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+	var self = this;
+	this.getProgressForMemberUnit = function(member, unitNum) {
+		return member.course_progress[self.courseNum].track_progress[self.trackNum].unit_progress[unitNum].progress;
+	}
 });
