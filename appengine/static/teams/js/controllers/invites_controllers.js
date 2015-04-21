@@ -3,6 +3,9 @@ angular.module('InviteControllers', [])
 	this.pending = [];
 	this.accepted = [];
 	var allInvites = invites["invites"];
+	if (allInvites == undefined) {
+		allInvites = [];
+	}
 	for (var i = 0; i < allInvites.length; i++) {
 		if (allInvites[i].response === "NOT_CHOSEN") {
 			this.pending.push(allInvites[i]);
@@ -21,10 +24,10 @@ angular.module('InviteControllers', [])
 			}
 			self.accepted.push(invite);
 		}
-		if (invite.response === "REJECT_INVITE") {
+		if (newResponse === "REJECT_INVITE") {
 			for(var i = 0; i < self.accepted.length; i++) {
 				if (self.accepted[i].team_key === invite.team_key) {
-					self.pending.splice(i, 1);
+					self.accepted.splice(i, 1);
 					break;
 				}
 			}

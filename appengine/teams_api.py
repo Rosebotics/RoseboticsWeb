@@ -106,7 +106,10 @@ class TeamApi(remote.Service):
     key = get_member_key(invite.team_key, user_email)
     member = key.get()
     member.visibility = invite.response
-    member.put()
+    if member.visibility != TeamVisibility.REJECT_INVITE:
+      member.put()
+    else:
+      member.key.delete()
     return invite
 
   @TeamInvites.method(user_required=True, name='invites.list', request_fields=(),
