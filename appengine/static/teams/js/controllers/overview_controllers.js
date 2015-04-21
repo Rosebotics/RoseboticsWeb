@@ -2,10 +2,16 @@ angular.module('OverviewControllers', [])
 .controller('OverviewCtrl', function() {
 })
 .controller('PreviewCtrl', function(oAuth, $location, sidebar, $rootScope, snackbar) {
-	oAuth.check();
+	oAuth.check().then(function() {
+		$location.path('/overview');
+		sidebar.show.set(true);
+		$rootScope.$apply();
+	});
 	this.signup = function() {
 		oAuth.signin(false, function(authResult) {
 			console.log(authResult);
+			//TODO: Check if email is the same that the server has...
+			//TODO: Change this to a promise
 			if (!authResult.error) {
 				$location.path('/overview');
 				sidebar.show.set(true);

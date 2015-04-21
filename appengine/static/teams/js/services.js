@@ -19,24 +19,27 @@ angular.module('TeamServices', [])
 .factory('userEmail', function($rootScope) {
 	return $rootScope.userEmail;
 })
-.service('oAuth', function ($q, $location, sidebar, $rootScope) {
+.service('oAuth', function ($q, $location, $rootScope) {
 	this.signin = function(immediate, callback) {
 		gapi.auth.authorize({
 			client_id: CLIENT_ID,
 			scope: SCOPES,
 			immediate: immediate
-		}, callback);
+		}, gapi.client.oauth2.userinfo.get().execute(function(resp) {
+			callback(resp);
+		}));
 	};
 	this.check = function() {
+		var p = $q.defer();
 		this.signin(true, function(authResult) {
 			if (authResult.error) {
-				$location.path('/preview');
-				sidebar.show.set(false);
-			} else if($location.path().startsWith('/preview')) {
-				$location.path('/overview');
+				p.reject(authResult);
+			} else {
+				p.resolve(authResult);
 			}
 			$rootScope.$apply();
 		});
+		return p.promise;
 	}
 	this.execute = function(apiMethod) {
 		var p = $q.defer();

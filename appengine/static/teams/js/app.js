@@ -81,8 +81,11 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
         redirectTo: '/overview/'
       });
   }])
-  .run(function($rootScope, oAuth) {
+  .run(function($rootScope, $location, oAuth, sidebar) {
 	  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
 	  angular.element(document.querySelector("div.spinner")).addClass("hidden");
-	  oAuth.check();
+	  oAuth.check().then(null, function() {
+		$location.path('/preview');
+		sidebar.show.set(false);
+	  });
 	});
