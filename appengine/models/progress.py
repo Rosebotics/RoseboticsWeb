@@ -881,6 +881,10 @@ class UnitLessonCompletionTracker(object):
         progress = self.get_or_create_progress(student)
         return self.get_course_status(progress) or self.NOT_STARTED_STATE
 
+    def get_course_units(self):
+      """Return the units for the course"""
+      return self._get_course().get_units()
+
     def get_unit_progress(self, student, progress=None):
         """Returns a dict with the states of each unit."""
         if student.is_transient:

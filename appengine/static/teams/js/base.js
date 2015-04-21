@@ -44,7 +44,7 @@ init = function() {
 	var apisToLoad;
 	var apiRoot = '//' + window.location.host + '/_ah/api';
 	// Change to https appspot domain for deployment.
-	if (window.location.host.indexOf("localhost") == -1) {
+	if (window.location.host.indexOf("localhost") === -1) {
 		apiRoot = "https://roseboticsweb.appspot.com/_ah/api"
 	}
 	var callback = function() {
