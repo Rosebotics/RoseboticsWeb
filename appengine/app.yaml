@@ -33,11 +33,9 @@ env_variables:
   GCB_COURSES_CONFIG: >
                         course:/cs1:/courses/cs1,
                         course:/smartproductdesign:/courses/smartproductdesign,
-                        course:/android-intro:/courses/android-intro,
                         course:/android-ui:/courses/android-ui,
-                        course:/android-storage:/courses/android-storage,
-                        course:/android-cloud-endpoints:/courses/android-cloud-endpoints,
-                        course:/android:/courses/android,
+                        course:/android-sqlite:/courses/android-sqlite,
+                        course:/android-endpoints:/courses/android-endpoints,
                         course:/web-appengine:/courses/web-appengine,
                         course:/web-css:/courses/web-css,
                         course:/web-js:/courses/web-js,

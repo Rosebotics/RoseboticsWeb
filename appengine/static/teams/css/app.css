@@ -1,6 +1,93 @@
 textarea {
 	resize: none;
 }
+
+span.select-span {
+	font-size: 16px;
+	position: relative;
+	top: 5px;
+}
+ul.teams-list {
+		font-size: 20px;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+}
+ul.teams-list>li {
+    background-image: url("/static/images/ic_group_18px.svg");
+    background-repeat: no-repeat;
+    background-position: 0px center;
+    padding-left: 30px;
+}
+#manage-member-list>p{
+		font-size: 14px;
+}
+#manage-member-list>p>button{
+		margin-right: 10px;
+}
+legend>button {
+	position: relative;
+	top: -5px;
+}
+/*
+* Snackbar
+*/
+.snackbar-container {
+	position: fixed;
+	left: 20px;
+	bottom: 0;
+	z-index: 99999;
+}
+.snackbar {
+	overflow: hidden;
+	clear: both;
+	min-width: 288px;
+	max-width: 568px;
+	cursor: pointer;
+	background-color: #323232;
+	color: #FFFFFF;
+	font-size: 14px;
+	border-radius: 2px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+
+	-moz-transition: -moz-transform 0.2s ease-in-out, opacity 0.2s ease-in, height 0 linear 0.2s, padding 0 linear 0.2s, height 0 linear 0.2s;
+	-webkit-transition: -webkit-transform 0.2s ease-in-out, opacity 0.2s ease-in, height 0 linear 0.2s, padding 0 linear 0.2s, height 0 linear 0.2s;
+	transition: transform 0.2s ease-in-out, opacity 0.2s ease-in, height 0 linear 0.2s, padding 0 linear 0.2s, height 0 linear 0.2s;
+	-moz-transform: translateY(200%);
+	-webkit-transform: translateY(200%);
+	transform: translateY(200%);
+}
+.snackbar.snackbar-opened {
+	height: auto;
+	padding: 14px 15px;
+	margin-bottom: 20px;
+	height: auto;
+
+	-moz-transition: -moz-transform 0.2s ease-in-out, opacity 0.2s ease-in, height 0 linear 0.2s;
+	-webkit-transition: -webkit-transform 0.2s ease-in-out, opacity 0.2s ease-in, height 0 linear 0.2s;
+	transition: transform 0.2s ease-in-out, opacity 0.2s ease-in, height 0 linear 0.2s, height 0 linear 0.2s;
+	-moz-transform: none;
+	-webkit-transform: none;
+	transform: none;
+}
+@media (max-width: 767px) {
+	.snackbar-container {
+		left: 0px !important;
+		right: 0px;
+		width: 100%;
+	}
+	.snackbar-container .snackbar {
+		min-width: 100%;
+	}
+	.snackbar-container [class="snackbar snackbar-opened"] ~ .snackbar.toast {
+		margin-top: 20px;
+	}
+	.snackbar-container [class="snackbar snackbar-opened"] {
+		border-radius: 0;
+		margin-bottom: 0;
+	}
+}
+
 /*
 * Spinner
 */
@@ -114,10 +201,10 @@ textarea {
 }
 
 @keyframes bouncedelay {
-  0%, 80%, 100% { 
+  0%, 80%, 100% {
     transform: scale(0.0);
     -webkit-transform: scale(0.0);
-  } 40% { 
+  } 40% {
     transform: scale(1.0);
     -webkit-transform: scale(1.0);
   }

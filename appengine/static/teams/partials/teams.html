@@ -1,5 +1,16 @@
-<p> These are the teams your on. Click one to view the team progress
-<ul>
-	<li><a href="#/teams/{{teams.team.team_key}}/courses">{{teams.team.name}}</a></li>
-</ul>
+<div>
+<p>
+Below are the teams you are on.
 </p>
+</div>
+<style>
+h4 {
+  display: inline;
+}
+</style>
+<ul class="teams-list">
+	<li ng-repeat="team in teams.items">
+		<a style="color: #000" href="#/teams/{{team.team_key}}/courses"><h4>{{team.name}}</h4></a> <span class="label label-default">by {{team.leader}}</span>
+	</li>
+</ul>
+<p ng-hide="teams.items.length">You are not on any teams</p>

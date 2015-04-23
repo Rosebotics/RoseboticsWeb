@@ -66,7 +66,7 @@ if appengine_config.gcb_appstats_enabled():
 
 # i18n configuration for jinja2
 webapp2_i18n_config = {'translations_path': os.path.join(
-    appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
+    appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')} 
 
 rosebotics_routes = [('/', main_handler.HomePage),
                      ('/courses', main_handler.CoursesPage),
@@ -74,6 +74,7 @@ rosebotics_routes = [('/', main_handler.HomePage),
                      ('/platform', main_handler.PlatformPage),
                      ('/web', course_handlers.WebCoursePage),
                      ('/ios', course_handlers.IosCoursePage),
+                     ('/android', course_handlers.AndroidCoursePage),
                      ('/editprofile', main_handler.EditProfileAction),
                      ('/resume', main_handler.ResumeRedirect),
                      ('/teams/', main_handler.TeamsPage),]

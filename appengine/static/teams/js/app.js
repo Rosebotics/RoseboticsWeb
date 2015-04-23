@@ -1,11 +1,8 @@
 'use strict';
 
-angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'TeamServices', 
-                           'ui.bootstrap', 'ngRoute', 'TeamDirectives'])
-.run(function() {
-  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
-  angular.element(document.querySelector("div.spinner")).addClass("hidden");
-})
+angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewControllers', 'ManageControllers',
+                           'TeamServices',  'InviteControllers', 'ui.bootstrap', 'ngRoute', 'TeamDirectives',
+                           'angular.snackbar'])
 .config(['$routeProvider',
   function($routeProvider) {
     $routeProvider
@@ -13,35 +10,82 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'TeamServices'
         templateUrl: '/static/teams/partials/overview.html',
         controller: 'OverviewCtrl as overview'
       })
+      .when('/preview/', {
+        templateUrl: '/static/teams/partials/preview.html',
+        controller: 'PreviewCtrl as preview'
+      })
       .when('/teams/', {
         templateUrl: '/static/teams/partials/teams.html',
-        controller: 'TeamsCtrl as teams'
+        controller: 'TeamsCtrl as teams',
+        resolve: {
+          teams: function(api) {
+            return api.getTeams();
+          }
+        }
       })
       .when('/teams/:team_key/courses', {
         templateUrl: '/static/teams/partials/teams_course.html',
-        controller: 'TeamsCourseCtrl as courses'
+        controller: 'TeamsCourseCtrl as courses',
+        resolve: {
+          team: function(api, $route) {
+            return api.getProgress($route.current.params);
+          }
+        }
       })
-      .when('/teams/:team_key/courses/:course_name', {
+      .when('/teams/:team_key/courses/:course_name/tracks', {
         templateUrl: '/static/teams/partials/teams_track.html',
-        controller: 'TeamsTrackCtrl as tracks'
+        controller: 'TeamsTrackCtrl as tracks',
+        resolve: {
+          team: function(api, $route) {
+            return api.getProgress($route.current.params);
+          }
+        }
       })
-      .when('/teams/:team_key/courses/:course_name/tracks/:track_name', {
+      .when('/teams/:team_key/courses/:course_name/tracks/:track_name/units', {
         templateUrl: '/static/teams/partials/teams_unit.html',
-        controller: 'TeamsUnitCtrl as units'
+        controller: 'TeamsUnitCtrl as units',
+        resolve: {
+          team: function(api, $route) {
+            return api.getProgress($route.current.params);
+          }
+        }
       })
       .when('/invites/', {
         templateUrl: '/static/teams/partials/invites.html',
-        controller: 'InvitesCtrl as invites'
+        controller: 'InvitesCtrl as invites',
+        resolve: {
+          invites: function(api) {
+            return api.getInvites();
+          }
+        }
       })
       .when('/manage/', {
         templateUrl: '/static/teams/partials/manage.html',
-        controller: 'ManageCtrl as manage'
+        controller: 'ManageCtrl as manage',
+        resolve: {
+          teams: function(api) {
+            return api.getLeadTeams();
+          }
+        }
       })
       .when('/manage/:team_key', {
         templateUrl: '/static/teams/partials/manage_team.html',
-        controller: 'ManageTeamCtrl as manage'
+        controller: 'ManageTeamCtrl as manage',
+        resolve: {
+          teams: function(api) {
+            return api.getLeadTeams();
+          }
+        }
       })
       .otherwise({
         redirectTo: '/overview/'
       });
-  }]);
+  }])
+  .run(function($rootScope, $location, oAuth, sidebar) {
+	  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
+	  angular.element(document.querySelector("div.spinner")).addClass("hidden");
+	  oAuth.check().then(null, function() {
+  		$location.path('/preview');
+  		sidebar.show.set(false);
+	  });
+	});

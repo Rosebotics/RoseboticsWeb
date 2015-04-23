@@ -13,27 +13,36 @@
 <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.1.js"></script>
 <script src="/static/teams/js/base.js"></script>
 <script src="/static/teams/js/app.js"></script>
-<script src="/static/teams/js/controllers.js"></script>
+<script src="/static/teams/js/controllers/overview_controllers.js"></script>
+<script src="/static/teams/js/controllers/manage_controllers.js"></script>
+<script src="/static/teams/js/controllers/teams_controllers.js"></script>
+<script src="/static/teams/js/controllers/invites_controllers.js"></script>
+<script src="/static/teams/js/controllers/modal_controllers.js"></script>
 <script src="/static/teams/js/services.js"></script>
 <script src="/static/teams/js/directives.js"></script>
+<script src="/static/teams/js/angular.snackbar.min.js"></script>
 <!-- Endpoints Library, call the init function when it's done loading -->
 <script src="//apis.google.com/js/client.js?onload=init"></script>
 </head>
-<body>
+<body ng-init="userEmail = '{{rosebotics_student.key.string_id()}}'">
 	{% include 'templates/views/common/angular_navbar.html' %}
 	{# http://jinja.pocoo.org/docs/dev/templates/#escaping #}
 	{% raw %}
 	<div class="container hidden">
 		<div class="row">
-			<section class="list-group col-sm-3 col-md-2" ng-controller="SidebarCtrl as sidebar">
-        <a ng-repeat="route in sidebar.routes"  
-        		href="{{ route.href }}" 
-        		class="list-group-item" 
-        		ng-class="{active: sidebar.isActive(route.href)}">
-    			{{ route.name }}
-  			</a>
-       </section>
-       <section class="col-sm-9 col-md-10" ng-view>
+			<div class="col-sm-3 col-md-2" ng-controller="SidebarCtrl as sidebar">
+				<section class="list-group" ng-show="sidebar.show">
+	        <a ng-repeat="route in sidebar.routes"  
+	        		href="{{ route.href }}" 
+	        		class="list-group-item" 
+	        		ng-class="{active: sidebar.isActive(route.href)}">
+	    			{{ route.name }}
+	  			</a>
+	       </section>
+       </div>
+       <section class="col-sm-9 col-md-10" ng-init="isRouteLoading = false">
+	        <div ng-view ng-show="!isRouteLoading"></div>
+	        <route-loading-indicator ng-show="isRouteLoading" />
        </section>
 		</div>	
 		<div class="footer">
@@ -66,5 +75,6 @@
 		</div>
 		<h1>Loading...</h1>
 	</div>
+<div class="snackbar-container" data-snackbar="true"></div>
 </body>
 </html>

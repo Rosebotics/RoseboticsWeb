@@ -2,6 +2,7 @@
 	<fieldset>
 		<legend>
 			<team-title team="manage.team"></team-title>
+			<button class="btn btn-danger pull-right" ng-click="manage.toggleDeleteTeamModal()">Delete Team</button>
 		</legend>
 		<div class="form-group">
 			<label for="inputName" class="col-lg-2 control-label">Name</label>
@@ -12,14 +13,25 @@
 		</div>
 		<div class="form-group">
       <label for="members" class="col-lg-2 control-label">Member Emails</label>
-      <div class="col-lg-10">
-        <textarea class="form-control" rows="3" id="textArea">{{manage.memberEmails}}</textarea>
-        <span class="help-block">These are the members that are apart of the team.</span>
+      <div class="col-lg-9 col-xs-11" id="manage-member-list" ng-init="editing = false;">
+        <p ng-repeat="member in manage.team.members">
+        	<button class="btn btn-danger" ng-show="editing" ng-click="manage.deleteMember(member)"><span class="glyphicon glyphicon-trash"></span></button>
+        	{{member.email}} <span class="label label-{{ member.visibility !== 'NOT_CHOSEN' ? 'success' : 'warning' }}">{{manage.visibilityOptions[member.visibility]}}</span>
+        </p>
+      </div>
+      <div class="col-lg-1 col-xs-1">
+        <button class="btn btn-primary" ng-click="manage.toggleCreateMemberModal()"><span class="glyphicon glyphicon-plus"></span></button>
+        <br>
+        <br>
+        <button class="btn btn-primary" ng-click="editing = !editing;">
+        	<span ng-show="!editing" class="glyphicon glyphicon-pencil"></span>
+        	<span ng-show="editing" class="glyphicon glyphicon-remove"></span>
+        </button>
       </div>
     </div>
     <div class="form-group">
       <div class="col-lg-10 col-lg-offset-2">
-        <button type="submit" class="btn btn-primary pull-right">Submit</button>
+        <button class="btn btn-primary pull-right" ng-click="manage.saveTeam()">Submit</button>
       </div>
     </div>
 	</fieldset>

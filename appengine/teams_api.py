@@ -25,7 +25,7 @@ class TeamApi(remote.Service):
       old_team = team.team_key.get()
     else:
       old_team = None
-    if old_team is not None: 
+    if old_team is not None:
       old_team.name = team.name
       old_team.put()
       old_members = RoseboticsTeamMember.query(ancestor=team.team_key)
@@ -67,12 +67,15 @@ class TeamApi(remote.Service):
     team = team.team_key.get()
     if team.leader != user_email:
       raise endpoints.BadRequestException('You are not the leader of this team!')
-      return  
-    team.team_key.delete()
-    return RoseboticsTeam(name='deleted')
+      return
+    members = RoseboticsTeamMember.query(ancestor=team.key)
+    for member in members:
+      member.key.delete()
+    team.key.delete()
+    return Team(name='deleted')
 
-  @Teams.method(user_required=True, request_fields=(), name='list', 
-                path='list', http_method='GET')
+  @Teams.method(user_required=True, request_fields=(), name='list.all',
+                path='list/all', http_method='GET')
   def get_teams(self, empty):
     """ Gets the teams that you are a member or leader of """
     user_email = get_user_email()
@@ -85,7 +88,7 @@ class TeamApi(remote.Service):
     response.teams = [to_team_from_rosebotics(team_key, get_members=False) for team_key in teams]
     return response
 
-  @Teams.method(user_required=True, request_fields=(), name='list.leader', 
+  @Teams.method(user_required=True, request_fields=(), name='list.leader',
                 path='list/leader', http_method='GET')
   def get_leader_teams(self, empty):
     """ Gets all of the teams you are leader of """
@@ -102,8 +105,11 @@ class TeamApi(remote.Service):
     user_email = get_user_email()
     key = get_member_key(invite.team_key, user_email)
     member = key.get()
-    member.visibility = invite.response    
-    member.put()
+    member.visibility = invite.response
+    if member.visibility != TeamVisibility.REJECT_INVITE:
+      member.put()
+    else:
+      member.key.delete()
     return invite
 
   @TeamInvites.method(user_required=True, name='invites.list', request_fields=(),
@@ -145,18 +151,20 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = ['iOS', 'Web'] #, 'Android'] # TODO: add 'Android'
+    courses = ['Android', 'iOS', 'Web']
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
         student = RoseboticsStudent.get_by_id(member.email)
+        if student is None:
+          continue
         mp.display_name = student.name
         mp.username = student.username
         for course in courses:
           progress = get_total_progress_for_course(member.email, course.lower())
           mp.course_progress.append(create_course_progress(course, progress))
-        members_progress.append(mp)     
-    team_progress.members_progress = members_progress          
+        members_progress.append(mp)
+    team_progress.members_progress = members_progress
     return team_progress
 
 def create_course_progress(course_name, progress):
@@ -166,7 +174,7 @@ def create_course_progress(course_name, progress):
     track_progress = create_track_progress(track_name, track)
     course_progress.track_progress.append(track_progress)
   return course_progress
-  
+
 def create_track_progress(track_name, progress):
   track_progress = TrackProgress(name=track_name, progress=progress["track"])
   units = progress["units"]
@@ -177,7 +185,7 @@ def create_track_progress(track_name, progress):
     unit = UnitProgress(name=unit_name, progress=unit_progress)
     track_progress.unit_progress.append(unit)
   return track_progress
-    
+
 def get_user_email():
   return endpoints.get_current_user().email().lower()
 
@@ -195,13 +203,14 @@ def to_team_from_rosebotics(rosebotics_team, get_members=True):
   return team
 
 def remove_model_duplicates(seq):
-  """ removes model duplicates by doing string comp on urlsafe of key """ 
+  """ removes model duplicates by doing string comp on urlsafe of key """
   urlsafes = []
   checked = []
   for e in seq:
+    if e is None:
+      continue
     urlsafe = e.key.urlsafe()
     if urlsafe not in urlsafes:
       urlsafes.append(urlsafe)
       checked.append(e)
   return checked
-
