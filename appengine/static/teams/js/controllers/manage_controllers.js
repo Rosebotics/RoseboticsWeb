@@ -25,7 +25,7 @@ angular.module('ManageControllers', [])
 		});
 	};
 })
-.controller('ManageTeamCtrl', function($routeParams, $modal, teams, $scope, snackbar, api, $location) {
+.controller('ManageTeamCtrl', function($routeParams, $modal, teams, $scope, snackbar, api, $location, userEmail) {
 	var items = teams["teams"];
 	var teamNumber = -1;
 	for(var i = 0; i < items.length; i++) {
@@ -95,7 +95,14 @@ angular.module('ManageControllers', [])
 		});
 		modalInstance.result.then(function(newEmail) {
 			var newMember = {email: newEmail, visibility: "NOT_CHOSEN"};
+			if (self.team.members == undefined) {
+				self.team.members = [];
+			}
+			if (newEmail == userEmail) {
+				newMember.visibility = "ALL_MEMBERS";
+			}
 			self.team.members.push(newMember);
+			self.team.newMembers = true;
 		});
 	};
 	this.visibilityOptions = {"NOT_CHOSEN" : "No Response",

@@ -34,7 +34,7 @@
         <li class="dropdown" dropdown>
           <a href="#" class="dropdown-toggle" dropdown-toggle>My Courses <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-          	<li><a href="{{ most_recent_track.path }}">Resume</a></li>
+          	<li id='resume-btn'><a href="{{most_recent_track.path}}"><span id='resume-icon' class="glyphicon glyphicon-pause" aria-hidden="true"></span> Resume</a></li>
             <li class="divider"></li>
             {% if recent_android_track %}
             <li><a href="{{ recent_android_track.path }}">Android</a></li>

@@ -1,5 +1,6 @@
 from handlers import base_handler
 from rosebotics_utils import recent_track_utils
+from google.appengine.api import users
 
 
 ### PAGES ###
@@ -18,6 +19,10 @@ class CoursesPage(base_handler.BasePage):
   def update_values(self, user, values):
     values["active_page"] = "courses"
     if not user:
+      values["android_login"] = users.create_login_url("/android")
+      values["ios_login"] = users.create_login_url("/ios")
+      values["web_login"] = users.create_login_url("/web")
+      values["me430_login"] = users.create_login_url("/me430")
       return
     # TODO: get progress for all courses
 

@@ -27,6 +27,9 @@ angular.module('TeamControllers', [])
 })
 .controller('TeamsCourseCtrl', function($modal, team) {
   this.team = team;
+	if (team.members_progress == undefined) {
+		this.team.members_progress = [];
+	}
 	this.courses = [];
 	if (team.members_progress.length > 0) {
 		courses = team.members_progress[0].course_progress;
@@ -44,6 +47,9 @@ angular.module('TeamControllers', [])
 })
 .controller('TeamsTrackCtrl', function($routeParams, team) {
 	this.team = team;
+	if (team.members_progress == undefined) {
+		this.team.members_progress = [];
+	}
 	this.course = $routeParams.course_name;
 	this.tracks = [];
 	if (team.members_progress.length > 0) {
@@ -66,6 +72,9 @@ angular.module('TeamControllers', [])
 })
 .controller('TeamsUnitCtrl', function($routeParams, team) {
 	this.team = team;
+	if (team.members_progress == undefined) {
+		this.team.members_progress = [];
+	}
 	this.course = $routeParams.course_name;
 	this.track = $routeParams.track_name;
 	this.units = [];

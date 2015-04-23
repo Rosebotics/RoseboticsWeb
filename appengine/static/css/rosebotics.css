@@ -41,3 +41,9 @@ input.with-help + .help-icon {
 input[type="radio"]+label {
 	display: inline;
 }
+
+.header {
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  background-color: #eee;
+}

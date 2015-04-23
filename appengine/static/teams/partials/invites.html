@@ -18,6 +18,7 @@
         <button ng-click="invites.editInvite(invite, newResponse)" class="btn btn-primary">Respond</button>
       </div>
     </div>
+    <p ng-hide="invites.pending.length">You don't have any pending invitations</p>
   </fieldset>
 </form>
 <br>
@@ -49,5 +50,6 @@
          ng-click="editing = !editing; invites.editInvite(invite, newResponse)"><span class="glyphicon glyphicon-ok"></span></button>
       </div>
     </div>
+    <p ng-hide="invites.accepted.length">You don't have any accpeted invitations</p>
   </fieldset>
 </form>
