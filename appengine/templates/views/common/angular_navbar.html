@@ -33,8 +33,10 @@
         {% if most_recent_track %}
         <li class="dropdown" dropdown>
           <a href="#" class="dropdown-toggle" dropdown-toggle>My Courses <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
-          	<li id='resume-btn'><a href="{{most_recent_track.path}}"><span id='resume-icon' class="glyphicon glyphicon-pause" aria-hidden="true"></span> Resume</a></li>
+          <ul class="dropdown-menu" role="menu" ng-init="icon = 'pause'">
+          	<li ng-mouseleave="icon = 'pause'" ng-mouseover="icon = 'play'">
+          		<a href="{{most_recent_track.path}}"><span class="glyphicon glyphicon-{{'{{icon}}'}}" aria-hidden="true"></span> Resume</a>
+          	</li>
             <li class="divider"></li>
             {% if recent_android_track %}
             <li><a href="{{ recent_android_track.path }}">Android</a></li>
