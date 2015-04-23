@@ -1,0 +1,55 @@
+<form class="form-horizontal">
+  <fieldset>
+    <legend>Pending Invitations</legend>
+    <div class="form-group" ng-repeat="invite in invites.pending">
+      <label for="select" class="col-lg-5 control-label">
+      	<team-title team="invite"></team-title>
+      </label>
+      <div class="col-lg-5">
+        <select class="form-control"
+        		tooltip="Select who can see your progress"
+        		tooltip-trigger="mouseenter"
+        		tooltip-placement="top"
+            ng-init="newResponse = invite.response"
+            ng-model="newResponse" ng-options="invites.responseOptions[resp] for resp in invites.pendingResponses">
+        </select>
+      </div>
+      <div class="col-lg-2">
+        <button ng-click="invites.editInvite(invite, newResponse)" class="btn btn-primary">Respond</button>
+      </div>
+    </div>
+    <p ng-hide="invites.pending.length">You don't have any pending invitations</p>
+  </fieldset>
+</form>
+<br>
+<form class="form-horizontal">
+  <fieldset>
+    <legend>Accepted Invitations</legend>
+    <div class="form-group" ng-repeat="invite in invites.accepted" ng-init="editing = false">
+      <label for="select" class="col-lg-5 control-label">
+      	<team-title team="invite"></team-title>
+      </label>
+      <div class="col-lg-5">
+      		<select class="form-control"
+      				ng-show="editing"
+	        		tooltip="Select who can see your progress"
+	        		tooltip-trigger="mouseenter"
+	        		tooltip-placement="top"
+              ng-init="newResponse = invite.response"
+              ng-model="newResponse" ng-options="invites.responseOptions[resp] for resp in invites.acceptedResponses">
+	        </select>
+          <span class="select-span" ng-show="!editing">{{invites.responseOptions[invite.response]}}</span>
+      </div>
+      <div class="col-lg-2">
+        <button class="btn btn-primary" ng-click="editing = !editing">
+        	<span ng-show="!editing" class="glyphicon glyphicon-pencil"></span>
+        	<span ng-show="editing" class="glyphicon glyphicon-remove"></span>
+        </button>
+        <button class="btn btn-success" ng-show="editing"
+         tooltip="Submit change" tooltip-trigger="mouseenter" tooltip-placement="bottom"
+         ng-click="editing = !editing; invites.editInvite(invite, newResponse)"><span class="glyphicon glyphicon-ok"></span></button>
+      </div>
+    </div>
+    <p ng-hide="invites.accepted.length">You don't have any accpeted invitations</p>
+  </fieldset>
+</form>

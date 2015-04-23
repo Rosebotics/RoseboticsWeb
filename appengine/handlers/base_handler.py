@@ -5,7 +5,7 @@ import webapp2
 
 from models.rosebotics_models import RoseboticsStudent
 from settings import jinja_env
-from rosebotics_utils import progress_utils
+from rosebotics_utils import recent_track_utils
 
 class BasePage(webapp2.RequestHandler):
   """ If the user is logged in, then show their name. Otherwise, show different info. """
@@ -19,15 +19,16 @@ class BasePage(webapp2.RequestHandler):
         rosebotics_student.put()
       values["logout_url"] = users.create_logout_url("/")
       values["rosebotics_student"] = rosebotics_student
-      most_recent_course = progress_utils.get_most_recent_course(rosebotics_student.key)
+      most_recent_course = recent_track_utils.get_most_recent_course(rosebotics_student.key)
       if most_recent_course is not None:
         values["most_recent_track"] = most_recent_course
-      values.update(progress_utils.get_recent_tracks(rosebotics_student.key))
+      values.update(recent_track_utils.get_recent_tracks(rosebotics_student.key))
     elif self.requires_oauth():
       self.redirect("/courses")
       return
     else:
       values["login_url"] = users.create_login_url("/courses")
+      
 
     self.update_values(user, values)
     template = jinja_env.get_template(self.template_file())
@@ -43,7 +44,7 @@ class BasePage(webapp2.RequestHandler):
     return False
 
 class BaseAction(webapp2.RequestHandler):
-  
+
   def post(self):
     user = users.get_current_user()
     if user is None:
@@ -55,12 +56,12 @@ class BaseAction(webapp2.RequestHandler):
       return
     self.handle_post(rosebotics_student)
     self.redirect(self.request.referer)
-  
+
   def handle_post(self, rosebotics_student):
     pass
 
 class BaseRedirect(webapp2.RedirectHandler):
-    
+
     def get(self):
       user = users.get_current_user()
       if user is None:
@@ -71,6 +72,6 @@ class BaseRedirect(webapp2.RedirectHandler):
         self.redirect("/courses")
         return
       self.handle_redirect(rosebotics_student)
-  
+
     def handle_redirect(self, rosebotics_student):
       pass

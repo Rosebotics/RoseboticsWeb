@@ -1,0 +1,43 @@
+<form class="form-horizontal">
+
+	<fieldset>
+		<div class="modal-header bg-info">
+			<button type="button" class="close" ng-click="modal.cancel()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<h4 class="modal-title">Create Team</h4>
+		</div>
+		<div class="modal-body">
+			<div class="form-group">
+				<label for="inputName" class="col-lg-2 control-label">Name</label>
+				<div class="col-lg-10">
+					<input type="text" class="form-control" id="inputName"
+						placeholder="Team Name" ng-model="modal.teamName">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="checkbox col-lg-10 col-lg-offset-2">
+					<label> <input type="checkbox" ng-model="modal.includeLeader"> Make my progress visible to other members
+					</label>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="members" class="col-lg-2 control-label">Member
+					Emails</label>
+				<div class="col-lg-10">
+					<textarea class="form-control" rows="3" id="textArea" ng-model="modal.teamMembers"></textarea>
+					<span class="help-block">Please enter a comma delimited list
+						of emails.</span>
+				</div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<div class="form-group">
+				<div class="col-lg-10 col-lg-offset-2">
+				<button class="btn btn-default" ng-click="modal.cancel()">Cancel</button>
+					<button class="btn btn-primary pull-right" ng-click="modal.add()">Submit</button>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</form>

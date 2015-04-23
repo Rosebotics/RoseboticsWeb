@@ -1,0 +1,28 @@
+<div class="row">
+	<ul class="breadcrumb">
+		<li><a href="#/teams/">Teams</a></li>
+		<li class="active">{{courses.team.name}}</li>
+	</ul>
+	<team-title team="courses.team"></team-title>
+	<!-- <button class="btn btn-primary pull-right" ng-click="courses.toggleExportProgressModal()">Export</button> -->
+</div>
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Username</th>
+			<th ng-repeat="course in courses.courses">
+				<a href="#/teams/{{courses.team.team_key}}/courses/{{course}}/tracks">{{course}}</a>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="member in courses.team.members_progress">
+			<td>{{member.display_name}}</td>
+			<td>{{member.username}}</td>
+			<td ng-repeat="course in courses.courses">
+				{{member.course_progress[$index].progress | percentage:2}}
+			</td>
+		</tr>
+	</tbody>
+</table>

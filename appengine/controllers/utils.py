@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from models.rosebotics_models import RoseboticsStudent
-from rosebotics_utils import progress_utils
+from rosebotics_utils import recent_track_utils
 import logging
 """Handlers that are not directly related to course content."""
 
@@ -660,11 +660,11 @@ class BaseHandler(CourseHandler):
             if rosebotics_student is None:
               rosebotics_student = RoseboticsStudent(id=user.email().lower())
               rosebotics_student.put()
-            progress_utils.set_recent_track(rosebotics_student.key, self.request.path_qs)
-            most_recent_course = progress_utils.get_most_recent_course(rosebotics_student.key)
+            recent_track_utils.set_recent_track(rosebotics_student.key, self.request.path_qs)
+            most_recent_course = recent_track_utils.get_most_recent_course(rosebotics_student.key)
             if most_recent_course is not None:
               self.template_value["most_recent_track"] = most_recent_course
-            self.template_value.update(progress_utils.get_recent_tracks(rosebotics_student.key))
+            self.template_value.update(recent_track_utils.get_recent_tracks(rosebotics_student.key))
             self.template_value["logout_url"] = users.create_logout_url("/")
             self.template_value["rosebotics_student"] = rosebotics_student
             namespace_manager.set_namespace(namespace)

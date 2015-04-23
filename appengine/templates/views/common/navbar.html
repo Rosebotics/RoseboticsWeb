@@ -7,7 +7,7 @@
 
 
 <nav class="navbar navbar-default">
-  <div class="container-fluid">
+  <div class="container">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -17,7 +17,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="/">
-        <img class="logo-r" height="25" src="/static/images/roseboticslogo2.png">
+        <img class="logo-r" height="40" src="/static/images/roseboticslogo.png">
        </a>
     </div>
 
@@ -34,7 +34,7 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">My Courses <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-          	<li><a href="{{ most_recent_track.path }}">Resume</a></li>
+          	<li id='resume-btn'><a href="{{most_recent_track.path}}"><span id='resume-icon' class="glyphicon glyphicon-pause" aria-hidden="true"></span> Resume</a></li>
             <li class="divider"></li>
             {% if recent_android_track %}
             <li><a href="{{ recent_android_track.path }}">Android</a></li>
@@ -52,12 +52,13 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ rosebotics_student.nickname }} <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
+          <!--<li><a href="/teams/">Teams</a></li>-->
             <li><a data-toggle="modal" data-target="#edit-student-details-modal" href="#">Edit Profile</a></li>
             <li><a data-toggle="modal" data-target="#confirm-signout-modal" href="#">Sign Out</a></li>
           </ul>
         </li>
         {% else %}
-        <li><a href="{{ login_url }}">Sign In</a></li>
+        <li><a class="btn btn-default" id="sign-in-btn" href="{{ login_url }}">Sign In</a></li>
         {% endif %}
       </ul>
 

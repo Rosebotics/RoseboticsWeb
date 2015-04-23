@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import endpoints
+import teams_api
 
 """Course Builder web application entry point."""
 
@@ -64,7 +66,7 @@ if appengine_config.gcb_appstats_enabled():
 
 # i18n configuration for jinja2
 webapp2_i18n_config = {'translations_path': os.path.join(
-    appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')}
+    appengine_config.BUNDLE_ROOT, 'modules/i18n/resources/locale')} 
 
 rosebotics_routes = [('/', main_handler.HomePage),
                      ('/courses', main_handler.CoursesPage),
@@ -72,11 +74,16 @@ rosebotics_routes = [('/', main_handler.HomePage),
                      ('/platform', main_handler.PlatformPage),
                      ('/web', course_handlers.WebCoursePage),
                      ('/ios', course_handlers.IosCoursePage),
+                     ('/android', course_handlers.AndroidCoursePage),
                      ('/editprofile', main_handler.EditProfileAction),
-                     ('/resume', main_handler.ResumeRedirect),]
+                     ('/resume', main_handler.ResumeRedirect),
+                     ('/teams/', main_handler.TeamsPage),]
 
 # init application
 app = webapp2.WSGIApplication(
     rosebotics_routes + global_routes + appstats_routes + app_routes,
     config={'webapp2_extras.i18n': webapp2_i18n_config},
     debug=not appengine_config.PRODUCTION_MODE)
+
+# init api
+api = endpoints.api_server([teams_api.TeamApi], restricted = False)

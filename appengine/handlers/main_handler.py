@@ -1,5 +1,6 @@
 from handlers import base_handler
-from rosebotics_utils import progress_utils
+from rosebotics_utils import recent_track_utils
+from google.appengine.api import users
 
 
 ### PAGES ###
@@ -18,10 +19,12 @@ class CoursesPage(base_handler.BasePage):
   def update_values(self, user, values):
     values["active_page"] = "courses"
     if not user:
+      values["android_login"] = users.create_login_url("/android")
+      values["ios_login"] = users.create_login_url("/ios")
+      values["web_login"] = users.create_login_url("/web")
+      values["me430_login"] = users.create_login_url("/me430")
       return
     # TODO: get progress for all courses
-
-
 
 class CompetitionPage(base_handler.BasePage):
   def template_file(self):
@@ -38,12 +41,18 @@ class PlatformPage(base_handler.BasePage):
   def page_title(self):
     return "Platform"
 
+class TeamsPage(base_handler.BasePage):
+  def template_file(self):
+    return "templates/teams.html"
+
+  def requires_oauth(self):
+    return True
 
 ### PAGES ###
 
 class ResumeRedirect(base_handler.BaseRedirect):
     def handle_redirect(self, rosebotics_student):
-      track = progress_utils.get_most_recent_course(rosebotics_student.key)
+      track = recent_track_utils.get_most_recent_course(rosebotics_student.key)
       if track is None:
         self.redirect("/courses")
       else:

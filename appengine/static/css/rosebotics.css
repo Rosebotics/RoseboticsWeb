@@ -15,20 +15,6 @@
 	text-decoration: underline;
 }
 
-.logo-r {
-	float: left;
-}
-
-.logo-text {
-	float: left;
-	margin-left: 10px;
-}
-
-.modal-header {
-	border-top-left-radius: 6px;
-	border-top-right-radius: 6px;
-}
-
 .required-asterisk {
 	color: #F00;
 }
@@ -50,4 +36,14 @@ textarea.with-help + .help-icon {
 
 input.with-help + .help-icon {
 	top: -24px;
+}
+
+input[type="radio"]+label {
+	display: inline;
+}
+
+.header {
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  background-color: #eee;
 }
