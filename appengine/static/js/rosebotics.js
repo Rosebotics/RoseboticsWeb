@@ -37,6 +37,8 @@ $(function() {
 
 	function() {
 		console.log("mouse in");
+		// Don't call new here. Just show the element (remove hidden class)
+		// can you set values after you create a new Circle? I would hope so
 		var circle = new ProgressBar.Circle('#android-course', {
 			color : '#FCB03C',
 			strokeWidth : 3,
