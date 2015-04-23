@@ -119,7 +119,7 @@
     <img class="img-responsive" src="androidlogo.png">
     <h6>Android Application Development</h6>
     <p>Get started building mobile applications for Android devices. Learn the basics of Android development and bring your app ideas to life.</p>
-    <a class="btn btn-default" >Start Course Now 
+    <a class="btn btn-default start-course-btn" data-toggle="modal" data-target="#myModal" >Start Course Now 
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
     </div>
   </div>
@@ -128,7 +128,7 @@
     <img class="img-responsive" src="applelogo2.png">
     <h6>iOS Application Development</h6>
     <p>Get started building iOS applications for iPhone and iPad mobile devices. Learn the basics of iOS development and bring your app ideas to life.</p>
-    <a class="btn btn-default" >Start Course Now 
+    <a class="btn btn-default start-course-btn" data-toggle="modal" data-target="#myModal">Start Course Now 
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
     </div>
     </div>
@@ -138,7 +138,7 @@
     <img class="img-responsive" src="androidlogo.png">
     <h6>Web Development</h6>
     <p>Learn the fundamentals of web development using Google App Engine. Topics also include CSS, HTML5, Javascript etc. </p>
-    <a class="btn btn-default" >Start Course Now 
+    <a class="btn btn-default start-course-btn" data-toggle="modal" data-target="#myModal" >Start Course Now 
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
     </div>
   </div>
@@ -147,10 +147,28 @@
     <img class="img-responsive" src="applelogo.png">
     <h6>Mechatronics</h6>
     <p>Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.</p>
-    <a class="btn btn-default" >Start Course Now 
+    <a class="btn btn-default start-course-bstn" data-toggle="modal" data-target="#myModal">Start Course Now 
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
   </div>
 </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"> </h4>
+      </div>
+      <div class="modal-body">
+        Please sign in before accessing courses. Thanks!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="example-percent-container"></div>
@@ -163,7 +181,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 <script src="https://cdn.rawgit.com/kimmobrunfeldt/progressbar.js/0.5.6/dist/progressbar.js"></script>
 
