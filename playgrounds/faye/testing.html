@@ -46,7 +46,14 @@
   padding-bottom: 5px;
   margin-top: 13px;
 }
-  
+  #android-course-img{
+    position: relative;
+  }
+
+  #android-course-progress{
+    position: absolute;
+  }
+
 
 </style>
 
@@ -117,7 +124,10 @@
   <div class="col-xs-6 col-sm-3">
   <div id="android-course" class="panel panel-default">
     <div class='panel-body'>
+    <div id="android-course-img">
     <img class="img-responsive" src="androidlogo.png">
+    <div id='andoird-course-progress'></div>
+    </div>
     <h6>Android Application Development</h6>
     <p>Get started building mobile applications for Android devices. Learn the basics of Android development and bring your app ideas to life.</p>
     <a class="btn btn-default start-course-btn" data-toggle="modal" data-target="#myModal" >Start Course Now 
