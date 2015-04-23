@@ -13,11 +13,11 @@ $(document).ready(function(){
 
     $('#video-btn').magnificPopup({type:'iframe'});
     
-    $("#android-course").hover(
+    $("#android-course-img").hover(
 
         function(){
             console.log("mouse in");
-            var circle = new ProgressBar.Circle('#android-course', {
+            var circle = new ProgressBar.Circle('#android-course-progress', {
             color: '#FCB03C',
             strokeWidth: 3,
             trailWidth: 1,
