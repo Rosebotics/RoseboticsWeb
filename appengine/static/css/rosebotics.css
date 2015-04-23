@@ -47,3 +47,12 @@ input[type="radio"]+label {
   margin-bottom: 30px;
   background-color: #eee;
 }
+
+.navbar {
+      font-family: "brandon-grotesque", sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 0px;
+ }

@@ -26,14 +26,14 @@ def get_total_progress_for_course(email, course_prefix):
     course = CourseModel12.load(course_app_context)
     tracker = progress.UnitLessonCompletionTracker(course)
     if student:
-      lesson_breakdown = tracker.get_task_progress(student)
+      lesson_breakdown = tracker.get_task_progress_with_title(student)
       track_tasks_completed = 0
       total_track_tasks = 0
       units = {}
-      for unit_id, unit in lesson_breakdown.items():
+      for unit_title, unit in lesson_breakdown.items():
         track_tasks_completed += unit[0]
         total_track_tasks += unit[1]
-        units[unit_id] = unit[0]/float(unit[1])
+        units[unit_title] = unit[0]/float(unit[1])
       track_progress.append({'name': course_app_context.get_title(), 'track': track_tasks_completed/float(total_track_tasks), 'units': units})
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
@@ -42,7 +42,7 @@ def get_total_progress_for_course(email, course_prefix):
       track = {'name': course_app_context.get_title(), 'track': 0, 'units': {}}
       total_track_tasks = tracker.get_task_total()
       for unit in tracker.get_course_units():
-        track['units'][unit.unit_id] = 0
+        track['units'][unit.unit_id + ":" + unit.title] = 0
       total_course_tasks += total_track_tasks
       track_progress.append(track)
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
