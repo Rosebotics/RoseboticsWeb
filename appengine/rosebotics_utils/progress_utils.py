@@ -6,13 +6,16 @@ import controllers.sites
 from models import progress
 from models.courses import CourseModel12
 from models.models import Student
+from models.rosebotics_models import RoseboticsTeam, TeamVisibility,\
+  RoseboticsTeamMember, RoseboticsStudent
+from google.appengine.ext import ndb
+from datetime import datetime
 
 
 def get_total_progress_for_course(email, course_prefix):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track
       percentages, which is a dictionary of the total progress in the course and the progress of each 
-      unit, (in the order they appear in app.yaml) for the given course-prefix. Please note that the 
-      unit progress for a not enrolled student is an empty list """
+      unit, (in the order they appear in app.yaml) for the given course-prefix. """
   track_progress = []
   course_tasks_completed = 0
   total_course_tasks = 0
@@ -48,6 +51,65 @@ def get_total_progress_for_course(email, course_prefix):
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
+def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, data):
+  table_data = [[str(datetime.now())]] # UTC?
+  header_row = []
+  table_data.append(header_row)
+  # Student Header
+  if export_student_name:
+    header_row.append("Full Name")
+  if export_rose_username:
+    header_row.append("Username")
+  team = ndb.Key(urlsafe=team_urlsafe).get()
+  if team is None:
+    return []
+  members = RoseboticsTeamMember.query(ancestor=team.key)
+  allowed_visibilies = [TeamVisibility.ALL_MEMBERS]
+  if team.leader == rosebotics_student.key.string_id():
+    allowed_visibilies.append(TeamVisibility.TEAM_LEADER)
+  else:
+    is_user_not_in_team = True
+    for member in members:
+      if member.email == rosebotics_student.key.string_id():
+        is_user_not_in_team = False
+        break
+    if is_user_not_in_team:
+      return []
+  is_first_student = True
+  for member in members:
+    student = RoseboticsStudent.get_by_id(member.email)
+    table_row = []
+    if student is None:
+      continue
+    if export_student_name:
+      table_row.append(student.name)
+    if export_rose_username:
+      table_row.append(student.username)
+    for course in data:
+      course_progress = get_total_progress_for_course(member.email, course['name'].lower())
+      for requested_track in course['tracks']:
+        track_data = None
+        requested_units = None
+        for track in course_progress['tracks']:
+          if requested_track['name'] == track['name']:
+            track_data = track['units']
+            requested_units = requested_track['units']
+            break
+        if track_data is None:
+          continue
+        # Sort units
+        extract_key = lambda pair:int(pair[0].split(":")[0])
+        track_data = sorted(track_data.items(), key=extract_key)
+        for unit_id, unit_progress in track_data:
+          unit_name = unit_id.split(':')[1]
+          if unit_name not in requested_units:
+            continue
+          table_row.append(unit_progress)
+          if is_first_student:
+            header_row.append(unit_name)
+    is_first_student = False
+    table_data.append(table_row)
+  return table_data
 
 def get_progress_for_course(user, course_prefix):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track

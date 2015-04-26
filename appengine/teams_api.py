@@ -178,6 +178,7 @@ def create_course_progress(course_name, progress):
 def create_track_progress(track_name, progress):
   track_progress = TrackProgress(name=track_name, progress=progress["track"])
   units = progress["units"]
+  # Sort units
   extract_key = lambda pair:int(pair[0].split(":")[0])
   units = sorted(units.items(), key=extract_key)
   for title, unit_progress in units:

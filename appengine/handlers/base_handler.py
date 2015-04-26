@@ -55,7 +55,6 @@ class BaseAction(webapp2.RequestHandler):
       self.redirect(self.request.referer)
       return
     self.handle_post(rosebotics_student)
-    self.redirect(self.request.referer)
 
   def handle_post(self, rosebotics_student):
     pass
