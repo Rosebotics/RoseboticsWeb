@@ -1,0 +1,35 @@
+RESULT OF get_total_progress
+     {'name': 'web', 'tracks':
+          [{'name': 'CSS', 'units': {
+                    u'4:CSS Layout Basics': 0,
+                    u'2:CSS Selectors': 0,
+                    u'1:HTML Basics': 0,
+                    u'3:CSS Property Basics': 0}
+                    },
+           {'name': 'JavaScript', 'units': {
+                    u'3:Simple AJAX Requests': 0,
+                    u'1:JavaScript Basics': 0,
+                    u'2:JavaScript Objects': 0
+                    }}]}
+
+Data:
+    # Must be inorder!
+    [
+      {name: "web",
+       tracks: [
+         {"name": "CSS",
+          "units": [
+            "HTML Basics",
+            "CSS Selectors",
+            "CSS Property Basics",
+            "CSS Layout Basics"
+          ]},
+         {name: "JS",
+          units: [
+            "Javascript Basics",
+            "Javascript Objects",
+            "Simple AJAX Requests"
+          ]}]
+      },
+      {name: "android", ...}
+    ]

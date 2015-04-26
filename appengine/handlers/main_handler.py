@@ -1,6 +1,9 @@
 from handlers import base_handler
 from rosebotics_utils import recent_track_utils
 from google.appengine.api import users
+import csv
+from rosebotics_utils.progress_utils import get_csv_export_lists
+import json
 
 
 ### PAGES ###
@@ -59,7 +62,6 @@ class ResumeRedirect(base_handler.BaseRedirect):
         self.redirect(track.path)
 
 class EditProfileAction(base_handler.BaseAction):
-
   def handle_post(self, rosebotics_student):
     rosebotics_student.name = self.request.get("name")
     rosebotics_student.nickname = self.request.get("nickname")
@@ -67,3 +69,20 @@ class EditProfileAction(base_handler.BaseAction):
     rosebotics_student.username = self.request.get("username")
     rosebotics_student.details = self.request.get("connection")
     rosebotics_student.put()
+    self.redirect(self.request.referer)
+
+class ExportCsvAction(base_handler.BaseAction):
+
+  def get(self):
+    self.post()
+
+  def handle_post(self, rosebotics_student):
+    export_student_name = len(self.request.get("student_name")) > 0
+    export_rose_username = len(self.request.get("rose_username")) > 0
+    team_urlsafe = self.request.get("team_urlsafe")
+    data = json.loads(self.request.get("progress_data"))
+    csv_data = get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, data)
+    self.response.headers['Content-Type'] = 'application/csv'
+    writer = csv.writer(self.response.out)
+    for csv_row in csv_data:
+      writer.writerow(csv_row)

@@ -28,7 +28,7 @@ class BasePage(webapp2.RequestHandler):
       return
     else:
       values["login_url"] = users.create_login_url("/courses")
-      
+
 
     self.update_values(user, values)
     template = jinja_env.get_template(self.template_file())
@@ -55,7 +55,6 @@ class BaseAction(webapp2.RequestHandler):
       self.redirect(self.request.referer)
       return
     self.handle_post(rosebotics_student)
-    self.redirect(self.request.referer)
 
   def handle_post(self, rosebotics_student):
     pass
