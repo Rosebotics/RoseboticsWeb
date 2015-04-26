@@ -15,6 +15,7 @@ angular.module('InviteControllers', [])
 	}
 	var self = this;
 	this.editInvite = function(invite, newResponse) {
+		var refreshTeams = false; 
 		if(invite.response === "NOT_CHOSEN" && newResponse !== "NOT_CHOSEN") {
 			for(var i = 0; i < self.pending.length; i++) {
 				if (self.pending[i].team_key === invite.team_key) {
@@ -23,6 +24,7 @@ angular.module('InviteControllers', [])
 				}
 			}
 			self.accepted.push(invite);
+			refreshTeams = true;
 		}
 		if (newResponse === "REJECT_INVITE") {
 			for(var i = 0; i < self.accepted.length; i++) {
@@ -31,12 +33,16 @@ angular.module('InviteControllers', [])
 					break;
 				}
 			}
+			refreshTeams = true;
 		}
 		invite.response = newResponse;
 		snackbar.create("Sending response...", 4);
 		api.editInvite(invite).then(function() {
 			snackbar.remove(4);
 			snackbar.createWithTimeout("<b>Success!</b> Response saved");
+			if (refreshTeams) {
+				api.getTeams(true);
+			}
 		}, function() {
 			snackbar.remove(4);
 			snackbar.createWithTimeout("<b>Error!</b> Response not saved");
