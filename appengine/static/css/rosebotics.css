@@ -85,3 +85,11 @@ div.row-eq-height.inner {
 		}	
 }
 
+.btn.start-course {
+	position: absolute;
+	bottom: 20px;
+}
+
+.col-sm-3.panel.panel-default {
+	 padding-bottom: 40px;
+}	

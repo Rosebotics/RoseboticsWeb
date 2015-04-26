@@ -72,6 +72,10 @@ class EditProfileAction(base_handler.BaseAction):
     self.redirect(self.request.referer)
 
 class ExportCsvAction(base_handler.BaseAction):
+
+  def get(self):
+    self.post()
+
   def handle_post(self, rosebotics_student):
     export_student_name = len(self.request.get("student_name")) > 0
     export_rose_username = len(self.request.get("rose_username")) > 0

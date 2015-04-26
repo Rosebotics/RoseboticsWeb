@@ -25,7 +25,22 @@ angular.module('TeamControllers', [])
 		});
 	};
 })
-.controller('TeamsCourseCtrl', function($modal, team) {
+.controller('TeamsParentCtrl', function($modal, team) {
+	this.toggleExportProgressModal = function() {
+		var modalInstance = $modal.open({
+		  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
+		  controller: 'ExportModalInstanceCtrl',
+		  controllerAs: 'modal',
+		  resolve: {
+			  team: function() {
+				  return team;
+			  } 
+		  }
+		});
+	};
+})
+.controller('TeamsCourseCtrl', function($modal, team, $controller) {
+	angular.extend(this, $controller('TeamsParentCtrl', {$modal: $modal, team: team}));
   this.team = team;
 	if (team.members_progress == undefined) {
 		this.team.members_progress = [];
@@ -37,15 +52,9 @@ angular.module('TeamControllers', [])
 			this.courses.push(courses[i].name);
 		}
 	}
-	this.toggleExportProgressModal = function() {
-		var modalInstance = $modal.open({
-		  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
-		  controller: 'SimpleModalInstanceCtrl',
-		  controllerAs: 'modal'
-		});
-	};
 })
-.controller('TeamsTrackCtrl', function($routeParams, team) {
+.controller('TeamsTrackCtrl', function($routeParams, team, $modal, $controller) {
+	angular.extend(this, $controller('TeamsParentCtrl', {$modal: $modal, team: team}));
 	this.team = team;
 	if (team.members_progress == undefined) {
 		this.team.members_progress = [];
@@ -70,7 +79,8 @@ angular.module('TeamControllers', [])
 		return member.course_progress[self.courseNum].track_progress[trackNum].progress;
 	}
 })
-.controller('TeamsUnitCtrl', function($routeParams, team) {
+.controller('TeamsUnitCtrl', function($routeParams, team, $modal, $controller) {
+	angular.extend(this, $controller('TeamsParentCtrl', {$modal: $modal, team: team}));
 	this.team = team;
 	if (team.members_progress == undefined) {
 		this.team.members_progress = [];

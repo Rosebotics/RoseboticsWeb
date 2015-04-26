@@ -28,7 +28,7 @@ class BasePage(webapp2.RequestHandler):
       return
     else:
       values["login_url"] = users.create_login_url("/courses")
-      
+
 
     self.update_values(user, values)
     template = jinja_env.get_template(self.template_file())

@@ -65,4 +65,58 @@ angular.module('ModalControllers', [])
 		}
 	  $modalInstance.close(newTeam);
 	};
+})
+.controller('ExportModalInstanceCtrl', function ($modalInstance, $controller, team, $window) {
+	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
+	this.team = team;
+	this.fullname = true;
+	this.username = true;
+	this.data = [];
+	if (team.members_progress.length > 0) {
+	  this.courses = team.members_progress[0].course_progress;
+	  for (var i = 0; i < courses.length; i++) {
+			var course = {name: courses[i].name, tracks:[]};
+			var tracks = courses[i].track_progress;
+			for (var j = 0; j < tracks.length; j++) {
+				var track = {name:tracks[j].name, units:[]};
+				var units = tracks[j].unit_progress;
+				for(var k = 0; k < units.length; k++) {
+					track["units"].push({name:units[k].name, toggled:false});
+				}
+				course["tracks"].push(track);
+			}
+			this.data.push(course);
+	  }
+	}
+	var self = this;
+	this.generate = function() {
+		console.log(self.data, self.fullname, self.username);
+		var landingUrl = "http://" + $window.location.host + "/teams/export.csv";
+		landingUrl += "?team_urlsafe=" + team.team_key;
+		if(self.fullname) {
+			landingUrl += "&student_name=true";
+		}
+		if(self.username) {
+			landingUrl += "&rose_username=true";
+		}
+		progress_data = angular.copy(self.data);
+		for (var i = 0; i < progress_data.length; i++) {
+			var course = progress_data[i];
+			for (var j = 0; j < course.tracks.length; j++) {
+				var track = course.tracks[j];
+				var unitList = [];
+				for(var k = 0; k < track.units.length; k++) {
+					var unit = track.units[k];
+					if(unit.toggled) {
+						unitList.push(unit.name);
+					}
+				}
+				track.units = unitList;
+			}
+		}
+		landingUrl += "&progress_data=" + encodeURIComponent(JSON.stringify(progress_data));
+		console.log(landingUrl);
+		$window.open(landingUrl, "_blank");
+		$modalInstance.close();
+	};
 });

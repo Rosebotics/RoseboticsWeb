@@ -2,6 +2,18 @@
 .indent {
 	margin-left: 25px;
 }
+.expandable {
+	width: 50%;
+}
+hr {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	position: relative;
+	top: -5px;
+	width: 50%;
+	text-align: left;
+  margin-left: 0px;
+}
 </style>
 <form class="form-horizontal">
 	<fieldset>
@@ -16,46 +28,34 @@
 				<label for="inputData" class="col-lg-2 control-label">Data</label>
 				<div class="col-lg-10">
 					<div class="checkbox">
-						<label> <input type="checkbox"> Full Name
+						<label> <input type="checkbox" ng-model="modal.fullname"> Full Name
 						</label>
 					</div>
 					<div class="checkbox">
-						<label> <input type="checkbox"> Username
+						<label> <input type="checkbox" ng-model="modal.username"> Username
 						</label>
 					</div>
-					<div class="checkbox" ng-init="iosChecked = false">
-						<label> <input type="checkbox" ng-model="iosChecked">
-							iOS
+					<div ng-repeat="course in modal.data">
+						<label class="expandable" ng-init="isCollapsed = false" ng-click="isCollapsed = !isCollapsed">{{course.name}}
+							<span class="pull-right glyphicon glyphicon-chevron-{{isCollapsed ? 'down' : 'up'}}" aria-hidden="true"></span>
 						</label>
-						<div collapse="!iosChecked" ng-init="iosTrackOneChecked = false">
-							<div class="checkbox indent">
-								<label> <input type="checkbox"
-									ng-model="iosTrackOneChecked"> Track 1
+						<hr>
+						<div collapse="!isCollapsed" class="indent">
+							<div ng-repeat="track in course['tracks']">
+								<label class="expandable" ng-init="isCollapsed = false" ng-click="isCollapsed = !isCollapsed">{{track.name}}
+									<span class="pull-right glyphicon glyphicon-chevron-{{isCollapsed ? 'down' : 'up'}}" aria-hidden="true"></span>
 								</label>
-								<div collapse="!iosTrackOneChecked">
-									<div class="checkbox indent">
-										<label> <input type="checkbox"> Unit 1
-										</label>
-									</div>
-									<div class="checkbox indent">
-										<label> <input type="checkbox"> Unit 2
+								<hr>
+								<div collapse="!isCollapsed" class="indent">
+									<div class="checkbox" ng-repeat="unit in track['units']">
+										<label>
+											<input type="checkbox" ng-model="unit.toggled">
+											{{unit.name}}
 										</label>
 									</div>
 								</div>
 							</div>
-							<div class="checkbox indent">
-								<label> <input type="checkbox"> Track 2
-								</label>
-							</div>
-							<div class="checkbox indent">
-								<label> <input type="checkbox"> Track 3
-								</label>
-							</div>
 						</div>
-					</div>
-					<div class="checkbox">
-						<label> <input type="checkbox"> Web
-						</label>
 					</div>
 				</div>
 			</div>
@@ -65,7 +65,7 @@
 				<div class="col-lg-10 col-lg-offset-2">
 					<button type="button" class="btn btn-default"
 						ng-click="modal.cancel()">Cancel</button>
-					<button type="submit" class="btn btn-primary pull-right">Generate</button>
+					<button ng-click="modal.generate()" class="btn btn-primary pull-right">Generate</button>
 				</div>
 			</div>
 		</div>
