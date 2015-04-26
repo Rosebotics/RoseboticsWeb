@@ -41,14 +41,14 @@ angular.module('ModalControllers', [])
 	  $modalInstance.close();
 	};
 })
-.controller('CreateTeamModalInstanceCtrl', function ($modalInstance, $controller, userEmail) {
+.controller('CreateTeamModalInstanceCtrl', function ($modalInstance, $controller, user) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.teamName = "";
 	this.teamMembers = "";
 	this.includeLeader = false;
 	var self = this;
 	this.add = function() {
-		var newTeam = {name: self.teamName, leader: userEmail, members:[]};
+		var newTeam = {name: self.teamName, leader: user.email, members:[]};
 		var members = self.teamMembers.split(',');
 		for (var i = 0; i < members.length; i++) {
 			var email = members[i].trim();
@@ -61,7 +61,7 @@ angular.module('ModalControllers', [])
 			newTeam.members.push({email:email, visibility:"NOT_CHOSEN"});
 		}
 		if (self.includeLeader) {
-			newTeam.members.push({email:userEmail, visibility:"ALL_MEMBERS"});
+			newTeam.members.push({email:user.email, visibility:"ALL_MEMBERS"});
 		}
 	  $modalInstance.close(newTeam);
 	};

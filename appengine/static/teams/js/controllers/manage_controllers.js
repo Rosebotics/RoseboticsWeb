@@ -1,12 +1,17 @@
 angular.module('ManageControllers', [])
-.controller('ManageCtrl', function($modal, teams, api, snackbar) {
+.controller('ManageCtrl', function($modal, teams, api, snackbar, oAuth) {
 	this.items = teams["teams"];
 	var self = this;
 	this.toggleCreateTeamModal = function() {
 		var modalInstance = $modal.open({
 		  templateUrl: '/static/teams/partials/modals/create_team_modal.html',
 		  controller: 'CreateTeamModalInstanceCtrl',
-		  controllerAs: 'modal'
+		  controllerAs: 'modal',
+			resolve: {
+				user: function() {
+					return oAuth.getUserInfo();
+				}
+			}
 		});
 		modalInstance.result.then(function(newTeam) {
 			snackbar.create("Creating team...", 1);
@@ -25,7 +30,7 @@ angular.module('ManageControllers', [])
 		});
 	};
 })
-.controller('ManageTeamCtrl', function($routeParams, $modal, teams, $scope, snackbar, api, $location, userEmail) {
+.controller('ManageTeamCtrl', function($routeParams, $modal, teams, $scope, snackbar, api, $location, user) {
 	var items = teams["teams"];
 	var teamNumber = -1;
 	for(var i = 0; i < items.length; i++) {
@@ -98,7 +103,7 @@ angular.module('ManageControllers', [])
 			if (self.team.members == undefined) {
 				self.team.members = [];
 			}
-			if (newEmail == userEmail) {
+			if (newEmail == user.email) {
 				newMember.visibility = "ALL_MEMBERS";
 			}
 			self.team.members.push(newMember);

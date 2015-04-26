@@ -74,6 +74,9 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
         resolve: {
           teams: function(api) {
             return api.getLeadTeams();
+          },
+          user: function(oAuth) {
+            return oAuth.getUserInfo();
           }
         }
       })

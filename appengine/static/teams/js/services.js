@@ -57,7 +57,7 @@ angular.module('TeamServices', [])
 		});
 		return p.promise;
 	};
-	this.getUserEmail = function() {
+	this.getUserInfo = function() {
 		return this.execute(gapi.client.oauth2.userinfo.get());
 	};
 })
