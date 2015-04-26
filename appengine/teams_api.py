@@ -81,7 +81,7 @@ class TeamApi(remote.Service):
     user_email = get_user_email()
     response = Teams()
     query = RoseboticsTeamMember.query(RoseboticsTeamMember.email==user_email)
-    teams = [key.parent().get() for key in query.iter(keys_only=True)]
+    teams = [m.key.parent().get() for m in query if m.visibility!=TeamVisibility.NOT_CHOSEN]
     query = RoseboticsTeam.query(RoseboticsTeam.leader==user_email)
     teams += [team for team in query]
     teams = remove_model_duplicates(teams)
