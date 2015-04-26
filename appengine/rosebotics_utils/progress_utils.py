@@ -49,6 +49,7 @@ def get_total_progress_for_course(email, course_prefix):
       total_course_tasks += total_track_tasks
       track_progress.append(track)
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
+  namespace_manager.set_namespace("")
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
 def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, data):
@@ -77,10 +78,13 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
       return []
   is_first_student = True
   for member in members:
+    logging.info(member.email)
+    if member.visibility not in allowed_visibilies:
+      continue
     student = RoseboticsStudent.get_by_id(member.email)
-    table_row = []
     if student is None:
       continue
+    table_row = []
     if export_student_name:
       table_row.append(student.name)
     if export_rose_username:
@@ -142,4 +146,5 @@ def get_progress_for_course(user, course_prefix):
       total_track_tasks = tracker.get_task_total()
       total_course_tasks += total_track_tasks
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
+  namespace_manager.set_namespace("")
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}

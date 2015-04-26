@@ -9,7 +9,7 @@ angular.module('OverviewControllers', [])
 	});
 	this.signup = function() {
 		oAuth.signup().then(function() {
-			oAuth.getUserEmail().then(function(userInfo) {
+			oAuth.getUserInfo().then(function(userInfo) {
 				if(userInfo.email !== userEmail) {
 					snackbar.createWithTimeout("<b>Danger!</b> Signing up for teams with another account may cause errors!", 6000);
 				}

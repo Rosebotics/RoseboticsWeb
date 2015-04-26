@@ -155,7 +155,7 @@ class TeamApi(remote.Service):
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
-        student = RoseboticsStudent.get_by_id(member.email)
+        student = RoseboticsStudent.get_by_id(member.email.lower())
         if student is None:
           continue
         mp.display_name = student.name
