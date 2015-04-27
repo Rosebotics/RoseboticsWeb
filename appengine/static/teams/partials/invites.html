@@ -29,7 +29,7 @@
       <label for="select" class="col-lg-5 control-label">
       	<team-title team="invite"></team-title>
       </label>
-      <div class="col-lg-5">
+      <div class="col-lg-5 col-xs-10">
       		<select class="form-control"
       				ng-show="editing"
 	        		tooltip="Select who can see your progress"
@@ -40,7 +40,7 @@
 	        </select>
           <span class="select-span" ng-show="!editing">{{invites.responseOptions[invite.response]}}</span>
       </div>
-      <div class="col-lg-2">
+      <div class="col-xs-2">
         <button class="btn btn-primary" ng-click="editing = !editing">
         	<span ng-show="!editing" class="glyphicon glyphicon-pencil"></span>
         	<span ng-show="editing" class="glyphicon glyphicon-remove"></span>
@@ -50,6 +50,6 @@
          ng-click="editing = !editing; invites.editInvite(invite, newResponse)"><span class="glyphicon glyphicon-ok"></span></button>
       </div>
     </div>
-    <p ng-hide="invites.accepted.length">You don't have any accpeted invitations</p>
+    <p ng-hide="invites.accepted.length">You don't have any accepted invitations</p>
   </fieldset>
 </form>

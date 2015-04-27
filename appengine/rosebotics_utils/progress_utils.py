@@ -6,7 +6,7 @@ import controllers.sites
 from models import progress
 from models.courses import CourseModel12
 from models.models import Student
-from models.rosebotics_models import RoseboticsTeam, TeamVisibility,\
+from models.rosebotics_models import TeamVisibility,\
   RoseboticsTeamMember, RoseboticsStudent
 from google.appengine.ext import ndb
 from datetime import datetime
