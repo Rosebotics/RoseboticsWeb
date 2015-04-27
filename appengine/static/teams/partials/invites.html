@@ -5,7 +5,7 @@
       <label for="select" class="col-lg-5 control-label">
       	<team-title team="invite"></team-title>
       </label>
-      <div class="col-lg-5">
+      <div class="col-lg-5 col-xs-10">
         <select class="form-control"
         		tooltip="Select who can see your progress"
         		tooltip-trigger="mouseenter"
@@ -14,7 +14,7 @@
             ng-model="newResponse" ng-options="invites.responseOptions[resp] for resp in invites.pendingResponses">
         </select>
       </div>
-      <div class="col-lg-2">
+      <div class="col-xs-2">
         <button ng-click="invites.editInvite(invite, newResponse)" class="btn btn-primary">Respond</button>
       </div>
     </div>
