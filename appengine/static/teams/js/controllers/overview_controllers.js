@@ -1,7 +1,7 @@
 angular.module('OverviewControllers', [])
 .controller('OverviewCtrl', function() {
 })
-.controller('PreviewCtrl', function(oAuth, $location, sidebar, $rootScope, snackbar, userEmail) {
+.controller('PreviewCtrl', ["oAuth", "$location", "sidebar", "$rootScope", "snackbar", "userEmail", function(oAuth, $location, sidebar, $rootScope, snackbar, userEmail) {
 	oAuth.check().then(function() {
 		$location.path('/overview');
 		sidebar.show.set(true);
@@ -20,8 +20,8 @@ angular.module('OverviewControllers', [])
 			snackbar.createWithTimeout("<b>Error!</b> Sign up failed");
 		});
 	};
-})
-.controller('SidebarCtrl', function(sidebar, $location, $scope) {
+}])
+.controller('SidebarCtrl', ["sidebar", "$location", "$scope", function(sidebar, $location, $scope) {
 	this.routes = sidebar.routes;
 	this.show = sidebar.show.get();
 	var self = this;
@@ -33,4 +33,4 @@ angular.module('OverviewControllers', [])
 		routeUrl = routeUrl.substring(1);
 		return path.startsWith(routeUrl);
 	}
-});
+}]);

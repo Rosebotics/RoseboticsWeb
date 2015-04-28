@@ -1,5 +1,5 @@
 angular.module('InviteControllers', [])
-.controller('InvitesCtrl', function(invites, api, snackbar) {
+.controller('InvitesCtrl', ["invites", "api", "snackbar", function(invites, api, snackbar) {
 	this.pending = [];
 	this.accepted = [];
 	var allInvites = invites["invites"];
@@ -54,4 +54,4 @@ angular.module('InviteControllers', [])
 													"ALL_MEMBERS" : "All members can see my progress",
 													"TEAM_LEADER": "Only the leader can see my progress",
 													"REJECT_INVITE": "Reject invite and no one can see my progress"};
-});
+}]);

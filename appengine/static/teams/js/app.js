@@ -18,77 +18,77 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
         templateUrl: '/static/teams/partials/teams.html',
         controller: 'TeamsCtrl as teams',
         resolve: {
-          teams: function(api) {
+          teams: ['api', function(api) {
             return api.getTeams();
-          }
+          }]
         }
       })
       .when('/teams/:team_key/courses', {
         templateUrl: '/static/teams/partials/teams_course.html',
         controller: 'TeamsCourseCtrl as courses',
         resolve: {
-          team: function(api, $route) {
+          team: ["api", "$route", function(api, $route) {
             return api.getProgress($route.current.params);
-          }
+          }]
         }
       })
       .when('/teams/:team_key/courses/:course_name/tracks', {
         templateUrl: '/static/teams/partials/teams_track.html',
         controller: 'TeamsTrackCtrl as tracks',
         resolve: {
-          team: function(api, $route) {
+          team: ["api", "$route", function(api, $route) {
             return api.getProgress($route.current.params);
-          }
+          }]
         }
       })
       .when('/teams/:team_key/courses/:course_name/tracks/:track_name/units', {
         templateUrl: '/static/teams/partials/teams_unit.html',
         controller: 'TeamsUnitCtrl as units',
         resolve: {
-          team: function(api, $route) {
+          team: ["api", "$route", function(api, $route) {
             return api.getProgress($route.current.params);
-          }
+          }]
         }
       })
       .when('/invites/', {
         templateUrl: '/static/teams/partials/invites.html',
         controller: 'InvitesCtrl as invites',
         resolve: {
-          invites: function(api) {
+          invites: ["api", function(api) {
             return api.getInvites();
-          }
+          }]
         }
       })
       .when('/manage/', {
         templateUrl: '/static/teams/partials/manage.html',
         controller: 'ManageCtrl as manage',
         resolve: {
-          teams: function(api) {
+          teams: ["api", function(api) {
             return api.getLeadTeams();
-          }
+          }]
         }
       })
       .when('/manage/:team_key', {
         templateUrl: '/static/teams/partials/manage_team.html',
         controller: 'ManageTeamCtrl as manage',
         resolve: {
-          teams: function(api) {
+          teams: ["api", function(api) {
             return api.getLeadTeams();
-          },
-          user: function(oAuth) {
+          }],
+          user: ["oAuth", function(oAuth) {
             return oAuth.getUserInfo();
-          }
+          }]
         }
       })
       .otherwise({
         redirectTo: '/overview/'
       });
   }])
-  .run(function($rootScope, $location, oAuth, sidebar) {
+  .run(["$rootScope", "$location", "oAuth", "sidebar", function($rootScope, $location, oAuth, sidebar) {
 	  angular.element(document.querySelectorAll(".hidden.container")).removeClass("hidden");
 	  angular.element(document.querySelector("div.spinner")).addClass("hidden");
 	  oAuth.check().then(null, function() {
   		$location.path('/preview');
   		sidebar.show.set(false);
 	  });
-	});
+	}]);

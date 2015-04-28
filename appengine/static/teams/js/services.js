@@ -17,10 +17,10 @@ angular.module('TeamServices', [])
 		}
 	};
 })
-.factory('userEmail', function($rootScope) {
+.factory('userEmail', ["$rootScope", function($rootScope) {
 	return $rootScope.userEmail;
-})
-.service('oAuth', function ($q, $location) {
+}])
+.service('oAuth', ["$q", "$location", function ($q, $location) {
 	var signin = function(immediate) {
 		return function() {
 			var p = $q.defer();
@@ -60,8 +60,8 @@ angular.module('TeamServices', [])
 	this.getUserInfo = function() {
 		return this.execute(gapi.client.oauth2.userinfo.get());
 	};
-})
-.service('api', function (oAuth, $q) {
+}])
+.service('api', ["oAuth", "$q", function (oAuth, $q) {
 	var cache = {};
 	var cachedApiCall = function(cacheKey, apiMethod) {
 		return function(forceRefresh) {
@@ -145,4 +145,4 @@ angular.module('TeamServices', [])
 		});
 		return p.promise;
 	};
-});
+}]);

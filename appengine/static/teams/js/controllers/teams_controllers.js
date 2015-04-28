@@ -1,9 +1,9 @@
 angular.module('TeamControllers', [])
-.controller('TeamsCtrl', function($modal, teams) {
+.controller('TeamsCtrl', ["$modal", "teams", function($modal, teams) {
 	this.items = teams["teams"];
 	var self = this;
-})
-.controller('TeamsParentCtrl', function($modal, team) {
+}])
+.controller('TeamsParentCtrl', ['$modal', 'team', function($modal, team) {
 	this.toggleExportProgressModal = function() {
 		var modalInstance = $modal.open({
 		  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
@@ -16,8 +16,8 @@ angular.module('TeamControllers', [])
 		  }
 		});
 	};
-})
-.controller('TeamsCourseCtrl', function($modal, team, $controller) {
+}])
+.controller('TeamsCourseCtrl', ["$modal", "team", "$controller", function($modal, team, $controller) {
 	angular.extend(this, $controller('TeamsParentCtrl', {$modal: $modal, team: team}));
   this.team = team;
 	if (team.members_progress == undefined) {
@@ -30,8 +30,8 @@ angular.module('TeamControllers', [])
 			this.courses.push(courses[i].name);
 		}
 	}
-})
-.controller('TeamsTrackCtrl', function($routeParams, team, $modal, $controller) {
+}])
+.controller('TeamsTrackCtrl', ["$routeParams", "team", "$modal", "$controller", function($routeParams, team, $modal, $controller) {
 	angular.extend(this, $controller('TeamsParentCtrl', {$modal: $modal, team: team}));
 	this.team = team;
 	if (team.members_progress == undefined) {
@@ -56,8 +56,8 @@ angular.module('TeamControllers', [])
 	this.getProgressForMemberTrack = function(member, trackNum) {
 		return member.course_progress[self.courseNum].track_progress[trackNum].progress;
 	}
-})
-.controller('TeamsUnitCtrl', function($routeParams, team, $modal, $controller) {
+}])
+.controller('TeamsUnitCtrl', ["$routeParams", "team", "$modal", "$controller", function($routeParams, team, $modal, $controller) {
 	angular.extend(this, $controller('TeamsParentCtrl', {$modal: $modal, team: team}));
 	this.team = team;
 	if (team.members_progress == undefined) {
@@ -90,4 +90,4 @@ angular.module('TeamControllers', [])
 	this.getProgressForMemberUnit = function(member, unitNum) {
 		return member.course_progress[self.courseNum].track_progress[self.trackNum].unit_progress[unitNum].progress;
 	}
-});
+}]);

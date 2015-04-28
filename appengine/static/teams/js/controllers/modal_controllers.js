@@ -1,5 +1,5 @@
 angular.module('ModalControllers', [])
-.controller('ModalToggleCtrl', function($modal) {
+.controller('ModalToggleCtrl', ["$modal", function($modal) {
 	this.toggleSignOutModal = function() {
 		var modalInstance = $modal.open({
 		  templateUrl: 'logout_modal.html',
@@ -14,13 +14,13 @@ angular.module('ModalControllers', [])
 		  controllerAs: 'modal'
 		});
 	};
-})
-.controller('SimpleModalInstanceCtrl', function ($modalInstance) {
+}])
+.controller('SimpleModalInstanceCtrl', ["$modalInstance", function ($modalInstance) {
   this.cancel = function() {
     $modalInstance.dismiss('cancel');
   };
-})
-.controller('NewMemberModalInstanceCtrl', function ($modalInstance, $controller) {
+}])
+.controller('NewMemberModalInstanceCtrl', ["$modalInstance", "$controller", function ($modalInstance, $controller) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.email = "";
 	this.addMember = function(email) {
@@ -34,14 +34,14 @@ angular.module('ModalControllers', [])
 		}
 	  $modalInstance.close(email);
 	};
-})
-.controller('DeleteTeamModalInstanceCtrl', function ($modalInstance, $controller) {
+}])
+.controller('DeleteTeamModalInstanceCtrl', ["$modalInstance", "$controller", function ($modalInstance, $controller) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.remove = function() {
 	  $modalInstance.close();
 	};
-})
-.controller('CreateTeamModalInstanceCtrl', function ($modalInstance, $controller, user) {
+}])
+.controller('CreateTeamModalInstanceCtrl', ["$modalInstance", "$controller", "user",  function ($modalInstance, $controller, user) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.teamName = "";
 	this.teamMembers = "";
@@ -65,8 +65,8 @@ angular.module('ModalControllers', [])
 		}
 	  $modalInstance.close(newTeam);
 	};
-})
-.controller('ExportModalInstanceCtrl', function ($modalInstance, $controller, team, $window) {
+}])
+.controller('ExportModalInstanceCtrl', ["$modalInstance", "$controller", "team", "$window", function ($modalInstance, $controller, team, $window) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.team = team;
 	this.fullname = true;
@@ -119,4 +119,4 @@ angular.module('ModalControllers', [])
 		$window.open(landingUrl, "_blank");
 		$modalInstance.close();
 	};
-});
+}]);

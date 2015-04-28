@@ -6,12 +6,10 @@
     <meta name="description" content="Rosebotics home page">
     <meta name="author" content="Dave Fisher">
 
-	{% include 'templates/views/common/common_css.html' %}
+    <link href="/static/dist/css/rosebotics.min.css" rel="stylesheet">
 
 <title>{{page_title}}</title>
 
-    <!-- Custom styles for this template -->
-    <link href="/static/css/justified-nav.css" rel="stylesheet">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -27,7 +25,7 @@
    {% include 'templates/views/common/navbar.html' %}
    <div class="container-fluid">
 		{% block content %}
-		{% endblock %}		
+		{% endblock %}
       <!-- Site footer -->
       <div class="footer container">
         <p>This site has been made possible by the students, faculty, and staff of the <a href="http://www.rose-hulman.edu/robotics">Multidiciplinary Minor in Robotics</a> available at <a href="http://www.rose-hulman.edu">Rose-Hulman</a></p>

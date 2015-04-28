@@ -8,7 +8,7 @@ angular.module('TeamDirectives', [])
     templateUrl: '/static/teams/partials/components/team_title.html'
   };
 })
-.directive('routeLoadingIndicator', function($rootScope) {
+.directive('routeLoadingIndicator', ['$rootScope', function($rootScope) {
   return {
     restrict: 'E',
     templateUrl: '/static/teams/partials/components/loading_spinner.html',
@@ -23,7 +23,7 @@ angular.module('TeamDirectives', [])
       });
     }
   };
-})
+}])
 .filter('percentage', ['$filter', function ($filter) {
   return function (input, decimals) {
     return $filter('number')(input * 100, decimals) + '%';

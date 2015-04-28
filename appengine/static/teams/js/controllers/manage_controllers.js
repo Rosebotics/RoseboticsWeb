@@ -1,5 +1,5 @@
 angular.module('ManageControllers', [])
-.controller('ManageCtrl', function($modal, teams, api, snackbar, oAuth) {
+.controller('ManageCtrl', ["$modal", "teams", "api", "snackbar", "oAuth", function($modal, teams, api, snackbar, oAuth) {
 	this.items = teams["teams"];
 	var self = this;
 	this.toggleCreateTeamModal = function() {
@@ -29,8 +29,8 @@ angular.module('ManageControllers', [])
 			});
 		});
 	};
-})
-.controller('ManageTeamCtrl', function($routeParams, $modal, teams, $scope, snackbar, api, $location, user) {
+}])
+.controller('ManageTeamCtrl', ["$routeParams", "$modal", "teams", "$scope", "snackbar", "api", "$location", "user", function($routeParams, $modal, teams, $scope, snackbar, api, $location, user) {
 	var items = teams["teams"];
 	var teamNumber = -1;
 	for(var i = 0; i < items.length; i++) {
@@ -113,4 +113,4 @@ angular.module('ManageControllers', [])
 	this.visibilityOptions = {"NOT_CHOSEN" : "No Response",
 														"ALL_MEMBERS" : "Progress visible by everyone",
 														"TEAM_LEADER": "Progress visible to leader only"};
-});
+}]);
