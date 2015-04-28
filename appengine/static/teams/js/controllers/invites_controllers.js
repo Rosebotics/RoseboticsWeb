@@ -15,7 +15,7 @@ angular.module('InviteControllers', [])
 	}
 	var self = this;
 	this.editInvite = function(invite, newResponse) {
-		var refreshTeams = false; 
+		var refreshTeams = false;
 		if(invite.response === "NOT_CHOSEN" && newResponse !== "NOT_CHOSEN") {
 			for(var i = 0; i < self.pending.length; i++) {
 				if (self.pending[i].team_key === invite.team_key) {
@@ -50,7 +50,7 @@ angular.module('InviteControllers', [])
 	}
 	this.pendingResponses = ["NOT_CHOSEN", "ALL_MEMBERS", "TEAM_LEADER", "REJECT_INVITE"];
 	this.acceptedResponses = ["ALL_MEMBERS", "TEAM_LEADER", "REJECT_INVITE"];
- 	this.responseOptions = {"NOT_CHOSEN" : "",
+ 	this.responseOptions = {"NOT_CHOSEN" : "No response",
 													"ALL_MEMBERS" : "All members can see my progress",
 													"TEAM_LEADER": "Only the leader can see my progress",
 													"REJECT_INVITE": "Reject invite and no one can see my progress"};

@@ -28,8 +28,6 @@ class BasePage(webapp2.RequestHandler):
       return
     else:
       values["login_url"] = users.create_login_url("/courses")
-
-
     self.update_values(user, values)
     template = jinja_env.get_template(self.template_file())
     self.response.out.write(template.render(values))
@@ -44,7 +42,6 @@ class BasePage(webapp2.RequestHandler):
     return False
 
 class BaseAction(webapp2.RequestHandler):
-
   def post(self):
     user = users.get_current_user()
     if user is None:
@@ -60,7 +57,6 @@ class BaseAction(webapp2.RequestHandler):
     pass
 
 class BaseRedirect(webapp2.RedirectHandler):
-
     def get(self):
       user = users.get_current_user()
       if user is None:
