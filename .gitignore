@@ -27,3 +27,6 @@ appengine/pytz/*.tmp
 *.xcuserstate
 project.xcworkspace/
 xcuserdata/
+
+# Prepros
+prepros.cfg
