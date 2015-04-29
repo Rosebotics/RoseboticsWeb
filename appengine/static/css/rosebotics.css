@@ -93,3 +93,16 @@ div.row-eq-height.inner {
 .col-sm-3.panel.panel-default {
 	 padding-bottom: 40px;
 }	
+
+.panel-link {
+	 color: #000;
+	 text-decoration: none;
+}
+.panel-link:hover {
+	 color: #000;
+	 text-decoration: none;
+}
+.panel-link>p {
+	 color: #666666;
+	 text-decoration: none;
+}

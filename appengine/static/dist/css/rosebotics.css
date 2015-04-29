@@ -7219,6 +7219,7 @@ input[type="checkbox"]:disabled:checked:after,
 .carousel-caption h6 {
   color: inherit;
 }
+
 #sign-in-btn{
   padding-top: 5px;
   padding-bottom: 5px;
@@ -7243,6 +7244,7 @@ input[type="checkbox"]:disabled:checked:after,
   	top: 50%;
   	transform: translate(0, -50%);
 }
+
 
 
 .footer {
@@ -7329,6 +7331,7 @@ input[type="checkbox"]:disabled:checked:after,
     padding-left: 0;
   }
 }
+
 /* Magnific Popup CSS */
 .mfp-bg {
   top: 0;
@@ -7703,6 +7706,7 @@ img.mfp-img {
   top: 0;
   right: 0;
   padding-top: 0; }
+
 .subtitle {
 	font-style: italic;
 	font-size: 22px;
@@ -7798,3 +7802,16 @@ div.row-eq-height.inner {
 .col-sm-3.panel.panel-default {
 	 padding-bottom: 40px;
 }	
+
+.panel-link {
+	 color: #000;
+	 text-decoration: none;
+}
+.panel-link:hover {
+	 color: #000;
+	 text-decoration: none;
+}
+.panel-link>p {
+	 color: #666666;
+	 text-decoration: none;
+}
