@@ -15,42 +15,45 @@
 <div class="row row-eq-height xs">
 
 <div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <div class='panel-body'>
+    <a href="/android"><div class='panel-body'>
     <img class="img-responsive" src="/static/images/androidlogo.png">
     <h6>Android Application Development</h6>
     <p>Get started building mobile applications for Android devices. Learn the basics of Android development and bring your app ideas to life.</p>
-    <a href="/android" class="btn btn-default start-course" >Start
+    {% if recent_android_track %}<a href="{{ recent_android_track.path }}" class="btn btn-default start-course">Resume
+    {% else %}<a href="/android" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div>
+    </div></a>
   
   </div>
 <div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <div class='panel-body'>
+    <a href="/ios"><div class='panel-body'>
     <img class="img-responsive" src="/static/images/applelogo2.png">
     <h6>iOS Application Development</h6>
     <p>Get started building iOS applications for iPhone and iPad mobile devices. Learn the basics of iOS development and bring your app ideas to life.</p>
-    <a href="/ios" class="btn btn-default start-course" >Start
+    {% if recent_ios_track %}<a href="{{ recent_ios_track.path }}" class="btn btn-default start-course">Resume
+    {% else %}<a href="/ios" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div>
+    </div></a>
 
   </div>
 <div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <div class='panel-body'>
+    <a href="/web"><div class='panel-body'>
     <img class="img-responsive" src="/static/images/weblogo.png">
     <h6>Web Development</h6>
     <p>Learn the fundamentals of web development using Google App Engine. Topics also include CSS, HTML5, Javascript etc. </p>
-    <a href="/web" class="btn btn-default start-course" >Start
+    {% if recent_web_track %}<a href="{{ recent_web_track.path }}" class="btn btn-default start-course">Resume
+    {% else %}<a href="/web" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div>
+    </div></a>
   </div>
 <div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <div class='panel-body'>
+    <a href="/me430"><div class='panel-body'>
     <img class="img-responsive" src="/static/images/melogo.png">
     <h6>Mechatronics</h6>
     <p>Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.</p>
     <a href="/me430" class="btn btn-default start-course" >Start
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-  </div>
+  </div></a>
 </div>
 </div>
 <div id="example-percent-container"></div>

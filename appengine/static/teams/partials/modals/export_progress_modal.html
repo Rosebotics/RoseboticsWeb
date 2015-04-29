@@ -26,7 +26,7 @@ hr {
 		<div class="modal-body">
 			<div class="form-group">
 				<label for="inputData" class="col-lg-2 control-label">Data</label>
-				<div class="col-lg-10">
+				<div class="col-lg-10 row">
 					<div class="checkbox">
 						<label> <input type="checkbox" ng-model="modal.fullname"> Full Name
 						</label>
@@ -35,6 +35,16 @@ hr {
 						<label> <input type="checkbox" ng-model="modal.username"> Username
 						</label>
 					</div>
+					<div>
+					<div class="checkbox">
+						<label class="col-xs-3"> 
+						  <input type="checkbox" ng-model="modal.hasTimestamp"> Timestamp
+						</label>
+						<span class="col-xs-9">
+							<select ng-show='modal.hasTimestamp' ng-options="item for item in modal.timezones" ng-model="modal.timezone"></select>
+						</span>
+					</div>
+
 					<div ng-repeat="course in modal.data">
 						<label class="expandable" ng-init="isCollapsed = false" ng-click="isCollapsed = !isCollapsed">{{course.name}}
 							<span class="pull-right glyphicon glyphicon-chevron-{{isCollapsed ? 'down' : 'up'}}" aria-hidden="true"></span>

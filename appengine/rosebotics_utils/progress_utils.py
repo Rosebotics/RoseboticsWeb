@@ -9,7 +9,7 @@ from models.models import Student
 from models.rosebotics_models import TeamVisibility,\
   RoseboticsTeamMember, RoseboticsStudent
 from google.appengine.ext import ndb
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def get_total_progress_for_course(email, course_prefix):
@@ -52,8 +52,14 @@ def get_total_progress_for_course(email, course_prefix):
   namespace_manager.set_namespace("")
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
-def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, data):
-  table_data = [[str(datetime.now())]] # UTC?
+_tz_offsets = {'UTC':0, 'Pacific':-7, 'Mountain':-6, 'Central':-5, 'Eastern':-4}
+
+def _tz_now(timezone='UTC'):
+  offset = _tz_offsets.get(timezone, 0)
+  return format(datetime.utcnow() + timedelta(hours=offset), "%a %b %d %H:%M:%S %Y")
+
+def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, timezone, data):
+  table_data = []
   header_row = []
   table_data.append(header_row)
   # Student Header
@@ -61,6 +67,8 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     header_row.append("Full Name")
   if export_rose_username:
     header_row.append("Username")
+  if timezone:
+    header_row.append("Timestamp")
   team = ndb.Key(urlsafe=team_urlsafe).get()
   if team is None:
     return []
@@ -89,6 +97,8 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
       table_row.append(student.name)
     if export_rose_username:
       table_row.append(student.username)
+    if timezone:
+      table_row.append(_tz_now(timezone))
     for course in data:
       course_progress = get_total_progress_for_course(member.email, course['name'].lower())
       for requested_track in course['tracks']:

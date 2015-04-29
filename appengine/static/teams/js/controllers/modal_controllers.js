@@ -71,6 +71,9 @@ angular.module('ModalControllers', [])
 	this.team = team;
 	this.fullname = true;
 	this.username = true;
+	this.hasTimestamp = true;
+	this.timezone = 'Eastern';
+	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.data = [];
 	if (team.members_progress.length > 0) {
 	  this.courses = team.members_progress[0].course_progress;
@@ -98,6 +101,9 @@ angular.module('ModalControllers', [])
 		}
 		if(self.username) {
 			landingUrl += "&rose_username=true";
+		}
+		if(self.hasTimestamp) {
+			landingUrl += "&timezone=" + self.timezone;
 		}
 		progress_data = angular.copy(self.data);
 		for (var i = 0; i < progress_data.length; i++) {
