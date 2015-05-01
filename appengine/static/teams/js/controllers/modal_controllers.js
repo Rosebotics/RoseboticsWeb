@@ -72,12 +72,15 @@ angular.module('ModalControllers', [])
 	this.fullname = true;
 	this.username = true;
 	this.hasTimestamp = true;
+	this.includeCourseProgress = false;
+	this.includeTrackProgress = false;
 	this.timezone = 'Eastern';
 	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.data = [];
 	var self = this;
+	console.log(team);
 	if (team.members_progress.length > 0) {
-	  this.courses = team.members_progress[0].course_progress;
+	  var courses = team.members_progress[0].course_progress;
 	  for (var i = 0; i < courses.length; i++) {
 			var course = {name: courses[i].name, tracks:[], toggled:false};
 			var tracks = courses[i].track_progress;
@@ -135,7 +138,6 @@ angular.module('ModalControllers', [])
 		checkCourseToggle(course);
 	};
 	this.generate = function() {
-		console.log(self.data, self.fullname, self.username);
 		var landingUrl = "http://" + $window.location.host + "/teams/export.csv";
 		landingUrl += "?team_urlsafe=" + team.team_key;
 		if(self.fullname) {
@@ -146,6 +148,12 @@ angular.module('ModalControllers', [])
 		}
 		if(self.hasTimestamp) {
 			landingUrl += "&timezone=" + self.timezone;
+		}
+		if(self.includeCourseProgress) {
+			landingUrl += "&course_progress=true";
+		}
+		if(self.includeTrackProgress) {
+			landingUrl += "&track_progress=true";
 		}
 		progress_data = angular.copy(self.data);
 		for (var i = 0; i < progress_data.length; i++) {
@@ -163,8 +171,10 @@ angular.module('ModalControllers', [])
 			}
 		}
 		landingUrl += "&progress_data=" + encodeURIComponent(JSON.stringify(progress_data));
-		console.log(landingUrl);
-		$window.open(landingUrl, "_blank");
+		self.onPostGenerate(landingUrl);
 		$modalInstance.close();
 	};
+	this.onPostGenerate = function(url) {
+		$window.open(url, "_blank");
+	}
 }]);

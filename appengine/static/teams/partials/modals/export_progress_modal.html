@@ -44,7 +44,14 @@ hr {
 							<select ng-show='modal.hasTimestamp' ng-options="item for item in modal.timezones" ng-model="modal.timezone"></select>
 						</span>
 					</div>
-
+					<div class="checkbox">
+						<label> <input type="checkbox" ng-model="modal.includeCourseProgress"> Include Course Progress
+						</label>
+					</div>
+					<div class="checkbox">
+						<label> <input type="checkbox" ng-model="modal.includeTrackProgress"> Include Track Progress
+						</label>
+					</div>
 					<div ng-repeat="course in modal.data">
 						<label class="expandable" ng-init="isCollapsed = false" ng-click="isCollapsed = !isCollapsed">
 							<span class="glyphicon glyphicon-chevron-{{isCollapsed ? 'down' : 'right'}}" aria-hidden="true"></span>

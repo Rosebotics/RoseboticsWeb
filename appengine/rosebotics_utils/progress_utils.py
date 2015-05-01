@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 def get_total_progress_for_course(email, course_prefix):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track
-      percentages, which is a dictionary of the total progress in the course and the progress of each 
+      percentages, which is a dictionary of the total progress in the course and the progress of each
       unit, (in the order they appear in app.yaml) for the given course-prefix. """
   track_progress = []
   course_tasks_completed = 0
@@ -58,7 +58,7 @@ def _tz_now(timezone='UTC'):
   offset = _tz_offsets.get(timezone, 0)
   return format(datetime.utcnow() + timedelta(hours=offset), "%a %b %d %H:%M:%S %Y")
 
-def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, timezone, data):
+def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, export_course_progress, export_track_progress, timezone, data):
   table_data = []
   header_row = []
   table_data.append(header_row)
@@ -101,11 +101,15 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
       table_row.append(_tz_now(timezone))
     for course in data:
       course_progress = get_total_progress_for_course(member.email, course['name'].lower())
+      course_added = False
       for requested_track in course['tracks']:
+        track_added = False
         track_data = None
+        track_progress = None
         requested_units = None
         for track in course_progress['tracks']:
           if requested_track['name'] == track['name']:
+            track_progress = track['track']
             track_data = track['units']
             requested_units = requested_track['units']
             break
@@ -118,6 +122,16 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
           unit_name = unit_id.split(':')[1]
           if unit_name not in requested_units:
             continue
+          if export_course_progress and not course_added:
+            table_row.append(course_progress['course'])
+            if is_first_student:
+              header_row.append(course['name'])
+            course_added = True
+          if export_track_progress and not track_added:
+            table_row.append(track_progress)
+            if is_first_student:
+              header_row.append(requested_track['name'])
+            track_added = True
           table_row.append(unit_progress)
           if is_first_student:
             header_row.append(unit_name)
