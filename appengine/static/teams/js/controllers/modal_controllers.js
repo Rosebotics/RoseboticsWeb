@@ -75,23 +75,65 @@ angular.module('ModalControllers', [])
 	this.timezone = 'Eastern';
 	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.data = [];
+	var self = this;
 	if (team.members_progress.length > 0) {
 	  this.courses = team.members_progress[0].course_progress;
 	  for (var i = 0; i < courses.length; i++) {
-			var course = {name: courses[i].name, tracks:[]};
+			var course = {name: courses[i].name, tracks:[], toggled:false};
 			var tracks = courses[i].track_progress;
 			for (var j = 0; j < tracks.length; j++) {
-				var track = {name:tracks[j].name, units:[]};
+				var track = {name:tracks[j].name, units:[], toggled:false};
 				var units = tracks[j].unit_progress;
 				for(var k = 0; k < units.length; k++) {
-					track["units"].push({name:units[k].name, toggled:false});
+					var unit = {name:units[k].name, toggled:false};
+					track["units"].push(unit);
 				}
 				course["tracks"].push(track);
 			}
 			this.data.push(course);
 	  }
 	}
-	var self = this;
+	var checkTrackToggle = function(track) {
+		track.toggled = true;
+		for(var i = 0; i < track.units.length; i++) {
+			if(!track.units[i].toggled) {
+				track.toggled = false;
+				break;
+			}
+		}
+	};
+	var checkCourseToggle = function(course) {
+		course.toggled = true;
+		for(var i = 0; i < course.tracks.length; i++) {
+			if(!course.tracks[i].toggled) {
+				course.toggled = false;
+				break;
+			}
+		}
+	};
+	this.toggleCourse = function(course) {
+		var tracks = course.tracks;
+		for (var j = 0; j < tracks.length; j++) {
+			var units = tracks[j].units;
+			for(var k = 0; k < units.length; k++) {
+				units[k].toggled = !course.toggled;
+			}
+			tracks[j].toggled = !course.toggled;
+		}
+		course.toggled = !course.toggled;
+	}
+	this.toggleTrack = function(course, track) {
+		var units = track.units;
+		for(var k = 0; k < units.length; k++) {
+			units[k].toggled = !track.toggled;
+		}
+		track.toggled = !track.toggled;
+		checkCourseToggle(course);
+	}
+	this.unitToggled = function(course, track) {
+		checkTrackToggle(track);
+		checkCourseToggle(course);
+	};
 	this.generate = function() {
 		console.log(self.data, self.fullname, self.username);
 		var landingUrl = "http://" + $window.location.host + "/teams/export.csv";
