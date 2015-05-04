@@ -72,6 +72,8 @@ angular.module('ModalControllers', [])
 	this.fullname = true;
 	this.username = true;
 	this.hasTimestamp = true;
+	this.pointValue = "points";
+	this.pointsPerUnit = 1;
 	this.includeCourseProgress = false;
 	this.includeTrackProgress = false;
 	this.timezone = 'Eastern';
@@ -155,7 +157,12 @@ angular.module('ModalControllers', [])
 		if(self.includeTrackProgress) {
 			landingUrl += "&track_progress=true";
 		}
-		progress_data = angular.copy(self.data);
+		console.log(self.pointValue);
+		console.log(self.pointsPerUnit);
+		if(self.pointValue === "points") {
+			landingUrl += "&ppu=" + self.pointsPerUnit;
+		}
+		var progress_data = angular.copy(self.data);
 		for (var i = 0; i < progress_data.length; i++) {
 			var course = progress_data[i];
 			for (var j = 0; j < course.tracks.length; j++) {

@@ -12,10 +12,11 @@ from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
 
-def get_total_progress_for_course(email, course_prefix):
+def get_total_progress_for_course(email, course_prefix, as_percent=True):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track
       percentages, which is a dictionary of the total progress in the course and the progress of each
-      unit, (in the order they appear in app.yaml) for the given course-prefix. """
+      unit, (in the order they appear in app.yaml) for the given course-prefix. 
+      as_percent is used to specify if the unit's are expressed in percentage or as number of completed tasks"""
   track_progress = []
   course_tasks_completed = 0
   total_course_tasks = 0
@@ -36,11 +37,14 @@ def get_total_progress_for_course(email, course_prefix):
       for unit_title, unit in lesson_breakdown.items():
         track_tasks_completed += unit[0]
         total_track_tasks += unit[1]
-        units[unit_title] = unit[0]/float(unit[1])
+        if as_percent:
+          units[unit_title] = unit[0]/float(unit[1])
+        else:
+          units[unit_title] = unit[0]/2
       track_progress.append({'name': course_app_context.get_title(), 'track': track_tasks_completed/float(total_track_tasks), 'units': units})
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
-      logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed, total_track_tasks))
+      logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed/2, total_track_tasks/2))
     else:
       track = {'name': course_app_context.get_title(), 'track': 0, 'units': {}}
       total_track_tasks = tracker.get_task_total()
@@ -48,7 +52,7 @@ def get_total_progress_for_course(email, course_prefix):
         track['units'][unit.unit_id + ":" + unit.title] = 0
       total_course_tasks += total_track_tasks
       track_progress.append(track)
-      logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
+      logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks/2))
   namespace_manager.set_namespace("")
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
@@ -58,7 +62,7 @@ def _tz_now(timezone='UTC'):
   offset = _tz_offsets.get(timezone, 0)
   return format(datetime.utcnow() + timedelta(hours=offset), "%a %b %d %H:%M:%S %Y")
 
-def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, export_course_progress, export_track_progress, timezone, data):
+def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, export_course_progress, export_track_progress, timezone, data):
   table_data = []
   header_row = []
   table_data.append(header_row)
@@ -100,7 +104,7 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     if timezone:
       table_row.append(_tz_now(timezone))
     for course in data:
-      course_progress = get_total_progress_for_course(member.email, course['name'].lower())
+      course_progress = get_total_progress_for_course(member.email, course['name'].lower(), as_percent=unit_points)
       course_added = False
       for requested_track in course['tracks']:
         track_added = False
@@ -132,7 +136,10 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
             if is_first_student:
               header_row.append(requested_track['name'])
             track_added = True
-          table_row.append(unit_progress)
+          if unit_points:
+            table_row.append(unit_progress * ppu)
+          else:
+            table_row.append(unit_progress)
           if is_first_student:
             header_row.append(unit_name)
     is_first_student = False
@@ -164,11 +171,11 @@ def get_progress_for_course(user, course_prefix):
       track_progress.append(track_tasks_completed/float(total_track_tasks))
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
-      logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed, total_track_tasks))
+      logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed/2, total_track_tasks/2))
     else:
       track_progress.append(0)
       total_track_tasks = tracker.get_task_total()
       total_course_tasks += total_track_tasks
-      logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks))
+      logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks/2))
   namespace_manager.set_namespace("")
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}

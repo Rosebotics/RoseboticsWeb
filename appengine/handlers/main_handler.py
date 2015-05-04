@@ -83,8 +83,10 @@ class ExportCsvAction(base_handler.BaseAction):
     timezone = self.request.get("timezone")
     course_progress = len(self.request.get("course_progress")) > 0
     track_progress = len(self.request.get("track_progress")) > 0
+    unit_points = len(self.request.get("ppu")) > 0
+    ppu = float(self.request.get("ppu", 1))
     data = json.loads(self.request.get("progress_data"))
-    csv_data = get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, course_progress, track_progress, timezone, data)
+    csv_data = get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, course_progress, track_progress, timezone, data)
     self.response.headers['Content-Type'] = 'application/csv'
     writer = csv.writer(self.response.out)
     for csv_row in csv_data:
