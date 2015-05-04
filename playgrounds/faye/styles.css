@@ -2,6 +2,9 @@
   position: static;
   background-color: #f1f2f2;
 }
+.white-bg {
+  background-color: white;
+}
 .track-progress {
   display: inline-block;
   width: 300;

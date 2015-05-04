@@ -23,6 +23,18 @@ $(document).ready(function(){
         }
     );
 
+    $('.list-group-item').hover(
+    	function(){
+            console.log('track mouse in');
+            $(this).find('svg').css("background-color","white");          
+        },
+        function(){
+            console.log('track mouse out');
+            $(this).find('svg').css("background-color","#f1f2f2");          
+            
+        }
+    );
+
 	var line1 = new ProgressBar.Line('#track-progress-container1', {
     color: '#FCB03C',
     strokeWidth: 3
