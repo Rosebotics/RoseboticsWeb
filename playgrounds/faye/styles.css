@@ -1,3 +1,9 @@
+.start-track-btn {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  margin-top: -5px;
+}
 .navbar {
   font-family: "brandon-grotesque", sans-serif;
   letter-spacing: 0.04em;
