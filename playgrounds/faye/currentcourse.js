@@ -24,17 +24,20 @@ $(document).ready(function(){
     );
 
 	var line1 = new ProgressBar.Line('#track-progress-container1', {
-    color: '#FCB03C'
+    color: '#FCB03C',
+    strokeWidth: 3
 
 	});
 
 	var line2 = new ProgressBar.Line('#track-progress-container2', {
-    color: '#FCB03C'
+    color: '#FCB03C',
+    strokeWidth: 3
 
 	});
 
 	var line3 = new ProgressBar.Line('#track-progress-container3', {
-    color: '#FCB03C'
+    color: '#FCB03C',
+    strokeWidth: 3
 
 	});
 

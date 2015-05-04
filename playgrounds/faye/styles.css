@@ -1,3 +1,18 @@
+.track-progress > svg {
+  position: static;
+  background-color: #f1f2f2;
+}
+.track-progress {
+  display: inline-block;
+  width: 300;
+  height: 10px;
+  margin-left: 1em;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.track-text {
+  display: inline-block;
+}
 #tracks {
   padding-top: 110px;
 }
