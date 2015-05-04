@@ -1,4 +1,28 @@
 $(document).ready(function(){
+
+	$('#resume-btn').hover(
+        function(){
+            console.log('resume mouse in');
+            $('#resume-icon').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        },
+        function(){
+            console.log('resume mouse out');
+            $('#resume-icon').removeClass('glyphicon-play').addClass('glyphicon-pause');
+        }
+    );
+
+
+	$('#resume-btn2').hover(
+        function(){
+            console.log('resume mouse in');
+            $('#resume-icon2').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        },
+        function(){
+            console.log('resume mouse out');
+            $('#resume-icon2').removeClass('glyphicon-play').addClass('glyphicon-pause');
+        }
+    );
+
 	var line1 = new ProgressBar.Line('#track-progress-container1', {
     color: '#FCB03C'
 
