@@ -73,14 +73,13 @@ angular.module('ModalControllers', [])
 	this.username = true;
 	this.hasTimestamp = true;
 	this.pointValue = "points";
-	this.pointsPerUnit = 1;
+	this.pointsPerUnit = parseInt(localStorage.getItem("ppu")) || 1;
 	this.includeCourseProgress = false;
 	this.includeTrackProgress = false;
 	this.timezone = 'Eastern';
 	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.data = [];
 	var self = this;
-	console.log(team);
 	if (team.members_progress.length > 0) {
 	  var courses = team.members_progress[0].course_progress;
 	  for (var i = 0; i < courses.length; i++) {
@@ -157,10 +156,9 @@ angular.module('ModalControllers', [])
 		if(self.includeTrackProgress) {
 			landingUrl += "&track_progress=true";
 		}
-		console.log(self.pointValue);
-		console.log(self.pointsPerUnit);
 		if(self.pointValue === "points") {
 			landingUrl += "&ppu=" + self.pointsPerUnit;
+			localStorage.setItem("ppu", self.pointsPerUnit);
 		}
 		var progress_data = angular.copy(self.data);
 		for (var i = 0; i < progress_data.length; i++) {
