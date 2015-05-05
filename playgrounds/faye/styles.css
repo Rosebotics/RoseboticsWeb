@@ -1,9 +1,16 @@
+#current-progress-percentage {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  margin: 0;
+}
+.pos-relative {
+  position: relative;
+}
 .track-progress > svg {
   position: static;
   background-color: #f1f2f2;
-}
-.white-bg {
-  background-color: white;
 }
 .track-progress {
   display: inline-block;
