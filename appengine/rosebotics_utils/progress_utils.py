@@ -12,11 +12,12 @@ from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
 
-def get_total_progress_for_course(email, course_prefix, as_percent=True):
+def get_total_progress_for_course(email, course_prefix, as_percent=True, get_total_tasks=False):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track
       percentages, which is a dictionary of the total progress in the course and the progress of each
       unit, (in the order they appear in app.yaml) for the given course-prefix. 
-      as_percent is used to specify if the unit's are expressed in percentage or as number of completed tasks"""
+      as_percent is used to specify if the unit's are expressed in percentage or as number of completed tasks
+      with the 'get_total_tasks' flag each unit will have another entry called unitid-total that will be the number of total tasks in the unit """
   track_progress = []
   course_tasks_completed = 0
   total_course_tasks = 0
@@ -41,6 +42,8 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True):
           units[unit_title] = unit[0]/float(unit[1])
         else:
           units[unit_title] = unit[0]/2
+        if get_total_tasks:
+          units[unit_title + "-total"] = unit[1]/2
       track_progress.append({'name': course_app_context.get_title(), 'track': track_tasks_completed/float(total_track_tasks), 'units': units})
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
@@ -104,7 +107,7 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     if timezone:
       table_row.append(_tz_now(timezone))
     for course in data:
-      course_progress = get_total_progress_for_course(member.email, course['name'].lower(), as_percent=unit_points)
+      course_progress = get_total_progress_for_course(member.email, course['name'].lower(), as_percent=unit_points, get_total_tasks=True)
       course_added = False
       for requested_track in course['tracks']:
         track_added = False
@@ -121,8 +124,10 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
           continue
         # Sort units
         extract_key = lambda pair:int(pair[0].split(":")[0])
-        track_data = sorted(track_data.items(), key=extract_key)
-        for unit_id, unit_progress in track_data:
+        unit_tuples = sorted(track_data.items(), key=extract_key)
+        for unit_id, unit_progress in unit_tuples:
+          if unit_id.endswith('-total'):
+            continue
           unit_name = unit_id.split(':')[1]
           if unit_name not in requested_units:
             continue
@@ -136,12 +141,15 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
             if is_first_student:
               header_row.append(requested_track['name'])
             track_added = True
+          unit_total = track_data[unit_id + '-total']
           if unit_points:
             table_row.append(unit_progress * ppu)
+            unit_total *= ppu
           else:
             table_row.append(unit_progress * ppt)
+            unit_total *= ppt
           if is_first_student:
-            header_row.append(unit_name)
+            header_row.append(unit_name + " (out of " + str(unit_total) + ")")
     is_first_student = False
     table_data.append(table_row)
   return table_data
