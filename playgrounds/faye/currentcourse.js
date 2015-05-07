@@ -75,6 +75,8 @@ $(document).ready(function(){
 
     step: function(state, circle) {
         circle.path.setAttribute('stroke', state.color);
+        console.log((circle.value() * 100).toFixed(0));
+        $('#current-progress-percentage').text((circle.value() * 100).toFixed(0));
     }
 	});
 
