@@ -1,3 +1,6 @@
+#video-btn-right {
+  float: right;
+}
 #current-progress-percentage {
   position: absolute;
   top: 50%;
