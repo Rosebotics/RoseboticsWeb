@@ -80,6 +80,18 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
           }]
         }
       })
+      .when('/manage/:team_key/sweeps', {
+        templateUrl: '/static/teams/partials/manage_sweeps.html',
+        controller: 'SweepsTeamCtrl as sweeps',
+        resolve: {
+          teams: ["api", function(api) {
+            return api.getLeadTeams();
+          }],
+          sweeps: ["api", "$route", function(api, $route) {
+        	  return api.getSweeps($route.current.params);
+          }]
+        }
+      })
       .otherwise({
         redirectTo: '/overview/'
       });

@@ -4,8 +4,10 @@ from protorpc import remote
 
 from models.rosebotics_models import CourseProgress, MemberProgress, RoseboticsStudent, RoseboticsTeam, RoseboticsTeamMember,\
   Team, TrackProgress, UnitProgress, TeamVisibility, TotalTeamProgress,\
-  TeamInvites, Teams, TeamInvite
+  TeamInvites, Teams, TeamInvite, AutoSweep, Sweep, Sweeps
 from rosebotics_utils.progress_utils import get_total_progress_for_course
+import json
+from datetime import datetime
 
 
 WEB_CLIENT_ID = "963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0.apps.googleusercontent.com"
@@ -13,6 +15,7 @@ WEB_CLIENT_ID = "963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0.apps.googleuserco
 @endpoints.api(name="teams", version="v1", description="ROSEbotics Team API",
                audiences=[WEB_CLIENT_ID],
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, WEB_CLIENT_ID])
+
 
 class TeamApi(remote.Service):
   """ The Api for the Teams feature within ROSEbotics.org """
@@ -167,6 +170,59 @@ class TeamApi(remote.Service):
     team_progress.members_progress = members_progress
     return team_progress
 
+  
+  @Sweep.method(user_required=True, name='sweeps.delete', path='sweeps/{sweep_key}', http_method='DELETE')
+  def delete_sweep(self, sweep):
+    """ Delete an AutoSweep that you have create """
+    user_email = get_user_email()
+    auto_sweep = sweep.sweep_key.get()
+    if not auto_sweep or user_email != auto_sweep.key.parent().string_id():
+      raise endpoints.NotFoundException('No AutoSweep with this key exists')
+    sweep.sweep_key.delete()
+    return sweep
+  
+  @Sweep.method(user_required=True, name='sweeps.insert', path='sweeps', http_method='POST')
+  def insert_sweep(self, sweep):
+    """ Create or edit an AutoSweep  """
+    user_email = get_user_email()
+    auto_sweep = None
+    if sweep.sweep_key:
+      auto_sweep = sweep.sweep_key.get()
+    if not auto_sweep:
+      new_sweep = AutoSweep(parent=ndb.Key(Sweep,user_email))
+      new_sweep.time = sweep.get_date_time()
+      new_sweep.options = sweep.parse_options()
+      new_sweep.team_key = sweep.team_key
+    else:
+      if user_email != auto_sweep.key.parent().string_id():
+        raise endpoints.NotFoundException('No AutoSweep with this key exists')
+      new_sweep = auto_sweep
+      new_sweep.time = sweep.get_date_time()
+      new_sweep.options = sweep.parse_options()
+      new_sweep.team_key = sweep.team_key
+    sweep.sweep_key = new_sweep.put()
+    return sweep
+  
+  @Sweeps.method(user_required=True, name='sweeps.get', path='sweeps/{team_key}', http_method='GET', request_fields=('team_key',))
+  def query_sweeps(self, query):
+    """ Get a user's AutoSweeps """
+    user_email = get_user_email()
+    query =  AutoSweep.query(AutoSweep.team_key==query.team_key)
+    response = Sweeps()
+    for auto_sweep in query:
+      sweep = Sweep()
+      sweep.sweep_key = auto_sweep.key
+      sweep.team_key = auto_sweep.team_key
+      sweep.options = str(auto_sweep.options)
+      sweep.email = user_email
+      sweep.year = auto_sweep.time.year
+      sweep.month = auto_sweep.time.month
+      sweep.day = auto_sweep.time.day
+      sweep.hour = auto_sweep.time.hour
+      response.sweeps.append(sweep)
+    return response
+
+### HELPER METHODS ### 
 def create_course_progress(course_name, progress):
   course_progress = CourseProgress(name=course_name, progress=progress["course"])
   for track in progress["tracks"]:
@@ -215,3 +271,7 @@ def remove_model_duplicates(seq):
       urlsafes.append(urlsafe)
       checked.append(e)
   return checked
+
+
+
+

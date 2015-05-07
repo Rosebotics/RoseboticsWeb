@@ -40,6 +40,9 @@ angular.module('ManageControllers', [])
 			break;
 		}
 	}
+	this.goToSweep = function() {
+		$location.path($location.path() + "/sweeps");
+	};
 	var timesChanged = 0;
 	var self = this;
 	var deregister = $scope.$watch(function () {
@@ -48,7 +51,7 @@ angular.module('ManageControllers', [])
 		timesChanged++;
 		self.onInputMadeDirty(timesChanged);
 	}, true);
-  this.onInputMadeDirty = function(timesChanged)  {
+	this.onInputMadeDirty = function(timesChanged)  {
 		if(timesChanged > 1) {
 			snackbar.createWithTimeout("<b>Warning!</b> You must press submit to save your changes");
 			deregister();
@@ -113,4 +116,34 @@ angular.module('ManageControllers', [])
 	this.visibilityOptions = {"NOT_CHOSEN" : "No Response",
 														"ALL_MEMBERS" : "Progress visible by everyone",
 														"TEAM_LEADER": "Progress visible to leader only"};
+}])
+.controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", function($routeParams, $modal, teams, sweeps, $location) {
+	// Going to need to progress for the modal...
+	var items = teams["teams"];
+	this.sweeps = sweeps["sweeps"];
+	var teamNumber = -1;
+	this.today = new Date();
+	this.done = function() {
+		$location.path("/manage/" + $routeParams.team_key);
+	};
+	for(var i = 0; i < items.length; i++) {
+		if(items[i].team_key == $routeParams.team_key) {
+			this.team = items[i];
+			teamNumber = i; 
+			break;
+		}
+	}
+	for(var i = 0; i < this.sweeps.length; i++) {
+		var sweep = this.sweeps[i];
+		sweep.hour = parseInt(sweep.hour);
+		var dt = new Date();
+		dt.setFullYear(sweep.year);
+		dt.setMonth(parseInt(sweep.month) - 1, parseInt(sweep.day));
+		sweep.dt = dt;
+	}
+	this.stopEvent = function($event) {
+		$event.preventDefault();
+		$event.stopPropagation();
+	};
 }]);
+

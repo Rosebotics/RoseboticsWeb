@@ -74,6 +74,7 @@ angular.module('ModalControllers', [])
 	this.hasTimestamp = true;
 	this.pointValue = "points";
 	this.pointsPerUnit = parseInt(localStorage.getItem("ppu")) || 1;
+	this.pointsPerTask = parseInt(localStorage.getItem("ppt")) || 1;
 	this.includeCourseProgress = false;
 	this.includeTrackProgress = false;
 	this.timezone = 'Eastern';
@@ -159,6 +160,9 @@ angular.module('ModalControllers', [])
 		if(self.pointValue === "points") {
 			landingUrl += "&ppu=" + self.pointsPerUnit;
 			localStorage.setItem("ppu", self.pointsPerUnit);
+		} else {
+			landingUrl += "&ppt=" + self.pointsPerTask;
+			localStorage.setItem("ppt", self.pointsPerTask);
 		}
 		var progress_data = angular.copy(self.data);
 		for (var i = 0; i < progress_data.length; i++) {
@@ -177,9 +181,9 @@ angular.module('ModalControllers', [])
 		}
 		landingUrl += "&progress_data=" + encodeURIComponent(JSON.stringify(progress_data));
 		self.onPostGenerate(landingUrl);
-		$modalInstance.close();
 	};
 	this.onPostGenerate = function(url) {
 		$window.open(url, "_blank");
+		$modalInstance.close();
 	}
 }]);

@@ -51,17 +51,20 @@ hr {
         <div class="radio">
           <label class="col-xs-7">
             <input type="radio" name="points" ng-model="modal.pointValue" value="points">
-            Specify points for each unit
+            Points per Unit
           </label>
           <span class="col-xs-3">
 										 <input type="number" ng-model="modal.pointsPerUnit" ng-show="modal.pointValue === 'points'">
 									</span>
         </div>
         <div class="radio">
-          <label class="col-xs-12">
+          <label class="col-xs-7">
             <input type="radio" name="points" ng-model="modal.pointValue" value="tasks">
-            Points proportional to tasks
+            Points per task
           </label>
+          <span class="col-xs-3">
+										 <input type="number" ng-model="modal.pointsPerTask" ng-show="modal.pointValue === 'tasks'">
+									</span>
         </div>
       </div>
     </div>

@@ -60,9 +60,9 @@ _tz_offsets = {'UTC':0, 'Pacific':-7, 'Mountain':-6, 'Central':-5, 'Eastern':-4}
 
 def _tz_now(timezone='UTC'):
   offset = _tz_offsets.get(timezone, 0)
-  return format(datetime.utcnow() + timedelta(hours=offset), "%a %b %d %H:%M:%S %Y")
+  return format(datetime.utcnow() + timedelta(hours=offset), "Exported on %a %b %d %H:%M %Y")
 
-def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, export_course_progress, export_track_progress, timezone, data):
+def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, export_course_progress, export_track_progress, timezone, data):
   table_data = []
   header_row = []
   table_data.append(header_row)
@@ -139,7 +139,7 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
           if unit_points:
             table_row.append(unit_progress * ppu)
           else:
-            table_row.append(unit_progress)
+            table_row.append(unit_progress * ppt)
           if is_first_student:
             header_row.append(unit_name)
     is_first_student = False
