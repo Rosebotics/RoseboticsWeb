@@ -1,3 +1,7 @@
+var progresscolor = '#4285f4';
+var googlered = '#db4437';
+var googleyellow = '#f4b400';
+
 $(document).ready(function(){
 
 	$('#resume-btn').hover(
@@ -36,36 +40,71 @@ $(document).ready(function(){
     );
 
 	var line1 = new ProgressBar.Line('#track-progress-container1', {
-    color: '#FCB03C',
-    strokeWidth: 3
+    color: progresscolor,
+    strokeWidth: 3,
+    step: function(state, line1) {
+        line1.path.setAttribute('stroke', state.color);
+    }
 
 	});
 
 	var line2 = new ProgressBar.Line('#track-progress-container2', {
-    color: '#FCB03C',
-    strokeWidth: 3
+    color: progresscolor,
+    strokeWidth: 3,
+    step: function(state, line2) {
+        line2.path.setAttribute('stroke', state.color);
+    }
 
 	});
 
 	var line3 = new ProgressBar.Line('#track-progress-container3', {
-    color: '#FCB03C',
-    strokeWidth: 3
-
-	});
-
-	var circle = new ProgressBar.Circle('#course-progress-container', {
-    color: '#FCB03C',
+    color: progresscolor,
     strokeWidth: 3,
-    trailWidth: 1,
-    duration: 1500,
-    text: {
-        value: '0'
+    step: function(state, line3) {
+        line3.path.setAttribute('stroke', state.color);
     }
 	});
 
-	circle.animate(1.0);  // Number from 0.0 to 1.0
+	var circle = new ProgressBar.Circle('#course-progress-container', {
+    trailColor: '#f1f2f2',
+    trailWidth: 1,
+    color: progresscolor,
+    strokeWidth: 3,
+    trailWidth: 1,
+    duration: 1500,
 
-	line1.animate(1.0);  // Number from 0.0 to 1.0
-	line2.animate(0.6);  // Number from 0.0 to 1.0
-	line3.animate(0.3);  // Number from 0.0 to 1.0
+    step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+    }
+	});
+
+
+
+	circle.animate(0.5, {
+        easing: "easeIn",
+        from: {color: googlered},
+        to: {color: googleyellow}
+    },function() {
+    circle.animate(1.0, {
+        easing: "easeOut",
+        from: {color: googleyellow},
+        to: {color: progresscolor}
+    });
+    });  // Number from 0.0 to 1.0
+
+	line1.animate(1.0, {
+    from: {color: googlered},
+    to: {color: progresscolor}
+    });  // Number from 0.0 to 1.0
+    // Number from 0.0 to 1.0
+	line2.animate(0.6, {
+    from: {color: googlered},
+    to: {color: progresscolor}
+    });  // Number from 0.0 to 1.0
+      // Number from 0.0 to 1.0
+	line3.animate(0.3, {
+    from: {color: googlered},
+    to: {color: progresscolor}
+    });  // Number from 0.0 to 1.0
+     // Number from 0.0 to 1.0
 });
