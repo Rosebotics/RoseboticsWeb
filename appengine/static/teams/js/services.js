@@ -150,9 +150,9 @@ angular.module('TeamServices', [])
 	this.getProgress = cachedTeamApiCall("progress", gapi.client.teams.progress);
 	this.getSweeps = cachedTeamApiCall("sweep", gapi.client.teams.sweeps.get);
 	this.insertSweep = function(sweep) {
-		return oAuth.execute(gapi.client.teams.sweep.insert(sweep));
+		return oAuth.execute(gapi.client.teams.sweeps.insert(sweep));
 	}
 	this.deleteSweep = function(sweep) {
-		return oAuth.execute(gapi.client.teams.sweep.delete(sweep));
+		return oAuth.execute(gapi.client.teams.sweeps.delete(sweep));
 	}
 }]);

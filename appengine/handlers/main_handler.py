@@ -74,6 +74,7 @@ class EditProfileAction(base_handler.BaseAction):
 class ExportCsvAction(base_handler.BaseAction):
 
   def get(self):
+    # TODO: Remove
     self.post()
 
   def handle_post(self, rosebotics_student):
@@ -86,6 +87,7 @@ class ExportCsvAction(base_handler.BaseAction):
     unit_points = len(self.request.get("ppu")) > 0
     ppu = float(self.request.get("ppu", "1"))
     ppt = float(self.request.get("ppt", "1"))
+    print self.request.get("progress_data")
     data = json.loads(self.request.get("progress_data"))
     csv_data = get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone, data)
     self.response.headers['Content-Type'] = 'application/csv'

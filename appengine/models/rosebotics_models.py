@@ -43,6 +43,13 @@ class AutoSweep(ndb.Model):
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   time = ndb.DateTimeProperty()
   options = ndb.JsonProperty()
+  
+  def unparse_options(self):
+    print self.options
+    options = ""
+    for key, value in self.options.items():
+      options += str(key) + "=" + str(value)
+    return options
 
 ### Endpoints Messaging Classes ###
 class Sweep(EndpointsModel):
@@ -65,7 +72,9 @@ class Sweep(EndpointsModel):
     
   def parse_options(self):
     options = {}
-    qs = self.options.split('&', 1)
+    if self.options == "":
+      return options
+    qs = self.options.split('&')
     for s in qs:
       s = s.split('=', 1)
       key = s[0]

@@ -114,10 +114,10 @@ angular.module('ManageControllers', [])
 		});
 	};
 	this.visibilityOptions = {"NOT_CHOSEN" : "No Response",
-														"ALL_MEMBERS" : "Progress visible by everyone",
-														"TEAM_LEADER": "Progress visible to leader only"};
+							  "ALL_MEMBERS" : "Progress visible by everyone",
+							  "TEAM_LEADER": "Progress visible by leader only"};
 }])
-.controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", function($routeParams, $modal, teams, sweeps, $location) {
+.controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", "progress", "snackbar", "api", function($routeParams, $modal, teams, sweeps, $location, progress, snackbar, api) {
 	// Going to need to progress for the modal...
 	var items = teams["teams"];
 	this.sweeps = sweeps["sweeps"];
@@ -135,15 +135,98 @@ angular.module('ManageControllers', [])
 	}
 	for(var i = 0; i < this.sweeps.length; i++) {
 		var sweep = this.sweeps[i];
-		sweep.hour = parseInt(sweep.hour);
+		sweep.hourNum = parseInt(sweep.hour);
 		var dt = new Date();
 		dt.setFullYear(sweep.year);
 		dt.setMonth(parseInt(sweep.month) - 1, parseInt(sweep.day));
 		sweep.dt = dt;
 	}
+	this.saveSweep = function(sweep) {
+		snackbar.create("Saving Sweep...", 6);
+		sweep.hour = sweep.hourNum.toString();
+		sweep.year = sweep.dt.getFullYear().toString();
+		sweep.month = (sweep.dt.getMonth() + 1).toString();
+		sweep.day = sweep.dt.getDate().toString();
+		api.insertSweep(sweep).then(function(newSweep) {
+			snackbar.remove(6);
+			snackbar.createWithTimeout("<b>Success!</b> Sweep saved");
+		}, function() {
+			snackbar.remove(6);
+			snackbar.createWithTimeout("<b>Error!</b> Sweep not saved");
+		});
+	};	
+	var self = this;
+	this.deleteSweep = function(sweep) {
+		snackbar.create("Removing Sweep...", 7);
+		api.deleteSweep(sweep).then(function() {
+			for(var i = 0; i < self.sweeps.length; i++) {
+				if(sweep.sweep_key === self.sweeps[i].sweep_key) {
+					self.sweeps.splice(i, 1);
+					break;
+				}
+			}
+			snackbar.remove(7);			
+			snackbar.createWithTimeout("<b>Success!</b> Sweep removed");
+			
+		}, function() {
+			snackbar.remove(7);
+			snackbar.createWithTimeout("<b>Error!</b> Sweep not removed");
+		});
+	};
 	this.stopEvent = function($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
+	};
+	this.toggleSweepOptionsModal = function(sweep) {
+		var modalInstance = $modal.open({
+			  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
+			  controller: 'SweepOptionsModalInstanceCtrl',
+			  controllerAs: 'modal',
+			  resolve: {
+				  team: function() {
+					  return progress;
+				  }
+			  }
+		});
+		modalInstance.result.then(function(newOptions) {
+			sweep.options = newOptions;
+		});
+	};
+	this.toggleCreateSweepDialog = function() {
+		var modalInstance = $modal.open({
+			  templateUrl: '/static/teams/partials/modals/create_sweep_modal.html',
+			  controller: 'NewSweepModalInstanceCtrl',
+			  controllerAs: 'modal',
+			  resolve: {
+				  team_key: function() {
+					  return $routeParams.team_key;
+				  },
+				  progress: function() {
+					  return progress;
+				  }
+			  }
+		});
+		modalInstance.result.then(function(sweep) {
+			snackbar.create("Creating Sweep...", 8);
+			sweep.hour = sweep.hourNum.toString();
+			sweep.year = sweep.dt.getFullYear().toString();
+			sweep.month = (sweep.dt.getMonth() + 1).toString();
+			sweep.day = sweep.dt.getDate().toString();
+			api.insertSweep(sweep).then(function(newSweep) {
+				console.log(newSweep);
+				newSweep.hourNum = parseInt(newSweep.hour);
+				var dt = new Date();
+				dt.setFullYear(newSweep.year);
+				dt.setMonth(parseInt(newSweep.month) - 1, parseInt(newSweep.day));
+				newSweep.dt = dt;
+				self.sweeps.push(newSweep);
+				snackbar.remove(8);
+				snackbar.createWithTimeout("<b>Success!</b> Sweep created");
+			}, function() {
+				snackbar.remove(8);
+				snackbar.createWithTimeout("<b>Error!</b> Sweep not created");
+			});
+		});
 	};
 }]);
 

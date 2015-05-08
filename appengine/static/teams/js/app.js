@@ -89,6 +89,9 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
           }],
           sweeps: ["api", "$route", function(api, $route) {
         	  return api.getSweeps($route.current.params);
+          }],
+          progress: ["api", "$route", function(api, $route) {
+        	  return api.getProgress($route.current.params);
           }]
         }
       })

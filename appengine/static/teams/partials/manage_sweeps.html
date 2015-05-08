@@ -15,13 +15,13 @@
         </div>
         <div class="col-lg-2 col-xs-6">
         		<div class="input-group">
-        				<span class="input-group-addon">Hour</span><input type="number" name="hour" ng-model="sweep.hour" min="0" max="23">
+        				<span class="input-group-addon">Hour</span><input type="number" name="hour" ng-model="sweep.hourNum" min="0" max="23">
         		</div>
         </div>
         <div class="col-lg-6 col-xs-12">
-        		<button class="btn btn-primary" ng-click="toggleSweepOptionsModal(sweep)">Export Options</button>
-        		<button class="btn btn-danger pull-right" ng-click="saveSweep(sweep)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-        		<button class="btn btn-primary pull-right" style="margin-right: 10px" ng-click="saveSweep(sweep)">Save</button>
+        		<button class="btn btn-primary" ng-click="sweeps.toggleSweepOptionsModal(sweep)">Export Options</button>
+        		<button class="btn btn-danger pull-right" ng-click="sweeps.deleteSweep(sweep)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+        		<button class="btn btn-primary pull-right" style="margin-right: 10px" ng-click="sweeps.saveSweep(sweep)">Save</button>
         </div>
     </div>
 			<div class="form-group">

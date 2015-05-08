@@ -213,7 +213,7 @@ class TeamApi(remote.Service):
       sweep = Sweep()
       sweep.sweep_key = auto_sweep.key
       sweep.team_key = auto_sweep.team_key
-      sweep.options = str(auto_sweep.options)
+      sweep.options = auto_sweep.unparse_options()
       sweep.email = user_email
       sweep.year = auto_sweep.time.year
       sweep.month = auto_sweep.time.month

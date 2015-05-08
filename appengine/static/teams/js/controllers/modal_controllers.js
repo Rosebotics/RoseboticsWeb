@@ -66,7 +66,7 @@ angular.module('ModalControllers', [])
 	  $modalInstance.close(newTeam);
 	};
 }])
-.controller('ExportModalInstanceCtrl', ["$modalInstance", "$controller", "team", "$window", function ($modalInstance, $controller, team, $window) {
+.controller('ExportModalParentCtrl', ["$modalInstance", "$controller", "team", "$window", function ($modalInstance, $controller, team) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.team = team;
 	this.fullname = true;
@@ -140,28 +140,27 @@ angular.module('ModalControllers', [])
 		checkCourseToggle(course);
 	};
 	this.generate = function() {
-		var landingUrl = "http://" + $window.location.host + "/teams/export.csv";
-		landingUrl += "?team_urlsafe=" + team.team_key;
+		var landingQs = "team_urlsafe=" + team.team_key;
 		if(self.fullname) {
-			landingUrl += "&student_name=true";
+			landingQs += "&student_name=true";
 		}
 		if(self.username) {
-			landingUrl += "&rose_username=true";
+			landingQs += "&rose_username=true";
 		}
 		if(self.hasTimestamp) {
-			landingUrl += "&timezone=" + self.timezone;
+			landingQs += "&timezone=" + self.timezone;
 		}
 		if(self.includeCourseProgress) {
-			landingUrl += "&course_progress=true";
+			landingQs += "&course_progress=true";
 		}
 		if(self.includeTrackProgress) {
-			landingUrl += "&track_progress=true";
+			landingQs += "&track_progress=true";
 		}
 		if(self.pointValue === "points") {
-			landingUrl += "&ppu=" + self.pointsPerUnit;
+			landingQs += "&ppu=" + self.pointsPerUnit;
 			localStorage.setItem("ppu", self.pointsPerUnit);
 		} else {
-			landingUrl += "&ppt=" + self.pointsPerTask;
+			landingQs += "&ppt=" + self.pointsPerTask;
 			localStorage.setItem("ppt", self.pointsPerTask);
 		}
 		var progress_data = angular.copy(self.data);
@@ -177,13 +176,54 @@ angular.module('ModalControllers', [])
 					}
 				}
 				track.units = unitList;
-			}
+			} 
 		}
-		landingUrl += "&progress_data=" + encodeURIComponent(JSON.stringify(progress_data));
-		self.onPostGenerate(landingUrl);
+		var jsonString = JSON.stringify(progress_data);
+		landingQs += "&progress_data=" + jsonString;
+		this.onPostGenerate(landingQs);
 	};
-	this.onPostGenerate = function(url) {
-		$window.open(url, "_blank");
+}])
+.controller('ExportModalInstanceCtrl', ["$modalInstance", "$controller", "team", "$window", function ($modalInstance, $controller, team, $window) {
+	angular.extend(this, $controller('ExportModalParentCtrl', {$modalInstance:$modalInstance, $controller:$controller, team:team}));
+	this.onPostGenerate = function(qs) {
+		var landingUrl = "http://" + $window.location.host + "/teams/export.csv?";
+		$window.open(landingUrl + encodeURI(qs), "_blank");
 		$modalInstance.close();
 	}
+	this.doneButtonText = 'Generate';
+}])
+.controller('NewSweepModalInstanceCtrl', ["$modalInstance", "$controller", "team_key", "$modal", "progress",  function ($modalInstance, $controller, team_key, $modal, progress) {
+	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
+	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12};
+	this.today = new Date(); 
+	this.stopEvent = function($event) {
+		$event.preventDefault();
+		$event.stopPropagation();
+	};
+	this.addSweep = function() {
+	  $modalInstance.close(this.sweep);
+	};
+	var self = this;
+	this.toggleSweepOptionsModal = function(sweep) {
+		var modalInstance = $modal.open({
+			  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
+			  controller: 'SweepOptionsModalInstanceCtrl',
+			  controllerAs: 'modal',
+			  resolve: {
+				  team: function() {
+					  return progress;
+				  }
+			  }
+		});
+		modalInstance.result.then(function(newOptions) {
+			self.options = newOptions;
+		});
+	};
+}])
+.controller('SweepOptionsModalInstanceCtrl', ["$modalInstance", "$controller", "team", function ($modalInstance, $controller, team) {
+	angular.extend(this, $controller('ExportModalParentCtrl', {$modalInstance:$modalInstance, $controller:$controller, team:team}));
+	this.onPostGenerate = function(qs) {
+		$modalInstance.close(qs); 
+	}
+	this.doneButtonText = 'Done';
 }]);

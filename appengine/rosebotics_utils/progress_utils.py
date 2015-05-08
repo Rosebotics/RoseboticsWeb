@@ -141,13 +141,12 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
             if is_first_student:
               header_row.append(requested_track['name'])
             track_added = True
-          unit_total = track_data[unit_id + '-total']
           if unit_points:
             table_row.append(unit_progress * ppu)
-            unit_total *= ppu
+            unit_total = ppu
           else:
             table_row.append(unit_progress * ppt)
-            unit_total *= ppt
+            unit_total = track_data[unit_id + '-total'] * ppt
           if is_first_student:
             header_row.append(unit_name + " (out of " + str(unit_total) + ")")
     is_first_student = False
