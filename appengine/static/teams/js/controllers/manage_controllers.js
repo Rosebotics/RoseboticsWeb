@@ -120,9 +120,10 @@ angular.module('ManageControllers', [])
 .controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", "progress", "snackbar", "api", function($routeParams, $modal, teams, sweeps, $location, progress, snackbar, api) {
 	// Going to need to progress for the modal...
 	var items = teams["teams"];
-	this.sweeps = sweeps["sweeps"];
+	this.sweeps = sweeps["sweeps"] || [];
 	var teamNumber = -1;
 	this.today = new Date();
+	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.done = function() {
 		$location.path("/manage/" + $routeParams.team_key);
 	};

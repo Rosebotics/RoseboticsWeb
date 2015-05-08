@@ -194,7 +194,8 @@ angular.module('ModalControllers', [])
 }])
 .controller('NewSweepModalInstanceCtrl', ["$modalInstance", "$controller", "team_key", "$modal", "progress",  function ($modalInstance, $controller, team_key, $modal, progress) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
-	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12};
+	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12, tz:"Eastern"};
+	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.today = new Date(); 
 	this.stopEvent = function($event) {
 		$event.preventDefault();

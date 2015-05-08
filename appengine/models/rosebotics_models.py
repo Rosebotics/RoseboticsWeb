@@ -42,6 +42,7 @@ class RoseboticsTeam(EndpointsModel):
 class AutoSweep(ndb.Model):
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   time = ndb.DateTimeProperty()
+  tz = ndb.StringProperty()
   options = ndb.JsonProperty()
   
   def unparse_options(self):
@@ -54,7 +55,7 @@ class AutoSweep(ndb.Model):
 ### Endpoints Messaging Classes ###
 class Sweep(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("sweep_key", "team_key", "year", "month", "day", "hour", "options")
+  _message_fields_schema = ("sweep_key", "team_key", "year", "month", "day", "hour", "tz", "options")
   sweep_key = ndb.KeyProperty(kind=AutoSweep)
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   options = ndb.StringProperty() # probably just the full qs from the client
@@ -62,7 +63,7 @@ class Sweep(EndpointsModel):
   month = ndb.IntegerProperty()
   day = ndb.IntegerProperty()
   hour = ndb.IntegerProperty()
-  email = ndb.StringProperty()
+  tz = ndb.StringProperty()
   
   def get_date_time(self):
     return datetime(year=self.year,

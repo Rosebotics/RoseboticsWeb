@@ -17,12 +17,14 @@
               </span>
             </p>
         </div>
-        <div class="col-lg-2 col-xs-6">
+        <div class="col-lg-8 col-xs-6">
         		<div class="input-group">
         				<span class="input-group-addon">Hour</span><input type="number" name="hour" ng-model="modal.sweep.hourNum" min="0" max="23">
         		</div>
         </div>
-        <div class="col-lg-6 col-xs-12">
+        <div class="col-xs-12">
+        		Timezone
+										<select ng-options="item for item in modal.timezones" ng-model="modal.sweep.tz"></select>
         		<button class="btn btn-primary pull-right" ng-click="modal.toggleSweepOptionsModal()">Export Options</button>
         </div>
 			</div>

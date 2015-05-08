@@ -190,16 +190,14 @@ class TeamApi(remote.Service):
       auto_sweep = sweep.sweep_key.get()
     if not auto_sweep:
       new_sweep = AutoSweep(parent=ndb.Key(Sweep,user_email))
-      new_sweep.time = sweep.get_date_time()
-      new_sweep.options = sweep.parse_options()
-      new_sweep.team_key = sweep.team_key
     else:
       if user_email != auto_sweep.key.parent().string_id():
         raise endpoints.NotFoundException('No AutoSweep with this key exists')
       new_sweep = auto_sweep
-      new_sweep.time = sweep.get_date_time()
-      new_sweep.options = sweep.parse_options()
-      new_sweep.team_key = sweep.team_key
+    new_sweep.time = sweep.get_date_time()
+    new_sweep.options = sweep.parse_options()
+    new_sweep.team_key = sweep.team_key
+    new_sweep.tz = sweep.tz
     sweep.sweep_key = new_sweep.put()
     return sweep
   
@@ -219,6 +217,7 @@ class TeamApi(remote.Service):
       sweep.month = auto_sweep.time.month
       sweep.day = auto_sweep.time.day
       sweep.hour = auto_sweep.time.hour
+      sweep.tz = auto_sweep.tz
       response.sweeps.append(sweep)
     return response
 
