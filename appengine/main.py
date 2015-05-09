@@ -13,6 +13,7 @@
 # limitations under the License.
 import endpoints
 import teams_api
+from modules.search.search import CronHandler
 
 """Course Builder web application entry point."""
 
@@ -31,7 +32,7 @@ from models import custom_modules
 from models import data_sources
 from models import student_labels
 
-from handlers import main_handler, course_handlers
+from handlers import main_handler, course_handlers, cron_handler
 
 # Import, register, & enable modules named in app.yaml's GCB_REGISTERED_MODULES.
 appengine_config.import_and_enable_modules()
@@ -78,7 +79,8 @@ rosebotics_routes = [('/', main_handler.HomePage),
                      ('/editprofile', main_handler.EditProfileAction),
                      ('/resume', main_handler.ResumeRedirect),
                      ('/teams/', main_handler.TeamsPage),
-                     ('/teams/export.csv', main_handler.ExportCsvAction),]
+                     ('/teams/export.csv', main_handler.ExportCsvAction),
+                     ('/cron/teams/autosweeps', cron_handler.AutoSweepCronJob),]
 
 # init application
 app = webapp2.WSGIApplication(

@@ -93,7 +93,6 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
       return []
   is_first_student = True
   for member in members:
-    logging.info(member.email)
     if member.visibility not in allowed_visibilies:
       continue
     student = RoseboticsStudent.get_by_id(member.email)
