@@ -24,7 +24,6 @@ class AutoSweepCronJob(CronJob):
 			time = datetime(utc.year, utc.month, utc.day , utc.hour) + timedelta(hours=offset)
 			sweeps = AutoSweep.query(AutoSweep.time==time, AutoSweep.tz==tz)
 			for sweep in sweeps:
-				print sweep
 				leader_email = sweep.key.parent().string_id()
 				team_leader = RoseboticsStudent.get_by_id(leader_email)
 				export_student_name = len(str(sweep.options.get("rose_username", ""))) > 0
@@ -46,10 +45,10 @@ class AutoSweepCronJob(CronJob):
 				self.send_email(leader_email, "You've received an AutoSweep!", mem_stream.getvalue())
 				mem_stream.close()
 
-	def send_email(self, leader_email, message, csv_file):
-		message = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
-		message.to = leader_email
-		message.subject = "ROSEbotics Auto Sweep"
-		message.body = message
-		message.attachments=[("exported.csv", csv_file)]
-		message.send()
+	def send_email(self, leader_email, msg, csv_file):
+		email = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
+		email.to = str(leader_email)
+		email.subject = "ROSEbotics Auto Sweep"
+		email.body = str(msg)
+		email.attachments=[("exported.csv", csv_file)]
+		email.send()
