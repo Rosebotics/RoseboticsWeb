@@ -48,7 +48,12 @@ class AutoSweep(ndb.Model):
   def unparse_options(self):
     print self.options
     options = ""
+    first = True
     for key, value in self.options.items():
+      if not first:
+        options += '&'
+      else:
+        first = False
       options += str(key) + "=" + str(value)
     return options
 

@@ -141,29 +141,29 @@ angular.module('ModalControllers', [])
 	};
 	this.generate = function() {
 		var landingQs = "team_urlsafe=" + team.team_key;
-		if(self.fullname) {
+		if(this.fullname) {
 			landingQs += "&student_name=true";
 		}
-		if(self.username) {
+		if(this.username) {
 			landingQs += "&rose_username=true";
 		}
-		if(self.hasTimestamp) {
-			landingQs += "&timezone=" + self.timezone;
+		if(this.hasTimestamp) {
+			landingQs += "&timezone=" + this.timezone;
 		}
-		if(self.includeCourseProgress) {
+		if(this.includeCourseProgress) {
 			landingQs += "&course_progress=true";
 		}
-		if(self.includeTrackProgress) {
+		if(this.includeTrackProgress) {
 			landingQs += "&track_progress=true";
 		}
-		if(self.pointValue === "points") {
-			landingQs += "&ppu=" + self.pointsPerUnit;
-			localStorage.setItem("ppu", self.pointsPerUnit);
+		if(this.pointValue === "points") {
+			landingQs += "&ppu=" + this.pointsPerUnit;
+			localStorage.setItem("ppu", this.pointsPerUnit);
 		} else {
-			landingQs += "&ppt=" + self.pointsPerTask;
-			localStorage.setItem("ppt", self.pointsPerTask);
+			landingQs += "&ppt=" + this.pointsPerTask;
+			localStorage.setItem("ppt", this.pointsPerTask);
 		}
-		var progress_data = angular.copy(self.data);
+		var progress_data = angular.copy(this.data);
 		for (var i = 0; i < progress_data.length; i++) {
 			var course = progress_data[i];
 			for (var j = 0; j < course.tracks.length; j++) {
@@ -205,7 +205,7 @@ angular.module('ModalControllers', [])
 	  $modalInstance.close(this.sweep);
 	};
 	var self = this;
-	this.toggleSweepOptionsModal = function(sweep) {
+	this.toggleSweepOptionsModal = function() {
 		var modalInstance = $modal.open({
 			  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',
 			  controller: 'SweepOptionsModalInstanceCtrl',
@@ -213,18 +213,52 @@ angular.module('ModalControllers', [])
 			  resolve: {
 				  team: function() {
 					  return progress;
+				  },
+				  optionString: function() {
+					  return self.sweep.options;
 				  }
 			  }
 		});
 		modalInstance.result.then(function(newOptions) {
-			self.options = newOptions;
+			self.sweep.options = newOptions;
 		});
 	};
 }])
-.controller('SweepOptionsModalInstanceCtrl', ["$modalInstance", "$controller", "team", function ($modalInstance, $controller, team) {
+.controller('SweepOptionsModalInstanceCtrl', ["$modalInstance", "$controller", "team", "optionString", function ($modalInstance, $controller, team, optionString) {
 	angular.extend(this, $controller('ExportModalParentCtrl', {$modalInstance:$modalInstance, $controller:$controller, team:team}));
 	this.onPostGenerate = function(qs) {
 		$modalInstance.close(qs); 
 	}
 	this.doneButtonText = 'Done';
+	console.log(optionString);
+	if (optionString !== "") {
+		var options = {};
+		optionString = optionString.split('&'); 
+		for(var i = 0; i < optionString.length; i++) {
+			var op = optionString[i].split('=');
+			options[op[0]] = op[1];
+		}
+		this.fullname = options['student_name'] === 'true';
+		this.username = options['rose_username'] === 'true';
+		this.hasTimestamp = options['timezone'] != undefined;
+		this.pointValue = options['ppu'] ? "points" : "tasks";
+		this.pointsPerUnit = parseInt(options['ppu']) || parseInt(localStorage.getItem("ppu")) || 1;
+		this.pointsPerTask = parseInt(options['ppt']) || parseInt(localStorage.getItem("ppt")) || 1;
+		this.includeCourseProgress = options['course_progress'] === 'true';
+		this.includeTrackProgress = options['track_progress'] === 'true';
+		this.timezone = options['timezone'] || 'Eastern';
+		this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
+		var progress_data = JSON.parse(options['progress_data']);
+		for (var i = 0; i < this.data.length; i++) {
+			var course = this.data[i];
+			for (var j = 0; j < course.tracks.length; j++) {
+				var track = course.tracks[j];
+				var toggledUnits = progress_data[i].tracks[j].units;
+				for(var k = 0; k < track.units.length; k++) {
+					var unit = track.units[k];
+					unit.toggled = toggledUnits.indexOf(unit.name) !== -1;
+				}
+			} 
+		}
+	}
 }]);

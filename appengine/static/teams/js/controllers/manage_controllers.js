@@ -118,7 +118,6 @@ angular.module('ManageControllers', [])
 							  "TEAM_LEADER": "Progress visible by leader only"};
 }])
 .controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", "progress", "snackbar", "api", function($routeParams, $modal, teams, sweeps, $location, progress, snackbar, api) {
-	// Going to need to progress for the modal...
 	var items = teams["teams"];
 	this.sweeps = sweeps["sweeps"] || [];
 	var teamNumber = -1;
@@ -186,6 +185,9 @@ angular.module('ManageControllers', [])
 			  resolve: {
 				  team: function() {
 					  return progress;
+				  },
+				  optionString: function() {
+					  return sweep.options;
 				  }
 			  }
 		});
@@ -220,6 +222,10 @@ angular.module('ManageControllers', [])
 				dt.setFullYear(newSweep.year);
 				dt.setMonth(parseInt(newSweep.month) - 1, parseInt(newSweep.day));
 				newSweep.dt = dt;
+				if (sweeps["sweeps"] == undefined) {
+					sweeps["sweeps"] = [];
+					self.sweeps = sweeps["sweeps"];
+				}
 				self.sweeps.push(newSweep);
 				snackbar.remove(8);
 				snackbar.createWithTimeout("<b>Success!</b> Sweep created");
