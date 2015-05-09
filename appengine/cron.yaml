@@ -13,4 +13,4 @@ cron:
   schedule: every day 03:45
 - description: Send AutoSweep emails
   url: /cron/teams/autosweeps
-  schedule: every 1 hours
+  schedule: every 1 hours synchronized

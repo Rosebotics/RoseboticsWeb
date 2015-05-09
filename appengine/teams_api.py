@@ -8,6 +8,8 @@ from models.rosebotics_models import CourseProgress, MemberProgress, RoseboticsS
 from rosebotics_utils.progress_utils import get_total_progress_for_course
 import json
 from datetime import datetime
+from google.appengine.api import mail
+import logging
 
 
 WEB_CLIENT_ID = "963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0.apps.googleusercontent.com"
@@ -43,6 +45,8 @@ class TeamApi(remote.Service):
           new_member.email = member.email
           if new_member.email == user_email:
             new_member.visibility = TeamVisibility.ALL_MEMBERS
+          else:
+            send_invite_email(member.email)
           new_member.put()
       # if old username is NOT in new_members remove old member
       for old_member in old_members:
@@ -59,6 +63,8 @@ class TeamApi(remote.Service):
         new_member.email = student_email
         if new_member.email == user_email:
           new_member.visibility = TeamVisibility.ALL_MEMBERS
+        else:
+          send_invite_email(email)
         new_member.put()
     return team
 
@@ -221,7 +227,32 @@ class TeamApi(remote.Service):
       response.sweeps.append(sweep)
     return response
 
-### HELPER METHODS ###
+def send_invite_email(email):
+    student = RoseboticsStudent.get_by_id(email)
+    if student is None:
+      return
+    if mail.is_email_valid(student.alt_email):
+      email = [email, student.alt_email]
+    message = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
+    message.to = email
+    message.subject = "ROSEbotics Team Invite"
+    message.body = """ 
+Hello,
+
+You've been invited to join a ROSEbotics Team! Teams is a place where you can create study groups and monitor others progress within the courses on the website. 
+    
+You can see your pending invites at: http://www.rosebotics.org/teams/#/invites/
+
+Happy Learning!
+
+-- The ROSEbotics Team
+     """.strip()
+    try:
+      message.send()
+      logging.info("Invite Email should have been sent to: " + str(email))
+    except Exception, e:
+      logging.warn("Invite Email not sent to: " + str(email) + str(e))
+
 def create_course_progress(course_name, progress):
   course_progress = CourseProgress(name=course_name, progress=progress["course"])
   for track in progress["tracks"]:
