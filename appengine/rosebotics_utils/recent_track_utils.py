@@ -1,11 +1,9 @@
 from models.rosebotics_models import RecentTrack
 import logging
+from settings import course_list as COURSE_IDS
 
 
 MOST_RECENT_TRACK_ID = 'most_recent'
-# To track the progress of a course, add the slug below 
-# (make sure the jinja2 template is expecting the right value)
-COURSE_IDS = ['android', 'ios', 'web']
 
 ### Helper methods ###
 def get_most_recent_course(rosebotics_key):
@@ -19,6 +17,7 @@ def get_recent_tracks(rosebotics_key):
       So this user has started the Web and iOS Courses and are on those tracks but not Android """
   recent_tracks = {}
   for key in COURSE_IDS:
+    key = key.lower()
     track = RecentTrack.get_by_id(key, parent=rosebotics_key)
     if track is not None:
       recent_tracks['recent_' + key + '_track'] = track
@@ -29,6 +28,7 @@ def set_recent_track(rosebotics_key, track_path):
   track_path = "/" + track_path.split("/", 2)[1]
   track_type = None
   for course_prefix in COURSE_IDS:
+    course_prefix = course_prefix.lower()
     if track_path.startswith("/" + course_prefix + "-"):
       track_type = course_prefix
       break

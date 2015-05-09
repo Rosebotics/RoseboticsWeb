@@ -1,6 +1,7 @@
 import endpoints
 from google.appengine.ext import ndb
 from protorpc import remote
+from settings import course_list as COURSE_IDS
 
 from models.rosebotics_models import CourseProgress, MemberProgress, RoseboticsStudent, RoseboticsTeam, RoseboticsTeamMember,\
   Team, TrackProgress, UnitProgress, TeamVisibility, TotalTeamProgress,\
@@ -10,6 +11,7 @@ import json
 from datetime import datetime
 from google.appengine.api import mail
 import logging
+import main
 
 
 WEB_CLIENT_ID = "963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0.apps.googleusercontent.com"
@@ -160,7 +162,7 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = ['Android', 'iOS', 'Web', 'ME430']
+    courses = COURSE_IDS
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
@@ -176,7 +178,7 @@ class TeamApi(remote.Service):
     team_progress.members_progress = members_progress
     return team_progress
 
-
+  
   @Sweep.method(user_required=True, name='sweeps.delete', path='sweeps/{sweep_key}', http_method='DELETE')
   def delete_sweep(self, sweep):
     """ Delete an AutoSweep that you have create """
@@ -186,7 +188,7 @@ class TeamApi(remote.Service):
       raise endpoints.NotFoundException('No AutoSweep with this key exists')
     sweep.sweep_key.delete()
     return sweep
-
+  
   @Sweep.method(user_required=True, name='sweeps.insert', path='sweeps', http_method='POST')
   def insert_sweep(self, sweep):
     """ Create or edit an AutoSweep  """
@@ -206,7 +208,7 @@ class TeamApi(remote.Service):
     new_sweep.tz = sweep.tz
     sweep.sweep_key = new_sweep.put()
     return sweep
-
+  
   @Sweeps.method(user_required=True, name='sweeps.get', path='sweeps/{team_key}', http_method='GET', request_fields=('team_key',))
   def query_sweeps(self, query):
     """ Get a user's AutoSweeps """
@@ -226,6 +228,8 @@ class TeamApi(remote.Service):
       sweep.tz = auto_sweep.tz
       response.sweeps.append(sweep)
     return response
+
+### HELPER METHODS ### 
 
 def send_invite_email(email):
     student = RoseboticsStudent.get_by_id(email)
@@ -252,7 +256,7 @@ Happy Learning!
       logging.info("Invite Email should have been sent to: " + str(email))
     except Exception, e:
       logging.warn("Invite Email not sent to: " + str(email) + str(e))
-
+    
 def create_course_progress(course_name, progress):
   course_progress = CourseProgress(name=course_name, progress=progress["course"])
   for track in progress["tracks"]:

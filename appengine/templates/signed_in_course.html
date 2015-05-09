@@ -51,7 +51,8 @@
     <img class="img-responsive" src="/static/images/melogo.png">
     <h6>Mechatronics</h6>
     <p>Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.</p>
-    <a href="/me430" class="btn btn-default start-course" >Start
+    {% if recent_me430_track %}<a href="{{ recent_me430_track.path }}" class="btn btn-default start-course">Resume
+    {% else %}<a href="/me430" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
   </div></a>
 </div>

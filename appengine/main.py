@@ -13,7 +13,6 @@
 # limitations under the License.
 import endpoints
 import teams_api
-from modules.search.search import CronHandler
 
 """Course Builder web application entry point."""
 
@@ -73,10 +72,10 @@ rosebotics_routes = [('/', main_handler.HomePage),
                      ('/courses', main_handler.CoursesPage),
                      ('/competition', main_handler.CompetitionPage),
                      ('/platform', main_handler.PlatformPage),
-                     ('/android', course_handlers.AndroidCoursePage),
-                     ('/ios', course_handlers.IosCoursePage),
-                     ('/me430', course_handlers.Me430CoursePage),
                      ('/web', course_handlers.WebCoursePage),
+                     ('/ios', course_handlers.IosCoursePage),
+                     ('/android', course_handlers.AndroidCoursePage),
+                     ('/me430', course_handlers.Me430CoursePage),
                      ('/editprofile', main_handler.EditProfileAction),
                      ('/resume', main_handler.ResumeRedirect),
                      ('/teams/', main_handler.TeamsPage),
@@ -91,3 +90,5 @@ app = webapp2.WSGIApplication(
 
 # init api
 api = endpoints.api_server([teams_api.TeamApi], restricted = False)
+
+
