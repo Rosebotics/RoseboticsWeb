@@ -1,0 +1,4 @@
+id,type,unit_id,title,release_date,now_available
+1,U,1,Introduction to transistors,,True
+2,U,2,"Snubber diodes, decoupling capacitors, and H-bridge circuits",,True
+3,U,3,Motors,,True

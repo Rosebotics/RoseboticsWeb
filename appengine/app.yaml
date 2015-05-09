@@ -43,7 +43,9 @@ env_variables:
                         course:/ios-core-data:/courses/ios-core-data,
                         course:/ios-endpoints:/courses/ios-endpoints,
                         course:/misc:/courses/misc,
-                        course:/me430:/courses/me430
+                        course:/me430-electronics:/courses/me430-electronics,
+                        course:/me430-pic:/courses/me430-pic,
+                        course:/me430-plc-fsm:/courses/me430-plc-fsm
 
 includes:
 - custom.yaml

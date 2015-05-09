@@ -29,14 +29,11 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'ME430 Mechatronics'
+  title: 'Electronics'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    <br><b>Step #1:</b> Click <b>Login</b> button (upper right) <br>
-    <i style="margin-left: 30px">or watch the video for login help</i><br><br>
-    <b>Step #2:</b> Register for the class (big button)<br><br>
-    <b>Step #3:</b> Click on the day you want below.
+    Welcome to the Mechatronics track on Programable Logic Controllers (PLCs) and Finite State Machines (FSMs).  PLCs run all the assembly lines in the world and they are really easy to work with.  We'll provide you with an introduction to Ladder Logic and get you some hands on skills with PicoSoft (the Allen Bradley software for PLCs).  Additionally we'll teach you about FSM which is a good planning tool for MANY projects not just PLCs.  We even have one unit where you use a FSM with a PIC, but more on that later.  Have fun!
 
   # Information about the instructor to display on the main page.
   instructor_details: 'Dave Fisher <br> fisherds@gmail.com'
@@ -49,7 +46,7 @@ course:
     url: https://www.youtube.com/embed/cAlLdpmXAzM?rel=0
   main_image:
     url: /assets/img/roselogo.png
-    alt_text: Rose logo
+    alt_text: Rose-Hulman logo
 
   # Course start date.
   start_date: ''
@@ -57,8 +54,8 @@ course:
   # Forum URL. For details, see
   #
   #     http://code.google.com/p/course-builder/wiki/WebForums.
-  forum_email: fisherds@rose-hulman.edu
-  forum_url: http://www.rose-hulman.edu/ME430
+  forum_email: rosebotics@googlegroups.com
+  forum_url: https://groups.google.com/group/rosebotics
 
   # Forum embedding URL. This link is used to embed the forum in an iframe on
   # the forum.html page. Set this value to False if you don't use forum and/or
@@ -69,8 +66,8 @@ course:
   # announcements. For details, see
   #
   #     http://code.google.com/p/course-builder/wiki/CreateEmailList
-  announcement_list_email: False
-  announcement_list_url: False
+  announcement_list_email: Rosebotics-announcements@googlegroups.com
+  announcement_list_url: https://groups.google.com/group/Rosebotics-announcements
 
   # Locale for internationalization. See modules/i18n/resources/locale for
   # available locales.
@@ -79,6 +76,32 @@ course:
   # Whether the course material can be accessed without requiring users to log
   # in or register.
   browsable: true
+
+  # Google Analytics tag: Fill this in with a value obtained by signing up
+  # at http://www.google.com/analytics.  Note that you may wish instead to
+  # use Google Tag Manager, which can forward event notifications to Google
+  # Analytics, as well as to any other user-activity-watcher you like.
+  # Change the value below to replace the '#' with the full text of your
+  # individual ID number, which will start with 'UA-'.  When set, pages will
+  # notify Google Analytics that they have loaded.  See views/base.html.
+  #
+  # If this tag is not present, boilerplate JavaScript to notify Google
+  # Analytics is not emitted.  Not having a value here is harmless.
+  google_analytics_id: 'UA-51734946-1'
+
+  # Google Tag Manager ID: Fill this in with a value obtained by signing up
+  # at http://www.google.com/tagmanager.  When this ID is present, pages will
+  # notify the tag manager (see views/base.html).  This will load a script
+  # from Tag Manager which can then emit notifications to other user activity
+  # trackers.  This neatly decouples changes to the source code of your
+  # course and CourseBuilder deployment from whatever tracking analytics
+  # you wish to perform.  (Note that if you wish to track activities more
+  # granular than page loads, you will need to mark up your course
+  # to send notifications to the tag manager.)
+  #
+  # If this tag is not present, boilerplate JavaScript to notify Google
+  # Tag Manager is not emitted.  Not having a value here is harmless.
+  google_tag_manager_id: 'GTM-KQSLSL'
 
 ########################
 # Course preview page
@@ -97,13 +120,23 @@ preview:
 reg_form:
   # Header text for the course registration form.
   header_text: |
-    Welcome!  Please answer the following question, and you will be
+    Welcome!  Please answer the following questions, and you will be
     enrolled in the course.
 
   # HTML representing additional fields to include in the course
   # registration form, in addition to the student's name. These should
   # be wrapped in <li></li> tags.
-  additional_registration_fields: '<li><label class="gcb-reg-form-label" for="form02">Rose-Hulman username (for example mine is fisherds)</label><input name="form02" id="form02" type="text"></li>'
+  additional_registration_fields: |
+    <li><label class="gcb-reg-form-label" for="form02">Rose-Hulman username (if you are a Rose student)</label>
+    <input name="form02" id="form02" type="text"></li>
+    <li><label class="gcb-reg-form-label" for="form03">If you are a Rose alum, what was your graduation Year (leave blank if not a Rose-Hulman alumni)</label>
+    <input name="form03" id="form03" type="text"></li>
+    <li><label class="gcb-reg-form-label" for="form04">Major (if you are a college student/alum anywhere)</label>
+    <input name="form04" id="form04" type="text"></li>
+    <li><label class="gcb-reg-form-label" for="form05">Rose-Hulman connection (examples: student, my dad works there, etc or just none, which is ok)</label>
+    <input name="form05" id="form05" type="text"></li>
+    <li><label class="gcb-reg-form-label" for="form06">Preferred first name</label>
+    <input name="form06" id="form06" type="text"></li>
 
   # Whether to allow new students to register for the course.
   can_register: True
@@ -136,3 +169,14 @@ unit:
   before_leftnav_ends: '<!-- unit.before_leftnav_ends -->'
   after_content_begins: '<!-- unit.after_content_begins -->'
   before_content_ends: '<!-- unit.before_content_ends -->'
+
+  # Whether or not to hide the 'Previous Page' and 'Next Page' lesson
+  # navigation buttons at the bottom of lesson and activity pages.
+  hide_lesson_navigation_buttons: False
+
+  # Whether or not to hide the 'Previous Page' and 'Next Page' lesson
+  # navigation buttons below pre/post assessments within units.
+  hide_assessment_navigation_buttons: False
+
+  # Whether to show the unit links in the side bar.
+  show_unit_links_in_leftnav: False

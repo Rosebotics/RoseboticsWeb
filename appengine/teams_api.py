@@ -154,7 +154,7 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = ['Android', 'iOS', 'Web']
+    courses = ['Android', 'iOS', 'Web', 'ME430']
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
@@ -170,7 +170,7 @@ class TeamApi(remote.Service):
     team_progress.members_progress = members_progress
     return team_progress
 
-  
+
   @Sweep.method(user_required=True, name='sweeps.delete', path='sweeps/{sweep_key}', http_method='DELETE')
   def delete_sweep(self, sweep):
     """ Delete an AutoSweep that you have create """
@@ -180,7 +180,7 @@ class TeamApi(remote.Service):
       raise endpoints.NotFoundException('No AutoSweep with this key exists')
     sweep.sweep_key.delete()
     return sweep
-  
+
   @Sweep.method(user_required=True, name='sweeps.insert', path='sweeps', http_method='POST')
   def insert_sweep(self, sweep):
     """ Create or edit an AutoSweep  """
@@ -200,7 +200,7 @@ class TeamApi(remote.Service):
     new_sweep.tz = sweep.tz
     sweep.sweep_key = new_sweep.put()
     return sweep
-  
+
   @Sweeps.method(user_required=True, name='sweeps.get', path='sweeps/{team_key}', http_method='GET', request_fields=('team_key',))
   def query_sweeps(self, query):
     """ Get a user's AutoSweeps """
@@ -221,7 +221,7 @@ class TeamApi(remote.Service):
       response.sweeps.append(sweep)
     return response
 
-### HELPER METHODS ### 
+### HELPER METHODS ###
 def create_course_progress(course_name, progress):
   course_progress = CourseProgress(name=course_name, progress=progress["course"])
   for track in progress["tracks"]:

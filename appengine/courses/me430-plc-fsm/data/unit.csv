@@ -1,0 +1,5 @@
+id,type,unit_id,title,release_date,now_available
+1,U,1,Introduction to PLCs and Ladder Logic,,True
+2,U,2,PicoSoft Markers Timers and Counters,,True
+3,U,3,Finite State Machines for PLCs,,True
+4,U,4,Finite State Machines for PICs,,True

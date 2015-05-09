@@ -1,0 +1,13 @@
+id,type,unit_id,title,release_date,now_available
+1,U,1,Introduction to MPLABx,,True
+2,U,2,Introduction to C,,True
+3,U,3,Number systems,,True
+4,U,4,Variable types and operations,,True
+5,U,5,Instruction cycles and SFRs,,True
+6,U,6,Functions and debugging,,True
+7,U,7,Timers,,True
+8,U,8,Interrupts,,True
+9,U,9,Using the ADC,,True
+10,U,10,Light sensors,,True
+11,U,11,Pulse Width Modulation,,True
+12,U,12,UART Communication,,True
