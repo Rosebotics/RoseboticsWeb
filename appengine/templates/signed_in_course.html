@@ -56,6 +56,7 @@ var currentCourseTrackPercentages = [
   <h3></h3>
   <h4> Check out these other courses... </h4>
 <div class="row">
+{% if course_title != 'Android'  %}
   <div class="col-xs-6 col-sm-4">
   <div id="android-course" class="panel panel-default">
     <div class='panel-body'>
@@ -70,8 +71,8 @@ var currentCourseTrackPercentages = [
     </div>
   </div>
 </div>
-
-
+{% endif %}
+{% if course_title != 'iOS'  %}
 <div class="col-xs-6 col-sm-4">
   <div class="panel panel-default">
     <div class='panel-body'>
@@ -84,7 +85,23 @@ var currentCourseTrackPercentages = [
     </div>
     </div>
   </div>
-
+{% endif %}
+{% if course_title != 'Web'  %}
+<div class="col-xs-6 col-sm-4">
+  <div class="panel panel-default">
+    <div class='panel-body'>
+    <img class="img-responsive" src="/static/images/weblogo.png">
+    <h6>Web Development</h6>
+    <p>Learn the fundamentals of web development using Google App
+					Engine. Topics also include CSS, HTML5, Javascript etc.</p>
+    {% if recent_web_track %}<a href="{{ recent_web_track.path }}" class="btn btn-default  start-course-bstn">Resume
+    {% else %}<a href="/web" class="btn btn-default start-course">Start{% endif %}
+  <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+    </div>
+    </div>
+  </div>
+{% endif %}
+{% if course_title != 'ME430'  %}
 <div class="col-xs-6 col-sm-4">
   <div class="panel panel-default">
     <div class='panel-body'>
@@ -97,6 +114,7 @@ var currentCourseTrackPercentages = [
   </div>
 </div>
 </div>
+{% endif %}
 </div>
 </div>
 </div>
