@@ -15,7 +15,6 @@ class AndroidCoursePage(base_handler.BasePage):
   def update_values(self, user, values):
     """ Updates the values passed to Jinja to add the progress in each track and the overall course """
     values["progress"] = progress_utils.get_progress_for_course(user, "android")
-    values['active_page'] = 'courses'
 
   def requires_oauth(self):
     return True
@@ -30,7 +29,6 @@ class IosCoursePage(base_handler.BasePage):
   def update_values(self, user, values):
     """ Updates the values passed to Jinja to add the progress in each track and the overall course """
     values["progress"] = progress_utils.get_progress_for_course(user, "ios")
-    values['active_page'] = 'courses'
 
   def requires_oauth(self):
     return True
@@ -47,7 +45,6 @@ class Me430CoursePage(base_handler.BasePage):
   def update_values(self, user, values):
     """ Updates the values passed to Jinja to add the progress in each track and the overall course """
     values["progress"] = progress_utils.get_progress_for_course(user, "me430")
-    values['active_page'] = 'courses'
 
   def requires_oauth(self):
     return True
@@ -63,7 +60,6 @@ class WebCoursePage(base_handler.BasePage):
   def update_values(self, user, values):
     """ Updates the values passed to Jinja to add the progress in each track and the overall course """
     values["progress"] = progress_utils.get_progress_for_course(user, "web")
-    values['active_page'] = 'courses'
 
   def requires_oauth(self):
     return True

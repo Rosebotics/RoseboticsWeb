@@ -19,13 +19,6 @@
 	position: relative;
 }
 
-.logo-r {
-	float: left;
-	position: absolute;
-  	top: 50%;
-  	transform: translate(0, -50%);
-}
-
 .footer {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -209,4 +202,102 @@ div.row-eq-height.inner {
 }
 .bg-info>h4 {
   color: #fff;
+}
+
+@progress-bg-color:        #f1f2f2;
+@progress-color:           #FCB03C;
+@android-green:            #a4c639;
+@web-blue:                 #4285f4;
+@me-red:                   #990937;
+
+#video-btn-right{
+  float: right;
+}
+
+#current-progress-percentage{
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  margin: 0;
+}
+
+.pos-relative {
+  position: relative;
+}
+
+.track-progress>svg {
+  position: static;
+  background-color: @progress-bg-color;
+}
+
+.track-progress {
+  width: 400;
+  height: 10px;
+  margin-left: 1em;
+  padding-top: 10px;
+  padding-bottom: 15px;
+}
+
+.track-text {
+  display: inline-block;
+  text-align: right;
+  line-height: 25px;
+}
+
+#tracks{
+  padding-top: 110px;
+}
+
+.center-me {
+  text-align: center;
+}
+
+#current-course{
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 30px;
+  position: relative;
+}
+
+.start-track-btn {
+position: absolute;
+top: 50%;
+right: 10px;
+margin-top: -5px;
+}
+
+.navbar {
+      font-family: "brandon-grotesque", sans-serif;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 0px;
+
+    }
+
+.header {
+      padding-bottom: 30px;
+      margin-bottom: 30px;
+}
+
+
+.logo-r{float: left; position: absolute; top: 50%; transform: translate(0, -50%); }
+  .navbar-brand{position: relative;}
+  .header{background-color: #eee}
+  #example-percent-container{width: 200px}
+  #sign-in-btn{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 13px;
+}
+
+#android-course-graphics{
+    position: relative;
+}
+  
+svg{
+    position: absolute;
+    top: 0;
 }

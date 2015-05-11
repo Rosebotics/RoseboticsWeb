@@ -2,8 +2,10 @@ from handlers import base_handler
 from rosebotics_utils import recent_track_utils
 from google.appengine.api import users
 import csv
-from rosebotics_utils.progress_utils import get_csv_export_lists
+from rosebotics_utils.progress_utils import get_csv_export_lists,\
+  get_total_progress_for_course
 import json
+from settings import course_list as COURSE_IDS
 
 
 ### PAGES ###
@@ -19,15 +21,20 @@ class CoursesPage(base_handler.BasePage):
   def page_title(self):
     return "Courses"
 
-  def update_values(self, user, values):
-    values["active_page"] = "courses"
+  def update_values(self, user, values):    
     if not user:
       values["android_login"] = users.create_login_url("/android")
       values["ios_login"] = users.create_login_url("/ios")
       values["web_login"] = users.create_login_url("/web")
       values["me430_login"] = users.create_login_url("/me430")
       return
-    # TODO: get progress for all courses
+    elif 'most_recent_track' in values:
+      for course in COURSE_IDS:
+        if course.lower() in values['most_recent_track'].path:
+          values['current_course'] = get_total_progress_for_course(user.email().lower(), course.lower())
+          values['course_title'] = course
+          break
+    
 
 class CompetitionPage(base_handler.BasePage):
   def template_file(self):

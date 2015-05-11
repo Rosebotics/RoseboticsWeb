@@ -1,62 +1,102 @@
-<link rel="stylesheet" href="/static/css/magnific-popup.css"> 
+<script>
+var currentCoursePercent = {{current_course['course']}};
+var currentCourseTrackPercentages = [
+{% for track in current_course['tracks'] %}
+{{track['track']}},
+{% endfor %}
+];
+</script>
 <div class="header">
 <div class="container">
 <h3> </h3>
-<h4> Courses </h4>
-<p> Programming course materials created by faculty at Rose-Hulman Institute of Technology, a top ranked engineering college. We currently offer four courses, each with full online video lessons and coding projects. More courses are on the way, stay tuned!</p>
-<a class="btn btn-default" id="video-btn" href="https://www.youtube.com/watch?v=0TjxnrWT8Es">
+<h4> Your Current Course </h4>
+<p>View your progress on your current course, and pick up where you left off.</p>
+<a class="btn btn-default" id="video-btn-right video-btn" href="https://www.youtube.com/watch?v=hRK7PVJFbS8">
   <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> Watch Video to Learn More</a>
 </div>
 </div>
 
-
 <div class="container">
+<div class="row">
+  <div class="col-md-4" id="current-course">
+    <div class="pos-relative">
+    <div id='course-progress-container'></div>
+    <img src="/static/images/weblogo.png" class="img-responsive" alt="Responsive image">
+    <h2 id="current-progress-percentage"> 0% </h2>
+  </div>
+    <div class="center-me" id="current-course-descrp">
+    <h4>{{course_title}}</h4>
+    <p>Current progress: {{ (current_course['course'] * 100)|round|int }}%</p>
+    <a class="btn btn-default" id="resume-btn2" href="{{ most_recent_track.path }}"> 
+      <span id='resume-icon2' class="glyphicon glyphicon-pause" aria-hidden="true"></span> 
+      Resume</a>
+    </div>
+  </div>
+  <div class="col-md-8" id="tracks">
+    <ul class="list-group">
+   {% for track in current_course['tracks'] %}
+  <li class="list-group-item btn btn-default row">
+  		<a href="{{track['url']}}">
+    <div class="track-text col-xs-3">{{track['name']}} Track</div>
+    <div class="track-progress col-xs-8" id='track-progress-container{{loop.index}}'></div>
+    <div class='start-track-btn col-xs-1'>
+    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+    </div>
+    </a>
+  </li>
+  {% endfor %}
+   </ul>
+  </div>
+</div>
+</div>
 
-<div class="row row-eq-height xs">
 
-<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <a href="/android" class="panel-link"><div class='panel-body'>
+<div class="header">
+<div class="container">
+  <h3></h3>
+  <h4> Check out these other courses... </h4>
+<div class="row">
+  <div class="col-xs-6 col-sm-4">
+  <div id="android-course" class="panel panel-default">
+    <div class='panel-body'>
+    <div id="android-course-graphics">
     <img class="img-responsive" src="/static/images/androidlogo.png">
+    </div>
     <h6>Android Application Development</h6>
     <p>Get started building mobile applications for Android devices. Learn the basics of Android development and bring your app ideas to life.</p>
-    {% if recent_android_track %}<a href="{{ recent_android_track.path }}" class="btn btn-default start-course">Resume
+    {% if recent_android_track %}<a href="{{ recent_android_track.path }}" class="btn btn-default  start-course-bstn">Resume
     {% else %}<a href="/android" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div></a>
-  
+    </div>
   </div>
-<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <a href="/ios" class="panel-link"><div class='panel-body'>
+</div>
+
+
+<div class="col-xs-6 col-sm-4">
+  <div class="panel panel-default">
+    <div class='panel-body'>
     <img class="img-responsive" src="/static/images/applelogo2.png">
     <h6>iOS Application Development</h6>
     <p>Get started building iOS applications for iPhone and iPad mobile devices. Learn the basics of iOS development and bring your app ideas to life.</p>
-    {% if recent_ios_track %}<a href="{{ recent_ios_track.path }}" class="btn btn-default start-course">Resume
+    {% if recent_ios_track %}<a href="{{ recent_ios_track.path }}" class="btn btn-default  start-course-bstn">Resume
     {% else %}<a href="/ios" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div></a>
+    </div>
+    </div>
+  </div>
 
-  </div>
-<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <a href="/web" class="panel-link"><div class='panel-body'>
-    <img class="img-responsive" src="/static/images/weblogo.png">
-    <h6>Web Development</h6>
-    <p>Learn the fundamentals of web development using Google App Engine. Topics also include CSS, HTML5, Javascript etc. </p>
-    {% if recent_web_track %}<a href="{{ recent_web_track.path }}" class="btn btn-default start-course">Resume
-    {% else %}<a href="/web" class="btn btn-default start-course">Start{% endif %}
-  <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div></a>
-  </div>
-<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-    <a href="/me430" class="panel-link"><div class='panel-body'>
+<div class="col-xs-6 col-sm-4">
+  <div class="panel panel-default">
+    <div class='panel-body'>
     <img class="img-responsive" src="/static/images/melogo.png">
     <h6>Mechatronics</h6>
     <p>Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.</p>
-    {% if recent_me430_track %}<a href="{{ recent_me430_track.path }}" class="btn btn-default start-course">Resume
+    {% if recent_me430_track %}<a href="{{ recent_me430_track.path }}" class="btn btn-default  start-course-bstn">Resume
     {% else %}<a href="/me430" class="btn btn-default start-course">Start{% endif %}
   <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-  </div></a>
+  </div>
 </div>
 </div>
-<div id="example-percent-container"></div>
-
+</div>
+</div>
 </div>

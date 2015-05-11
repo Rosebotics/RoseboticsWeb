@@ -1,23 +1,9 @@
 {% extends 'templates/base.html' %}
 {% block content %}
       <div class="row">
-      {% if rosebotics_student %}
-      <!-- <div class="row">
-          <h2>Courses</h2>
-      We currently offer four courses, in various stages of development:
-            <ol>
-              <li><a href = "/android">Android Application Development (assumes experience with Java programming)</a></li>
-              <li><a href = "/web">Web Application Development</a></li>
-              <li><a href = "/ios">iOS Application Development</a></li>
-              <li><a href = "/me430">Mechatronics (ME430 course using a Microchip PIC)</a></li>
-        						<li>Adv Web Application Development (Firebase?)</a></li>
-              <li>Smart Product Design (maybe someday)</a></li>
-              <li>CS1 (maybe someday)</a></li>
-            </ol>
-      </div>-->
+      {% if rosebotics_student and most_recent_track %}
 								{% include 'templates/signed_in_course.html' %}
       {% else %}
-        <!-- <div class="jumbotron"><a href="{{ login_url }}" class="btn btn-lg btn-success">Sign in with Google</a></div> -->
         {% include 'templates/non_signed_in_course.html' %}
       {% endif %}
       </div>
