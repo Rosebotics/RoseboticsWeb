@@ -1,6 +1,6 @@
-
-.pos-rel{
-	position: relative;
+.img-circle {
+	border-radius: 50%;
+	background: white;
 }
 
 
