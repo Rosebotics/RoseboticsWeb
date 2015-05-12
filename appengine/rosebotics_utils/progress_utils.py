@@ -11,6 +11,22 @@ from models.rosebotics_models import TeamVisibility,\
 from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
+###
+#
+# TODO for the motivated/looking for a refactoring challenge. 
+#
+# A LOT of the below code for the get_total_progress is primitively obsessed (http://www.mdswanson.com/blog/2012/05/31/primitive-obsession.html)
+#
+# For example, the different flags or options in the below function could just always include the information, but in different fields of the object,
+# Also the units have a weird title of 0:<TrackName> where the number is the unit number, because the function does not pull them out in the correct
+# order. It would be nice not to have to do this. 
+#
+# This should be changed to Unit, Track, and Course Objects. The nice thing about this
+# would be that once you have course objects, settings.py would *just* have to be creating these
+# different Course objects, then these would be used instead of all of these crazy dictionaries.
+# Also I know the GCourseBuilder has these objects already existing, so maybe these could be used. 
+#
+###
 
 def get_total_progress_for_course(email, course_prefix, as_percent=True, get_total_tasks=False):
   """ Returns a progess dict for the overall percentage of the course complete and an array of track
