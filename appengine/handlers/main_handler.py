@@ -6,7 +6,7 @@ from rosebotics_utils.progress_utils import get_csv_export_lists,\
   get_total_progress_for_course
 import json
 from settings import course_list as COURSE_IDS
-
+from settings import formal_titles as COURSE_TITLES
 
 ### PAGES ###
 class HomePage(base_handler.BasePage):
@@ -33,8 +33,14 @@ class CoursesPage(base_handler.BasePage):
         if course.lower() in values['most_recent_track'].path:
           values['current_course'] = get_total_progress_for_course(user.email().lower(), course.lower())
           values['course_title'] = course
+          values['formal_title'] = COURSE_TITLES.get(course, course) # Default to course short title
           break
-    
+    else:
+      values["android_login"] = users.create_login_url("/android")
+      values["ios_login"] = users.create_login_url("/ios")
+      values["web_login"] = users.create_login_url("/web")
+      values["me430_login"] = users.create_login_url("/me430")
+      return
 
 class CompetitionPage(base_handler.BasePage):
   def template_file(self):
