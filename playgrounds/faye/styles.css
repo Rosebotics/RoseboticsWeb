@@ -1,3 +1,10 @@
+.expand-btn {
+  left: -40px;
+  font-size: 20;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+}
 #video-btn {
   margin-bottom: 1em;
 }
