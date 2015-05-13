@@ -1,0 +1,25 @@
+<form class="form-horizontal">
+
+	<fieldset>
+		<div class="modal-header bg-info">
+			<button type="button" class="close" ng-click="modal.cancel()">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			<h4 class="modal-title">Delete Team</h4>
+		</div>
+		<div class="modal-body">
+			<p>Please pick the team that you would like to import sweeps from</p>
+			<select ng-model="modal.selectedTeam" ng-options="team.name for team in modal.teams" style="width:40%"></select>
+		</div>
+		<div class="modal-footer">
+			<div class="form-group">
+				<div class="col-lg-10 col-lg-offset-2">
+					<button class="btn btn-default"
+						ng-click="modal.cancel()">Cancel</button>
+					<button class="btn btn-primary pull-right"
+					  ng-click="modal.import()">Import</button>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</form>

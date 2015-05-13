@@ -82,7 +82,7 @@ class TeamApi(remote.Service):
     members = RoseboticsTeamMember.query(ancestor=team.key)
     for member in members:
       member.key.delete()
-    for sweep in AutoSweep.query(AutoSweep.team_key==team.team_key):
+    for sweep in AutoSweep.query(AutoSweep.team_key==team.key):
       sweep.key.delete()
     team.key.delete()
     return Team(name='deleted')

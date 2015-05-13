@@ -3,6 +3,7 @@
 		<legend>
 			<team-title team="sweeps.team"></team-title>
 			<button class="btn btn-primary pull-right" ng-click="sweeps.toggleCreateSweepDialog()">Create</button>
+			<button class="btn btn-primary pull-right" ng-click="sweeps.toggleImportSweepsDialog()" style="margin-right: 10px;">Import</button>
 		</legend>
 					<p>Pending Sweeps</p>
 					<div class="form-group" ng-repeat="sweep in sweeps.sweeps | pendingSweeps">

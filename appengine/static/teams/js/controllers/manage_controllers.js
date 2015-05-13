@@ -177,6 +177,63 @@ angular.module('ManageControllers', [])
 		$event.preventDefault();
 		$event.stopPropagation();
 	};
+	this.toggleImportSweepsDialog = function() {
+		var modalInstance = $modal.open({
+			  templateUrl: '/static/teams/partials/modals/import_sweeps_modal.html',
+			  controller: 'ImportSweepsModalInstanceCtrl',
+			  controllerAs: 'modal',
+			  resolve: {
+				  teams: function() {
+					  return items;
+				  }
+			  }
+		});
+		modalInstance.result.then(function(teamToImportFrom) {
+			console.log(teamToImportFrom);
+			snackbar.create("Importing from " + teamToImportFrom.name + "...", 10);
+			api.getSweeps(teamToImportFrom).then(function(importedSweeps) {
+				console.log(importedSweeps);
+				if (!importedSweeps.sweeps || !importedSweeps.sweeps.length) {
+					snackbar.remove(10);
+					snackbar.createWithTimeout("<b>Error!</b> There were no sweeps to import");
+					return;
+				}
+				for(var i = 0; i < importedSweeps.sweeps.length; i++) {
+					var sweep = importedSweeps.sweeps[i];
+					delete sweep.sweep_key;
+					sweep.team_key = self.team.team_key;
+					api.insertSweep(sweep).then(function(newSweep) {
+						console.log(newSweep);
+						newSweep.hourNum = parseInt(newSweep.hour);
+						var dt = new Date(0);
+						dt.setFullYear(newSweep.year);
+						dt.setMonth(parseInt(newSweep.month) - 1, parseInt(newSweep.day));
+						newSweep.dt = dt;
+						if (sweeps["sweeps"] == undefined) {
+							sweeps["sweeps"] = [];
+							self.sweeps = sweeps["sweeps"];
+						}
+						var inserted = false;
+						for(var i = 0; i < self.sweeps.length; i++) {
+							if(self.sweeps[i].dt.getTime() < newSweep.dt.getTime() || (self.sweeps[i].dt.getTime() === newSweep.dt.getTime() && self.sweeps[i].hourNum < newSweep.hourNum)) {
+								self.sweeps.splice(i, 0, newSweep);
+								inserted = true;
+								break;
+							}
+						}
+						if(!inserted) {
+							self.sweeps.push(newSweep);
+						}
+					});
+				}
+				snackbar.remove(10);
+				snackbar.createWithTimeout("<b>Success!</b> Sweeps Imported");
+			}, function() {
+				snackbar.remove(10);
+				snackbar.createWithTimeout("<b>Error!</b> Import failed");
+			});
+		});
+	}
 	this.toggleSweepOptionsModal = function(sweep) {
 		var modalInstance = $modal.open({
 			  templateUrl: '/static/teams/partials/modals/export_progress_modal.html',

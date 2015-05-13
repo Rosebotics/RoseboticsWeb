@@ -41,6 +41,14 @@ angular.module('ModalControllers', [])
 	  $modalInstance.close();
 	};
 }])
+.controller('ImportSweepsModalInstanceCtrl', ["$modalInstance", "$controller", "teams", function ($modalInstance, $controller, teams) {
+	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
+	this.teams = teams;
+	this.selectedTeam = teams[0];
+	this.import = function() {
+	  $modalInstance.close(this.selectedTeam);
+	};
+}])
 .controller('CreateTeamModalInstanceCtrl', ["$modalInstance", "$controller", "user",  function ($modalInstance, $controller, user) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.teamName = "";
@@ -97,6 +105,8 @@ angular.module('ModalControllers', [])
 			}
 			this.data.push(course);
 	  }
+	} else {
+		alert("You need at least one member to do this!");
 	}
 	var checkTrackToggle = function(track) {
 		track.toggled = true;
@@ -230,7 +240,6 @@ angular.module('ModalControllers', [])
 		$modalInstance.close(qs); 
 	}
 	this.doneButtonText = 'Done';
-	console.log(optionString);
 	if (optionString !== "") {
 		var options = {};
 		optionString = optionString.split('&'); 
