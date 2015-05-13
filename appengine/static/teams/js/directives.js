@@ -28,4 +28,36 @@ angular.module('TeamDirectives', [])
   return function (input, decimals) {
     return $filter('number')(input * 100, decimals) + '%';
   };
-}]);;
+}])
+.filter('pendingSweeps', function() {
+    return function(items) {
+      var now = new Date();
+      var compareDate = new Date(0);
+      compareDate.setFullYear(now.getFullYear());
+	  compareDate.setMonth(now.getMonth(), now.getDate());
+      var hourNum = now.getHours();
+      var filtered = [];
+      angular.forEach(items, function(item) {
+        if(item.dt.getTime() > compareDate.getTime() || (item.dt.getTime() === compareDate.getTime() && item.hourNum > hourNum)) {
+          filtered.push(item); 
+        }
+      });
+      return filtered;
+    };
+})
+.filter('firedSweeps', function() {
+	return function(items) {
+	  var now = new Date();
+	  var compareDate = new Date(0);
+	  compareDate.setFullYear(now.getFullYear());
+	  compareDate.setMonth(now.getMonth(), now.getDate());
+	  var hourNum = now.getHours();
+	  var filtered = [];
+	  angular.forEach(items, function(item) {
+	    if(item.dt.getTime() < compareDate.getTime() || (item.dt.getTime() === compareDate.getTime() && item.hourNum <= hourNum)) {
+	      filtered.push(item);
+	    }
+	  });
+	  return filtered;
+	};
+});

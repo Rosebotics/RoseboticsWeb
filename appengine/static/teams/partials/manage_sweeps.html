@@ -4,7 +4,31 @@
 			<team-title team="sweeps.team"></team-title>
 			<button class="btn btn-primary pull-right" ng-click="sweeps.toggleCreateSweepDialog()">Create</button>
 		</legend>
-					<div class="form-group" ng-repeat="sweep in sweeps.sweeps">
+					<p>Pending Sweeps</p>
+					<div class="form-group" ng-repeat="sweep in sweeps.sweeps | pendingSweeps">
+      	<div class="col-lg-3 col-xs-6">
+            <p class="input-group" ng-init="opened = false">
+              <input type="text" class="form-control" datepicker-popup="MM/dd/yyyy" ng-model="sweep.dt" is-open="opened" min-date="sweeps.today" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="opened = true;sweeps.stopEvent($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+            </p>
+        </div>
+        <div class="col-lg-2 col-xs-6">
+        		<div class="input-group">
+        				<span class="input-group-addon">Hour</span><input type="number" name="hour" ng-model="sweep.hourNum" min="0" max="23">
+        		</div>
+        </div>
+        <div class="col-lg-6 col-xs-12">
+        		Timezone
+										<select ng-options="item for item in sweeps.timezones" ng-model="sweep.tz" style="margin-right: 10px"></select>
+        		<button class="btn btn-primary" ng-click="sweeps.toggleSweepOptionsModal(sweep)">Options</button>
+        		<button class="btn btn-danger pull-right" ng-click="sweeps.deleteSweep(sweep)"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+        		<button class="btn btn-primary pull-right" style="margin-right: 10px" ng-click="sweeps.saveSweep(sweep)">Save</button>
+        </div>
+    </div>
+    <p>Fired Sweeps</p>
+    <div class="form-group" ng-repeat="sweep in sweeps.sweeps | firedSweeps">
       	<div class="col-lg-3 col-xs-6">
             <p class="input-group" ng-init="opened = false">
               <input type="text" class="form-control" datepicker-popup="MM/dd/yyyy" ng-model="sweep.dt" is-open="opened" min-date="sweeps.today" ng-required="true" close-text="Close" />

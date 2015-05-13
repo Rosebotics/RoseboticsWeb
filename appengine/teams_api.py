@@ -217,7 +217,7 @@ class TeamApi(remote.Service):
   def query_sweeps(self, query):
     """ Get a user's AutoSweeps """
     user_email = get_user_email()
-    query =  AutoSweep.query(AutoSweep.team_key==query.team_key)
+    query =  AutoSweep.query(AutoSweep.team_key==query.team_key).order(-AutoSweep.time)
     response = Sweeps()
     for auto_sweep in query:
       sweep = Sweep()

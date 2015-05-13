@@ -117,7 +117,7 @@ angular.module('ManageControllers', [])
 							  "ALL_MEMBERS" : "Progress visible by everyone",
 							  "TEAM_LEADER": "Progress visible by leader only"};
 }])
-.controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", "progress", "snackbar", "api", function($routeParams, $modal, teams, sweeps, $location, progress, snackbar, api) {
+.controller('SweepsTeamCtrl', ["$routeParams", "$modal", "teams", "sweeps", "$location", "progress", "snackbar", "api", "$scope", function($routeParams, $modal, teams, sweeps, $location, progress, snackbar, api, $scope) {
 	var items = teams["teams"];
 	this.sweeps = sweeps["sweeps"] || [];
 	var teamNumber = -1;
@@ -133,10 +133,11 @@ angular.module('ManageControllers', [])
 			break;
 		}
 	}
+	var self = this;
 	for(var i = 0; i < this.sweeps.length; i++) {
 		var sweep = this.sweeps[i];
 		sweep.hourNum = parseInt(sweep.hour);
-		var dt = new Date();
+		var dt = new Date(0);
 		dt.setFullYear(sweep.year);
 		dt.setMonth(parseInt(sweep.month) - 1, parseInt(sweep.day));
 		sweep.dt = dt;
@@ -155,7 +156,6 @@ angular.module('ManageControllers', [])
 			snackbar.createWithTimeout("<b>Error!</b> Sweep not saved");
 		});
 	};	
-	var self = this;
 	this.deleteSweep = function(sweep) {
 		snackbar.create("Removing Sweep...", 7);
 		api.deleteSweep(sweep).then(function() {
@@ -218,7 +218,7 @@ angular.module('ManageControllers', [])
 			api.insertSweep(sweep).then(function(newSweep) {
 				console.log(newSweep);
 				newSweep.hourNum = parseInt(newSweep.hour);
-				var dt = new Date();
+				var dt = new Date(0);
 				dt.setFullYear(newSweep.year);
 				dt.setMonth(parseInt(newSweep.month) - 1, parseInt(newSweep.day));
 				newSweep.dt = dt;
@@ -226,7 +226,17 @@ angular.module('ManageControllers', [])
 					sweeps["sweeps"] = [];
 					self.sweeps = sweeps["sweeps"];
 				}
-				self.sweeps.push(newSweep);
+				var inserted = false;
+				for(var i = 0; i < self.sweeps.length; i++) {
+					if(self.sweeps[i].dt.getTime() < newSweep.dt.getTime() || (self.sweeps[i].dt.getTime() === newSweep.dt.getTime() && self.sweeps[i].hourNum < newSweep.hourNum)) {
+						self.sweeps.splice(i, 0, newSweep);
+						inserted = true;
+						break;
+					}
+				}
+				if(!inserted) {
+					self.sweeps.push(newSweep);
+				}
 				snackbar.remove(8);
 				snackbar.createWithTimeout("<b>Success!</b> Sweep created");
 			}, function() {
