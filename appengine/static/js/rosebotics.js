@@ -23,19 +23,15 @@ var googleyellow = '#f4b400';
 $(document).ready(function(){
 	loginModalFunctions();
 	
-	$('#resume-btn').hover(
+	$('.resume-btn').hover(
         function(){
             //console.log('resume mouse in');
-            $('#resume-icon').removeClass('glyphicon-pause').addClass('glyphicon-play');
+        	$(this).find('.resume-icon').removeClass('glyphicon-pause').addClass('glyphicon-play');
         },
         function(){
             //console.log('resume mouse out');
-            $('#resume-icon').removeClass('glyphicon-play').addClass('glyphicon-pause');
+        	$(this).find('.resume-icon').removeClass('glyphicon-play').addClass('glyphicon-pause');
         }
-    );
-
-
-	$('#resume-btn2').hover(
     );
 
     $('.list-group-item').hover(
