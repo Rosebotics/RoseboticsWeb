@@ -36,18 +36,9 @@
           <ul class="dropdown-menu" role="menu">
           	<li id='resume-btn'><a href="{{most_recent_track.path}}"><span id='resume-icon' class="glyphicon glyphicon-pause" aria-hidden="true"></span> Resume</a></li>
             <li class="divider"></li>
-            {% if recent_android_track %}
-            <li><a href="{{ recent_android_track.path }}">Android</a></li>
-            {% endif %}
-            {% if recent_ios_track %}
-            <li><a href="{{ recent_ios_track.path }}">iOS</a></li>
-            {% endif %}
-            {% if recent_web_track %}
-            <li><a href="{{ recent_web_track.path }}">Web</a></li>
-												{% endif %}
-												{% if recent_me430_track %}
-            <li><a href="{{ recent_me430_track.path }}">Mechatronics</a></li>
-												{% endif %}
+            {% for course in courses if not course.coming_soon and recent_tracks[course.prefix] %}
+              <li><a href="{{ recent_tracks[course.prefix].path }}">{{course.short_title}}</a></li>
+            {% endfor %} 
           </ul>
         </li>
       {% endif %}

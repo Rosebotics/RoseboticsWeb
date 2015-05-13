@@ -12,58 +12,28 @@
 <div class="container">
 
 	<div class="row row-eq-height xs">
-
+{% for course in courses %}
+		{% if not loop.first and loop.index0 is divisibleby 4 %}
+		 </div>
+			<div class="row row-eq-height xs">
+		{% endif %}
 		<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
 			<div class='panel-body'>
-				<img class="img-responsive" src="/static/images/androidlogo.png">
-				<h6>Android Application Development</h6>
-				<p>Get started building mobile applications for Android devices.
-					Learn the basics of Android development and bring your app ideas to
-					life.</p>
-				<a href="{{android_login}}" class="btn btn-default start-course">Sign Up <span
-					class="glyphicon glyphicon glyphicon-chevron-right"
-					aria-hidden="true"></span></a>
+				<img class="img-responsive" src="/static/images/logos/{{course.prefix}}logo.png">
+				<h6>{{course.formal_title}}</h6>
+				<p>{{course.description}}</p>
+				{% if login[course.prefix] %}
+				<a href="{{not course.coming_soon}}" class="btn btn-default start-course">Sign Up
+				<span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+				{% else %}
+				<a class="btn btn-default start-course">Coming Soon
+				{% endif %} 
+				</a>
 			</div>
 		</div>
-		<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-			<div class='panel-body'>
-				<img class="img-responsive" src="/static/images/ioslogo.png">
-				<h6>iOS Application Development</h6>
-				<p>Get started building iOS applications for iPhone and iPad
-					mobile devices. Learn the basics of iOS development and bring your
-					app ideas to life.</p>
-				<a href="{{ios_login}}" class="btn btn-default start-course">Sign Up <span
-					class="glyphicon glyphicon glyphicon-chevron-right"
-					aria-hidden="true"></span></a>
-			</div>
-		</div>
-
-
-		<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-			<div class='panel-body'>
-				<img class="img-responsive" src="/static/images/weblogo.png">
-				<h6>Web Development</h6>
-				<p>Learn the fundamentals of web development using Google App
-					Engine. Topics also include CSS, HTML5, Javascript etc.</p>
-				<a href="{{web_login}}" class="btn btn-default start-course">Sign Up <span
-					class="glyphicon glyphicon glyphicon-chevron-right"
-					aria-hidden="true"></span></a>
-			</div>
-		</div>
-		<div class="col-xs-8 col-xs-offset-2 col-sm-3 panel panel-default">
-			<div class='panel-body'>
-				<img class="img-responsive" src="/static/images/me430logo.png">
-				<h6>Mechatronics</h6>
-				<p>Learn to build and control electronics using a Microchip PIC.
-					Get started building embedded control systems used in smart systems
-					and products.</p>
-				<a href="{{me430_login}}" class="btn btn-default start-course">Sign Up <span
-					class="glyphicon glyphicon glyphicon-chevron-right"
-					aria-hidden="true"></span></a>
-			</div>
-		</div>
+{% endfor %}
+		
+		
 	</div>
-	<div id="example-percent-container"></div>
 
-</div>
 

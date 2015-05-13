@@ -5,8 +5,7 @@ import csv
 from rosebotics_utils.progress_utils import get_csv_export_lists,\
   get_total_progress_for_course
 import json
-from settings import course_list as COURSE_IDS
-from settings import formal_titles as COURSE_TITLES
+from settings import course_list as COURSE_LIST
 
 ### PAGES ###
 class HomePage(base_handler.BasePage):
@@ -21,25 +20,19 @@ class CoursesPage(base_handler.BasePage):
   def page_title(self):
     return "Courses"
 
-  def update_values(self, user, values):    
-    if not user:
-      values["android_login"] = users.create_login_url("/android")
-      values["ios_login"] = users.create_login_url("/ios")
-      values["web_login"] = users.create_login_url("/web")
-      values["me430_login"] = users.create_login_url("/me430")
-      return
-    elif 'most_recent_track' in values:
-      for course in COURSE_IDS:
-        if course.lower() in values['most_recent_track'].path:
-          values['current_course'] = get_total_progress_for_course(user.email().lower(), course.lower())
-          values['course_title'] = course
-          values['formal_title'] = COURSE_TITLES.get(course, course) # Default to course short title
+  def update_values(self, user, values):
+    if user and 'most_recent_track' in values:
+      for course in COURSE_LIST:
+        if course.prefix in values['most_recent_track'].path:
+          values['current_course'] = get_total_progress_for_course(user.email().lower(), course.prefix)
+          values['current_course_obj'] = course # Default to course short title
           break
     else:
-      values["android_login"] = users.create_login_url("/android")
-      values["ios_login"] = users.create_login_url("/ios")
-      values["web_login"] = users.create_login_url("/web")
-      values["me430_login"] = users.create_login_url("/me430")
+      values['login'] = {}
+      values['login']["android"] = users.create_login_url("/android")
+      values['login']["ios"] = users.create_login_url("/ios")
+      values['login']["web"] = users.create_login_url("/web")
+      values['login']["me430"] = users.create_login_url("/me430")
       return
 
 class CompetitionPage(base_handler.BasePage):

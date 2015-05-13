@@ -26,6 +26,8 @@ from datetime import datetime, timedelta
 # different Course objects, then these would be used instead of all of these crazy dictionaries.
 # Also I know the GCourseBuilder has these objects already existing, so maybe these could be used. 
 #
+# Warning you'll have to update the code in numerous places, teams_api.py, main_handlers.py, etc.
+#
 ###
 
 def get_total_progress_for_course(email, course_prefix, as_percent=True, get_total_tasks=False):

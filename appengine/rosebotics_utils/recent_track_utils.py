@@ -1,6 +1,7 @@
-from models.rosebotics_models import RecentTrack
+from models.rosebotics_models import RecentTrack, RoseboticsStudent
 import logging
-from settings import course_list as COURSE_IDS
+from settings import course_list as COURSE_LIST
+from google.appengine.ext import ndb
 
 
 MOST_RECENT_TRACK_ID = 'most_recent'
@@ -12,23 +13,25 @@ def get_most_recent_course(rosebotics_key):
 
 
 def get_recent_tracks(rosebotics_key):
-  """ Returns a dictionary of courses with their recent tracks, if there is one.
-      Peusdo output: { 'recent_web_track' : RecentTrack(), 'recent_ios_track' : RecentTrack() } 
-      So this user has started the Web and iOS Courses and are on those tracks but not Android """
-  recent_tracks = {}
-  for key in COURSE_IDS:
-    key = key.lower()
+  """ Returns a nested dictionary of courses with their recent tracks, if there is one. """
+  recent_tracks = {'recent_tracks':{}}
+  for course in COURSE_LIST:
+    key = course.prefix.lower()
     track = RecentTrack.get_by_id(key, parent=rosebotics_key)
     if track is not None:
-      recent_tracks['recent_' + key + '_track'] = track
+      recent_tracks['recent_tracks'][key] = track
   return recent_tracks
+
+def get_recent_track(email, prefix):
+  track = RecentTrack.get_by_id(prefix, parent=ndb.Key(RoseboticsStudent, email.lower()))
+  return track
   
 def set_recent_track(rosebotics_key, track_path):
   """ Sets the track as the most recently visited track """
   track_path = "/" + track_path.split("/", 2)[1]
   track_type = None
-  for course_prefix in COURSE_IDS:
-    course_prefix = course_prefix.lower()
+  for course in COURSE_LIST:
+    course_prefix = course.prefix
     if track_path.startswith("/" + course_prefix + "-"):
       track_type = course_prefix
       break

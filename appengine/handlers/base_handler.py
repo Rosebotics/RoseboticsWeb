@@ -2,7 +2,7 @@ import logging
 
 from google.appengine.api import users
 import webapp2
-
+from settings import course_list as COURSE_LIST
 from models.rosebotics_models import RoseboticsStudent
 from settings import jinja_env
 from rosebotics_utils import recent_track_utils
@@ -11,6 +11,7 @@ class BasePage(webapp2.RequestHandler):
   """ If the user is logged in, then show their name. Otherwise, show different info. """
   def get(self):
     values = {"page_title": self.page_title()}
+    values['courses'] = COURSE_LIST
     user = users.get_current_user()
     if user:
       rosebotics_student = RoseboticsStudent.get_by_id(user.email().lower())

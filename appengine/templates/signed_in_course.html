@@ -19,15 +19,15 @@ var currentCourseTrackPercentages = [
 <div class="container">
 <div class="row">
   <div class="col-md-4" id="current-course">
-  <a href="/{{course_title.lower()}}">  
+  <a href="{{current_course_obj.getUrl()}}">  
   <div class="pos-relative">
     <div id='course-progress-container'></div>
-    <img src="/static/images/{{course_title}}logo.png" class="img-responsive" alt="Responsive image">
+    <img src="/static/images/logos/{{current_course_obj.prefix}}logo.png" class="img-responsive" alt="Responsive image">
     <h2 id="current-progress-percentage"> 0% </h2>
   </div>
   </a>
     <div class="center-me" id="current-course-descrp">
-    <h4>{{formal_title}}</h4>
+    <h4>{{current_course_obj.formal_title}}</h4>
     <a class="btn btn-default" id="resume-btn2" href="{{ most_recent_track.path }}"> 
       <span id='resume-icon2' class="glyphicon glyphicon-pause" aria-hidden="true"></span> 
       Resume</a>
@@ -57,73 +57,32 @@ var currentCourseTrackPercentages = [
   <h3></h3>
   <h4> Check out these other courses... </h4>
 <div class="row">
-{% if course_title != 'Android'  %}
+{% for course in courses if course != current_course_obj %}
+
   <div class="col-xs-6 col-sm-4">
-  <div id="android-course" class="panel panel-default">
+  <div id="{{course.prefix}}-course" class="panel panel-default">
     <div class='panel-body'>
-    <div id="android-course-graphics">
-    <a href="/android">
-    <img class="img-responsive" src="/static/images/androidlogo.png">
+    <div id="{{course.prefix}}-course-graphics">
+    <a{% if not course.coming_soon %}href="/{{course.prefix}}"{% endif %}>
+    <img class="img-responsive" src="/static/images/logos/{{course.prefix}}logo.png">
     </a>
     </div>
-    <h6>Android Application Development</h6>
-    <p>Get started building mobile applications for Android devices. Learn the basics of Android development and bring your app ideas to life.</p>
-    {% if recent_android_track %}<a href="{{ recent_android_track.path }}" class="btn btn-default  start-course-bstn">Resume
-    {% else %}<a href="/android" class="btn btn-default start-course-bstn">Start{% endif %}
-  <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+    <h6>{{course.formal_title}}</h6>
+    <p>{{course.description}}</p>
+    {% if not course.coming_soon %}
+    {% if recent_tracks[course.prefix] %}<a href="{{ recent_tracks[course.prefix] }}" class="btn btn-default  start-course-bstn">Resume
+    {% else %}<a href="/{{course.prefix}}" class="btn btn-default start-course-bstn">Start{% endif %}
+  		<span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+  		{% else %}
+  			<a class="btn btn-default  start-course-bstn">Coming Soon
+  		{% endif %}
+  		</a>
     </div>
   </div>
 </div>
-{% endif %}
-{% if course_title != 'iOS'  %}
-<div class="col-xs-6 col-sm-4">
-  <div class="panel panel-default">
-    <div class='panel-body'>
-    <a href="/ios">
-    <img class="img-responsive" src="/static/images/ioslogo.png">
-    </a>
-    <h6>iOS Application Development</h6>
-    <p>Get started building iOS applications for iPhone and iPad mobile devices. Learn the basics of iOS development and bring your app ideas to life.</p>
-    {% if recent_ios_track %}<a href="{{ recent_ios_track.path }}" class="btn btn-default  start-course-bstn">Resume
-    {% else %}<a href="/ios" class="btn btn-default start-course-bstn">Start{% endif %}
-  <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div>
-    </div>
-  </div>
-{% endif %}
-{% if course_title != 'Web'  %}
-<div class="col-xs-6 col-sm-4">
-  <div class="panel panel-default">
-    <div class='panel-body'>
-    <a href="/web">
-    <img class="img-responsive" src="/static/images/weblogo.png">
-    </a>
-    <h6>Web Development</h6>
-    <p>Learn the fundamentals of web development using Google App
-					Engine. Topics also include CSS, HTML5, Javascript etc.</p>
-    {% if recent_web_track %}<a href="{{ recent_web_track.path }}" class="btn btn-default  start-course-bstn">Resume
-    {% else %}<a href="/web" class="btn btn-default start-course-bstn">Start{% endif %}
-  <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-    </div>
-    </div>
-  </div>
-{% endif %}
-{% if course_title != 'ME430'  %}
-<div class="col-xs-6 col-sm-4">
-  <div class="panel panel-default">
-    <div class='panel-body'>
-    <a href="/me430">
-    <img class="img-responsive" src="/static/images/me430logo.png">
-    </a>
-    <h6>Mechatronics</h6>
-    <p>Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.</p>
-    {% if recent_me430_track %}<a href="{{ recent_me430_track.path }}" class="btn btn-default  start-course-bstn">Resume
-    {% else %}<a href="/me430" class="btn btn-default start-course-bstn">Start{% endif %}
-  <span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-  </div>
-</div>
-</div>
-{% endif %}
+
+{% endfor %}
+
 </div>
 </div>
 </div>

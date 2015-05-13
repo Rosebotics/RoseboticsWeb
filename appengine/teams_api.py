@@ -1,7 +1,7 @@
 import endpoints
 from google.appengine.ext import ndb
 from protorpc import remote
-from settings import course_list as COURSE_IDS
+from settings import course_list as COURSE_LIST
 
 from models.rosebotics_models import CourseProgress, MemberProgress, RoseboticsStudent, RoseboticsTeam, RoseboticsTeamMember,\
   Team, TrackProgress, UnitProgress, TeamVisibility, TotalTeamProgress,\
@@ -164,7 +164,7 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = COURSE_IDS
+    courses = COURSE_LIST
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
@@ -174,8 +174,10 @@ class TeamApi(remote.Service):
         mp.display_name = student.name
         mp.username = student.username
         for course in courses:
-          progress = get_total_progress_for_course(member.email, course.lower())
-          mp.course_progress.append(create_course_progress(course, progress))
+          if course.coming_soon:
+            continue
+          progress = get_total_progress_for_course(member.email, course.prefix)
+          mp.course_progress.append(create_course_progress(course.short_title, progress))
         members_progress.append(mp)
     team_progress.members_progress = members_progress
     return team_progress
