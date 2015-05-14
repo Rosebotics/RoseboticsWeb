@@ -31,16 +31,22 @@ ME430 = RoseboticsCourse(prefix='me430',
                          desciption='Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.')
 
 CS1 = RoseboticsCourse(prefix='cs1',
-                         short_title='CS1',
-                         formal_title='Intro to Computer Science',
-                         desciption='Course coming soon! Stay tuned :)',
-                         coming_soon=True)
+                       short_title='CS1',
+                       formal_title='Intro to Computer Science',
+                       desciption='Course coming soon! Stay tuned :)',
+                       coming_soon=True)
 
 ADV_WEB = RoseboticsCourse(prefix='advweb',
-                         short_title='Adv Web',
-                         formal_title='Advanced Web Development',
-                         desciption='Course coming soon! Stay tuned :)',
-                         coming_soon=True)
+                           short_title='Adv Web',
+                           formal_title='Advanced Web Development',
+                           desciption='Course coming soon! Stay tuned :)',
+                           coming_soon=True)
+
+SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
+                                 short_title='Smart Product',
+                                 formal_title='Smart Product Design',
+                                 desciption='Course coming soon! Stay tuned :)',
+                                 coming_soon=True)
 
 # this order matters!
 course_list = [ANDROID, IOS, WEB, ME430, CS1, ADV_WEB,]
