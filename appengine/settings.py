@@ -23,7 +23,7 @@ IOS = RoseboticsCourse(prefix='ios',
                        desciption='Get started building iOS applications for iPhone and iPad mobile devices. Learn the basics of iOS development and bring your app ideas to life.')
 WEB = RoseboticsCourse(prefix='web',
                        short_title='Web',
-                       formal_title='Web Development',
+                       formal_title='Web App Frameworks with AppEngine',
                        desciption='Learn the fundamentals of web development using Google App Engine. Topics also include CSS, HTML5, Javascript etc.')
 ME430 = RoseboticsCourse(prefix='me430',
                          short_title='Mechatronics',
@@ -42,7 +42,7 @@ ADV_WEB = RoseboticsCourse(prefix='advweb',
                          desciption='Course coming soon! Stay tuned :)',
                          coming_soon=True)
 
-
+# this order matters!
 course_list = [ANDROID, IOS, WEB, ME430, CS1, ADV_WEB,]
 
 def __init_jinja_env():

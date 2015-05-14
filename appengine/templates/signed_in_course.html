@@ -70,7 +70,7 @@ var currentCourseTrackPercentages = [
     <h6>{{course.formal_title}}</h6>
     <p>{{course.description}}</p>
     {% if not course.coming_soon %}
-    {% if recent_tracks[course.prefix] %}<a href="{{ recent_tracks[course.prefix] }}" class="btn btn-default  start-course-bstn">Resume
+    {% if recent_tracks[course.prefix] %}<a href="{{ recent_tracks[course.prefix].path }}" class="btn btn-default  start-course-bstn">Resume
     {% else %}<a href="/{{course.prefix}}" class="btn btn-default start-course-bstn">Start{% endif %}
   		<span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
   		{% else %}
