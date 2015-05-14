@@ -29,10 +29,8 @@ class CoursesPage(base_handler.BasePage):
           break
     else:
       values['login'] = {}
-      values['login']["android"] = users.create_login_url("/android")
-      values['login']["ios"] = users.create_login_url("/ios")
-      values['login']["web"] = users.create_login_url("/web")
-      values['login']["me430"] = users.create_login_url("/me430")
+      for course in COURSE_LIST:
+        values['login'][course.prefix] = users.create_login_url(course.get_url())
       return
 
 class CompetitionPage(base_handler.BasePage):

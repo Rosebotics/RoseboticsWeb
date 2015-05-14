@@ -10,7 +10,7 @@ class RoseboticsCourse():
     self.description = desciption
     self.coming_soon = coming_soon
     
-  def getUrl(self):
+  def get_url(self):
     return "/" + self.prefix
 
 ANDROID = RoseboticsCourse(prefix='android',

@@ -19,7 +19,7 @@ var currentCourseTrackPercentages = [
 <div class="container">
 <div class="row">
   <div class="col-md-4" id="current-course">
-  <a href="{{current_course_obj.getUrl()}}">  
+  <a href="{{current_course_obj.get_url()}}">  
   <div class="pos-relative">
     <div id='course-progress-container'></div>
     <img src="/static/images/logos/{{current_course_obj.prefix}}logo.png" class="img-responsive" alt="Responsive image">
@@ -63,7 +63,7 @@ var currentCourseTrackPercentages = [
   <div id="{{course.prefix}}-course" class="panel panel-default">
     <div class='panel-body'>
     <div id="{{course.prefix}}-course-graphics">
-    <a{% if not course.coming_soon %}href="/{{course.prefix}}"{% endif %}>
+    <a{% if not course.coming_soon %} href="/{{course.prefix}}"{% endif %}>
     <img class="img-responsive" src="/static/images/logos/{{course.prefix}}logo.png">
     </a>
     </div>

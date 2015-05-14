@@ -22,8 +22,8 @@
 				<img class="img-responsive" src="/static/images/logos/{{course.prefix}}logo.png">
 				<h6>{{course.formal_title}}</h6>
 				<p>{{course.description}}</p>
-				{% if login[course.prefix] %}
-				<a href="{{not course.coming_soon}}" class="btn btn-default start-course">Sign Up
+				{% if not course.coming_soon %}
+				<a href="{{login[course.prefix]}}" class="btn btn-default start-course">Sign Up
 				<span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
 				{% else %}
 				<a class="btn btn-default start-course">Coming Soon
