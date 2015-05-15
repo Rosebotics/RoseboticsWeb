@@ -92,7 +92,7 @@ angular.module('ModalControllers', [])
 	if (team.members_progress.length > 0) {
 	  var courses = team.members_progress[0].course_progress;
 	  for (var i = 0; i < courses.length; i++) {
-			var course = {name: courses[i].name, tracks:[], toggled:false};
+			var course = {name: courses[i].name, tracks:[], toggled:false, id:courses[i].id};
 			var tracks = courses[i].track_progress;
 			for (var j = 0; j < tracks.length; j++) {
 				var track = {name:tracks[j].name, units:[], toggled:false};

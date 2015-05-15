@@ -44,6 +44,7 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
   course_tasks_completed = 0
   total_course_tasks = 0
   all_course_app_contexts = controllers.sites.get_all_courses()
+  print course_prefix
   for course_app_context in all_course_app_contexts:
     url_path = course_app_context.slug
     if not url_path.startswith("/" + course_prefix + "-"):
@@ -128,7 +129,7 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     if timezone:
       table_row.append(_tz_now(timezone))
     for course in data:
-      course_progress = get_total_progress_for_course(member.email, course['name'].lower(), as_percent=unit_points, get_total_tasks=True)
+      course_progress = get_total_progress_for_course(member.email, course['id'].lower(), as_percent=unit_points, get_total_tasks=True)
       course_added = False
       for requested_track in course['tracks']:
         track_added = False

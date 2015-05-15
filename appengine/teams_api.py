@@ -177,7 +177,7 @@ class TeamApi(remote.Service):
           if course.coming_soon:
             continue
           progress = get_total_progress_for_course(member.email, course.prefix)
-          mp.course_progress.append(create_course_progress(course.short_title, progress))
+          mp.course_progress.append(create_course_progress(course.short_title, progress, course.prefix))
         members_progress.append(mp)
     team_progress.members_progress = members_progress
     return team_progress
@@ -261,8 +261,8 @@ Happy Learning!
     except Exception, e:
       logging.warn("Invite Email not sent to: " + str(email) + str(e))
     
-def create_course_progress(course_name, progress):
-  course_progress = CourseProgress(name=course_name, progress=progress["course"])
+def create_course_progress(course_name, progress, course_id):
+  course_progress = CourseProgress(name=course_name, progress=progress["course"], id=course_id)
   for track in progress["tracks"]:
     track_name = track['name']
     track_progress = create_track_progress(track_name, track)

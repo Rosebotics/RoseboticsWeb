@@ -135,8 +135,9 @@ class TrackProgress(EndpointsModel):
 
 class CourseProgress(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("name", "progress", "track_progress")
+  _message_fields_schema = ("name", "progress", "track_progress", "id")
   name = ndb.StringProperty()
+  id = ndb.StringProperty()
   progress = ndb.FloatProperty()
   track_progress = ndb.LocalStructuredProperty(TrackProgress, repeated=True)
 
