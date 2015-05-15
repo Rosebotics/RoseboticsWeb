@@ -11,6 +11,10 @@ from models.rosebotics_models import TeamVisibility,\
 from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
+def dump(obj):
+  for attr in dir(obj):
+    print "obj.%s = %s" % (attr, getattr(obj, attr))
+
 ###
 #
 # TODO for the motivated/looking for a refactoring challenge. 
@@ -62,12 +66,12 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
           units[unit_title] = unit[0]/2
         if get_total_tasks:
           units[unit_title + "-total"] = unit[1]/2
-      track_progress.append({'name': course_app_context.get_title(), 'url':url_path, 'track': track_tasks_completed/float(total_track_tasks), 'units': units})
+      track_progress.append({'name': course_app_context.get_title(), 'url':url_path, 'track': track_tasks_completed/float(total_track_tasks), 'units': units, 'blurb':course_app_context.get_environ()['course']['blurb'].strip()})
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
       logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed/2, total_track_tasks/2))
     else:
-      track = {'name': course_app_context.get_title(), 'track': 0, 'url':url_path, 'units': {}}
+      track = {'name': course_app_context.get_title(), 'track': 0, 'url':url_path, 'units': {}, 'blurb':course_app_context.get_environ()['course']['blurb'].strip()}
       total_track_tasks = tracker.get_task_total()
       for unit in tracker.get_course_units():
         track['units'][unit.unit_id + ":" + unit.title] = 0

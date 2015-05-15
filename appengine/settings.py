@@ -3,13 +3,14 @@ import os
 
 # Courses
 class RoseboticsCourse():
-  def __init__(self, prefix, short_title, formal_title, desciption, color='#FCB03C', coming_soon=False):
+  def __init__(self, prefix, short_title, formal_title, desciption, color='#FCB03C', coming_soon=False, video_id="0TjxnrWT8Es"):
     self.short_title = short_title
     self.prefix = prefix
     self.formal_title = formal_title
     self.description = desciption
     self.coming_soon = coming_soon
     self.color = color
+    self.video_id = video_id
     
   def get_url(self):
     return "/" + self.prefix
@@ -27,7 +28,8 @@ WEB = RoseboticsCourse(prefix='web',
                        short_title='Web',
                        formal_title='Web App Frameworks with AppEngine',
                        desciption='Learn the fundamentals of web development using Google App Engine. Topics also include CSS, HTML5, Javascript etc.',
-                       color='#4285f4')
+                       color='#4285f4',
+                       video_id='PLN-oI858ZA')
 ME430 = RoseboticsCourse(prefix='me430',
                          short_title='Mechatronics',
                          formal_title='Mechatronics',

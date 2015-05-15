@@ -5,7 +5,7 @@ import webapp2
 from settings import course_list as COURSE_LIST
 from models.rosebotics_models import RoseboticsStudent
 from settings import jinja_env
-from rosebotics_utils import recent_track_utils
+from rosebotics_utils import recent_track_utils, progress_utils
 
 class BasePage(webapp2.RequestHandler):
   """ If the user is logged in, then show their name. Otherwise, show different info. """
@@ -35,12 +35,27 @@ class BasePage(webapp2.RequestHandler):
 
   def page_title(self):
     return "ROSEbotics"
-
+  
+  def requires_oauth(self):
+    return False
+  
   def update_values(self, user, values):
     pass
 
+class BaseCoursePage(BasePage):
+
+  def template_file(self):
+    return "templates/base_course.html"
+
+  def page_title(self):
+    return self.get_course().formal_title
+
+  def update_values(self, user, values):
+    values['course'] = self.get_course()
+    values["progress"] = progress_utils.get_total_progress_for_course(user.email().lower(), self.get_course().prefix)
+    
   def requires_oauth(self):
-    return False
+    return True
 
 class BaseAction(webapp2.RequestHandler):
   def post(self):
