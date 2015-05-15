@@ -75,6 +75,9 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
       track_progress.append(track)
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks/2))
   namespace_manager.set_namespace("")
+  if total_course_tasks == 0:
+    logging.warn('WARNING: track %s has 0 total tasks' % url_path)
+    total_course_tasks = 1
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
 _tz_offsets = {'UTC':0, 'Pacific':-7, 'Mountain':-6, 'Central':-5, 'Eastern':-4}
