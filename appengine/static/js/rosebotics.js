@@ -22,7 +22,12 @@ var googleyellow = '#f4b400';
 
 $(document).ready(function(){
 	loginModalFunctions();
-	
+	$('#video-btn').click(function(){
+		$('#theater').fadeIn(1000).removeClass('hidden');
+	});
+	$('#close-btn').click(function(){
+		$('#theater').fadeOut(1000);
+	});
 	$('.resume-btn').hover(
         function(){
             //console.log('resume mouse in');
