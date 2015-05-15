@@ -33,7 +33,7 @@ $(document).ready(function(){
         	$(this).find('.resume-icon').removeClass('glyphicon-play').addClass('glyphicon-pause');
         }
     );
-
+	
     $('.list-group-item').hover(
     	function(){
             //console.log('track mouse in');
@@ -45,51 +45,52 @@ $(document).ready(function(){
             
         }
     );
-   
+   if(typeof currentCoursePercent !== 'undefined') {
 	var circle = new ProgressBar.Circle('#course-progress-container', {
-    trailColor: '#f1f2f2',
-    trailWidth: 1,
-    color: progresscolor,
-    strokeWidth: 3,
-    trailWidth: 1,
-    duration: 1500,
-    step: function(state, circle) {
-        circle.path.setAttribute('stroke', state.color);
-        //console.log((circle.value() * 100).toFixed(0));
-        $('#current-progress-percentage').text(Math.abs((circle.value() * 100).toFixed(0)) + "%");
-    }
+	    trailColor: '#f1f2f2',
+	    trailWidth: 1,
+	    color: progresscolor,
+	    strokeWidth: 3,
+	    trailWidth: 1,
+	    duration: 1500,
+	    step: function(state, circle) {
+	        circle.path.setAttribute('stroke', state.color);
+	        //console.log((circle.value() * 100).toFixed(0));
+	        $('#current-progress-percentage').text(Math.abs((circle.value() * 100).toFixed(0)) + "%");
+	    }
 	});
-
 	circle.animate(0.5, {
-        easing: "easeIn",
-        from: {color: googlered},
-        to: {color: googleyellow}
-    },function() {
-    circle.animate(currentCoursePercent, {
-        easing: "easeOut",
-        from: {color: googleyellow},
-        to: {color: progresscolor}
-    });
+	        easing: "easeIn",
+	        from: {color: googlered},
+	        to: {color: googleyellow}
+	    },function() {
+	    circle.animate(currentCoursePercent, {
+	        easing: "easeOut",
+	        from: {color: googleyellow},
+	        to: {color: currentCourseColor}
+	    });
     });  // Number from 0.0 to 1.0
-	for(var i = 0; i < currentCourseTrackPercentages.length; i++) {
-			var line = new ProgressBar.Line('#track-progress-container' + (i + 1), {
-				color : progresscolor,
-				strokeWidth : 3,
-				step : function(state, line1) {
-					line1.path.setAttribute('stroke', state.color);
-				}
-
-			});
-			line.animate(currentCourseTrackPercentages[i], {
-				from : {
-					color : googlered
-				},
-				to : {
-					color : progresscolor
-				}
-			});	
+   }
+	if(typeof currentCourseTrackPercentages !== 'undefined') {
+		for(var i = 0; i < currentCourseTrackPercentages.length; i++) {
+				var line = new ProgressBar.Line('#track-progress-container' + (i + 1), {
+					color : progresscolor,
+					strokeWidth : 3,
+					step : function(state, line1) {
+						line1.path.setAttribute('stroke', state.color);
+					}
+	
+				});
+				line.animate(currentCourseTrackPercentages[i], {
+					from : {
+						color : googlered
+					},
+					to : {
+						color : progresscolor
+					}
+				});	
+		}
 	}
-			
 	
 
 });

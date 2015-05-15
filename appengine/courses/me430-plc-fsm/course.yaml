@@ -29,7 +29,7 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'PLCs and Finite State Machines'
+  title: 'PLCs and FSMs'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
