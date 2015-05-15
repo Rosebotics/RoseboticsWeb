@@ -7,12 +7,31 @@ var currentCourseTrackPercentages = [
 {% endfor %}
 ];
 </script>
+<div id="theater" class="hidden row">
+	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<a id="close-btn"> <span
+				class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+			</a>
+			<div id="video-container">
+				<iframe
+					src="https://www.youtube.com/embed/0TjxnrWT8Es?rel=0&amp;showinfo=0"
+					frameborder="0" allowfullscreen></iframe>
+			</div>
+			<div class="col-md-2"></div>
+
+
+		</div>
+	</div>
+</div>
+
 <div class="header">
 <div class="container">
 <h3> </h3>
 <h4> Your Current Course </h4>
 <p>View your progress on your current course, and pick up where you left off.</p>
-<a class="btn btn-default" id="video-btn-right video-btn" href="https://www.youtube.com/watch?v=0TjxnrWT8Es">
+<a class="btn btn-default" id="video-btn">
   <span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span> Watch Video to Learn More</a>
 </div>
 </div>
