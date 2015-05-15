@@ -21,6 +21,7 @@ var googlered = '#db4437';
 var googleyellow = '#f4b400';
 
 $(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip({'html':true});
 	loginModalFunctions();
 	$('#video-btn').click(function(){
 		$('#theater').fadeIn(1000).removeClass('hidden');
