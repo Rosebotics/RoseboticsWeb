@@ -43,7 +43,7 @@ class AutoSweep(ndb.Model):
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   time = ndb.DateTimeProperty()
   tz = ndb.StringProperty()
-  options = ndb.JsonProperty()
+  options = ndb.JsonProperty(indexed=False)
   
   def unparse_options(self):
     print self.options
