@@ -155,4 +155,5 @@ angular.module('TeamServices', [])
 	this.deleteSweep = function(sweep) {
 		return oAuth.execute(gapi.client.teams.sweeps.delete(sweep));
 	}
+	this.getCourses = cachedApiCall("courses", gapi.client.teams.courses());
 }]);

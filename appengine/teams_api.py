@@ -5,13 +5,10 @@ from settings import course_list as COURSE_LIST
 
 from models.rosebotics_models import CourseProgress, MemberProgress, RoseboticsStudent, RoseboticsTeam, RoseboticsTeamMember,\
   Team, TrackProgress, UnitProgress, TeamVisibility, TotalTeamProgress,\
-  TeamInvites, Teams, TeamInvite, AutoSweep, Sweep, Sweeps
+  TeamInvites, Teams, TeamInvite, AutoSweep, Sweep, Sweeps, OfferedCourses
 from rosebotics_utils.progress_utils import get_total_progress_for_course
-import json
-from datetime import datetime
 from google.appengine.api import mail
 import logging
-import main
 
 
 WEB_CLIENT_ID = "963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0.apps.googleusercontent.com"
@@ -19,7 +16,6 @@ WEB_CLIENT_ID = "963009065087-2a5ccl5rhm4ghgm88li21fkjgsu5eua0.apps.googleuserco
 @endpoints.api(name="teams", version="v1", description="ROSEbotics Team API",
                audiences=[WEB_CLIENT_ID],
                allowed_client_ids=[endpoints.API_EXPLORER_CLIENT_ID, WEB_CLIENT_ID])
-
 
 class TeamApi(remote.Service):
   """ The Api for the Teams feature within ROSEbotics.org """
@@ -34,6 +30,7 @@ class TeamApi(remote.Service):
       old_team = None
     if old_team is not None:
       old_team.name = team.name
+      old_team.courses = team.courses
       old_team.put()
       old_members = RoseboticsTeamMember.query(ancestor=team.team_key)
       new_emails = []
@@ -55,7 +52,7 @@ class TeamApi(remote.Service):
         if old_member.email not in new_emails:
           old_member.key.delete()
     else:
-      new_team = RoseboticsTeam(leader=user_email, name=team.name)
+      new_team = RoseboticsTeam(leader=user_email, name=team.name, courses=team.courses)
       team.team_key = new_team.put()
       emails = [member.email for member in team.members]
       for email in emails:
@@ -164,7 +161,7 @@ class TeamApi(remote.Service):
           break
       if is_user_not_in_team:
         raise endpoints.BadRequestException("You are not allowed to view this team!")
-    courses = COURSE_LIST
+    courses = rosebotics_team.courses
     for member in members:
       if member.visibility in allowed_visibilies or member.email == user_email:
         mp = MemberProgress()
@@ -174,6 +171,7 @@ class TeamApi(remote.Service):
         mp.display_name = student.name
         mp.username = student.username
         for course in courses:
+          course = get_course(course)
           if course.coming_soon:
             continue
           progress = get_total_progress_for_course(member.email, course.prefix)
@@ -233,7 +231,20 @@ class TeamApi(remote.Service):
       response.sweeps.append(sweep)
     return response
 
+  @OfferedCourses.method(user_required=True, name='courses', path='courses', http_method='GET', request_fields=())
+  def get_courses(self, empty):
+    """ Get all of the offered courses on ROSEbotics """
+    offerings = OfferedCourses()
+    offerings.ids = [c.prefix for c in COURSE_LIST if not c.coming_soon]
+    offerings.titles = [c.short_title for c in COURSE_LIST if not c.coming_soon]    
+    return offerings
+
 ### HELPER METHODS ### 
+
+def get_course(prefix):
+  for course in COURSE_LIST:
+    if prefix == course.prefix:
+      return course
 
 def send_invite_email(email):
     student = RoseboticsStudent.get_by_id(email)
@@ -292,6 +303,7 @@ def to_team_from_rosebotics(rosebotics_team, get_members=True):
   team.name = rosebotics_team.name
   team.leader = rosebotics_team.leader
   team.team_key = rosebotics_team.key
+  team.courses = rosebotics_team.courses or [c.prefix for c in COURSE_LIST if not c.coming_soon]
   if get_members:
     members = RoseboticsTeamMember.query(ancestor=rosebotics_team.key)
     team.members = [member for member in members] # iterate through them to get them all
