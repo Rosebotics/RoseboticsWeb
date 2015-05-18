@@ -12,6 +12,8 @@ from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
 def dump(obj):
+  """ A useful function that prints *all* of the attributes of an object.
+          - I used this to figure out what the CourseBuilder Objects contained """
   for attr in dir(obj):
     print "obj.%s = %s" % (attr, getattr(obj, attr))
 
