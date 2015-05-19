@@ -27,7 +27,7 @@ def dump(obj):
 # Also the units have a weird title of 0:<TrackName> where the number is the unit number, because the function does not pull them out in the correct
 # order. It would be nice not to have to do this. 
 #
-# This should be changed to Unit, Track, and Course Objects. The nice thing about this
+# This should be changed to Unit, Track, and use the existing Course Objects. The nice thing about this
 # would be that once you have course objects, settings.py would *just* have to be creating these
 # different Course objects, then these would be used instead of all of these crazy dictionaries.
 # Also I know the GCourseBuilder has these objects already existing, so maybe these could be used. 
@@ -177,8 +177,10 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     table_data.append(table_row)
   return table_data
 
+# DEPRECATED: Use get_total_progress_for_course instead
 def get_progress_for_course(user, course_prefix):
-  """ Returns a progess dict for the overall percentage of the course complete and an array of track
+  """ DEPRECATED: Use get_total_progress_for_course instead!
+      Returns a progess dict for the overall percentage of the course complete and an array of track
       percentages (in the order they appear in app.yaml) for the given course-prefix. """
   track_progress = []
   course_tasks_completed = 0

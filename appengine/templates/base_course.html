@@ -1,5 +1,13 @@
 {% extends 'templates/base.html' %} {% block content %}
+<script>
+var currentCourseColor = "{{course.color}}";
+var currentCourseTrackPercentages = [
+{% for track in progress.tracks %}
+{{track['track']}},
+{% endfor %}
+];
 
+</script>
 <div id="theater" class="hidden row">
 	<div class="row">
 		<div class="col-md-2"></div>
@@ -51,10 +59,16 @@
 					that.</p>
 				{% for track in progress.tracks %}
 				<ul class="list-group">
-					<li class="list-group-item">
-						<h6 class="text-uppercase">{{track.name}}</h6>
-					</li>
-					<li class="list-group-item">{{track.blurb}}</li>
+					<li class="list-group-item btn btn-default row">
+		  		<a href="{{track['url']}}">
+			    <div class="track-text col-xs-3">{{track.name}}</div>
+				    <div class="track-progress course-page col-xs-8" id='track-progress-container{{loop.index}}'></div>
+				    <div class='start-track-btn col-xs-1'>
+				    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+			    </div>
+		    </a>
+  			</li>
+					<li class="list-group-item row">{{track.blurb}}</li>
 				</ul>
 			{% endfor %}
 			</div>
