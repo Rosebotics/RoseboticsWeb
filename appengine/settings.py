@@ -15,6 +15,16 @@ class RoseboticsCourse():
   def get_url(self):
     return "/" + self.prefix
   
+###
+# Field descriptions:
+# prefix: start of track names
+# short_title: Title used in resume menu dropdown, used in teams area
+# format_title: Used everywhere else
+# description: Used in /courses page in the panels
+# color: Used for progress bars in /courses
+# coming_soon: If the course doesn't have tracks yet
+# video_id: the id of the youtube video to show in the course page
+
 ANDROID = RoseboticsCourse(prefix='android',
                            short_title='Android',
                            formal_title='Android Application Development',
