@@ -77,6 +77,9 @@ angular.module('TeamApp', ['TeamControllers', 'ModalControllers', 'OverviewContr
           }],
           user: ["oAuth", function(oAuth) {
             return oAuth.getUserInfo();
+          }],
+          courses: ["api", function (api) {
+            return api.getCourses();
           }]
         }
       })

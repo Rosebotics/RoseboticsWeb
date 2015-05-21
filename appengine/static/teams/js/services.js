@@ -63,6 +63,9 @@ angular.module('TeamServices', [])
 }])
 .service('api', ["oAuth", "$q", function (oAuth, $q) {
 	var cache = {};
+	this.deleteCache = function() {
+		cache = {};
+	}
 	var cachedApiCall = function(cacheKey, apiMethod) {
 		return function(forceRefresh) {
 			var p = $q.defer();
@@ -155,4 +158,5 @@ angular.module('TeamServices', [])
 	this.deleteSweep = function(sweep) {
 		return oAuth.execute(gapi.client.teams.sweeps.delete(sweep));
 	}
+	this.getCourses = cachedApiCall("courses", gapi.client.teams.courses());
 }]);

@@ -35,9 +35,10 @@ class RoseboticsTeamMember(EndpointsModel):
     return self.key.string_id()
 
 class RoseboticsTeam(EndpointsModel):
-  _message_fields_schema = ("entityKey", "name", "leader")
+  _message_fields_schema = ("entityKey", "name", "leader", "courses")
   name = ndb.StringProperty(indexed=False) # Name for the team
   leader = ndb.StringProperty() # email address of leader
+  courses = ndb.StringProperty(repeated=True, indexed=False) # The courses that the team leader cares about
 
 class AutoSweep(ndb.Model):
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
@@ -96,11 +97,12 @@ class Sweeps(EndpointsModel):
 
 class Team(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("team_key", "name", "leader", "members")
+  _message_fields_schema = ("team_key", "name", "leader", "members", "courses")
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   name = ndb.StringProperty() # Name for the team
   leader = ndb.StringProperty() # email address of leader...
   members = ndb.StructuredProperty(RoseboticsTeamMember, repeated=True)
+  courses = ndb.StringProperty(repeated=True) # The courses that the team leader cares about
 
 class Teams(EndpointsModel):
   """ Class for message purposes only """
@@ -135,8 +137,9 @@ class TrackProgress(EndpointsModel):
 
 class CourseProgress(EndpointsModel):
   """ Class for message purposes only """
-  _message_fields_schema = ("name", "progress", "track_progress")
+  _message_fields_schema = ("name", "progress", "track_progress", "id")
   name = ndb.StringProperty()
+  id = ndb.StringProperty()
   progress = ndb.FloatProperty()
   track_progress = ndb.LocalStructuredProperty(TrackProgress, repeated=True)
 
@@ -153,3 +156,10 @@ class TotalTeamProgress(EndpointsModel):
   team_key = ndb.KeyProperty(kind=RoseboticsTeam)
   name = ndb.StringProperty() # Name of the team
   members_progress = ndb.LocalStructuredProperty(MemberProgress, repeated=True)
+  
+class OfferedCourses(EndpointsModel):
+  """ Class for message purposes only """
+  _message_fields_schema = ("ids", "titles")
+  team_key = ndb.KeyProperty(kind=RoseboticsTeam)
+  ids = ndb.StringProperty(repeated=True) # Name of the team
+  titles = ndb.StringProperty(repeated=True)

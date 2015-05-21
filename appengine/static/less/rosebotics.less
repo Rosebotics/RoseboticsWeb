@@ -142,12 +142,6 @@ input[type="radio"]+label {
 	display: inline;
 }
 
-.header {
-  padding-bottom: 30px;
-  margin-bottom: 30px;
-  background-color: #eee;
-}
-
 .navbar {
       font-family: "brandon-grotesque", sans-serif;
       letter-spacing: 0.04em;
@@ -158,10 +152,10 @@ input[type="radio"]+label {
  }
  
 .row-eq-height {
-  display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
-		display:         flex;
+		display:         flex;		
+  display: -webkit-box;
 }
 
 div.row-eq-height.inner {
@@ -239,6 +233,10 @@ div.row-eq-height.inner {
   padding-bottom: 15px;
 }
 
+.track-progress.course-page {
+		width: 350px;
+}
+
 .track-text {
   display: inline-block;
   text-align: right;
@@ -277,9 +275,14 @@ margin-top: -5px;
 
     }
 
+.content {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
 .header {
-      padding-bottom: 30px;
-      margin-bottom: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 
@@ -300,4 +303,46 @@ margin-top: -5px;
 svg{
     position: absolute;
     top: 0;
+}
+
+
+#close-btn {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  height:40px;
+  width:40px;
+  font-size:2em;
+  color: white;
+}
+
+
+.img-circle {
+	border-radius: 50%;
+	background: white;
+}
+
+
+#video-container {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 30px;
+	height: 0;
+	overflow: hidden; }
+
+#video-container iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%; }
+
+#theater{
+	padding: 10px;
+	position: relative;
+	background-color: #1b1b1b;
+}
+
+#video-btn {
+  margin-bottom: 1em;
 }

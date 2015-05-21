@@ -49,14 +49,24 @@ angular.module('ModalControllers', [])
 	  $modalInstance.close(this.selectedTeam);
 	};
 }])
-.controller('CreateTeamModalInstanceCtrl', ["$modalInstance", "$controller", "user",  function ($modalInstance, $controller, user) {
+.controller('CreateTeamModalInstanceCtrl', ["$modalInstance", "$controller", "user", "courses", function ($modalInstance, $controller, user, courses) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.teamName = "";
 	this.teamMembers = "";
 	this.includeLeader = false;
 	var self = this;
+	this.courses = angular.copy(courses.ids);
+	this.offeredCourses = courses;
+	this.getCourseTitle = function(prefix) {
+		for (var i = 0; i < courses.ids.length; i++) {
+			if (courses.ids[i] === prefix) {
+				return courses.titles[i];
+			}
+		}
+		return "";
+	};
 	this.add = function() {
-		var newTeam = {name: self.teamName, leader: user.email, members:[]};
+		var newTeam = {name: self.teamName, leader: user.email, members:[], courses:self.courses};
 		var members = self.teamMembers.split(',');
 		for (var i = 0; i < members.length; i++) {
 			var email = members[i].trim();
@@ -92,7 +102,7 @@ angular.module('ModalControllers', [])
 	if (team.members_progress.length > 0) {
 	  var courses = team.members_progress[0].course_progress;
 	  for (var i = 0; i < courses.length; i++) {
-			var course = {name: courses[i].name, tracks:[], toggled:false};
+			var course = {name: courses[i].name, tracks:[], toggled:false, id:courses[i].id};
 			var tracks = courses[i].track_progress;
 			for (var j = 0; j < tracks.length; j++) {
 				var track = {name:tracks[j].name, units:[], toggled:false};
@@ -186,7 +196,7 @@ angular.module('ModalControllers', [])
 					}
 				}
 				track.units = unitList;
-			} 
+			}
 		}
 		var jsonString = JSON.stringify(progress_data);
 		landingQs += "&progress_data=" + jsonString;
@@ -206,7 +216,7 @@ angular.module('ModalControllers', [])
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12, tz:"Eastern"};
 	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
-	this.today = new Date(); 
+	this.today = new Date();
 	this.stopEvent = function($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
@@ -237,12 +247,12 @@ angular.module('ModalControllers', [])
 .controller('SweepOptionsModalInstanceCtrl', ["$modalInstance", "$controller", "team", "optionString", function ($modalInstance, $controller, team, optionString) {
 	angular.extend(this, $controller('ExportModalParentCtrl', {$modalInstance:$modalInstance, $controller:$controller, team:team}));
 	this.onPostGenerate = function(qs) {
-		$modalInstance.close(qs); 
+		$modalInstance.close(qs);
 	}
 	this.doneButtonText = 'Done';
 	if (optionString !== "") {
 		var options = {};
-		optionString = optionString.split('&'); 
+		optionString = optionString.split('&');
 		for(var i = 0; i < optionString.length; i++) {
 			var op = optionString[i].split('=');
 			options[op[0]] = op[1];
@@ -267,7 +277,7 @@ angular.module('ModalControllers', [])
 					var unit = track.units[k];
 					unit.toggled = toggledUnits.indexOf(unit.name) !== -1;
 				}
-			} 
+			}
 		}
 	}
 }]);

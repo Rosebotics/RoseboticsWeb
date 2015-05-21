@@ -10,6 +10,9 @@ angular.module('ManageControllers', [])
 			resolve: {
 				user: function() {
 					return oAuth.getUserInfo();
+				},
+				courses: function() {
+					return api.getCourses();
 				}
 			}
 		});
@@ -30,7 +33,7 @@ angular.module('ManageControllers', [])
 		});
 	};
 }])
-.controller('ManageTeamCtrl', ["$routeParams", "$modal", "teams", "$scope", "snackbar", "api", "$location", "user", function($routeParams, $modal, teams, $scope, snackbar, api, $location, user) {
+.controller('ManageTeamCtrl', ["$routeParams", "$modal", "teams", "$scope", "snackbar", "api", "$location", "user", "courses", function($routeParams, $modal, teams, $scope, snackbar, api, $location, user, courses) {
 	var items = teams["teams"];
 	var teamNumber = -1;
 	for(var i = 0; i < items.length; i++) {
@@ -43,6 +46,16 @@ angular.module('ManageControllers', [])
 	this.goToSweep = function() {
 		$location.path($location.path() + "/sweeps");
 	};
+	this.offeredCourses = courses;
+	console.log(courses);
+	this.getCourseTitle = function (prefix) {
+		for (var i = 0; i < courses.ids.length; i++) {
+			if (courses.ids[i] === prefix) {
+				return courses.titles[i];
+			}
+		}
+		return "";
+	}
 	var timesChanged = 0;
 	var self = this;
 	var deregister = $scope.$watch(function () {
@@ -129,7 +142,7 @@ angular.module('ManageControllers', [])
 	for(var i = 0; i < items.length; i++) {
 		if(items[i].team_key == $routeParams.team_key) {
 			this.team = items[i];
-			teamNumber = i; 
+			teamNumber = i;
 			break;
 		}
 	}
@@ -155,7 +168,7 @@ angular.module('ManageControllers', [])
 			snackbar.remove(6);
 			snackbar.createWithTimeout("<b>Error!</b> Sweep not saved");
 		});
-	};	
+	};
 	this.deleteSweep = function(sweep) {
 		snackbar.create("Removing Sweep...", 7);
 		api.deleteSweep(sweep).then(function() {
@@ -165,9 +178,9 @@ angular.module('ManageControllers', [])
 					break;
 				}
 			}
-			snackbar.remove(7);			
+			snackbar.remove(7);
 			snackbar.createWithTimeout("<b>Success!</b> Sweep removed");
-			
+
 		}, function() {
 			snackbar.remove(7);
 			snackbar.createWithTimeout("<b>Error!</b> Sweep not removed");
@@ -303,4 +316,3 @@ angular.module('ManageControllers', [])
 		});
 	};
 }]);
-

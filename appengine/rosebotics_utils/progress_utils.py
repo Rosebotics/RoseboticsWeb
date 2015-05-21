@@ -11,6 +11,12 @@ from models.rosebotics_models import TeamVisibility,\
 from google.appengine.ext import ndb
 from datetime import datetime, timedelta
 
+def dump(obj):
+  """ A useful function that prints *all* of the attributes of an object.
+          - I used this to figure out what the CourseBuilder Objects contained """
+  for attr in dir(obj):
+    print "obj.%s = %s" % (attr, getattr(obj, attr))
+
 ###
 #
 # TODO for the motivated/looking for a refactoring challenge. 
@@ -21,7 +27,7 @@ from datetime import datetime, timedelta
 # Also the units have a weird title of 0:<TrackName> where the number is the unit number, because the function does not pull them out in the correct
 # order. It would be nice not to have to do this. 
 #
-# This should be changed to Unit, Track, and Course Objects. The nice thing about this
+# This should be changed to Unit, Track, and use the existing Course Objects. The nice thing about this
 # would be that once you have course objects, settings.py would *just* have to be creating these
 # different Course objects, then these would be used instead of all of these crazy dictionaries.
 # Also I know the GCourseBuilder has these objects already existing, so maybe these could be used. 
@@ -40,6 +46,7 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
   course_tasks_completed = 0
   total_course_tasks = 0
   all_course_app_contexts = controllers.sites.get_all_courses()
+  print course_prefix
   for course_app_context in all_course_app_contexts:
     url_path = course_app_context.slug
     if not url_path.startswith("/" + course_prefix + "-"):
@@ -62,12 +69,12 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
           units[unit_title] = unit[0]/2
         if get_total_tasks:
           units[unit_title + "-total"] = unit[1]/2
-      track_progress.append({'name': course_app_context.get_title(), 'url':url_path, 'track': track_tasks_completed/float(total_track_tasks), 'units': units})
+      track_progress.append({'name': course_app_context.get_title(), 'url':url_path, 'track': track_tasks_completed/float(total_track_tasks), 'units': units, 'blurb':course_app_context.get_environ()['course']['blurb'].strip()})
       course_tasks_completed += track_tasks_completed
       total_course_tasks += total_track_tasks
       logging.info("Lesson progress in %s:  %d of %d tasks completed" % (url_path, track_tasks_completed/2, total_track_tasks/2))
     else:
-      track = {'name': course_app_context.get_title(), 'track': 0, 'url':url_path, 'units': {}}
+      track = {'name': course_app_context.get_title(), 'track': 0, 'url':url_path, 'units': {}, 'blurb':course_app_context.get_environ()['course']['blurb'].strip()}
       total_track_tasks = tracker.get_task_total()
       for unit in tracker.get_course_units():
         track['units'][unit.unit_id + ":" + unit.title] = 0
@@ -127,7 +134,7 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     if timezone:
       table_row.append(_tz_now(timezone))
     for course in data:
-      course_progress = get_total_progress_for_course(member.email, course['name'].lower(), as_percent=unit_points, get_total_tasks=True)
+      course_progress = get_total_progress_for_course(member.email, course['id'].lower(), as_percent=unit_points, get_total_tasks=True)
       course_added = False
       for requested_track in course['tracks']:
         track_added = False
@@ -173,8 +180,10 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
     table_data.append(table_row)
   return table_data
 
+# DEPRECATED: Use get_total_progress_for_course instead
 def get_progress_for_course(user, course_prefix):
-  """ Returns a progess dict for the overall percentage of the course complete and an array of track
+  """ DEPRECATED: Use get_total_progress_for_course instead!
+      Returns a progess dict for the overall percentage of the course complete and an array of track
       percentages (in the order they appear in app.yaml) for the given course-prefix. """
   track_progress = []
   course_tasks_completed = 0
