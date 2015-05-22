@@ -39,9 +39,12 @@ var currentCourseTrackPercentages = [
         </div>
           <div class="center-me" id="current-course-descrp">
           <h4>{{course.formal_title}}</h4>
-          <a class="btn btn-default resume-btn" href="{{ recent_tracks[course.prefix].path }}">
-            <span class="glyphicon glyphicon-pause resume-icon" aria-hidden="true"></span>
-            Resume</a>
+          {% if recent_tracks[course.prefix] %}
+            <a class="btn btn-default resume-btn" href="{{ recent_tracks[course.prefix].path }}">
+              <span class="glyphicon glyphicon-pause resume-icon" aria-hidden="true"></span>Resume</a>
+          {% else %}
+            <a href="{{progress.tracks[0]['url']}}" class="btn btn-default start-course-bstn">Start</a>
+          {% endif %}
           </div>
       </div>
       <div class="col-md-6 col-sm-8 col-xs-12">
