@@ -34,31 +34,31 @@ var activity = [
 '<b>1.</b> If you have a rule for the font property on a <b>ul</b> element would the <b>li</b> elements in the list inherit that property?<br>',
 
 {
-	questionType : 'multiple choice',
-	choices : [
-			['Yes', true, 'Correct!' ],
-			['No', false, 'Please try again.' ] ]
+  questionType : 'multiple choice',
+  choices : [
+      ['Yes', true, 'Correct!' ],
+      ['No', false, 'Please try again.' ] ]
 },
 
 '<br><br><b>2.</b> If you have a rule for the height property on a <b>ul</b> element would the <b>li</b> elements in the list inherit that property?<br>',
 
 {
-	questionType : 'multiple choice',
-	choices : [
-			['Yes', false, 'Please try again.' ],
-			['No', true, 'Correct!' ] ]
+  questionType : 'multiple choice',
+  choices : [
+      ['Yes', false, 'Please try again.' ],
+      ['No', true, 'Correct!' ] ]
 },
 
 
 '<br><br><b>3.</b> What color would the "Hello World!" text be?<br>',
 '<img src="assets/img/h1_color_question.png" alt="H1 color question"><br>',
 {
-	questionType : 'multiple choice',
-	choices : [
-			['red', false, 'Please try again.  Nope there is a syntax error in this rule before the color property.  // is NOT a comment in CSS, just a syntax error that causes the rest of the rules in the block to silently fail.' ],
-			['blue', false, 'Please try again.  Nope there is a syntax error in this rule before the color property.  // is NOT a comment in CSS, just a syntax error that causes the rest of the rules in the block to silently fail.' ],
-			['black', true, 'Correct!  Both rules above have syntax errors, so the User Agent default color wins (uncontested), which is black on every browser.' ],
-			['white', false, 'Please try again.'] ]
+  questionType : 'multiple choice',
+  choices : [
+      ['red', false, 'Please try again.  Nope there is a syntax error in this rule before the color property.  \/\/ is NOT a comment in CSS, just a syntax error that causes the rest of the rules in the block to silently fail.' ],
+      ['blue', false, 'Please try again.  Nope there is a syntax error in this rule before the color property.  \/\/ is NOT a comment in CSS, just a syntax error that causes the rest of the rules in the block to silently fail.' ],
+      ['black', true, 'Correct!  Both rules above have syntax errors, so the User Agent default color wins (uncontested), which is black on every browser.' ],
+      ['white', false, 'Please try again.'] ]
 },
 
 
