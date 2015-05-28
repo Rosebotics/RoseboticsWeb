@@ -29,41 +29,29 @@
 //    asks for help. For more information on how to specify the object, please
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
- WebFontConfig = {
-    google: { families: [ 'Rokkitt::latin' ] }
-  };
-  (function() {
-    var wf = document.createElement('script');
-    wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
-      '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
-    wf.type = 'text/javascript';
-    wf.async = 'true';
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(wf, s);
-  })();
-  
+
 var activity = [
 
     '<div style="background-color: rgb(255, 0, 0); border-radius: 5px; border: 2px solid #555; width: 150px; padding: 6px; margin: auto; color: white; text-align: center; font: 24px Rokkitt, Arial, sans-serif;">Red</div>',
-	{
-		questionType : 'multiple choice group',
-		questionsList : [
-				{
-					questionHTML : '<b>1.</b> Which of these colors are fully red?',
-					choices : [ '#FFF', '#FF0000', 'blue', '#F00', 'red', 'rgb(100, 0, 0)', 'hsl(0, 100%, 50%)', 'rgba(255, 0, 0, 1.0)' ],
-					correctIndex : [1,3,4,6,7]
-				} ],
-		allCorrectOutput : 'Well done!',
-		someIncorrectOutput : 'Please try again. Hints: There are 5 correct answers.  1 name, 2 hex, 1 rgba, 1 hsl (the hsl one is tricky, but it is correct)',
-	},
-	'<br><br><b>2.</b> Use Chrome dev tool to inspect the red element above.  Which version of red did I use to set the background-color?<br>',
+  {
+    questionType : 'multiple choice group',
+    questionsList : [
+        {
+          questionHTML : '<b>1.</b> Which of these colors are fully red?',
+          choices : [ '#FFF', '#FF0000', 'blue', '#F00', 'red', 'rgb(100, 0, 0)', 'hsl(0, 100%, 50%)', 'rgba(255, 0, 0, 1.0)' ],
+          correctIndex : [1,3,4,6,7]
+        } ],
+    allCorrectOutput : 'Well done!',
+    someIncorrectOutput : 'Please try again. Hints: There are 5 correct answers.  1 name, 2 hex, 1 rgba, 1 hsl (the hsl one is tricky, but it is correct)',
+  },
+  '<br><br><b>2.</b> Use Chrome dev tool to inspect the red element above.  Which version of red did I use to set the background-color?<br>',
 
-	{
-		questionType : 'freetext',
-		correctAnswerRegex : /rgb\(\s*255,\s*0,\s*0\s*\)/i,
-		correctAnswerOutput : 'Correct!',
-		incorrectAnswerOutput : 'Please try again.',
-		showAnswerOutput : 'Here is the answer: rgb(255, 0, 0);'
-	},
+  {
+    questionType : 'freetext',
+    correctAnswerRegex : /rgb\(\s*255,\s*0,\s*0\s*\)/i,
+    correctAnswerOutput : 'Correct!',
+    incorrectAnswerOutput : 'Please try again.',
+    showAnswerOutput : 'Here is the answer: rgb(255, 0, 0);'
+  },
 
 ];

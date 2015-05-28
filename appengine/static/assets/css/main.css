@@ -81,7 +81,7 @@ th, td {
 }
 
 #gcb-nav-y.gcb-nav-full {
-  width: auto; 
+  width: auto;
 }
 
 
@@ -225,7 +225,7 @@ th, td {
 }
 
 .gcb-aside {
-  background: #f9f9f9;
+  background: #eeeeee;
   border-color: #f2f2f2;
 }
 
@@ -522,7 +522,7 @@ a.gcb-button-action, button.gcb-button-action {
   -moz-transition: all .218s ease-in;
   -webkit-transition: all .218s ease-in;
   transition: all .218s ease-in;
-  
+
 }
 
 .gcb-next-button > a, .gcb-prev-button > a {

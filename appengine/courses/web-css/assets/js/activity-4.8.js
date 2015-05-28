@@ -28,92 +28,94 @@
 //    asks for help. For more information on how to specify the object, please
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
-window.onload=function(){
-	  document.getElementById('show-hide-cheatsheetbutton').addEventListener('click', function() {
-		if (this.classList.contains('closed')) {
-		  this.classList.remove('closed');
-		  document.getElementById('cheatsheet').style.display = "none";
-		  console.log("Hide img");
-		} else {
-		  this.classList.add('closed');
-		  document.getElementById('cheatsheet').style.display = "block";
-		  console.log("Show img");
-		}
-	  });
-};
+
 var activity = [
-                
+
 
         '<button id="show-hide-cheatsheetbutton">Show / Hide Cheatsheet</button>',
         '<img width="90%" style="margin-left: 15px; display:none;" id="cheatsheet" src="assets/img/interactions_between_display_position_and_float.png" alt="LCD code"><br>',
         '<br>For all questions you\'ll be told the position + float + display properties (in that order).<br><br>',
         '<b>1.</b> What is the difference between relative+left+block vs relative+left+inline-block?<br>',
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-					[ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
-					[ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
-					[ 'Nothing. They are the same. The display property is ignored in this case.', true, 'Correct'  ],
-					[ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
-					[ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
-					[ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
-					[ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+          [ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
+          [ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
+          [ 'Nothing. They are the same. The display property is ignored in this case.', true, 'Correct'  ],
+          [ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
+          [ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
+          [ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
+          [ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
+    },
 
-		'<br><br><b>2.</b> What is the difference between absolute+left+block vs absolute+none+block?<br>',
+    '<br><br><b>2.</b> What is the difference between absolute+left+block vs absolute+none+block?<br>',
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-						[ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The float property is ignored in this case.', true, 'Correct'  ],
-						[ 'Nothing. They are the same. The display property is ignored in this case.', false, 'Please try again.' ],
-						[ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
-						[ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
-						[ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
-						[ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+            [ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The float property is ignored in this case.', true, 'Correct'  ],
+            [ 'Nothing. They are the same. The display property is ignored in this case.', false, 'Please try again.' ],
+            [ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
+            [ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
+            [ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
+            [ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
+    },
 
-		'<br><br><b>3.</b> What is the difference between static+left+inline-block vs relative+left+block?<br>',
-		{
-			questionType : 'multiple choice',
-			choices : [
-						[ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The display property is ignored in this case.', false, 'Please try again.' ],
-						[ 'One respects the location offset properties (left, right, top, bottom). The other does not.', true, 'Correct' ],
-						[ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
-						[ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
-						[ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
-		},
-		'<br><br><b>4.</b> What is the difference between fixed+left+block vs relative+left+block?<br>',
+    '<br><br><b>3.</b> What is the difference between static+left+inline-block vs relative+left+block?<br>',
+    {
+      questionType : 'multiple choice',
+      choices : [
+            [ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The display property is ignored in this case.', false, 'Please try again.' ],
+            [ 'One respects the location offset properties (left, right, top, bottom). The other does not.', true, 'Correct' ],
+            [ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
+            [ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
+            [ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
+    },
+    '<br><br><b>4.</b> What is the difference between fixed+left+block vs relative+left+block?<br>',
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-						[ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The display property is ignored in this case.', false, 'Please try again.'],
-						[ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
-						[ 'One is slammed over to the left.  The other is not.', true, 'Correct'  ],
-						[ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
-						[ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+            [ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The display property is ignored in this case.', false, 'Please try again.'],
+            [ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
+            [ 'One is slammed over to the left.  The other is not.', true, 'Correct'  ],
+            [ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
+            [ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
+    },
 
 
-		'<br><br><b>5.</b> What is the difference between relative+left+inline-block vs relative+left+inline?<br>',
+    '<br><br><b>5.</b> What is the difference between relative+left+inline-block vs relative+left+inline?<br>',
 
-		{
-			questionType : 'multiple choice',
-			choices : [
-						[ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
-						[ 'Nothing. They are the same. The display property is ignored in this case.', true, 'Correct'  ],
-						[ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
-						[ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
-						[ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
-						[ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
-		},
+    {
+      questionType : 'multiple choice',
+      choices : [
+            [ 'Nothing. They are the same. The position property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The float property is ignored in this case.', false, 'Please try again.'  ],
+            [ 'Nothing. They are the same. The display property is ignored in this case.', true, 'Correct'  ],
+            [ 'One respects the location offset properties (left, right, top, bottom). The other does not.', false, 'Please try again.'],
+            [ 'One is slammed over to the left.  The other is not.', false, 'Please try again.'],
+            [ 'One gets the line to itself.  The other shares the line with other elements.', false, 'Please try again.'],
+            [ 'One respects the size properties (width, height). The other does not.', false, 'Please try again.'  ]]
+    },
 
 ];
+
+window.onload=function(){
+  document.getElementById('show-hide-cheatsheetbutton').addEventListener('click', function() {
+  if (this.classList.contains('closed')) {
+    this.classList.remove('closed');
+    document.getElementById('cheatsheet').style.display = "none";
+    console.log("Hide img");
+  } else {
+    this.classList.add('closed');
+    document.getElementById('cheatsheet').style.display = "block";
+    console.log("Show img");
+  }
+  });
+};
