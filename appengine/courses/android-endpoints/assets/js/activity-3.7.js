@@ -30,24 +30,24 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What is the type of the parameter that is passed to the InsertQuoteTask's doInBackground()  method?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["Long", false, "Try again. " ],
-				["String", false, "Try again. That's the type of the parameter that is passed to the DeleteQuoteTask's doInBackground() method." ],
-				["Void", false, "Try again. We are passing an argument, so it isn't Void." ],
-				["MovieQuote", true, "Correct. " ],
-				["MovieQuoteCollection", false, "Try again. Our API only allows us to insert a single quote at a time." ],
-		]
-	},
-	"<br><br>",
-	"<b>2.</b> What is wrong with this code to update the quotes after one is inserted? <code style=\"font-weight: bold; padding: 5px; background: rgb(234, 248, 248); display: inline-block;\"> // ... ready to insert<br>(new InsertQuoteTask()).execute(currentQuote);<br>updateQuotes()<br>//...</code><br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["Nothing. Updating after an insertion is good since it moves the newly inserted quote up to the top of the list.", false, "Try again. Updating is good, but you should do it in the InsertQuoteTask's onPostExecute() method." ],
-				["insert isn't guaranteed to finish before the UI is updated.", true, "Correct. You are calling updateQuotes from the UI thread, which is happening concurrently with the InsertQuoteTask. (Actually, in practice, it would still probably work most of the time.)" ],
-		]
-	},
+  "<b>1.</b> What is the type of the parameter that is passed to the InsertQuoteTask's doInBackground()  method?<br>",
+  {
+    questionType : "multiple choice",
+    choices : [
+        ["Long", false, "Try again. " ],
+        ["String", false, "Try again. That's the type of the parameter that is passed to the DeleteQuoteTask's doInBackground() method." ],
+        ["Void", false, "Try again. We are passing an argument, so it isn't Void." ],
+        ["MovieQuote", true, "Correct. " ],
+        ["MovieQuoteCollection", false, "Try again. Our API only allows us to insert a single quote at a time." ],
+    ]
+  },
+  "<br><br>",
+  "<b>2.</b> What is wrong with this code to update the quotes after one is inserted?<br><code style=\"font-weight: bold; padding: 5px; background: rgb(234, 248, 248); display: inline-block;\"> \/\/ ... ready to insert<br>(new InsertQuoteTask()).execute(currentQuote);<br>updateQuotes()<br>\/\/...</code><br>",
+  {
+    questionType : "multiple choice",
+    choices : [
+        ["Nothing. Updating after an insertion is good since it moves the newly inserted quote up to the top of the list.", false, "Try again. Updating is good, but you should do it in the InsertQuoteTask's onPostExecute() method." ],
+        ["insert isn't guaranteed to finish before the UI is updated.", true, "Correct. You are calling updateQuotes from the UI thread, which is happening concurrently with the InsertQuoteTask. (Actually, in practice, it would still probably work most of the time.)" ],
+    ]
+  },
 ];
