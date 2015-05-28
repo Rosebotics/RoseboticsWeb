@@ -30,39 +30,39 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-                
+
   '<b>1.</b> We added two attributes to the form element.  What were they?<br>',
 
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['href="/addquote" method="POST"', false, 'Please try again.' ],
-				['href="/addquote" method="GET"', false, 'Please try again.' ],
-				['action="/addquote" method="POST"',  true, 'Correct!'],
-				['action="/addquote" method="GET"',  false, 'Please try again.'] ]
-	},
-	
+  {
+    questionType : 'multiple choice',
+    choices : [
+        ['href="/addquote" method="POST"', false, 'Please try again.' ],
+        ['href="/addquote" method="GET"', false, 'Please try again.' ],
+        ['action="/addquote" method="POST"',  true, 'Correct!'],
+        ['action="/addquote" method="GET"',  false, 'Please try again.'] ]
+  },
+
   '<br><br><b>2.</b> A form can have any amount of html within it.  However only certain elements are important to the form that is sent to the backend.  What elements are important?<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				['button elements', false, 'Please try again.' ],
-				['td and th elements', false, 'Please try again.' ],
-				['input elements, specifically their name and value attributes', true, 'Correct!' ],
-				['input elements, specifically their id and value attributes',  ] ]
-	},
+  {
+    questionType : 'multiple choice',
+    choices : [
+        ['button elements', false, 'Please try again.' ],
+        ['td and th elements', false, 'Please try again.' ],
+        ['input elements, specifically their name and value attributes', true, 'Correct!' ],
+        ['input elements, specifically their id and class attributes', false, 'Please try again.'] ]
+  },
 
-	'<br><br><b>3.</b> If you resize the page while your Modal is up (<b>with the form now inside the modal</b>) what happens (Try it first!).<br>',
+  '<br><br><b>3.</b> If you resize the page while your Modal is up (<b>with the form now inside the modal</b>) what happens (Try it first!).<br>',
 
-	{
-		questionType : 'multiple choice',
-		choices : [
-				[ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
-				[ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well and the labels even reflow.', true, 'Correct!' ],
-				[ 'A resize dismisses the Modal.', false, 'Please try again.' ],
-				[ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
-	}		
-	
+  {
+    questionType : 'multiple choice',
+    choices : [
+        [ 'It looks pretty bad because it extends off the page.', false, 'Please try again.' ],
+        [ 'Bootstrap puts mobile first and tries for a responsive UI so it resizes very well and the labels even reflow.', true, 'Correct!' ],
+        [ 'A resize dismisses the Modal.', false, 'Please try again.' ],
+        [ 'You can\'t resize the window while the Modal is up.', false, 'Please try again.' ]]
+  }
+
 ];
