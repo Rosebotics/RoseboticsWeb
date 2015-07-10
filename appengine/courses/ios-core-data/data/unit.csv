@@ -1,3 +1,4 @@
 id,type,unit_id,title,release_date,now_available
 1,U,1,Table based navigation with a single Core Data entity,,True
+2,U,2,Core Data Relationships in Objective-C,,True
 
