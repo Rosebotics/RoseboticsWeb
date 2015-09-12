@@ -791,10 +791,10 @@ class StudentProfileDAO(object):
             profile = cls._add_new_profile(user_id, email)
 
         # create new student or re-enroll existing
-        student = Student.get_by_email(email)
+        student = Student.get_by_email(email.lower())
         if not student:
             # TODO(psimakov): we must move to user_id as a key
-            student = Student(key_name=email)
+            student = Student(key_name=email.lower())
 
         # update profile
         cls._update_attributes(
@@ -967,7 +967,7 @@ class Student(BaseEntity):
 
     @classmethod
     def get_by_email(cls, email):
-        return Student.get_by_key_name(email.encode('utf8'))
+        return Student.get_by_key_name(email.encode('utf8').lower())
 
     @classmethod
     def get_enrolled_student_by_email(cls, email):
