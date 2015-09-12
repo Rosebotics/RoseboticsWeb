@@ -2,7 +2,7 @@
 {% set navigation_bar = [
     ('/courses', 'courses', 'Courses'),
     ('/competition', 'competition', 'Competition'),
-    ('/platform', 'platform', 'Platform'),
+    ('/platform', 'platform', 'RoseBot'),
 ] -%}
 
 
@@ -23,7 +23,7 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" collapse="isCollapsed">
-      
+
       <ul class="nav navbar-nav navbar-right">
         {% for href, id, caption in navigation_bar %}
         <li><a href="{{ href|e }}">{{ caption|e }}</a></li>
@@ -34,13 +34,13 @@
         <li class="dropdown" dropdown>
           <a href="#" class="dropdown-toggle" dropdown-toggle>My Courses <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu" ng-init="icon = 'pause'">
-          	<li ng-mouseleave="icon = 'pause'" ng-mouseover="icon = 'play'">
-          		<a href="{{most_recent_track.path}}"><span class="glyphicon glyphicon-{{'{{icon}}'}}" aria-hidden="true"></span> Resume</a>
-          	</li>
+            <li ng-mouseleave="icon = 'pause'" ng-mouseover="icon = 'play'">
+              <a href="{{most_recent_track.path}}"><span class="glyphicon glyphicon-{{'{{icon}}'}}" aria-hidden="true"></span> Resume</a>
+            </li>
             <li class="divider"></li>
             {% for course in courses if not course.coming_soon and recent_tracks[course.prefix] %}
               <li><a href="{{ recent_tracks[course.prefix].path }}">{{course.short_title}}</a></li>
-            {% endfor %} 
+            {% endfor %}
           </ul>
         </li>
       {% endif %}
@@ -66,12 +66,12 @@
 <script type="text/ng-template" id="logout_modal.html">
 
         <div class="modal-header bg-info">
-					<button type="button" class="close" ng-click="modal.cancel()"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" ng-click="modal.cancel()"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">Confirm Sign Out</h4>
         </div>
         <div class="modal-body">
             <p>This will sign you out of all sites that you have open that use the same Google sign in.</p>
-     		<p>To only stop using ROSEbotics, click Cancel and close the ROSEbotics tab.</p>
+         <p>To only stop using ROSEbotics, click Cancel and close the ROSEbotics tab.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" ng-click="modal.cancel()">Cancel</button>
@@ -88,35 +88,35 @@
         </div>
         <form action="/editprofile" method="POST" class="form-horizontal">
         <div class="modal-body">
-		<div class="form-group">
-        	<label for="student_key" class="col-sm-3 control-label">Name<span class="required-asterisk">*</span></label>
+    <div class="form-group">
+          <label for="student_key" class="col-sm-3 control-label">Name<span class="required-asterisk">*</span></label>
             <div class="col-sm-9">
             <input type="text" id="edit-student-details-modal-name-field" name="name" class="form-control with-help" value="{{ rosebotics_student.name if rosebotics_student.name }}"/>
             </div>
         </div>
         <div class="form-group">
-        	<label for="student_key" class="col-sm-3 control-label">Preferred Name<span class="required-asterisk">*</span></label>
+          <label for="student_key" class="col-sm-3 control-label">Preferred Name<span class="required-asterisk">*</span></label>
             <div class="col-sm-9">
             <input type="text" name="nickname" class="form-control with-help" value="{{ rosebotics_student.nickname if rosebotics_student.nickname }}"/>
             <span class="glyphicon glyphicon-question-sign help-icon pull-right" tooltip-placement="right" tooltip-html-unsafe="<div style='width:150px'>This is the name that will appear in the upper-right hand corner.</div>"></span>
             </div>
         </div>
         <div class="form-group">
-        	<label for="student_key" class="col-sm-3 control-label">Email</label>
+          <label for="student_key" class="col-sm-3 control-label">Email</label>
             <div class="col-sm-9">
             <input type="text" name="alt_email" class="form-control with-help" placeholder="" value="{{ rosebotics_student.alt_email if rosebotics_student.alt_email }}"/>
             <span class="glyphicon glyphicon-question-sign help-icon pull-right" tooltip-placement="right" tooltip-html-unsafe="<div style='width:150px'>Enter whatever email you actually check.  Not required to be a gmail or Google account.  Just whatever email address you check.</div>"></span>
             </div>
         </div>
         <div class="form-group">
-        	<label for="student_key" class="col-sm-3 control-label">RHIT Username</label>
+          <label for="student_key" class="col-sm-3 control-label">RHIT Username</label>
             <div class="col-sm-9">
             <input type="text" name="username" class="form-control with-help" placeholder="" value="{{ rosebotics_student.username if rosebotics_student.username }}"/>
             <span class="glyphicon glyphicon-question-sign help-icon pull-right" tooltip-placement="right" tooltip-html-unsafe="<div style='width:150px'>Your Rose-Hulman kerberous username, if you have one. This is not a required field, so blank is totally fine.</div>"></span>
             </div>
         </div>
         <div class="form-group">
-        	<label for="student_key" class="col-sm-3 control-label">Rose Connection</label>
+          <label for="student_key" class="col-sm-3 control-label">Rose Connection</label>
             <div class="col-sm-9">
             <textarea name="connection" class="form-control with-help" placeholder="" rows="3">{{ rosebotics_student.details if rosebotics_student.details }}</textarea>
             <span class="glyphicon glyphicon-question-sign help-icon pull-right" tooltip-placement="right" tooltip-html-unsafe="<div style='width:150px'>If applicable, please tell us how you are connected to Rose-Hulman. We're just curious! For example, if you are an alumni feel free to tell us your graduation year, major, and where you work/live now.  If you are an active student let us know what year you plan to graduate, your major, or something else fun.</div>"></span>

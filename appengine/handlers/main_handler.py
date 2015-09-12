@@ -43,10 +43,10 @@ class CompetitionPage(base_handler.BasePage):
 
 class PlatformPage(base_handler.BasePage):
   def template_file(self):
-    return "templates/underconstruction.html"
+    return "templates/rosebot.html"
 
   def page_title(self):
-    return "Platform"
+    return "RoseBot"
 
 class TeamsPage(base_handler.BasePage):
   def template_file(self):
