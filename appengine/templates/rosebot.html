@@ -1,1052 +1,330 @@
 {% extends 'templates/base.html' %} {% block content %}
+<link href="/static/dist/css/rosebot.css" rel="stylesheet">
+<div class="rosebot-header" tabindex="-1">
+  <div class="container">
+    <h1>RoseBot</h1>
+    <p>The Rosebotics Robot Platform</p>
+  </div>
+</div>
 <div class="container">
-  <h1 style="text-align:center;">Rosebot</h1>
-  <style type="text/css">
-
-  table {
-    width: 100%;
-  }
-ul.lst-kix_r0mh8gxhqse1-1 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-2 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-6.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-6 0
-}
-
-ul.lst-kix_r0mh8gxhqse1-0 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-7 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-8 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-5 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-6 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-3 {
-  list-style-type: none
-}
-
-ul.lst-kix_r0mh8gxhqse1-4 {
-  list-style-type: none
-}
-
-.lst-kix_9l1yoe4j082l-3>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-3
-}
-
-.lst-kix_9l1yoe4j082l-6>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-6, decimal) ". "
-}
-
-ol.lst-kix_9l1yoe4j082l-2.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-2 0
-}
-
-.lst-kix_9l1yoe4j082l-5>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-5, lower-roman) ". "
-}
-
-.lst-kix_9l1yoe4j082l-4>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-4, lower-latin) ". "
-}
-
-.lst-kix_9l1yoe4j082l-8>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-8
-}
-
-.lst-kix_9l1yoe4j082l-5>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-5
-}
-
-.lst-kix_9l1yoe4j082l-2>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-2
-}
-
-.lst-kix_9l1yoe4j082l-3>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-3, decimal) ". "
-}
-
-.lst-kix_9l1yoe4j082l-0>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-0, decimal) ". "
-}
-
-.lst-kix_9l1yoe4j082l-2>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-2, lower-roman) ". "
-}
-
-ol.lst-kix_9l1yoe4j082l-0.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-0 0
-}
-
-.lst-kix_9l1yoe4j082l-1>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-1, lower-latin) ". "
-}
-
-.lst-kix_9l1yoe4j082l-0>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-0
-}
-
-ol.lst-kix_9l1yoe4j082l-3.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-3 0
-}
-
-ol.lst-kix_9l1yoe4j082l-8 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-7 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-6 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-5 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-4 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-3 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-2 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-1 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-0 {
-  list-style-type: none
-}
-
-ol.lst-kix_9l1yoe4j082l-1.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-1 0
-}
-
-ol.lst-kix_9l1yoe4j082l-4.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-4 0
-}
-
-.lst-kix_9l1yoe4j082l-6>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-6
-}
-
-ol.lst-kix_9l1yoe4j082l-7.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-7 0
-}
-
-ol.lst-kix_9l1yoe4j082l-5.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-5 0
-}
-
-.lst-kix_r0mh8gxhqse1-8>li:before {
-  content: "\0025a0  "
-}
-
-.lst-kix_9l1yoe4j082l-7>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-7, lower-latin) ". "
-}
-
-.lst-kix_9l1yoe4j082l-8>li:before {
-  content: "" counter(lst-ctn-kix_9l1yoe4j082l-8, lower-roman) ". "
-}
-
-.lst-kix_r0mh8gxhqse1-6>li:before {
-  content: "\0025cf  "
-}
-
-.lst-kix_r0mh8gxhqse1-5>li:before {
-  content: "\0025a0  "
-}
-
-.lst-kix_r0mh8gxhqse1-7>li:before {
-  content: "\0025cb  "
-}
-
-.lst-kix_r0mh8gxhqse1-2>li:before {
-  content: "\0025a0  "
-}
-
-.lst-kix_r0mh8gxhqse1-1>li:before {
-  content: "\0025cb  "
-}
-
-.lst-kix_r0mh8gxhqse1-3>li:before {
-  content: "\0025cf  "
-}
-
-ol.lst-kix_9l1yoe4j082l-8.start {
-  counter-reset: lst-ctn-kix_9l1yoe4j082l-8 0
-}
-
-.lst-kix_r0mh8gxhqse1-0>li:before {
-  content: "\0025cf  "
-}
-
-.lst-kix_r0mh8gxhqse1-4>li:before {
-  content: "\0025cb  "
-}
-
-.lst-kix_9l1yoe4j082l-4>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-4
-}
-
-.lst-kix_9l1yoe4j082l-1>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-1
-}
-
-.lst-kix_9l1yoe4j082l-7>li {
-  counter-increment: lst-ctn-kix_9l1yoe4j082l-7
-}
-
-ol {
-  margin: 0;
-  padding: 0
-}
-
-.c18 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: middle;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 167.2pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c19 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: top;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 171.8pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c21 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: middle;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 244.8pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c1 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: top;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 244.8pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c26 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: middle;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 171.8pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c34 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: top;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 167.2pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c27 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 1pt;
-  border-right-width: 1pt;
-  border-left-color: #ffffff;
-  vertical-align: top;
-  border-right-color: #ffffff;
-  border-left-width: 1pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 1pt;
-  width: 489.6pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c32 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: top;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 174.8pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c22 {
-  border-right-style: solid;
-  padding: 5pt 5pt 5pt 5pt;
-  border-bottom-color: #ffffff;
-  border-top-width: 0pt;
-  border-right-width: 0pt;
-  border-left-color: #ffffff;
-  vertical-align: middle;
-  border-right-color: #ffffff;
-  border-left-width: 0pt;
-  border-top-style: solid;
-  border-left-style: solid;
-  border-bottom-width: 0pt;
-  width: 174.8pt;
-  border-top-color: #ffffff;
-  border-bottom-style: solid
-}
-
-.c3 {
-  background-color: #ffffff;
-  color: #555555;
-  font-weight: bold;
-  text-decoration: none;
-  vertical-align: baseline;
-  font-size: 14pt;
-  font-family: "Arial";
-  font-style: normal
-}
-
-.c33 {
-  color: #000000;
-  font-weight: normal;
-  text-decoration: none;
-  vertical-align: baseline;
-  font-size: 20pt;
-  font-family: "Arial";
-  font-style: normal
-}
-
-.c15 {
-  color: #000000;
-  font-weight: normal;
-  text-decoration: none;
-  vertical-align: baseline;
-  font-size: 11pt;
-  font-family: "Arial";
-  font-style: normal
-}
-
-.c0 {
-  padding-top: 0pt;
-  padding-bottom: 0pt;
-  line-height: 1.0;
-  text-align: center;
-  direction: ltr
-}
-
-.c4 {
-  background-color: #ffffff;
-  font-size: 14pt;
-  color: #555555;
-  font-weight: bold
-}
-
-.c7 {
-  padding-top: 0pt;
-  padding-bottom: 0pt;
-  line-height: 1.1;
-  text-align: center
-}
-
-.c9 {
-  padding-top: 0pt;
-  padding-bottom: 0pt;
-  line-height: 1.15;
-  text-align: center
-}
-
-.c25 {
-  padding-top: 0pt;
-  padding-bottom: 0pt;
-  line-height: 1.1
-}
-
-.c2 {
-  orphans: 2;
-  widows: 2;
-  direction: ltr
-}
-
-.c37 {
-  margin-left: -9.8pt;
-  border-collapse: collapse;
-  margin-right: auto
-}
-
-.c20 {
-  border-collapse: collapse;
-  margin-right: auto
-}
-
-.c30 {
-  background-color: #ffffff;
-  max-width: 489.6pt;
-  padding: 54pt 61.2pt 54pt 61.2pt
-}
-
-.c28 {
-  background-color: #ffffff;
-  font-size: 18pt;
-  color: #555555
-}
-
-.c13 {
-  padding: 0;
-  margin: 0
-}
-
-.c17 {
-  color: inherit;
-  text-decoration: inherit
-}
-
-.c14 {
-  margin-left: 36pt;
-  padding-left: 0pt
-}
-
-.c16 {
-  margin-left: -2.7pt
-}
-
-.c6 {
-  height: 11pt
-}
-
-.c35 {
-  height: 32pt
-}
-
-.c12 {
-  color: #1155cc
-}
-
-.c31 {
-  font-size: 18pt
-}
-
-.c36 {
-  height: 20pt
-}
-
-.c8 {
-  height: 0pt
-}
-
-.c5 {
-  color: #a61c00
-}
-
-.c29 {
-  direction: ltr
-}
-
-.c23 {
-  text-align: center
-}
-
-.c10 {
-  font-weight: bold
-}
-
-.c24 {
-  font-size: 11pt
-}
-
-.c11 {
-  text-decoration: underline
-}
-
-.title {
-  padding-top: 0pt;
-  color: #000000;
-  font-size: 26pt;
-  padding-bottom: 3pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-.subtitle {
-  padding-top: 0pt;
-  color: #666666;
-  font-size: 15pt;
-  padding-bottom: 16pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-li {
-  color: #000000;
-  font-size: 11pt;
-  font-family: "Arial"
-}
-
-p {
-  margin: 0;
-  color: #000000;
-  font-size: 11pt;
-  font-family: "Arial"
-}
-
-h1 {
-  padding-top: 20pt;
-  color: #000000;
-  font-size: 20pt;
-  padding-bottom: 6pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-h2 {
-  padding-top: 18pt;
-  color: #000000;
-  font-size: 16pt;
-  padding-bottom: 6pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-h3 {
-  padding-top: 16pt;
-  color: #434343;
-  font-size: 14pt;
-  padding-bottom: 4pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-h4 {
-  padding-top: 14pt;
-  color: #666666;
-  font-size: 12pt;
-  padding-bottom: 4pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-h5 {
-  padding-top: 12pt;
-  color: #666666;
-  font-size: 11pt;
-  padding-bottom: 4pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-
-h6 {
-  padding-top: 12pt;
-  color: #666666;
-  font-size: 11pt;
-  padding-bottom: 4pt;
-  font-family: "Arial";
-  line-height: 1.15;
-  page-break-after: avoid;
-  font-style: italic;
-  orphans: 2;
-  widows: 2;
-  text-align: left
-}
-</style>
-  <p class="c2 c23">
-    <span class="c31 c10">The Rosebotics Robot Platform</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>The Rosebotics robot platform, simply called Rosebot, is designed to include all you will need to: </span>
-  </p>
-  <ol class="c13 lst-kix_9l1yoe4j082l-0 start" start="1">
-    <li class="c2 c14"><span>Complete all of the online Rosebotics courseware</span></li>
-    <li class="c2 c14"><span>Participate in the annual Rosebotics competition</span></li>
-  </ol>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span class="c10 c11">Overview</span>
-  </p>
-  <p class="c2">
-    <span>The core component of Rosebot is the Sparkfun RedBot (Inventor&rsquo;s Kit version), a 2 wheel drive, Arduino-based robot.
-      &nbsp;RedBot is designed to be simple to use, easy to modify and, most importantly, fun to use! &nbsp;The RedBot comes with a bunch of sensors
-      already included, such as: bump sensors, wheel encoders and line following sensors. &nbsp; In addition to the RedBot, the Rosebot platform adds
-      some peripherals, a wireless communication mechanism, and a software stack to support the C, Python, and Scratch programming languages.</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c23">
-    <span
-      style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 624.00px; height: 270.67px;"><img
-      alt="rosebot.png" src="/static/images/rosebot/image02.png"
-      style="width: 624.00px; height: 270.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-      title=""></span>
-  </p>
-  <p class="c2 c23">
-    <span>Rosebot (still a work in progress to make it pretty)</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>In addition to the Sparkfun Redbot, the image above show the additional hardware:</span>
-  </p>
-  <ul class="c13 lst-kix_r0mh8gxhqse1-0 start">
-    <li class="c2 c14"><span class="c10">WiFly module</span><span>&nbsp;to allow the RedBot to be controlled wirelessly, a fun addition
-        for any robotics project.</span></li>
-    <li class="c2 c14"><span class="c10">Extra IR distance sensors</span><span>&nbsp;to allow advanced detection of upcoming obstacles.</span></li>
-    <li class="c2 c14"><span class="c10">A smartphone mount</span><span>&nbsp;to allow you to add your own smartphone for advanced
-        challenges.</span></li>
-  </ul>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>Here is a list of the materials used in the Rosebot. &nbsp;Note, some components are required, other components you can choose to
-      purchase or not depending on how you expect to use your robot.</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <hr style="page-break-before: always; display: none;">
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <h1 class="c2 c25">
-    <a name="h.pbloxkkbfxpt"></a><span class="c24">The core of RoseBot is the Sparkfun RedBot. &nbsp;Originally we had made a very custom
-      robot, but we&rsquo;ve since decided that it&rsquo;s more fun to join a thriving community. &nbsp;RedBot is an excellent choice because you can
-      program it with Arduino and start your experience with the </span><span class="c12 c24 c11"><a class="c17"
-      href="https://www.google.com/url?q=https://learn.sparkfun.com/tutorials/experiment-guide-for-redbot-with-shadow-chassis&amp;sa=D&amp;usg=AFQjCNG-B43oc4Liz5ZMPfOuK619QN15RA">Sparkfun
-        experiments</a></span><span class="c24">.</span>
-  </h1>
-  <h1 class="c7 c2 c36">
-    <a name="h.gf1cz36bgaqk"></a>
-  </h1>
-  <h1 class="c7 c2">
-    <a name="h.tfonjmyj04v1"></a><span class="c28 c10">SparkFun Inventor&#39;s Kit for RedBot</span>
-  </h1>
-  <h1 class="c7 c2">
-    <a name="h.hwtxqov0g9cj"></a><span class="c5 c24">(Required)</span>
-  </h1>
-  <p class="c2 c23">
-    <span
-      style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 262.00px; height: 213.63px;"><img
-      alt="Redbot_Kit-85.jpg" src="static/images/rosebot/image04.jpg"
-      style="width: 373.79px; height: 248.09px; margin-left: -66.37px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-      title=""></span>
-  </p>
-  <p class="c2 c23">
-    <span>$119.95 from Sparkfun (</span><span class="c12 c11"><a class="c17"
-      href="https://www.google.com/url?q=https://www.sparkfun.com/products/12649&amp;sa=D&amp;usg=AFQjCNEvm8vV43QuLEAIiZ5UHlgEEDqTUA">link</a></span><span>)</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>If you want to control your Rosebot wirelessly using C or control the robot using Python or Scratch you will need a WiFly module.
-      &nbsp;In addition to the WiFly module you should also purchase (or borrow for 5 minutes) an explorer USB to do the one time WiFly setup with
-      your home network.</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <a href="#" name="3c657da708910a41f5fc77093facfd8c2b938bef"></a><a href="#" name="0"></a>
-  <table cellpadding="0" cellspacing="0" class="c20">
-    <tbody>
-      <tr class="c8">
-        <td class="c1" colspan="1" rowspan="1"><h1 class="c2 c7">
-            <a name="h.kku88pj1wkjm"></a><span class="c3">WiFly Module - Wire Antenna</span>
-          </h1>
-          <p class="c9 c2">
-            <span class="c5">(You could use an XBee pair if you prefer)</span>
-          </p></td>
-        <td class="c1" colspan="1" rowspan="1"><h1 class="c7 c29">
-            <a name="h.oyp1bdqa84zs"></a><span class="c3">SparkFun Explorer USB</span>
-          </h1>
-          <p class="c9 c2">
-            <span class="c5">(Required to setup the WiFly once)</span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c21" colspan="1" rowspan="1"><p class="c2 c9">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 120.00px; height: 105.00px;"><img
-              alt="10822-01.jpg" src="static/images/rosebot/image08.jpg"
-              style="width: 120.00px; height: 120.00px; margin-left: 0.00px; margin-top: -6.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-        <td class="c21" colspan="1" rowspan="1"><p class="c9 c2">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 110.84px; height: 88.50px;"><img
-              alt="11812-02.jpg" src="static/images/rosebot/image07.jpg"
-              style="width: 110.84px; height: 112.10px; margin-left: 0.00px; margin-top: -14.75px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c1" colspan="1" rowspan="1"><p class="c9 c2">
-            <span>$34.95 from Sparkfun (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=https://www.sparkfun.com/products/10822&amp;sa=D&amp;usg=AFQjCNEPkB4qxFmx4ItglLYLBrWt7IBIqw">link</a></span><span>)</span>
-          </p></td>
-        <td class="c1" colspan="1" rowspan="1"><p class="c9 c2">
-            <span>$24.95 from Sparkfun (</span><span class="c11 c12"><a class="c17"
-              href="https://www.google.com/url?q=https://www.sparkfun.com/products/11812&amp;sa=D&amp;usg=AFQjCNGrSbnzWO51YsZ7yijX-3LUklfDmg">link</a></span><span>)</span>
-          </p></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <hr style="page-break-before: always; display: none;">
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>In addition to the RedBot sensors we decided to add 3 distance sensors. &nbsp;If you would like to add distance sensors to your
-      Rosebot we recommend the purchases below. &nbsp;By adding these sensors you will be able to follow along with any Rosebotics course material
-      created.</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <a href="#" name="232cfdc71d8b1f60a700119961b4abac98259c73"></a><a href="#" name="1"></a>
-  <table cellpadding="0" cellspacing="0" class="c37">
-    <tbody>
-      <tr class="c35">
-        <td class="c34" colspan="1" rowspan="1"><h1 class="c0 c16">
-            <a name="h.pa44ztpypjl8"></a><span class="c4">Sharp IR Range Sensor</span><span class="c5 c24"><br>(optional)</span>
-          </h1></td>
-        <td class="c34" colspan="1" rowspan="1"><h1 class="c0 c16">
-            <a name="h.pa44ztpypjl8"></a><span class="c4">Sharp Sensor Cable</span><span class="c5 c24"><br>(optional)</span>
-          </h1></td>
-        <td class="c32" colspan="1" rowspan="1"><h1 class="c0 c16">
-            <a name="h.cym28jp0jzxb"></a><span class="c4">Distance Sensor Bracket </span><span class="c5 c24"><br>(optional)</span>
-          </h1></td>
-      </tr>
-      <tr class="c8">
-        <td class="c26" colspan="1" rowspan="1"><p class="c0 c16">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 141.90px; height: 141.90px;"><img
-              alt="08959-03-L.jpg" src="static/images/rosebot/image05.jpg"
-              style="width: 141.90px; height: 141.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-        <td class="c18" colspan="1" rowspan="1"><p class="c0 c16">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 164.00px; height: 120.00px;"><img
-              alt="" src="static/images/rosebot/image09.png"
-              style="width: 164.00px; height: 164.00px; margin-left: 0.00px; margin-top: -23.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-        <td class="c22" colspan="1" rowspan="1"><p class="c0 c16">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 156.00px; height: 128.00px;"><img
-              alt="" src="static/images/rosebot/image06.png"
-              style="width: 156.00px; height: 156.00px; margin-left: 0.00px; margin-top: -11.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c19" colspan="1" rowspan="1"><p class="c0 c16">
-            <span>$41.85 from RobotShop (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=http://www.robotshop.com/en/sharp-gp2y0a21yk0f-ir-range-sensor.html&amp;sa=D&amp;usg=AFQjCNGGVKJszCB-R_KYto9M5NRSnVoWYw">link</a></span><span
-              class="c15">)</span>
-          </p>
-          <p class="c0 c16">
-            <span class="c15">Buy 3 @ $13.95 each</span>
-          </p>
-          <p class="c0 c16 c6">
-            <span class="c15"></span>
-          </p></td>
-        <td class="c34" colspan="1" rowspan="1"><p class="c0 c16">
-            <span>$4.50 from RobotShop (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=http://www.robotshop.com/en/sirc-01-sharp-gp2-ir-sensor-cable-8.html&amp;sa=D&amp;usg=AFQjCNHiWvql8lAxEHEJZi4T6Y-LWXLodg">link</a></span><span
-              class="c15">)</span>
-          </p>
-          <p class="c0 c16">
-            <span class="c15">Buy 3 @ $1.50 each</span>
-          </p></td>
-        <td class="c32" colspan="1" rowspan="1"><p class="c0 c16">
-            <span>$12.45 from RobotShop (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=http://www.robotshop.com/en/analog-distance-sensor-bracket.html&amp;sa=D&amp;usg=AFQjCNEsQj4zovSgBewlsLWPIPzay1zkAw">link</a></span><span
-              class="c15">)</span>
-          </p>
-          <p class="c0 c16">
-            <span class="c15">Buy 3 @ $4.15 each</span>
-          </p></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>In addition to the wireless module and the extra sensors, we&rsquo;ve also added a smartphone mount. &nbsp;The purpose of the
-      smartphone mount is to allow users to experiment with things like image recognition using a camera, internet remote control using tools like
-      Firebase, video streams, or on-screen displays to express your robot&rsquo;s emotional state. ;) &nbsp;To mount your smartphone we&rsquo;ve
-      chosen this pan and tilt phone mount.</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <a href="#" name="a99b61429f5dea83ba09b4c25d903340489611bb"></a><a href="#" name="2"></a>
-  <table cellpadding="0" cellspacing="0" class="c20">
-    <tbody>
-      <tr class="c8">
-        <td class="c1" colspan="1" rowspan="1"><p class="c0">
-            <span class="c3">Cell Phone Pan and Tilt Kit</span>
-          </p>
-          <p class="c0">
-            <span class="c5">(Optional, fits well with RedBot)</span>
-          </p></td>
-        <td class="c1" colspan="1" rowspan="1"><p class="c0">
-            <span class="c3">Servos for the phone mount</span>
-          </p>
-          <p class="c0">
-            <span class="c5">(The kit to the left does NOT include servos)</span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c1" colspan="1" rowspan="1"><p class="c0">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 169.90px; height: 171.01px;"><img
-              alt="lynxmotion-cell-phone-pan-tilt-kit-no-servos-2_1.jpg" src="static/images/rosebot/image01.jpg"
-              style="width: 169.90px; height: 171.01px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-        <td class="c21" colspan="1" rowspan="1"><p class="c0">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 196.00px; height: 172.00px;"><img
-              alt="" src="static/images/rosebot/image00.png"
-              style="width: 196.00px; height: 197.00px; margin-left: 0.00px; margin-top: -16.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c1" colspan="1" rowspan="1"><p class="c0">
-            <span>$24.95 from RobotShop (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=http://www.robotshop.com/en/lynxmotion-cell-phone-pan-tilt-kit-no-servos.html?gclid%3DCjwKEAjwu72pBRC9hsn2-e34vRUSJACnSYsTR80lPS5KwYA8ocRz8CRKh7VeKibkHU0FuBgeD6lZqBoCIkDw_wcB&amp;sa=D&amp;usg=AFQjCNFuadnCLLIG7TwnwkbfX253otczJQ">link</a></span><span>)</span>
-          </p></td>
-        <td class="c1" colspan="1" rowspan="1"><p class="c0">
-            <span>$19.98 from RobotShop (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=http://www.robotshop.com/en/hitec-hs422-servo-motor.html&amp;sa=D&amp;usg=AFQjCNElZljQ1K2boxQzook9fSMYxyMPfA">link</a></span><span
-              class="c15">)</span>
-          </p>
-          <p class="c0">
-            <span class="c15">Buy 2 @ $9.99 each</span>
-          </p></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>If you do not have a AA battery charger, then it is highly recommended that you purchase one of these as well. &nbsp;This option
-      includes 8 batteries. &nbsp;Use any battery solution you like though. :)</span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <a href="#" name="a067345f01b77d4671810e1cd1b893a890f4b4cd"></a><a href="#" name="3"></a>
-  <table cellpadding="0" cellspacing="0" class="c20">
-    <tbody>
-      <tr class="c8">
-        <td class="c27" colspan="1" rowspan="1"><p class="c0">
-            <span class="c4">Powerex Battery Charger w/Batteries</span><span class="c5 c24"><br>(This is the option we used but pick any option you like)</span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c27" colspan="1" rowspan="1"><p class="c0">
-            <span
-              style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 175.90px; height: 175.90px;"><img
-              alt="" src="static/images/rosebot/image03.png"
-              style="width: 175.90px; height: 175.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-              title=""></span>
-          </p></td>
-      </tr>
-      <tr class="c8">
-        <td class="c27" colspan="1" rowspan="1"><p class="c0">
-            <span>$48.95 from B&amp;H Photo and Video (</span><span class="c12 c11"><a class="c17"
-              href="https://www.google.com/url?q=http://www.bhphotovideo.com/c/product/1104557-REG/powerex_mh_c800s8aa27_mh_c800s_8_cell_smart_charger.html&amp;sa=D&amp;usg=AFQjCNHtTCx4auhLSeCtCg7_TcuQtATrlg">link</a></span><span>)</span>
-          </p></td>
-      </tr>
-    </tbody>
-  </table>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2">
-    <span>If you look at the total prices for all the items the cost of the entire Rosebot platform is $332.53 plus shipping and tax.
-      &nbsp;Happy shopping, and we look forward to you joining the Rosebotics team! </span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
-  <p class="c2 c6">
-    <span></span>
-  </p>
+  <div class="row">
+    <p class="no-gap-before-list">The Rosebotics robot platform, simply called RoseBot, is designed to include all you will need to:</p>
+    <ol>
+      <li>Complete all of the online Rosebotics courseware</li>
+      <li>Participate in the annual Homecoming Rosebotics competition</li>
+    </ol>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+          <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Overview</a>
+          </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Overview">
+          <div class="panel-body">
+            <p>
+              The core component of RoseBot is the Sparkfun RedBot (Inventor's Kit version), a 2 wheel drive, Arduino-based robot. RedBot is designed
+              to be simple to use, easy to modify and, most importantly, fun to use! The RedBot comes with a bunch of sensors already included, such
+              as: bump sensors, wheel encoders and line following sensors. In addition to the RedBot, the RoseBot platform adds some peripherals, a
+              wireless communication mechanism, and a software stack to support the C, Python, and Scratch programming languages.</span>
+            </p>
+            <div class="clearfix"></div>
+            <div class="col-md-8 col-md-offset-2">
+              <img alt="RoseBot" src="/static/images/rosebot/rosebot.jpg" class="center-block img-responsive img-rounded"
+                title="RoseBot draft version">
+              <p class="text-center">
+                RoseBot Draft version<br> <span class="small-subtext">(still a work in progress to make it pretty)</span>
+              </p>
+            </div>
+            <div class="clearfix"></div>
+            <p class="no-gap-before-list">In addition to the Sparkfun RedBot, the image above shows the additional RoseBot hardware:</p>
+            <ul>
+              <li><strong>WiFly module</strong> to allow the RedBot to be controlled wirelessly, a fun addition for any robotics project.</li>
+              <li><strong>Extra IR distance sensors</strong> to allow advanced detection of upcoming obstacles.</li>
+              <li><strong>A smartphone mount</strong> to allow you to add your own smartphone for advanced challenges.</li>
+            </ul>
+            <p>
+              <span></span>
+            </p>
+            <p>
+              Some components are required, other components you can choose to purchase or not depending on how you expect to use your robot. In order
+              to help guide or purchase decision, we've created a <strong>Core components</strong> category and an <strong>Extras</strong> category.
+              We recommend you pick up the <strong>Core components</strong> initially and only purchase the <strong>Extras</strong> once you're sure
+              you can commit time to this project. Love to have you join our world, but don't by a dust collector. :)
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+          <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false"
+              aria-controls="collapseTwo">Core components</a>
+          </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+          <div class="panel-body">
+            <div class="panel-group" id="core-component-accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingCoreOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreOne" aria-expanded="true"
+                      aria-controls="collapseCoreOne">Sparkfun RedBot</a>
+                  </h4>
+                </div>
+                <div id="collapseCoreOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingCoreOne">
+                  <div class="panel-body">
+                    <p>
+                      The core of RoseBot is the Sparkfun RedBot (which explains the naming similarity). Originally the Rosebotics team made a very
+                      custom robot, but we've since decided that it's more fun to join a thriving community. RedBot is an excellent choice for our
+                      group's goals because you can program it with Arduino, and start your experience with the Sparkfun <a target="_blank"
+                        href="https://learn.sparkfun.com/tutorials/assembly-guide-for-redbot-with-shadow-chassis">Assembly Guide</a> and <a
+                        target="_blank" href="https://learn.sparkfun.com/tutorials/experiment-guide-for-RedBot-with-shadow-chassis">Arduino
+                        Experiments,</a> or you can look at some of our course material to learn more about Python on Scratch. <strong>ALL are
+                        fun!</strong> While we are getting material together for Python and Scratch, you can enjoy your robot with Arduino development
+                      explained by the good folks at Sparkfun.
+                    </p>
+                    <h4 class="text-center">SparkFun Inventor's Kit for RedBot</h4>
+                    <div class="col-md-4 col-md-offset-4">
+                      <img alt="RedBot" src="/static/images/rosebot/image04.jpg" class="center-block img-responsive img-rounded" title="RedBot">
+                      <p class="text-center">
+                        <span>$119.95 from Sparkfun (</span><span><a target="_blank" href="https://www.sparkfun.com/products/12649">link</a></span><span>)</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingCoreTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreTwo"
+                      aria-expanded="false" aria-controls="collapseCoreTwo">A Wireless Solution</a>
+                  </h4>
+                </div>
+                <div id="collapseCoreTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreTwo">
+                  <div class="panel-body">
+                    <p>
+                      <span>If you want to control your RoseBot wirelessly using an Arduino Sketch or control the robot using Python (like
+                        we'll do in the CSSE120 content we'll make) or Scratch (AWESOME for new programmers and kids), you will need a why to get rid
+                        of the USB cable that tethers your robot to your computer. Normally hobbyist use two XBee models as their wireless solution.
+                        That can work if you'd like to go that route. Moving forward though, we live in a WiFi world, so we are moving away from the
+                        traditional XBee and using a WiFi solution. Fortunately Sparkfun sells a WiFly module that fits the RedBot XBee connector
+                        (listed below). In addition to the WiFly module you should also purchase (or borrow for 5 minutes) an Explorer USB dongle to
+                        do the one time WiFly setup with your home network. Someday we'll provide an Arduino Sketch to let you avoid the purchase of
+                        the Explorer Donge for the network setup, but for now you need to buy that one too.</span>
+                    </p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="text-center">WiFly Module - Wire Antenna</h4>
+                            <p>
+                              <span class="red-details">(You could use an XBee pair if you prefer)</span>
+                            </p>
+                          </td>
+                          <td><h4 class="text-center">SparkFun Explorer USB Dongle</h4>
+                            <p>
+                              <span class="red-details">(Required to setup the WiFly once)</span>
+                            </p></td>
+                        </tr>
+                        <tr>
+                          <!-- TODO: I could make these images use Bootstrap classes instead of hardcoded sizes, but I really just don't care about them. :) -->
+                          <td><img alt="10822-01.jpg" src="static/images/rosebot/wifly.jpg"
+                            style="width: 120.00px; height: 120.00px; margin-left: 0.00px; margin-top: -6.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                            title=""></td>
+                          <td><img alt="11812-02.jpg" src="static/images/rosebot/explorer_dongle.jpg"
+                            style="width: 110.84px; height: 112.10px; margin-left: 0.00px; margin-top: -14.75px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                            title=""></td>
+                        </tr>
+                        <tr>
+                          <td>$34.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/10822">link</a>)
+                          </td>
+                          <td>$24.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/11697">link</a>)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingCoreThree">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreThree"
+                      aria-expanded="false" aria-controls="collapseCoreThree">Rechargeable AA batteries</a>
+                  </h4>
+                </div>
+                <div id="collapseCoreThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreThree">
+                  <div class="panel-body">
+                    <p>For the sake of the environment please don't make Alkaline batteries your permenant solution. :) You have my personally
+                      permission to use regualr AA batteries for a while initially, but if you use the robot much at all invest in a better battery
+                      solution. So if you do not have a AA battery charger already, then it is highly recommended that you purchase SOME recharger.
+                      This option includes 8 batteries so it's a pretty good deal for the features it includes: LCD display, individual charging
+                      instead of pair charging, and a reconditioning cycle.</p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="text-center">Powerex Battery Charger w/Batteries</h4>
+                            <p>
+                              <span class="red-details">(This is the option we used, but pick any option you like, here is a <a target="_blank"
+                                href="http://amzn.com/B00EB7812C">cheaper one</a>)
+                              </span>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><img alt="Battery Charger" src="static/images/rosebot/image03.png"
+                            style="width: 175.90px; height: 175.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                            title="Battery Charger"></td>
+                        </tr>
+                        <tr>
+                          <td>$48.95 from B&amp;H Photo and Video (<a target="_blank"
+                            href="http://www.bhphotovideo.com/c/product/1104557-REG/powerex_mh_c800s8aa27_mh_c800s_8_cell_smart_charger.html">link</a>)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <br>
+                    <p class="text-center">
+                      Cheaper on the site above than on Amazon (<a target="_blank" href="http://amzn.com/B000LQMKDS">here</a>) only because the site
+                      above includes 8 batteries (just make sure they <b>DO</b> ship them to you).
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+          <h4 class="panel-title">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false"
+              aria-controls="collapseThree">Extras</a>
+          </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            <div class="panel-group" id="extras-accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingExtrasOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#extras-accordion" href="#collapseExtrasOne" aria-expanded="true"
+                      aria-controls="collapseExtrasOne"> Additional Sensors - Distance Sensors </a>
+                  </h4>
+                </div>
+                <div id="collapseExtrasOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingExtrasOne">
+                  <div class="panel-body">
+                    <p>In addition to the RedBot sensors we decided to add 3 distance sensors. If you would like to add distance sensors to your
+                      RoseBot we recommend the purchases below. By adding these sensors you will be able to follow along with any Rosebotics course
+                      material created.</p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="text-center">Sharp IR Range Sensor</h4>
+                            <p>
+                              <span class="red-details">(optional)</span>
+                            </p>
+                          </td>
+                          <td>
+                            <h4 class="text-center">Sharp Sensor Cable</h4>
+                            <p>
+                              <span class="red-details">(Recommended if you buy the sensor)</span>
+                            </p>
+                          </td>
+                          <td>
+                            <h4 class="text-center">Distance Sensor Bracket</h4>
+                            <p>
+                              <span class="red-details">(Recommended if you buy the sensor)</span>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><img alt="08959-03-L.jpg" src="static/images/rosebot/image05.jpg"
+                            style="width: 141.90px; height: 141.90px;"
+                            title=""></td>
+                          <td><img alt="" src="static/images/rosebot/image09.png"
+                            style="width: 164.00px; height: 164.00px;"
+                            title=""></td>
+                          <td><img alt="" src="static/images/rosebot/image06.png"
+                            style="width: 156.00px; height: 156.00px;"
+                            title=""></td>
+                        </tr>
+                        <tr>
+                          <td>$41.85 from RobotShop (<a target="_blank"
+                            href="http://www.robotshop.com/en/sharp-gp2y0a21yk0f-ir-range-sensor.html">link</a>) <br>Buy 3 @ $13.95 each
+                          </td>
+                          <td>$4.50 from RobotShop (<a target="_blank"
+                            href="http://www.robotshop.com/en/sirc-01-sharp-gp2-ir-sensor-cable-8.html">link</a>) <br>Buy 3 @ $1.50 each
+                          </td>
+                          <td>$12.45 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/analog-distance-sensor-bracket.html">link</a>)
+                            <br>Buy 3 @ $4.15 each
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingExtrasTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#extras-accordion" href="#collapseExtrasTwo"
+                      aria-expanded="false" aria-controls="collapseExtrasTwo"> Smartphone Mount </a>
+                  </h4>
+                </div>
+                <div id="collapseExtrasTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingExtrasTwo">
+                  <div class="panel-body">
+                    <p>In addition to the wireless module and the extra sensors, we've also added a smartphone mount. The purpose of the
+                      smartphone mount is to allow users to experiment with things like image recognition using a camera, internet remote control
+                      using tools like Firebase, video streams, or on-screen displays to express your robot's emotional state. ;) To mount your
+                      smartphone we've chosen this pan and tilt phone mount.</p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="text-center">Cell Phone Pan and Tilt Kit</h4>
+                            <p>
+                              <span class="red-details">(Optional, fits well with RedBot)</span>
+                            </p>
+                          </td>
+                          <td>
+                            <h4 class="text-center">Servos for the phone mount</h4>
+                            <p>
+                              <span class="red-details">(The kit to the left does NOT include servos)</span>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><img alt="lynxmotion-cell-phone-pan-tilt-kit-no-servos-2_1" src="static/images/rosebot/image01.jpg"
+                            style="width: 169.90px; height: 171.01px;" title=""></td>
+                          <td><img alt="" src="static/images/rosebot/image00.png"
+                            style="width: 196.00px; height: 197.00px;" title=""></td>
+                        </tr>
+                        <tr>
+                          <td>$24.95 from RobotShop (<a target="_blank"
+                            href="http://www.robotshop.com/en/lynxmotion-cell-phone-pan-tilt-kit-no-servos.html">link</a>)
+                          </td>
+                          <td>$19.98 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/hitec-hs422-servo-motor.html">link</a>)
+                            <br>Buy 2 @ $9.99 each
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h4>Summary</h4>
+    <p>If you look at the total prices for all the items the cost of the entire RoseBot platform is $332.53 plus shipping and tax. So really I
+      wouldn't just blindly order everything. Pick what you think you'd like to start with. I recommend RedBot, WiFly (+USB Explorer Dongle), and some
+      battery solution to start with. Happy shopping! We look forward to you joining the Rosebotics team!</p>
+  </div>
 </div>
 {% endblock %}
