@@ -65,83 +65,136 @@
         </div>
         <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
           <div class="panel-body">
-
-          <!-- TODO Try making the interior also an accordion. -->
-
-            <p>
-              The core of RoseBot is the Sparkfun RedBot (which explains the naming similarity). Originally the Rosebotics team made a very custom
-              robot, but we've since decided that it's more fun to join a thriving community. RedBot is an excellent choice for our group goals
-              because you can program it with Arduino, and start your experience with the Sparkfun <a target="_blank"
-                href="https://learn.sparkfun.com/tutorials/assembly-guide-for-redbot-with-shadow-chassis">Assembly Guide</a> and <a target="_blank"
-                href="https://learn.sparkfun.com/tutorials/experiment-guide-for-RedBot-with-shadow-chassis">Arduino Experiments,</a> or you can look
-              at some of our course material to learn more about Python on Scratch. <strong>ALL are fun!</strong> While we are getting material
-              together for Python and Scratch, you can enjoy your robot with Arduino development explained by the good folks at Sparkfun.
-            </p>
-            <h4 class="text-center">SparkFun Inventor's Kit for RedBot</h4>
-            <div class="col-md-4 col-md-offset-4">
-              <img alt="RedBot" src="/static/images/rosebot/image04.jpg" class="center-block img-responsive img-rounded"
-                title="RedBot">
-                          <p class="text-center">
-              <span>$119.95 from Sparkfun (</span><span><a target="_blank" href="https://www.sparkfun.com/products/12649">link</a></span><span>)</span>
-            </p>
+            <div class="panel-group" id="core-component-accordion" role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingCoreOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreOne" aria-expanded="true"
+                      aria-controls="collapseCoreOne">Sparkfun RedBot</a>
+                  </h4>
+                </div>
+                <div id="collapseCoreOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingCoreOne">
+                  <div class="panel-body">
+                    <p>
+                      The core of RoseBot is the Sparkfun RedBot (which explains the naming similarity). Originally the Rosebotics team made a very
+                      custom robot, but we've since decided that it's more fun to join a thriving community. RedBot is an excellent choice for our
+                      group's goals because you can program it with Arduino, and start your experience with the Sparkfun <a target="_blank"
+                        href="https://learn.sparkfun.com/tutorials/assembly-guide-for-redbot-with-shadow-chassis">Assembly Guide</a> and <a
+                        target="_blank" href="https://learn.sparkfun.com/tutorials/experiment-guide-for-RedBot-with-shadow-chassis">Arduino
+                        Experiments,</a> or you can look at some of our course material to learn more about Python on Scratch. <strong>ALL are
+                        fun!</strong> While we are getting material together for Python and Scratch, you can enjoy your robot with Arduino development
+                      explained by the good folks at Sparkfun.
+                    </p>
+                    <h4 class="text-center">SparkFun Inventor's Kit for RedBot</h4>
+                    <div class="col-md-4 col-md-offset-4">
+                      <img alt="RedBot" src="/static/images/rosebot/image04.jpg" class="center-block img-responsive img-rounded" title="RedBot">
+                      <p class="text-center">
+                        <span>$119.95 from Sparkfun (</span><span><a target="_blank" href="https://www.sparkfun.com/products/12649">link</a></span><span>)</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingCoreTwo">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreTwo"
+                      aria-expanded="false" aria-controls="collapseCoreTwo">A Wireless Solution</a>
+                  </h4>
+                </div>
+                <div id="collapseCoreTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreTwo">
+                  <div class="panel-body">
+                    <p>
+                      <span>If you want to control your RoseBot wirelessly using an Arduino Sketch or control the robot using Python (like
+                        we'll do in the CSSE120 content we'll make) or Scratch (AWESOME for new programmers and kids), you will need a why to get rid
+                        of the USB cable that tethers your robot to your computer. Normally hobbyist use two XBee models as their wireless solution.
+                        That can work if you'd like to go that route. Moving forward though, we live in a WiFi world, so we are moving away from the
+                        traditional XBee and using a WiFi solution. Fortunately Sparkfun sells a WiFly module that fits the RedBot XBee connector
+                        (listed below). In addition to the WiFly module you should also purchase (or borrow for 5 minutes) an Explorer USB dongle to
+                        do the one time WiFly setup with your home network. Someday we'll provide an Arduino Sketch to let you avoid the purchase of
+                        the Explorer Donge for the network setup, but for now you need to buy that one too.</span>
+                    </p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="text-center">WiFly Module - Wire Antenna</h4>
+                            <p>
+                              <span class="red-details">(You could use an XBee pair if you prefer)</span>
+                            </p>
+                          </td>
+                          <td><h4 class="text-center">SparkFun Explorer USB Dongle</h4>
+                            <p>
+                              <span class="red-details">(Required to setup the WiFly once)</span>
+                            </p></td>
+                        </tr>
+                        <tr>
+                          <!-- TODO: I could make these images use Bootstrap classes instead of hardcoded sizes, but I really just don't care about them. :) -->
+                          <td><img alt="10822-01.jpg" src="static/images/rosebot/wifly.jpg"
+                            style="width: 120.00px; height: 120.00px; margin-left: 0.00px; margin-top: -6.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                            title=""></td>
+                          <td><img alt="11812-02.jpg" src="static/images/rosebot/explorer_dongle.jpg"
+                            style="width: 110.84px; height: 112.10px; margin-left: 0.00px; margin-top: -14.75px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                            title=""></td>
+                        </tr>
+                        <tr>
+                          <td>$34.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/10822">link</a>)
+                          </td>
+                          <td>$24.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/11697">link</a>)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingCoreThree">
+                  <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreThree"
+                      aria-expanded="false" aria-controls="collapseCoreThree">Rechargeable AA batteries</a>
+                  </h4>
+                </div>
+                <div id="collapseCoreThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreThree">
+                  <div class="panel-body">
+                    <p>
+                      For the sake of the environment please don't make Alkaline batteries your permenant solution. :) You have my personally
+                      permission to use regualr AA batteries for a while initially, but if you use the robot much at all invest in a better battery
+                      solution. So if you do not have a AA battery charger already, then it is highly recommended that you purchase SOME recharger.
+                      This option includes 8 batteries so it's a pretty good deal for the features it includes: LCD display, individual charging
+                      instead of pair charging, and a reconditioning cycle.
+                    </p>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>
+                            <h4 class="text-center">Powerex Battery Charger w/Batteries</h4>
+                            <p>
+                              <span class="red-details">(This is the option we used, but pick any option you like, here is a <a target="_blank"
+                        href="http://amzn.com/B00EB7812C">cheaper one</a>)</span>
+                            </p>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><img alt="Battery Charger" src="static/images/rosebot/image03.png"
+                            style="width: 175.90px; height: 175.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                            title="Battery Charger"></td>
+                        </tr>
+                        <tr>
+                          <td>$48.95 from B&amp;H Photo and Video (<a target="_blank"
+                            href="http://www.bhphotovideo.com/c/product/1104557-REG/powerex_mh_c800s8aa27_mh_c800s_8_cell_smart_charger.html">link</a>)
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <br>
+                    <p class="text-center">
+                      Cheaper on the site above then on Amazon (<a target="_blank" href="http://amzn.com/B000LQMKDS">here</a>) only because the site
+                      above includes 8 batteries (just make sure they <b>DO</b> ship them to you).
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="clearfix"></div>
-
-            <p>
-              <span>If you want to control your RoseBot wirelessly using C or control the robot using Python or Scratch you will need a WiFly
-                module. In addition to the WiFly module you should also purchase (or borrow for 5 minutes) an explorer USB to do the one time WiFly
-                setup with your home network.</span>
-            </p>
-            <table cellpadding="0" cellspacing="0">
-              <tbody>
-                <tr>
-                  <td>WiFly Module - Wire Antenna
-                    <p>
-                      <span>(You could use an XBee pair if you prefer)</span>
-                    </p>
-                  </td>
-                  <td>SparkFun Explorer USB
-                    <p>
-                      <span>(Required to setup the WiFly once)</span>
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td><img alt="10822-01.jpg" src="static/images/rosebot/wifly.jpg"
-                    style="width: 120.00px; height: 120.00px; margin-left: 0.00px; margin-top: -6.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-                    title=""></td>
-                  <td><img alt="11812-02.jpg" src="static/images/rosebot/explorer_dongle.jpg"
-                    style="width: 110.84px; height: 112.10px; margin-left: 0.00px; margin-top: -14.75px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-                    title=""></td>
-                </tr>
-                <tr>
-                  <td>$34.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/10822">link</a>)
-                  </td>
-                  <td>$24.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/11697">link</a>)
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p>If you do not have a AA battery charger, then it is highly recommended that you purchase one of these as well. This option includes
-              8 batteries. Use any battery solution you like though. :)</p>
-            <table>
-              <tbody>
-                <tr>
-                  <td>Powerex Battery Charger w/Batteries<br>(This is the option we used but pick any option you like)
-                  </td>
-                </tr>
-                <tr>
-                  <td><img alt="" src="static/images/rosebot/image03.png"
-                    style="width: 175.90px; height: 175.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-                    title=""></td>
-                </tr>
-                <tr>
-                  <td>$48.95 from B&amp;H Photo and Video (<a target="_blank"
-                    href="http://www.bhphotovideo.com/c/product/1104557-REG/powerex_mh_c800s8aa27_mh_c800s_8_cell_smart_charger.html">link</a>)
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -156,7 +209,7 @@
           <div class="panel-body">
             <p>In addition to the RedBot sensors we decided to add 3 distance sensors. If you would like to add distance sensors to your RoseBot
               we recommend the purchases below. By adding these sensors you will be able to follow along with any Rosebotics course material created.</p>
-            <table cellpadding="0" cellspacing="0">
+            <table>
               <tbody>
                 <tr>
                   <td>Sharp IR Range Sensor<br>(optional)
