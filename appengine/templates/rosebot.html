@@ -13,318 +13,287 @@
       <li>Complete all of the online Rosebotics courseware</li>
       <li>Participate in the annual Homecoming Rosebotics competition</li>
     </ol>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne">
-          <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              Overview</a>
-          </h4>
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#overview" data-toggle="tab">Overview</a></li>
+      <li><a href="#core-components" data-toggle="tab">Core Components</a></li>
+      <li><a href="#extras" data-toggle="tab">Extras</a></li>
+      <li><a href="#summary" data-toggle="tab">Summary</a></li>
+    </ul>
+    <br>
+    <div class="tab-content">
+      <div class="tab-pane fade active in" id="overview">
+        <p>
+          The core component of RoseBot is the Sparkfun RedBot (Inventor's Kit version), a 2 wheel drive, Arduino-based robot. RedBot is designed to
+          be simple to use, easy to modify and, most importantly, fun to use! The RedBot comes with a bunch of sensors already included, such as: bump
+          sensors, wheel encoders and line following sensors. In addition to the RedBot, the RoseBot platform adds some peripherals, a wireless
+          communication mechanism, and a software stack to support the C, Python, and Scratch programming languages.</span>
+        </p>
+        <div class="clearfix"></div>
+        <div class="col-md-8 col-md-offset-2">
+          <img alt="RoseBot" src="/static/images/rosebot/rosebot.jpg" class="center-block img-responsive img-rounded" title="RoseBot draft version">
+          <p class="text-center">
+            RoseBot Draft version<br> <span class="small-subtext">(still a work in progress to make it pretty)</span>
+          </p>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="Overview">
-          <div class="panel-body">
-            <p>
-              The core component of RoseBot is the Sparkfun RedBot (Inventor's Kit version), a 2 wheel drive, Arduino-based robot. RedBot is designed
-              to be simple to use, easy to modify and, most importantly, fun to use! The RedBot comes with a bunch of sensors already included, such
-              as: bump sensors, wheel encoders and line following sensors. In addition to the RedBot, the RoseBot platform adds some peripherals, a
-              wireless communication mechanism, and a software stack to support the C, Python, and Scratch programming languages.</span>
-            </p>
-            <div class="clearfix"></div>
-            <div class="col-md-8 col-md-offset-2">
-              <img alt="RoseBot" src="/static/images/rosebot/rosebot.jpg" class="center-block img-responsive img-rounded"
-                title="RoseBot draft version">
-              <p class="text-center">
-                RoseBot Draft version<br> <span class="small-subtext">(still a work in progress to make it pretty)</span>
-              </p>
-            </div>
-            <div class="clearfix"></div>
-            <p class="no-gap-before-list">In addition to the Sparkfun RedBot, the image above shows the additional RoseBot hardware:</p>
-            <ul>
-              <li><strong>WiFly module</strong> to allow the RedBot to be controlled wirelessly, a fun addition for any robotics project.</li>
-              <li><strong>Extra IR distance sensors</strong> to allow advanced detection of upcoming obstacles.</li>
-              <li><strong>A smartphone mount</strong> to allow you to add your own smartphone for advanced challenges.</li>
-            </ul>
-            <p>
-              <span></span>
-            </p>
-            <p>
-              Some components are required, other components you can choose to purchase or not depending on how you expect to use your robot. In order
-              to help guide or purchase decision, we've created a <strong>Core components</strong> category and an <strong>Extras</strong> category.
-              We recommend you pick up the <strong>Core components</strong> initially and only purchase the <strong>Extras</strong> once you're sure
-              you can commit time to this project. Love to have you join our world, but don't by a dust collector. :)
-            </p>
-          </div>
-        </div>
+        <div class="clearfix"></div>
+        <p class="no-gap-before-list">In addition to the Sparkfun RedBot, the image above shows the additional RoseBot hardware:</p>
+        <ul>
+          <li><strong>WiFly module</strong> to allow the RedBot to be controlled wirelessly, a fun addition for any robotics project.</li>
+          <li><strong>Extra IR distance sensors</strong> to allow advanced detection of upcoming obstacles.</li>
+          <li><strong>A smartphone mount</strong> to allow you to add your own smartphone for advanced challenges.</li>
+        </ul>
+        <p>
+          Some components are required, other components you can choose to purchase or not depending on how you expect to use your robot. In order to
+          help guide or purchase decision, we've created a <strong>Core components</strong> category and an <strong>Extras</strong> category. We
+          recommend you pick up the <strong>Core components</strong> initially and only purchase the <strong>Extras</strong> once you're sure you can
+          commit time to this project. Love to have you join our world, but don't by a dust collector. :)
+        </p>
       </div>
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingTwo">
-          <h4 class="panel-title">
-            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false"
-              aria-controls="collapseTwo">Core components</a>
-          </h4>
-        </div>
-        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-          <div class="panel-body">
-            <div class="panel-group" id="core-component-accordion" role="tablist" aria-multiselectable="true">
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingCoreOne">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreOne" aria-expanded="true"
-                      aria-controls="collapseCoreOne">Sparkfun RedBot</a>
-                  </h4>
+      <div class="tab-pane fade" id="core-components">
+        <div class="panel-group" id="core-component-accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingCoreOne">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreOne" aria-expanded="true"
+                  aria-controls="collapseCoreOne">Sparkfun RedBot</a>
+              </h4>
+            </div>
+            <div id="collapseCoreOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingCoreOne">
+              <div class="panel-body">
+                <p>
+                  The core of RoseBot is the Sparkfun RedBot (which explains the naming similarity). Originally the Rosebotics team made a very custom
+                  robot, but we've since decided that it's more fun to join a thriving community. RedBot is an excellent choice for our group's goals
+                  because you can program it with Arduino, and start your experience with the Sparkfun <a target="_blank"
+                    href="https://learn.sparkfun.com/tutorials/assembly-guide-for-redbot-with-shadow-chassis">Assembly Guide</a> and <a
+                    target="_blank" href="https://learn.sparkfun.com/tutorials/experiment-guide-for-RedBot-with-shadow-chassis">Arduino
+                    Experiments,</a> or you can look at some of our course material to learn more about Python on Scratch. <strong>ALL are fun!</strong>
+                  While we are getting material together for Python and Scratch, you can enjoy your robot with Arduino development explained by the
+                  good folks at Sparkfun.
+                </p>
+                <h4 class="text-center">SparkFun Inventor's Kit for RedBot</h4>
+                <div class="col-md-4 col-md-offset-4">
+                  <img alt="RedBot" src="/static/images/rosebot/image04.jpg" class="center-block img-responsive img-rounded" title="RedBot">
+                  <p class="text-center">
+                    <span>$119.95 from Sparkfun (</span><span><a target="_blank" href="https://www.sparkfun.com/products/12649">link</a></span><span>)</span>
+                  </p>
                 </div>
-                <div id="collapseCoreOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingCoreOne">
-                  <div class="panel-body">
-                    <p>
-                      The core of RoseBot is the Sparkfun RedBot (which explains the naming similarity). Originally the Rosebotics team made a very
-                      custom robot, but we've since decided that it's more fun to join a thriving community. RedBot is an excellent choice for our
-                      group's goals because you can program it with Arduino, and start your experience with the Sparkfun <a target="_blank"
-                        href="https://learn.sparkfun.com/tutorials/assembly-guide-for-redbot-with-shadow-chassis">Assembly Guide</a> and <a
-                        target="_blank" href="https://learn.sparkfun.com/tutorials/experiment-guide-for-RedBot-with-shadow-chassis">Arduino
-                        Experiments,</a> or you can look at some of our course material to learn more about Python on Scratch. <strong>ALL are
-                        fun!</strong> While we are getting material together for Python and Scratch, you can enjoy your robot with Arduino development
-                      explained by the good folks at Sparkfun.
-                    </p>
-                    <h4 class="text-center">SparkFun Inventor's Kit for RedBot</h4>
-                    <div class="col-md-4 col-md-offset-4">
-                      <img alt="RedBot" src="/static/images/rosebot/image04.jpg" class="center-block img-responsive img-rounded" title="RedBot">
-                      <p class="text-center">
-                        <span>$119.95 from Sparkfun (</span><span><a target="_blank" href="https://www.sparkfun.com/products/12649">link</a></span><span>)</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <div class="clearfix"></div>
+                <p>Click on the 'Wireless Solution' tab below to see more Core Component parts.</p>
               </div>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingCoreTwo">
-                  <h4 class="panel-title">
-                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreTwo"
-                      aria-expanded="false" aria-controls="collapseCoreTwo">A Wireless Solution</a>
-                  </h4>
-                </div>
-                <div id="collapseCoreTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreTwo">
-                  <div class="panel-body">
-                    <p>
-                      <span>If you want to control your RoseBot wirelessly using an Arduino Sketch or control the robot using Python (like
-                        we'll do in the CSSE120 content we'll make) or Scratch (AWESOME for new programmers and kids), you will need a why to get rid
-                        of the USB cable that tethers your robot to your computer. Normally hobbyist use two XBee models as their wireless solution.
-                        That can work if you'd like to go that route. Moving forward though, we live in a WiFi world, so we are moving away from the
-                        traditional XBee and using a WiFi solution. Fortunately Sparkfun sells a WiFly module that fits the RedBot XBee connector
-                        (listed below). In addition to the WiFly module you should also purchase (or borrow for 5 minutes) an Explorer USB dongle to
-                        do the one time WiFly setup with your home network. Someday we'll provide an Arduino Sketch to let you avoid the purchase of
-                        the Explorer Donge for the network setup, but for now you need to buy that one too.</span>
-                    </p>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <h4 class="text-center">WiFly Module - Wire Antenna</h4>
-                            <p>
-                              <span class="red-details">(You could use an XBee pair if you prefer)</span>
-                            </p>
-                          </td>
-                          <td><h4 class="text-center">SparkFun Explorer USB Dongle</h4>
-                            <p>
-                              <span class="red-details">(Required to setup the WiFly once)</span>
-                            </p></td>
-                        </tr>
-                        <tr>
-                          <!-- TODO: I could make these images use Bootstrap classes instead of hardcoded sizes, but I really just don't care about them. :) -->
-                          <td><img alt="10822-01.jpg" src="static/images/rosebot/wifly.jpg"
-                            style="width: 120.00px; height: 120.00px; margin-left: 0.00px; margin-top: -6.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-                            title=""></td>
-                          <td><img alt="11812-02.jpg" src="static/images/rosebot/explorer_dongle.jpg"
-                            style="width: 110.84px; height: 112.10px; margin-left: 0.00px; margin-top: -14.75px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-                            title=""></td>
-                        </tr>
-                        <tr>
-                          <td>$34.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/10822">link</a>)
-                          </td>
-                          <td>$24.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/11697">link</a>)
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingCoreTwo">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreTwo"
+                  aria-expanded="false" aria-controls="collapseCoreTwo">A Wireless Solution</a>
+              </h4>
+            </div>
+            <div id="collapseCoreTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreTwo">
+              <div class="panel-body">
+                <p>
+                  <span>If you want to control your RoseBot wirelessly using an Arduino Sketch or control the robot using Python (like we'll do
+                    in the CSSE120 content we'll make) or Scratch (AWESOME for new programmers and kids), you will need a why to get rid of the USB
+                    cable that tethers your robot to your computer. Normally hobbyist use two XBee models as their wireless solution. That can work if
+                    you'd like to go that route. Moving forward though, we live in a WiFi world, so we are moving away from the traditional XBee and
+                    using a WiFi solution. Fortunately Sparkfun sells a WiFly module that fits the RedBot XBee connector (listed below). In addition
+                    to the WiFly module you should also purchase (or borrow for 5 minutes) an Explorer USB dongle to do the one time WiFly setup with
+                    your home network. Someday we'll provide an Arduino Sketch to let you avoid the purchase of the Explorer Donge for the network
+                    setup, but for now you need to buy that one too.</span>
+                </p>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h4 class="text-center">WiFly Module - Wire Antenna</h4>
+                        <p>
+                          <span class="red-details">(You could use an XBee pair if you prefer)</span>
+                        </p>
+                      </td>
+                      <td><h4 class="text-center">SparkFun Explorer USB Dongle</h4>
+                        <p>
+                          <span class="red-details">(Required to setup the WiFly once)</span>
+                        </p></td>
+                    </tr>
+                    <tr>
+                      <!-- TODO: I could make these images use Bootstrap classes instead of hardcoded sizes, but I really just don't care about them. :) -->
+                      <td><img alt="10822-01.jpg" src="static/images/rosebot/wifly.jpg"
+                        style="width: 120.00px; height: 120.00px; margin-left: 0.00px; margin-top: -6.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                        title=""></td>
+                      <td><img alt="11812-02.jpg" src="static/images/rosebot/explorer_dongle.jpg"
+                        style="width: 110.84px; height: 112.10px; margin-left: 0.00px; margin-top: -14.75px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                        title=""></td>
+                    </tr>
+                    <tr>
+                      <td>$34.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/10822">link</a>)
+                      </td>
+                      <td>$24.95 from Sparkfun (<a target="_blank" href="https://www.sparkfun.com/products/11697">link</a>)
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingCoreThree">
-                  <h4 class="panel-title">
-                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreThree"
-                      aria-expanded="false" aria-controls="collapseCoreThree">Rechargeable AA batteries</a>
-                  </h4>
-                </div>
-                <div id="collapseCoreThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreThree">
-                  <div class="panel-body">
-                    <p>For the sake of the environment please don't make Alkaline batteries your permenant solution. :) You have my personally
-                      permission to use regualr AA batteries for a while initially, but if you use the robot much at all invest in a better battery
-                      solution. So if you do not have a AA battery charger already, then it is highly recommended that you purchase SOME recharger.
-                      This option includes 8 batteries so it's a pretty good deal for the features it includes: LCD display, individual charging
-                      instead of pair charging, and a reconditioning cycle.</p>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <h4 class="text-center">Powerex Battery Charger w/Batteries</h4>
-                            <p>
-                              <span class="red-details">(This is the option we used, but pick any option you like, here is a <a target="_blank"
-                                href="http://amzn.com/B00EB7812C">cheaper one</a>)
-                              </span>
-                            </p>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><img alt="Battery Charger" src="static/images/rosebot/image03.png"
-                            style="width: 175.90px; height: 175.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
-                            title="Battery Charger"></td>
-                        </tr>
-                        <tr>
-                          <td>$48.95 from B&amp;H Photo and Video (<a target="_blank"
-                            href="http://www.bhphotovideo.com/c/product/1104557-REG/powerex_mh_c800s8aa27_mh_c800s_8_cell_smart_charger.html">link</a>)
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <br>
-                    <p class="text-center">
-                      Cheaper on the site above than on Amazon (<a target="_blank" href="http://amzn.com/B000LQMKDS">here</a>) only because the site
-                      above includes 8 batteries (just make sure they <b>DO</b> ship them to you).
-                  </div>
-                </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingCoreThree">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#core-component-accordion" href="#collapseCoreThree"
+                  aria-expanded="false" aria-controls="collapseCoreThree">Rechargeable AA batteries</a>
+              </h4>
+            </div>
+            <div id="collapseCoreThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingCoreThree">
+              <div class="panel-body">
+                <p>For the sake of the environment please don't make Alkaline batteries your permenant solution. :) You have my personally
+                  permission to use regualr AA batteries for a while initially, but if you use the robot much at all invest in a better battery
+                  solution. So if you do not have a AA battery charger already, then it is highly recommended that you purchase SOME recharger. This
+                  option includes 8 batteries so it's a pretty good deal for the features it includes: LCD display, individual charging instead of
+                  pair charging, and a reconditioning cycle.</p>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h4 class="text-center">Powerex Battery Charger w/Batteries</h4>
+                        <p>
+                          <span class="red-details">(This is the option we used, but pick any option you like, here is a <a target="_blank"
+                            href="http://amzn.com/B00EB7812C">cheaper one</a>)
+                          </span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><img alt="Battery Charger" src="static/images/rosebot/image03.png"
+                        style="width: 175.90px; height: 175.90px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+                        title="Battery Charger"></td>
+                    </tr>
+                    <tr>
+                      <td>$48.95 from B&amp;H Photo and Video (<a target="_blank"
+                        href="http://www.bhphotovideo.com/c/product/1104557-REG/powerex_mh_c800s8aa27_mh_c800s_8_cell_smart_charger.html">link</a>)
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <br>
+                <p class="text-center">
+                  Cheaper on the site above than on Amazon (<a target="_blank" href="http://amzn.com/B000LQMKDS">here</a>) only because the site above
+                  includes 8 batteries (just make sure they <b>DO</b> ship them to you).
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingThree">
-          <h4 class="panel-title">
-            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false"
-              aria-controls="collapseThree">Extras</a>
-          </h4>
-        </div>
-        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-          <div class="panel-body">
-            <div class="panel-group" id="extras-accordion" role="tablist" aria-multiselectable="true">
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingExtrasOne">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#extras-accordion" href="#collapseExtrasOne" aria-expanded="true"
-                      aria-controls="collapseExtrasOne"> Additional Sensors - Distance Sensors </a>
-                  </h4>
-                </div>
-                <div id="collapseExtrasOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingExtrasOne">
-                  <div class="panel-body">
-                    <p>In addition to the RedBot sensors we decided to add 3 distance sensors. If you would like to add distance sensors to your
-                      RoseBot we recommend the purchases below. By adding these sensors you will be able to follow along with any Rosebotics course
-                      material created.</p>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <h4 class="text-center">Sharp IR Range Sensor</h4>
-                            <p>
-                              <span class="red-details">(optional)</span>
-                            </p>
-                          </td>
-                          <td>
-                            <h4 class="text-center">Sharp Sensor Cable</h4>
-                            <p>
-                              <span class="red-details">(Recommended if you buy the sensor)</span>
-                            </p>
-                          </td>
-                          <td>
-                            <h4 class="text-center">Distance Sensor Bracket</h4>
-                            <p>
-                              <span class="red-details">(Recommended if you buy the sensor)</span>
-                            </p>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><img alt="08959-03-L.jpg" src="static/images/rosebot/image05.jpg"
-                            style="width: 141.90px; height: 141.90px;"
-                            title=""></td>
-                          <td><img alt="" src="static/images/rosebot/image09.png"
-                            style="width: 164.00px; height: 164.00px;"
-                            title=""></td>
-                          <td><img alt="" src="static/images/rosebot/image06.png"
-                            style="width: 156.00px; height: 156.00px;"
-                            title=""></td>
-                        </tr>
-                        <tr>
-                          <td>$41.85 from RobotShop (<a target="_blank"
-                            href="http://www.robotshop.com/en/sharp-gp2y0a21yk0f-ir-range-sensor.html">link</a>) <br>Buy 3 @ $13.95 each
-                          </td>
-                          <td>$4.50 from RobotShop (<a target="_blank"
-                            href="http://www.robotshop.com/en/sirc-01-sharp-gp2-ir-sensor-cable-8.html">link</a>) <br>Buy 3 @ $1.50 each
-                          </td>
-                          <td>$12.45 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/analog-distance-sensor-bracket.html">link</a>)
-                            <br>Buy 3 @ $4.15 each
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+      <div class="tab-pane fade" id="extras">
+        <div class="panel-group" id="extras-accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingExtrasOne">
+              <h4 class="panel-title">
+                <a role="button" data-toggle="collapse" data-parent="#extras-accordion" href="#collapseExtrasOne" aria-expanded="true"
+                  aria-controls="collapseExtrasOne"> Additional Sensors - Distance Sensors </a>
+              </h4>
+            </div>
+            <div id="collapseExtrasOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingExtrasOne">
+              <div class="panel-body">
+                <p>In addition to the RedBot sensors we decided to add 3 distance sensors. If you would like to add distance sensors to your
+                  RoseBot we recommend the purchases below. By adding these sensors you will be able to follow along with any Rosebotics course
+                  material created.</p>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h4 class="text-center">Sharp IR Range Sensor</h4>
+                        <p>
+                          <span class="red-details">(optional)</span>
+                        </p>
+                      </td>
+                      <td>
+                        <h4 class="text-center">Sharp Sensor Cable</h4>
+                        <p>
+                          <span class="red-details">(Recommended if you buy the sensor)</span>
+                        </p>
+                      </td>
+                      <td>
+                        <h4 class="text-center">Distance Sensor Bracket</h4>
+                        <p>
+                          <span class="red-details">(Recommended if you buy the sensor)</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><img alt="08959-03-L.jpg" src="static/images/rosebot/image05.jpg" style="width: 141.90px; height: 141.90px;" title=""></td>
+                      <td><img alt="" src="static/images/rosebot/image09.png" style="width: 164.00px; height: 164.00px;" title=""></td>
+                      <td><img alt="" src="static/images/rosebot/image06.png" style="width: 156.00px; height: 156.00px;" title=""></td>
+                    </tr>
+                    <tr>
+                      <td>$41.85 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/sharp-gp2y0a21yk0f-ir-range-sensor.html">link</a>)
+                        <br>Buy 3 @ $13.95 each
+                      </td>
+                      <td>$4.50 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/sirc-01-sharp-gp2-ir-sensor-cable-8.html">link</a>)
+                        <br>Buy 3 @ $1.50 each
+                      </td>
+                      <td>$12.45 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/analog-distance-sensor-bracket.html">link</a>)
+                        <br>Buy 3 @ $4.15 each
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingExtrasTwo">
-                  <h4 class="panel-title">
-                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#extras-accordion" href="#collapseExtrasTwo"
-                      aria-expanded="false" aria-controls="collapseExtrasTwo"> Smartphone Mount </a>
-                  </h4>
-                </div>
-                <div id="collapseExtrasTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingExtrasTwo">
-                  <div class="panel-body">
-                    <p>In addition to the wireless module and the extra sensors, we've also added a smartphone mount. The purpose of the
-                      smartphone mount is to allow users to experiment with things like image recognition using a camera, internet remote control
-                      using tools like Firebase, video streams, or on-screen displays to express your robot's emotional state. ;) To mount your
-                      smartphone we've chosen this pan and tilt phone mount.</p>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <h4 class="text-center">Cell Phone Pan and Tilt Kit</h4>
-                            <p>
-                              <span class="red-details">(Optional, fits well with RedBot)</span>
-                            </p>
-                          </td>
-                          <td>
-                            <h4 class="text-center">Servos for the phone mount</h4>
-                            <p>
-                              <span class="red-details">(The kit to the left does NOT include servos)</span>
-                            </p>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><img alt="lynxmotion-cell-phone-pan-tilt-kit-no-servos-2_1" src="static/images/rosebot/image01.jpg"
-                            style="width: 169.90px; height: 171.01px;" title=""></td>
-                          <td><img alt="" src="static/images/rosebot/image00.png"
-                            style="width: 196.00px; height: 197.00px;" title=""></td>
-                        </tr>
-                        <tr>
-                          <td>$24.95 from RobotShop (<a target="_blank"
-                            href="http://www.robotshop.com/en/lynxmotion-cell-phone-pan-tilt-kit-no-servos.html">link</a>)
-                          </td>
-                          <td>$19.98 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/hitec-hs422-servo-motor.html">link</a>)
-                            <br>Buy 2 @ $9.99 each
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingExtrasTwo">
+              <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#extras-accordion" href="#collapseExtrasTwo"
+                  aria-expanded="false" aria-controls="collapseExtrasTwo"> Smartphone Mount </a>
+              </h4>
+            </div>
+            <div id="collapseExtrasTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingExtrasTwo">
+              <div class="panel-body">
+                <p>In addition to the wireless module and the extra sensors, we've also added a smartphone mount. The purpose of the smartphone
+                  mount is to allow users to experiment with things like image recognition using a camera, internet remote control using tools like
+                  Firebase, video streams, or on-screen displays to express your robot's emotional state. ;) To mount your smartphone we've chosen
+                  this pan and tilt phone mount.</p>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h4 class="text-center">Cell Phone Pan and Tilt Kit</h4>
+                        <p>
+                          <span class="red-details">(Optional, fits well with RedBot)</span>
+                        </p>
+                      </td>
+                      <td>
+                        <h4 class="text-center">Servos for the phone mount</h4>
+                        <p>
+                          <span class="red-details">(The kit to the left does NOT include servos)</span>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><img alt="lynxmotion-cell-phone-pan-tilt-kit-no-servos-2_1" src="static/images/rosebot/image01.jpg"
+                        style="width: 169.90px; height: 171.01px;" title=""></td>
+                      <td><img alt="" src="static/images/rosebot/image00.png" style="width: 196.00px; height: 197.00px;" title=""></td>
+                    </tr>
+                    <tr>
+                      <td>$24.95 from RobotShop (<a target="_blank"
+                        href="http://www.robotshop.com/en/lynxmotion-cell-phone-pan-tilt-kit-no-servos.html">link</a>)
+                      </td>
+                      <td>$19.98 from RobotShop (<a target="_blank" href="http://www.robotshop.com/en/hitec-hs422-servo-motor.html">link</a>) <br>Buy
+                        2 @ $9.99 each
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="tab-pane fade active in" id="summary">
+        <p>If you look at the total prices for all the items the cost of the entire RoseBot platform is $332.53 plus shipping and tax. So really I
+          wouldn't just blindly order everything. Pick what you think you'd like to start with. I recommend RedBot, WiFly (+USB Explorer Dongle), and
+          some battery solution to start with. Happy shopping! We look forward to you joining the Rosebotics team!</p>
       </div>
     </div>
-    <h4>Summary</h4>
-    <p>If you look at the total prices for all the items the cost of the entire RoseBot platform is $332.53 plus shipping and tax. So really I
-      wouldn't just blindly order everything. Pick what you think you'd like to start with. I recommend RedBot, WiFly (+USB Explorer Dongle), and some
-      battery solution to start with. Happy shopping! We look forward to you joining the Rosebotics team!</p>
   </div>
 </div>
 {% endblock %}
