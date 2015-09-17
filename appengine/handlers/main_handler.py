@@ -35,7 +35,7 @@ class CoursesPage(base_handler.BasePage):
 
 class CompetitionPage(base_handler.BasePage):
   def template_file(self):
-    return "templates/underconstruction.html"
+    return "templates/competition.html"
 
   def page_title(self):
     return "Competition"

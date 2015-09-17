@@ -1,3 +1,7 @@
+.container-fluid {
+  padding: 0px;
+}
+
 .rosebot-header {
   background-color: #7F1416;
   background-image: linear-gradient(to bottom, #7F1416 0px, #670303 100%);
@@ -13,16 +17,18 @@
 }
 
 .rosebot-header h1 {
- color: #DDD;
+ color: #EEE;
 }
 
-.rosebot {
+.rosebot, .competition {
   p, li {
     font-size: 12pt;
     line-height: 1.5;
   }
+  .btn {
+    width: 360px;
+  }
 }
-
 
 .no-gap-before-list {
   margin-bottom: 0px;
@@ -42,3 +48,8 @@ table {
   color: #7F1416;
 }
 
+/* Competition page */
+
+.no-bullets {
+  list-style-type: none;
+}

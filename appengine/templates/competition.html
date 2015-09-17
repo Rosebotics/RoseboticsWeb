@@ -1,0 +1,73 @@
+{% extends 'templates/base.html' %} {% block content %}
+<link href="/static/dist/css/rosebot.css" rel="stylesheet">
+<div class="rosebot-header" tabindex="-1">
+  <div class="container">
+    <h1>Rosebotics Homecoming Competition</h1>
+    <p>Come join our Alumni Group for some hobbyist robotics goodness!</p>
+  </div>
+</div>
+<div class="container competition">
+  <div class="row">
+    <p class="no-gap-before-list">The Rosebotics Homecoming competition is open to all Rose-Hulman alumni (any major, any year) as well as current
+      Rose-Hulman students, faculty, and staff. The competition will take place in Tent City just before the Rose-Hulman Homecoming football game each
+      year. The competition will allow past and present students to enjoy some fun hobbyist robotics goodness.</p>
+    <ul class="">
+      <li>This event began at the 2014 Homecoming with a driving division competition called the Solar Farm Timer. Alumni visiting the Rosebotics
+        booth in Tent City got to play our driving game.</li>
+      <li>In 2015 the Rosebotics program announced an official RoseBot platform and again is holding a driving division competition in Tent City.
+        See game rules below.</li>
+      <li>In 2016 we plan to start the REAL event. There will be a driving division again where people can walk up and drive our bots, but there
+        will also be an Engineers division where people will purchase their own <a href="/platform">RoseBot</a> and bring it to the competition (rules
+        will be announced on the date of Rose graduation 2016).
+      </li>
+    </ul>
+    <p>
+      <a class="btn btn-lg btn-success center-block" href="https://docs.google.com/forms/d/1XzB4Q5XZL_HbSQk_L1TJJtc2dKHxKVSfQhYSztqvMw0/viewform"
+        role="button">Sign up for future announcements</a>
+    </p>
+    <p>Click on a link below to learn more about a particular year</p>
+    <ul class="nav nav-tabs">
+      <li><a href="#2016" data-toggle="tab">2016</a></li>
+      <li class="active"><a href="#2015" data-toggle="tab">2015</a></li>
+      <li><a href="#2014" data-toggle="tab">2014</a></li>
+    </ul>
+    <br>
+    <div class="tab-content">
+      <div class="tab-pane fade" id="2016">
+        <iframe src="http://docs.google.com/gview?url=http://www.rosebotics.org/static/pdfs/homecoming_2016_announcement.pdf&embedded=true"
+          style="width: 800px; height: 1200px;" frameborder="0"></iframe>
+      </div>
+      <div class="tab-pane fade active in" id="2015">
+        <iframe src="http://docs.google.com/gview?url=http://www.rosebotics.org/static/pdfs/homecoming_2015_competition_rules.pdf&embedded=true"
+          style="width: 800px; height: 1200px;" frameborder="0"></iframe>
+      </div>
+      <div class="tab-pane fade" id="2014">
+        <p>In 2014 we used the first generation of the Rosebotics robot platform to participate in a game we called the Solar Farm Timer. We
+          developed this game during the 2014 summer Catapult session and had alumni walk up and drive our bots in Tent City. The video below is from an
+          Operation Catapult student (who is now a current student) playing the Solor Farm Timer competition.</p>
+        <!-- 16:9 aspect ratio -->
+        <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" width="560" height="315" src="https://www.youtube.com/embed/t6a1w7iAfnc" frameborder="0" allowfullscreen></iframe>
+
+        </div>
+        <p>The game in Tent City was identical to the game the Catapulters played (except in Catapult they built everything, including their app).</p>
+        <p>
+          The goal of the Solar Farm Timer game was to get all of the mirrors to the correct location as fast as possible to heat the water bath as quickly as possible. To
+          help keep score we made a fun little web app to measure Sun Power. You can still visit that site at <a
+            href="http://solarfarmtimer.appspot.com/" target="_blank">http://solarfarmtimer.appspot.com/</a>
+        </p>
+        <p>
+        <p class="no-gap-before-list">The winners of the 2014 Driving division were:</p>
+        <ol>
+          <li>Kevin Cao</li>
+          <li>Matt DeVries</li>
+          <li>P. Davis Baker</li>
+          <li>Sami DeVries</li>
+          <li>Brad Drake</li>
+        </ol>
+        <p>It was a really fun year.  We were still working out which robot platform the program would officially support though so we didn't encourage anyone to buy their own.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
