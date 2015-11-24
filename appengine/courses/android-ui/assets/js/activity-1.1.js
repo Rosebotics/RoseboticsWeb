@@ -30,35 +30,49 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What are android.app.Fragments?<br>",
+	"<b>1.</b> When you create new projects in this unit, what type of Activity do you select?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Little shards of glass", false, "Try again. ." ],
-				["Little shards of code encapsulating layout and controller", true, "Correct. But thinking of fragment as shards is appropriate, since these pieces can be re-arranged within activities." ],
+				["No activity", false, "Try again. There was something." ],
+				["Empty Activity", true, "Correct. Yes, that is the most basic one and we'll use it in this unit. Later you will use others." ],
+				["Blank Activity", false, "Try again. That will be for the next unit, when we need menus." ],
+				["Navigation Drawer Activity", false, "Try again. We'll use that later this term. You are free to play around with some of these now if you like." ],
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> How does the layout xml of a fragment differ from that of an activity?<br>",
+	"<b>2.</b> What naming convention is used for packages?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Not at all", true, "Correct. " ],
-				["They use the fragment xml tag", false, "Try again. We did see the fragment tag in the FAQ, but that was for permanently adding a fragment to an activity, not for specifying the layout of the fragment itself." ],
+				["just use your initials", false, "Try again. No, that isn't descriptive enough" ],
+				["use findViewById", false, "Try again. We will learn about that in an upcoming video." ],
+				["reverse URL", true, "Correct. Please use something like edu.rosehulman.yourusername.theappname" ],
 		]
 	},
 	"<br><br>",
-	"<b>3.</b> How is a Fragment class typically structured differently than an Activity class? (Choose all that apply.)",
+	"<b>3.</b> What can you find in the AndroidManifest.xml file? Look at the file if you aren't sure. (Choose all that apply.)",
 	{
 		questionType : "multiple choice group",
 		questionsList : [
 				{
 					questionHTML : "",
-					choices : [ "Fragments extend android.app.Fragment while Activities extend android.app.Activity", "Fragments have a more complex lifecycle, so more callback methods", "Activities can have onClickListeners, but Fragments cannot"],
+					choices : [ "The package name", "The Activity that will be launched", "What versions of Android your app is written for"],
 					correctIndex : [0,1]
 				}
 				],
 		allCorrectOutput : "Well done!",
 		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
+	},
+	"<br><br>",
+	"<b>4.</b> In which values file does our screen text go?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["colors.xml", false, "Try again. Next lesson, we'll learn about specifying RGB colors" ],
+				["dimens.xml", false, "Try again. That's for margins and other dimensions you need re-used." ],
+				["strings.xml", true, "Correct. You got it!" ],
+				["styles.xml", false, "Try again. No, that's for specifying themes." ],
+		]
 	},
 ];
