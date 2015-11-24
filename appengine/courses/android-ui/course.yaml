@@ -33,7 +33,7 @@ course:
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    Welcome to Android Development.
+    Welcome to Android Development, and to the User Interface (UI) track. In this track, we'll learn all the basics you'll need for creating a UI: activities, buttons, menus, dialogs, adapters, and fragments. 
 
   # Information about the instructor to display on the main page.
   instructor_details: 'Dr. Matt Boutell<br>Rose-Hulman'
@@ -124,7 +124,7 @@ preview:
 reg_form:
   # Header text for the course registration form.
   header_text: |
-    Welcome!  Please answer the following questiond, and you will be
+    Welcome!  Please answer the following questions, and you will be
     enrolled in the course.
 
   # HTML representing additional fields to include in the course
