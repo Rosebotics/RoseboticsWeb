@@ -70,6 +70,8 @@ SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
 # this order matters!
 course_list = [ANDROID, IOS, WEB, ME430, CS1, ADV_WEB, SMART_PRODUCT]
 
+admin_list = ["boutell@gmail.com", "fisherds@gmail.com"]
+
 def __init_jinja_env():
   jenv = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.dirname(__file__)),
