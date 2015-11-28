@@ -48,3 +48,5 @@ gulp.task("teams", function() {
    .pipe(sourcemaps.write())
    .pipe(gulp.dest("./static/dist/teams/js/"));;       
 });
+
+gulp.task("default", ["js", "less", "teams"]);

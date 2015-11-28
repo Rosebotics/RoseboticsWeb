@@ -28,5 +28,6 @@ appengine/pytz/*.tmp
 project.xcworkspace/
 xcuserdata/
 
-# Prepros
+# Prepros/Gulp
 prepros.cfg
+node_modules/
