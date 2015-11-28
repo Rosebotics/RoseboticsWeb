@@ -2,6 +2,7 @@ import endpoints
 from google.appengine.ext import ndb
 from protorpc import remote
 from settings import course_list as COURSE_LIST
+from settings import admin_list as ADMIN_LIST
 
 from models.rosebotics_models import CourseProgress, MemberProgress, RoseboticsStudent, RoseboticsTeam, RoseboticsTeamMember,\
   Team, TrackProgress, UnitProgress, TeamVisibility, TotalTeamProgress,\
@@ -42,7 +43,7 @@ class TeamApi(remote.Service):
           member_key = get_member_key(team.team_key, member.email)
           new_member = RoseboticsTeamMember(key=member_key)
           new_member.email = member.email
-          if new_member.email == user_email:
+          if new_member.email == user_email or is_admin_user(user_email):
             new_member.visibility = TeamVisibility.ALL_MEMBERS
           else:
             send_invite_email(member.email)
@@ -60,7 +61,7 @@ class TeamApi(remote.Service):
         member_key = get_member_key(team.team_key, student_email)
         new_member = RoseboticsTeamMember(key=member_key)
         new_member.email = student_email
-        if new_member.email == user_email:
+        if new_member.email == user_email or is_admin_user(user_email):
           new_member.visibility = TeamVisibility.ALL_MEMBERS
         else:
           send_invite_email(email)
@@ -294,6 +295,9 @@ def create_track_progress(track_name, progress):
 
 def get_user_email():
   return endpoints.get_current_user().email().lower()
+
+def is_admin_user(user_email):
+  return user_email in ADMIN_LIST
 
 def get_member_key(team_key, email):
   return ndb.Key(RoseboticsTeamMember, email, parent=team_key)
