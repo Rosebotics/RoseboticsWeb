@@ -74,7 +74,7 @@ var activity = [
 		choices : [
 				["matchParent", true, "Correct. " ],
 				["fillParent", false, "Try again. That is what it used to be called. (And it will work fine if you use it, so you still get full credit.)" ],
-				["wrap content", false, "Try again. That will only be as large as the text within it." ],
+				["wrapContent", false, "Try again. That will only be as large as the text within it." ],
 		]
 	},
 	"<br><br>",
@@ -84,7 +84,7 @@ var activity = [
 		questionsList : [
 				{
 					questionHTML : "",
-					choices : [ "To refer to it in code", "Every widget needs an ID", "to specify where one i"],
+					choices : [ "To refer to it in code", "Every widget needs an ID", "To specify where another widget is located relative to this widget"],
 					correctIndex : [0,2]
 				}
 				],

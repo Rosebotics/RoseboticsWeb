@@ -84,9 +84,9 @@ var activity = [
 	{
 		questionType : "multiple choice",
 		choices : [
-				["The message, "Button pressed for " + row + " " + column", false, "Try again. That was the second parameter" ],
+				["The message, 'Button pressed for ' + row + ' ' + column", false, "Try again. That was the second parameter" ],
 				["The tag, Constants.TTT", false, "Try again. Close. I do create log tag variables like this in larger programs." ],
-				["The tag, "TTT"", true, "Correct. Yes, although creating a constant like Constants.TAG which equals "TTT" would scale better." ],
+				["The tag, 'TTT'", true, "Correct. Yes, although creating a constant like Constants.TAG which equals 'TTT' would scale better." ],
 		]
 	},
 ];
