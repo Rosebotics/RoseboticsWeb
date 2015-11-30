@@ -47,7 +47,6 @@ class AutoSweep(ndb.Model):
   options = ndb.JsonProperty(indexed=False)
   
   def unparse_options(self):
-    print self.options
     options = ""
     first = True
     for key, value in self.options.items():

@@ -77,33 +77,6 @@ hr {
 						<label> <input type="checkbox" ng-model="modal.includeTrackProgress"> Include Track Progress Percentage
 						</label>
 					</div>
-					<div ng-repeat="course in modal.data">
-						<label class="expandable" ng-init="isCollapsed = false" ng-click="isCollapsed = !isCollapsed">
-							<span class="glyphicon glyphicon-chevron-{{isCollapsed ? 'down' : 'right'}}" aria-hidden="true"></span>
-							{{course.name}}
-							<a class="pull-right" ng-show="isCollapsed" ng-click="modal.toggleCourse(course);$event.stopPropagation()">{{course.toggled ? 'None' : 'All'}}</a>
-						</label>
-						<hr>
-						<div collapse="!isCollapsed" class="indent">
-							<div ng-repeat="track in course['tracks']">
-								<label class="expandable" ng-init="isCollapsed = false" ng-click="isCollapsed = !isCollapsed">
-									<span class="glyphicon glyphicon-chevron-{{isCollapsed ? 'down' : 'right'}}" aria-hidden="true"></span>
-									{{track.name}}
-									<a class="pull-right" ng-show="isCollapsed" ng-click="modal.toggleTrack(course, track);$event.stopPropagation()">{{track.toggled ? 'None' : 'All'}}</a>
-								</label>
-								<hr>
-								<div collapse="!isCollapsed" class="indent">
-									<div class="checkbox" ng-repeat="unit in track['units']">
-										<label>
-											<input type="checkbox" ng-model="unit.toggled" ng-change="modal.unitToggled(course, track)">
-											{{unit.name}}
-										</label>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 		<div class="modal-footer">
