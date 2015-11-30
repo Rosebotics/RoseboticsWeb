@@ -99,7 +99,8 @@ angular.module('ModalControllers', [])
 	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 	this.data = [];
 	var self = this;
-	if (team.members_progress.length > 0) {
+  console.log(team);
+	if (team.members_progress && team.members_progress.length > 0) {
 	  var courses = team.members_progress[0].course_progress;
 	  for (var i = 0; i < courses.length; i++) {
 			var course = {name: courses[i].name, tracks:[], toggled:false, id:courses[i].id};
@@ -268,6 +269,7 @@ angular.module('ModalControllers', [])
 		this.timezone = options['timezone'] || 'Eastern';
 		this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
 		var progress_data = JSON.parse(options['progress_data']);
+    console.log(progress_data);
 		for (var i = 0; i < this.data.length; i++) {
 			var course = this.data[i];
 			for (var j = 0; j < course.tracks.length; j++) {
