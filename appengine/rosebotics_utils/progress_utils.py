@@ -87,7 +87,7 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
     total_course_tasks = 1
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
-_tz_offsets = {'UTC':0, 'Pacific':-7, 'Mountain':-6, 'Central':-5, 'Eastern':-4}
+_tz_offsets = {'UTC':0, 'PDT':-7, 'MDT':-6, 'CDT':-5, 'EDT':-4, 'PST':-6, 'MST':-5, 'CST':-4, 'EST':-3}
 
 def _tz_now(timezone='UTC'):
   offset = _tz_offsets.get(timezone, 0)
@@ -133,49 +133,82 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
       table_row.append(student.username)
     if timezone:
       table_row.append(_tz_now(timezone))
-    for course in data:
-      course_progress = get_total_progress_for_course(member.email, course['id'].lower(), as_percent=unit_points, get_total_tasks=True)
-      course_added = False
-      for requested_track in course['tracks']:
-        track_added = False
-        track_data = None
-        track_progress = None
-        requested_units = None
+    if data is None:
+      for course in team.courses:
+        course_progress = get_total_progress_for_course(member.email, course, as_percent=unit_points, get_total_tasks=True)
+        course_added = False
         for track in course_progress['tracks']:
-          if requested_track['name'] == track['name']:
-            track_progress = track['track']
-            track_data = track['units']
-            requested_units = requested_track['units']
-            break
-        if track_data is None:
-          continue
-        # Sort units
-        extract_key = lambda pair:int(pair[0].split(":")[0])
-        unit_tuples = sorted(track_data.items(), key=extract_key)
-        for unit_id, unit_progress in unit_tuples:
-          if unit_id.endswith('-total'):
-            continue
-          unit_name = unit_id.split(':')[1]
-          if unit_name not in requested_units:
-            continue
-          if export_course_progress and not course_added:
-            table_row.append(course_progress['course'])
+          track_progress = track['track']
+          track_data = track['units']
+          extract_key = lambda pair:int(pair[0].split(":")[0])
+          unit_tuples = sorted(track_data.items(), key=extract_key)
+          for unit_id, unit_progress in unit_tuples:
+            if unit_id.endswith('-total'):
+              continue
+            unit_name = unit_id.split(':')[1]
+            if export_course_progress and not course_added:
+              table_row.append(course_progress['course'])
+              if is_first_student:
+                header_row.append(course['name'])
+              course_added = True
+            if export_track_progress and not track_added:
+              table_row.append(track_progress)
+              if is_first_student:
+                header_row.append(requested_track['name'])
+              track_added = True
+            if unit_points:
+              table_row.append(unit_progress * ppu)
+              unit_total = ppu
+            else:
+              table_row.append(unit_progress * ppt)
+              unit_total = track_data[unit_id + '-total'] * ppt
             if is_first_student:
-              header_row.append(course['name'])
-            course_added = True
-          if export_track_progress and not track_added:
-            table_row.append(track_progress)
+              header_row.append(unit_name + " (out of " + str(unit_total) + ")")
+    else:
+      for course in data:
+        course_id = course['id'].lower()
+        course_progress = get_total_progress_for_course(member.email, course_id, as_percent=unit_points, get_total_tasks=True)
+        course_added = False
+        for requested_track in course['tracks']:
+          track_added = False
+          track_data = None
+          track_progress = None
+          requested_units = None
+          for track in course_progress['tracks']:
+            if requested_track['name'] == track['name']:
+              track_progress = track['track']
+              track_data = track['units']
+              requested_units = requested_track['units']
+              break
+          if track_data is None:
+            continue
+          # Sort units
+          extract_key = lambda pair:int(pair[0].split(":")[0])
+          unit_tuples = sorted(track_data.items(), key=extract_key)
+          for unit_id, unit_progress in unit_tuples:
+            if unit_id.endswith('-total'):
+              continue
+            unit_name = unit_id.split(':')[1]
+            if unit_name not in requested_units:
+              continue
+            if export_course_progress and not course_added:
+              table_row.append(course_progress['course'])
+              if is_first_student:
+                header_row.append(course['name'])
+              course_added = True
+            if export_track_progress and not track_added:
+              table_row.append(track_progress)
+              if is_first_student:
+                header_row.append(requested_track['name'])
+              track_added = True
+            if unit_points:
+              table_row.append(unit_progress * ppu)
+              unit_total = ppu
+            else:
+              table_row.append(unit_progress * ppt)
+              unit_total = track_data[unit_id + '-total'] * ppt
             if is_first_student:
-              header_row.append(requested_track['name'])
-            track_added = True
-          if unit_points:
-            table_row.append(unit_progress * ppu)
-            unit_total = ppu
-          else:
-            table_row.append(unit_progress * ppt)
-            unit_total = track_data[unit_id + '-total'] * ppt
-          if is_first_student:
-            header_row.append(unit_name + " (out of " + str(unit_total) + ")")
+              header_row.append(unit_name + " (out of " + str(unit_total) + ")")
     is_first_student = False
     table_data.append(table_row)
   return table_data

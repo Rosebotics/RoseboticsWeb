@@ -52,4 +52,3 @@ def set_recent_track(rosebotics_key, track_path):
   elif most_recent_track.path != track_path:
     most_recent_track.path = track_path
     most_recent_track.put()
-  

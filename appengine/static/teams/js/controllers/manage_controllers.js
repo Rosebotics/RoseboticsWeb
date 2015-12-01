@@ -135,7 +135,7 @@ angular.module('ManageControllers', [])
 	this.sweeps = sweeps["sweeps"] || [];
 	var teamNumber = -1;
 	this.today = new Date();
-	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
+  this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	this.done = function() {
 		$location.path("/manage/" + $routeParams.team_key);
 	};

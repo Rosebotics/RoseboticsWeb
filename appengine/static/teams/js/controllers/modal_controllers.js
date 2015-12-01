@@ -95,70 +95,9 @@ angular.module('ModalControllers', [])
 	this.pointsPerTask = parseInt(localStorage.getItem("ppt")) || 1;
 	this.includeCourseProgress = false;
 	this.includeTrackProgress = false;
-	this.timezone = 'Eastern';
-	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
-	this.data = [];
+	this.timezone = 'EST';
+  this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	var self = this;
-	if (team.members_progress.length > 0) {
-	  var courses = team.members_progress[0].course_progress;
-	  for (var i = 0; i < courses.length; i++) {
-			var course = {name: courses[i].name, tracks:[], toggled:false, id:courses[i].id};
-			var tracks = courses[i].track_progress;
-			for (var j = 0; j < tracks.length; j++) {
-				var track = {name:tracks[j].name, units:[], toggled:false};
-				var units = tracks[j].unit_progress;
-				for(var k = 0; k < units.length; k++) {
-					var unit = {name:units[k].name, toggled:false};
-					track["units"].push(unit);
-				}
-				course["tracks"].push(track);
-			}
-			this.data.push(course);
-	  }
-	} else {
-		alert("You need at least one member to do this!");
-	}
-	var checkTrackToggle = function(track) {
-		track.toggled = true;
-		for(var i = 0; i < track.units.length; i++) {
-			if(!track.units[i].toggled) {
-				track.toggled = false;
-				break;
-			}
-		}
-	};
-	var checkCourseToggle = function(course) {
-		course.toggled = true;
-		for(var i = 0; i < course.tracks.length; i++) {
-			if(!course.tracks[i].toggled) {
-				course.toggled = false;
-				break;
-			}
-		}
-	};
-	this.toggleCourse = function(course) {
-		var tracks = course.tracks;
-		for (var j = 0; j < tracks.length; j++) {
-			var units = tracks[j].units;
-			for(var k = 0; k < units.length; k++) {
-				units[k].toggled = !course.toggled;
-			}
-			tracks[j].toggled = !course.toggled;
-		}
-		course.toggled = !course.toggled;
-	}
-	this.toggleTrack = function(course, track) {
-		var units = track.units;
-		for(var k = 0; k < units.length; k++) {
-			units[k].toggled = !track.toggled;
-		}
-		track.toggled = !track.toggled;
-		checkCourseToggle(course);
-	}
-	this.unitToggled = function(course, track) {
-		checkTrackToggle(track);
-		checkCourseToggle(course);
-	};
 	this.generate = function() {
 		var landingQs = "team_urlsafe=" + team.team_key;
 		if(this.fullname) {
@@ -183,23 +122,6 @@ angular.module('ModalControllers', [])
 			landingQs += "&ppt=" + this.pointsPerTask;
 			localStorage.setItem("ppt", this.pointsPerTask);
 		}
-		var progress_data = angular.copy(this.data);
-		for (var i = 0; i < progress_data.length; i++) {
-			var course = progress_data[i];
-			for (var j = 0; j < course.tracks.length; j++) {
-				var track = course.tracks[j];
-				var unitList = [];
-				for(var k = 0; k < track.units.length; k++) {
-					var unit = track.units[k];
-					if(unit.toggled) {
-						unitList.push(unit.name);
-					}
-				}
-				track.units = unitList;
-			}
-		}
-		var jsonString = JSON.stringify(progress_data);
-		landingQs += "&progress_data=" + jsonString;
 		this.onPostGenerate(landingQs);
 	};
 }])
@@ -214,8 +136,8 @@ angular.module('ModalControllers', [])
 }])
 .controller('NewSweepModalInstanceCtrl', ["$modalInstance", "$controller", "team_key", "$modal", "progress",  function ($modalInstance, $controller, team_key, $modal, progress) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
-	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12, tz:"Eastern"};
-	this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
+	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12, tz:"EST"};
+  this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	this.today = new Date();
 	this.stopEvent = function($event) {
 		$event.preventDefault();
@@ -265,19 +187,7 @@ angular.module('ModalControllers', [])
 		this.pointsPerTask = parseInt(options['ppt']) || parseInt(localStorage.getItem("ppt")) || 1;
 		this.includeCourseProgress = options['course_progress'] === 'true';
 		this.includeTrackProgress = options['track_progress'] === 'true';
-		this.timezone = options['timezone'] || 'Eastern';
-		this.timezones = ['UTC', 'Eastern', 'Central', 'Mountain', 'Pacific'];
-		var progress_data = JSON.parse(options['progress_data']);
-		for (var i = 0; i < this.data.length; i++) {
-			var course = this.data[i];
-			for (var j = 0; j < course.tracks.length; j++) {
-				var track = course.tracks[j];
-				var toggledUnits = progress_data[i].tracks[j].units;
-				for(var k = 0; k < track.units.length; k++) {
-					var unit = track.units[k];
-					unit.toggled = toggledUnits.indexOf(unit.name) !== -1;
-				}
-			}
-		}
+		this.timezone = options['timezone'] || 'EST';
+    this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	}
 }]);

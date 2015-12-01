@@ -6,6 +6,7 @@ from rosebotics_utils.progress_utils import get_csv_export_lists
 import csv
 import StringIO
 import json
+import logging
 
 class CronJob(webapp2.RequestHandler):
 	def get(self):
@@ -14,10 +15,9 @@ class CronJob(webapp2.RequestHandler):
 			return
 		self.handle_job()
 
-_tz_offsets = {'UTC':0, 'Pacific':-7, 'Mountain':-6, 'Central':-5, 'Eastern':-4}
+_tz_offsets = {'UTC':0, 'PDT':-7, 'MDT':-6, 'CDT':-5, 'EDT':-4, 'PST':-6, 'MST':-5, 'CST':-4, 'EST':-3}
 
 class AutoSweepCronJob(CronJob):
-	
 	def handle_job(self):
 		utc = datetime.utcnow()
 		for tz, offset in _tz_offsets.items():
@@ -36,8 +36,7 @@ class AutoSweepCronJob(CronJob):
 					unit_points = len(str(sweep.options.get("ppu", ""))) > 0
 					ppu = float(sweep.options.get("ppu", "1"))
 					ppt = float(sweep.options.get("ppt", "1"))
-					data = json.loads(sweep.options.get("progress_data"))
-					csv_data = get_csv_export_lists(team_leader, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone, data)
+					csv_data = get_csv_export_lists(team_leader, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone, None)
 					self.response.headers['Content-Type'] = 'application/csv'
 					mem_stream = StringIO.StringIO()
 					writer = csv.writer(mem_stream)
@@ -45,9 +44,12 @@ class AutoSweepCronJob(CronJob):
 						writer.writerow(csv_row)
 					self.send_email_with_attachment(leader_email, "You've received an AutoSweep!", mem_stream.getvalue())
 					mem_stream.close()
-				except Exception, _:
+				except Exception, e:
+                                        import traceback
+                                        traceback.print_exc()
+                                        logging.error(e)
 					self.send_email(leader_email, "ERROR: Sorry there was an error generating your AutoSweep")
-				
+
 	def send_email(self, leader_email, msg):
 		email = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
 		email.to = str(leader_email)
