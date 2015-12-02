@@ -140,6 +140,7 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
         for track in course_progress['tracks']:
           track_progress = track['track']
           track_data = track['units']
+          track_added = False
           extract_key = lambda pair:int(pair[0].split(":")[0])
           unit_tuples = sorted(track_data.items(), key=extract_key)
           for unit_id, unit_progress in unit_tuples:
@@ -149,12 +150,12 @@ def get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, 
             if export_course_progress and not course_added:
               table_row.append(course_progress['course'])
               if is_first_student:
-                header_row.append(course['name'])
+                header_row.append(course)
               course_added = True
             if export_track_progress and not track_added:
               table_row.append(track_progress)
               if is_first_student:
-                header_row.append(requested_track['name'])
+                header_row.append(track['name'])
               track_added = True
             if unit_points:
               table_row.append(unit_progress * ppu)
