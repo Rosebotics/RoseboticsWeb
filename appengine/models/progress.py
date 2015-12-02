@@ -905,6 +905,17 @@ class UnitLessonCompletionTracker(object):
 
         return result
 
+    def get_num_tasks_for_unit(self, unit):
+      """ Returns the total number of tasks for unit """
+      total = 0
+      if unit.type == verify.UNIT_TYPE_UNIT:
+        lessons = self._get_course().get_lessons(unit.unit_id)
+        for lesson in lessons:
+          total += 1
+          if lesson.has_activity:
+            total += 1
+      return total
+
     def get_task_total(self):
       """ Returns the total number of tasks for this track """
       total_tasks = 0

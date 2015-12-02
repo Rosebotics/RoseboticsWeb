@@ -15,7 +15,10 @@ def dump(obj):
   """ A useful function that prints *all* of the attributes of an object.
           - I used this to figure out what the CourseBuilder Objects contained """
   for attr in dir(obj):
-    print "obj.%s = %s" % (attr, getattr(obj, attr))
+    try:
+      print "obj.%s = %s" % (attr, getattr(obj, attr))
+    except:
+      print "obj.%s = ?" % (attr,)
 
 ###
 #
@@ -46,7 +49,6 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
   course_tasks_completed = 0
   total_course_tasks = 0
   all_course_app_contexts = controllers.sites.get_all_courses()
-  print course_prefix
   for course_app_context in all_course_app_contexts:
     url_path = course_app_context.slug
     if not url_path.startswith("/" + course_prefix + "-"):
@@ -78,6 +80,9 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
       total_track_tasks = tracker.get_task_total()
       for unit in tracker.get_course_units():
         track['units'][unit.unit_id + ":" + unit.title] = 0
+        if get_total_tasks:
+          unit_tasks = tracker.get_num_tasks_for_unit(unit)
+          track['units'][unit.unit_id + ":" + unit.title + "-total"] = unit_tasks
       total_course_tasks += total_track_tasks
       track_progress.append(track)
       logging.info("Student not enrolled in %s, which has %d tasks"  % (url_path, total_track_tasks/2))
