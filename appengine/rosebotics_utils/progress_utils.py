@@ -87,7 +87,7 @@ def get_total_progress_for_course(email, course_prefix, as_percent=True, get_tot
     total_course_tasks = 1
   return {"course": course_tasks_completed/float(total_course_tasks), "tracks": track_progress}
 
-_tz_offsets = {'UTC':0, 'PDT':-7, 'MDT':-6, 'CDT':-5, 'EDT':-4, 'PST':-6, 'MST':-5, 'CST':-4, 'EST':-3}
+_tz_offsets = {'UTC':0, 'PDT':-7, 'MDT':-6, 'CDT':-5, 'EDT':-4, 'PST':-8, 'MST':-7, 'CST':-6, 'EST':-5}
 
 def _tz_now(timezone='UTC'):
   offset = _tz_offsets.get(timezone, 0)

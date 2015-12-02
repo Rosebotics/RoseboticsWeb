@@ -15,15 +15,17 @@ class CronJob(webapp2.RequestHandler):
 			return
 		self.handle_job()
 
-_tz_offsets = {'UTC':0, 'PDT':-7, 'MDT':-6, 'CDT':-5, 'EDT':-4, 'PST':-6, 'MST':-5, 'CST':-4, 'EST':-3}
+_tz_offsets = {'UTC':0, 'PDT':-7, 'MDT':-6, 'CDT':-5, 'EDT':-4, 'PST':-8, 'MST':-7, 'CST':-6, 'EST':-5}
 
 class AutoSweepCronJob(CronJob):
 	def handle_job(self):
 		utc = datetime.utcnow()
 		for tz, offset in _tz_offsets.items():
 			time = datetime(utc.year, utc.month, utc.day , utc.hour) + timedelta(hours=offset)
+                        logging.info("Checking for sweep at: " + str(time) + " with tz: " + tz)
 			sweeps = AutoSweep.query(AutoSweep.time==time, AutoSweep.tz==tz)
 			for sweep in sweeps:
+                                logging.info(sweep)
 				leader_email = sweep.key.parent().string_id()
 				team_leader = RoseboticsStudent.get_by_id(leader_email)
 				try:
@@ -51,6 +53,7 @@ class AutoSweepCronJob(CronJob):
 					self.send_email(leader_email, "ERROR: Sorry there was an error generating your AutoSweep")
 
 	def send_email(self, leader_email, msg):
+                logging.info("Should send email to: " + leader_email)
 		email = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
 		email.to = str(leader_email)
 		email.subject = "ROSEbotics Auto Sweep"
@@ -58,6 +61,7 @@ class AutoSweepCronJob(CronJob):
 		email.send()
 
 	def send_email_with_attachment(self, leader_email, msg, csv_file):
+                logging.info("Should send email with attachment to: " + leader_email)
 		email = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
 		email.to = str(leader_email)
 		email.subject = "ROSEbotics Auto Sweep"
