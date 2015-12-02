@@ -38,7 +38,7 @@ class AutoSweepCronJob(CronJob):
 					unit_points = len(str(sweep.options.get("ppu", ""))) > 0
 					ppu = float(sweep.options.get("ppu", "1"))
 					ppt = float(sweep.options.get("ppt", "1"))
-					csv_data = get_csv_export_lists(team_leader, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone, None)
+					csv_data = get_csv_export_lists(team_leader, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone)
 					self.response.headers['Content-Type'] = 'application/csv'
 					mem_stream = StringIO.StringIO()
 					writer = csv.writer(mem_stream)

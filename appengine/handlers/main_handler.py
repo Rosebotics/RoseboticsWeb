@@ -91,9 +91,7 @@ class ExportCsvAction(base_handler.BaseAction):
     unit_points = len(self.request.get("ppu")) > 0
     ppu = float(self.request.get("ppu", "1"))
     ppt = float(self.request.get("ppt", "1"))
-    print self.request.get("progress_data")
-    data = json.loads(self.request.get("progress_data"))
-    csv_data = get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone, data)
+    csv_data = get_csv_export_lists(rosebotics_student, team_urlsafe, export_student_name, export_rose_username, unit_points, ppu, ppt, course_progress, track_progress, timezone)
     self.response.headers['Content-Type'] = 'application/csv'
     writer = csv.writer(self.response.out)
     for csv_row in csv_data:
