@@ -285,34 +285,50 @@ angular.module('ManageControllers', [])
 			sweep.year = sweep.dt.getFullYear().toString();
 			sweep.month = (sweep.dt.getMonth() + 1).toString();
 			sweep.day = sweep.dt.getDate().toString();
-			api.insertSweep(sweep).then(function(newSweep) {
-				console.log(newSweep);
-				newSweep.hourNum = parseInt(newSweep.hour);
-				var dt = new Date(0);
-				dt.setFullYear(newSweep.year);
-				dt.setMonth(parseInt(newSweep.month) - 1, parseInt(newSweep.day));
-				newSweep.dt = dt;
-				if (sweeps["sweeps"] == undefined) {
-					sweeps["sweeps"] = [];
-					self.sweeps = sweeps["sweeps"];
-				}
-				var inserted = false;
-				for(var i = 0; i < self.sweeps.length; i++) {
-					if(self.sweeps[i].dt.getTime() < newSweep.dt.getTime() || (self.sweeps[i].dt.getTime() === newSweep.dt.getTime() && self.sweeps[i].hourNum < newSweep.hourNum)) {
-						self.sweeps.splice(i, 0, newSweep);
-						inserted = true;
-						break;
-					}
-				}
-				if(!inserted) {
-					self.sweeps.push(newSweep);
-				}
-				snackbar.remove(8);
-				snackbar.createWithTimeout("<b>Success!</b> Sweep created");
-			}, function() {
-				snackbar.remove(8);
-				snackbar.createWithTimeout("<b>Error!</b> Sweep not created");
-			});
+      var repeats = sweep.repeats || 0;
+      var newSweeps = [sweep];
+      var nextWeek = function (date, times) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate()+(7*times));
+      }
+      for (var i = 1; i <= repeats; i++) {
+        var newSweep = angular.copy(newSweeps[0]);
+        var dt = nextWeek(newSweep.dt, i); 
+        newSweep.year = dt.getFullYear().toString();
+        newSweep.month = (dt.getMonth() + 1).toString();
+        newSweep.day = dt.getDate().toString();
+        newSweeps.push(newSweep);
+      }
+      for (var j = 0; j < newSweeps.length; j++) {
+        sweep = newSweeps[j];
+        api.insertSweep(sweep).then(function(newSweep) {
+          newSweep.hourNum = parseInt(newSweep.hour);
+          var dt = new Date(0);
+          dt.setFullYear(newSweep.year);
+          dt.setMonth(parseInt(newSweep.month) - 1, parseInt(newSweep.day));
+          newSweep.dt = dt;
+          if (sweeps["sweeps"] == undefined) {
+            sweeps["sweeps"] = [];
+            self.sweeps = sweeps["sweeps"];
+          }
+          var inserted = false;
+          for(var i = 0; i < self.sweeps.length; i++) {
+            if(self.sweeps[i].dt.getTime() < newSweep.dt.getTime() || 
+               (self.sweeps[i].dt.getTime() === newSweep.dt.getTime() && self.sweeps[i].hourNum < newSweep.hourNum)) {
+              self.sweeps.splice(i, 0, newSweep);
+              inserted = true;
+              break;
+            }
+          }
+          if(!inserted) {
+            self.sweeps.push(newSweep);
+          }
+          snackbar.remove(8);
+          snackbar.createWithTimeout("<b>Success!</b> Sweep created");
+        }, function() {
+          snackbar.remove(8);
+          snackbar.createWithTimeout("<b>Error!</b> Sweep not created");
+        });
+      }
 		});
 	};
 }]);
