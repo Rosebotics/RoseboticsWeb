@@ -275,7 +275,7 @@ class CourseHandler(BaseHandler):
                 self.redirect("/../courses")
                 return
             else:
-                student = Student.get_enrolled_student_by_email(user.email())
+                student = Student.get_enrolled_student_by_email(user.email().lower())
                 profile = StudentProfileDAO.get_profile_by_user_id(
                     user.user_id())
                 self.template_value['has_global_profile'] = profile is not None
@@ -284,7 +284,7 @@ class CourseHandler(BaseHandler):
                     ## Enrolling the student using their roseboticsStudent account ##
                     roseboticsStudent = self.template_value['rosebotics_student']
                     Student.add_new_student_for_current_user(roseboticsStudent.nickname, None, None, labels=None)
-                    student = Student.get_enrolled_student_by_email(user.email())
+                    student = Student.get_enrolled_student_by_email(user.email().lower())
                     profile = StudentProfileDAO.get_profile_by_user_id(user.user_id())
 
             if (student.is_transient and

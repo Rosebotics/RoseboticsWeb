@@ -972,6 +972,7 @@ class Student(BaseEntity):
     @classmethod
     def get_enrolled_student_by_email(cls, email):
         """Returns enrolled student or None."""
+        email = email.lower()
         student = MemcacheManager.get(cls._memcache_key(email))
         if NO_OBJECT == student:
             return None
