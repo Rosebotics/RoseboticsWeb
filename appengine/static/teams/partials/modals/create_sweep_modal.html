@@ -27,6 +27,14 @@
 										<select ng-options="item for item in modal.timezones" ng-model="modal.sweep.tz"></select>
         		<button class="btn btn-primary pull-right" ng-click="modal.toggleSweepOptionsModal()">Export Options</button>
         </div>
+        <div class="checkbox col-xs-12">
+						<label class="col-xs-3">
+						  <input type="checkbox" ng-model="modal.doesRepeat"> Repeat Weekly
+						</label>
+						<span class="col-xs-9">
+              <input type="number" ng-model="modal.repeatWeeks" ng-show="modal.doesRepeat">
+						</span>
+					</div>
 			</div>
 		</div>
 		<div class="modal-footer">

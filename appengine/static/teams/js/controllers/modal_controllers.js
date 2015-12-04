@@ -139,11 +139,16 @@ angular.module('ModalControllers', [])
 	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12, tz:"EST"};
   this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	this.today = new Date();
+  this.doesRepeat = false;
+  this.repeatWeeks = 0;
 	this.stopEvent = function($event) {
 		$event.preventDefault();
 		$event.stopPropagation();
 	};
 	this.addSweep = function() {
+    if (this.doesRepeat) {
+      this.sweep.repeats = this.repeatWeeks;
+    }
 	  $modalInstance.close(this.sweep);
 	};
 	var self = this;
