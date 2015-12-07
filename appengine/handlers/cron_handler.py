@@ -29,9 +29,9 @@ class AutoSweepCronJob(CronJob):
 				leader_email = sweep.key.parent().string_id()
 				team_leader = RoseboticsStudent.get_by_id(leader_email)
 				try:
-					export_student_name = len(str(sweep.options.get("rose_username", ""))) > 0
+					export_student_name = len(str(sweep.options.get("student_name", ""))) > 0
 					export_rose_username = len(str(sweep.options.get("rose_username", ""))) > 0
-					team_urlsafe = sweep.options.get("team_urlsafe") or sweep.team_key.urlsafe()
+					team_urlsafe = sweep.team_key.urlsafe()
 					timezone = sweep.options.get("timezone") or sweep.tz
 					course_progress = len(str(sweep.options.get("course_progress", ""))) > 0
 					track_progress = len(str(sweep.options.get("track_progress", ""))) > 0

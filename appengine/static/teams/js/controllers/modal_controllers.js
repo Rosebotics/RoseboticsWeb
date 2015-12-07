@@ -136,7 +136,7 @@ angular.module('ModalControllers', [])
 }])
 .controller('NewSweepModalInstanceCtrl', ["$modalInstance", "$controller", "team_key", "$modal", "progress",  function ($modalInstance, $controller, team_key, $modal, progress) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
-	this.sweep = {dt:new Date(), team_key:team_key, options:"", hourNum:12, tz:"EST"};
+	this.sweep = {dt:new Date(), team_key:team_key, options:"student_name=true&rose_username=true", hourNum:12, tz:"EST"};
   this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	this.today = new Date();
   this.doesRepeat = false;
