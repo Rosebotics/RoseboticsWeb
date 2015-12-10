@@ -90,7 +90,7 @@ angular.module('ModalControllers', [])
 	this.fullname = true;
 	this.username = true;
 	this.hasTimestamp = true;
-	this.pointValue = "points";
+	this.pointValue = "tasks";
 	this.pointsPerUnit = parseInt(localStorage.getItem("ppu")) || 1;
 	this.pointsPerTask = parseInt(localStorage.getItem("ppt")) || 1;
 	this.includeCourseProgress = false;
@@ -136,7 +136,8 @@ angular.module('ModalControllers', [])
 }])
 .controller('NewSweepModalInstanceCtrl', ["$modalInstance", "$controller", "team_key", "$modal", "progress",  function ($modalInstance, $controller, team_key, $modal, progress) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
-	this.sweep = {dt:new Date(), team_key:team_key, options:"student_name=true&rose_username=true", hourNum:12, tz:"EST"};
+  var pptDefault = localStorage.getItem("ppt") || "1";
+	this.sweep = {dt:new Date(), team_key:team_key, options:"student_name=true&rose_username=true&ppt=" + pptDefault, hourNum:12, tz:"EST"};
   this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	this.today = new Date();
   this.doesRepeat = false;
