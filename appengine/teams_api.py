@@ -168,7 +168,7 @@ class TeamApi(remote.Service):
         mp = MemberProgress()
         student = RoseboticsStudent.get_by_id(member.email.lower())
         if student is None:
-          logging.info(email + " being thrown out of sweep!")
+          logging.info(member.email + " being thrown out of sweep!")
           continue
         mp.display_name = student.name
         mp.username = student.username
