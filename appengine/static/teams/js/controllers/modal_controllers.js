@@ -136,8 +136,8 @@ angular.module('ModalControllers', [])
 }])
 .controller('NewSweepModalInstanceCtrl', ["$modalInstance", "$controller", "team_key", "$modal", "progress",  function ($modalInstance, $controller, team_key, $modal, progress) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
-  var pptDefault = localStorage.getItem("ppt") || "1";
-	this.sweep = {dt:new Date(), team_key:team_key, options:"student_name=true&rose_username=true&ppt=" + pptDefault, hourNum:12, tz:"EST"};
+  var ppuDefault = localStorage.getItem("ppu") || "1";
+	this.sweep = {dt:new Date(), team_key:team_key, options:"student_name=true&rose_username=true&timezone=EST&ppu=" + ppuDefault, hourNum:12, tz:"EST"};
   this.timezones = ['UTC', 'PDT', 'MDT', 'CDT', 'EDT', 'PST', 'MST', 'CST', 'EST'];
 	this.today = new Date();
   this.doesRepeat = false;
