@@ -1,11 +1,14 @@
 from handlers import base_handler
 from rosebotics_utils import recent_track_utils
 from google.appengine.api import users
+from google.appengine.ext import ndb
 import csv
 from rosebotics_utils.progress_utils import get_csv_export_lists,\
   get_total_progress_for_course
 import json
 from settings import course_list as COURSE_LIST
+from settings import admin_list as ADMIN_LIST
+from models.rosebotics_models import RoseboticsTeamMember, TeamVisibility
 
 ### PAGES ###
 class HomePage(base_handler.BasePage):
@@ -73,7 +76,24 @@ class EditProfileAction(base_handler.BaseAction):
     rosebotics_student.username = self.request.get("username")
     rosebotics_student.details = self.request.get("connection")
     rosebotics_student.put()
+    self.fill_in_team_members(rosebotics_student)
     self.redirect(self.request.referer)
+
+  def fill_in_team_members(self, rosebotics_student):
+    if rosebotics_student.username is None or rosebotics_student.username == "":
+      return
+    rose_email = rosebotics_student.username + "@rose-hulman.edu"
+    query = RoseboticsTeamMember.query(RoseboticsTeamMember.email == rose_email)
+    for team_member_key in query.iter(keys_only=True):
+      team_key = team_member_key.parent()
+      team_member_key.delete()
+      team_member_key = ndb.Key(RoseboticsTeamMember, rosebotics_student.key.string_id(), parent=team_key)
+      team_member = RoseboticsTeamMember(key=team_member_key)
+      team_member.email = rosebotics_student.key.string_id()
+      leader_email = team_key.get().leader
+      if leader_email in ADMIN_LIST:
+        team_member.visibility = TeamVisibility.TEAM_LEADER
+      team_member.put()
 
 class ExportCsvAction(base_handler.BaseAction):
 

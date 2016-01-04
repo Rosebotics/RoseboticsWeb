@@ -38,13 +38,22 @@ class TeamApi(remote.Service):
       old_emails = [member.email for member in old_members]
       # if new email is NOT in old_members: add new email
       for member in team.members:
+        if "@rose-hulman.edu" in member.email:
+          username = member.email.split("@")[0]
+          student = RoseboticsStudent.query(RoseboticsStudent.username==username).get()
+          if student is not None:
+            member.email = student.key.string_id()
+          else:
+            send_rose_invite_email(member.email)
         new_emails.append(member.email)
         if member.email not in old_emails:
           member_key = get_member_key(team.team_key, member.email)
           new_member = RoseboticsTeamMember(key=member_key)
           new_member.email = member.email
-          if new_member.email == user_email or is_admin_user(user_email):
+          if new_member.email == user_email:
             new_member.visibility = TeamVisibility.ALL_MEMBERS
+          elif is_admin_user(user_email) and "@rose-hulman.edu" not in new_member.email:
+            new_member.visibility = TeamVisibility.TEAM_LEADER
           else:
             send_invite_email(member.email)
           new_member.put()
@@ -58,11 +67,20 @@ class TeamApi(remote.Service):
       emails = [member.email for member in team.members]
       for email in emails:
         student_email = email
+        if "@rose-hulman.edu" in student_email:
+          username = student_email.split("@")[0]
+          student = RoseboticsStudent.query(RoseboticsStudent.username==username).get()
+          if student is not None:
+            student_email = student.key.string_id()
+          else:
+            send_rose_invite_email(student_email)
         member_key = get_member_key(team.team_key, student_email)
         new_member = RoseboticsTeamMember(key=member_key)
         new_member.email = student_email
-        if new_member.email == user_email or is_admin_user(user_email):
+        if new_member.email == user_email:
           new_member.visibility = TeamVisibility.ALL_MEMBERS
+        elif is_admin_user(user_email) and "@rose-hulman.edu" not in student_email:
+          new_member.visibility = TeamVisibility.TEAM_LEADER
         else:
           send_invite_email(email)
         new_member.put()
@@ -274,6 +292,30 @@ Happy Learning!
     except Exception, e:
       logging.warn("Invite Email not sent to: " + str(email) + str(e))
     
+
+def send_rose_invite_email(email):
+    message = mail.EmailMessage(sender="no-reply@roseboticsweb.appspotmail.com")
+    message.to = email
+    message.subject = "ROSEbotics Team Invite"
+    message.body = """ 
+Hello,
+
+You've been invited to join a ROSEbotics Team on rosebotics.org! Rosebotics.org is place where you can watch and learn about mobile & web development.
+Teams is a place where you can create study groups and monitor others progress within the courses on the website.
+
+Please go to http://rosebotics.org to signup, then you can join this team by clicking on the teams item in the dropdown menu under your name once you've signed it.
+
+Happy Learning!
+
+-- The ROSEbotics Team
+     """.strip()
+    try:
+      message.send()
+      logging.info("Invite Email should have been sent to: " + str(email))
+    except Exception, e:
+      logging.warn("Invite Email not sent to: " + str(email) + str(e))
+    
+
 def create_course_progress(course_name, progress, course_id):
   course_progress = CourseProgress(name=course_name, progress=progress["course"], id=course_id)
   for track in progress["tracks"]:
