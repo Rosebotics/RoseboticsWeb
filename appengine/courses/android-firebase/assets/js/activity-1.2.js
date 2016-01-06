@@ -44,17 +44,13 @@ var activity = [
 		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
 	},
 	"<br><br>",
-	"<b>2.</b> Which one of these Rose-Hulman alumni didn't found Firebase? (Choose all that apply.)",
+	"<b>2.</b> Which one of these Rose-Hulman alumni didn't found Firebase?<br>",
 	{
-		questionType : "multiple choice group",
-		questionsList : [
-				{
-					questionHTML : "",
-					choices : [ "Andrew Lee", "Michael Lehenbauer", "Mike McDonald"],
-					correctIndex : [0,1,2]
-				}
-				],
-		allCorrectOutput : "Well done!",
-		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
+		questionType : "multiple choice",
+		choices : [
+				["Andrew Lee", false, "Try again. Founder." ],
+				["Michael Lehenbauer", false, "Try again. Founder." ],
+				["Mike McDonald", true, "Correct. Mike is excellent, but he graduated too recently to be a founder. :)" ],
+		]
 	},
 ];

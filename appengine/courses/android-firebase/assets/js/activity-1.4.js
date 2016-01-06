@@ -35,7 +35,7 @@ var activity = [
 		questionType : "multiple choice",
 		choices : [
 				["Yes", true, "Correct. Excellent - I think you'll enjoy using it." ],
-				["No", true, "Correct. OK, you can use the forge." ],
+				["No", true, "Correct. That's OK, you can use the Forge for testing." ],
 		]
 	},
 ];

@@ -62,8 +62,8 @@ var activity = [
 	{
 		questionType : "multiple choice",
 		choices : [
-				["The object's class", true, "Correct. " ],
 				["The DataSnapshot.DESERIALIZE boolean flag", false, "Try again. Seems reasonable. But no." ],
+				["The object's class", true, "Correct. " ],
 		]
 	},
 	"<br><br>",
@@ -72,7 +72,7 @@ var activity = [
 		questionType : "multiple choice",
 		choices : [
 				["True", true, "Correct. " ],
-				["False", false, "Try again. In fact, this is why we are studying Firebase even before we study local storage (SQLite)" ],
+				["False", false, "Try again. In fact, this is why we are studying Firebase even before we study SQLite, which is used for local storage" ],
 		]
 	},
 ];

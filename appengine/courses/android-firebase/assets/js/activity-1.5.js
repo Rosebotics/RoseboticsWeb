@@ -38,7 +38,7 @@ var activity = [
 				["Add packaging options to the gradle file", false, "Try again. " ],
 				["Add internet permission to the manifest", false, "Try again. " ],
 				["Call Firebase.setAndroidContext(context)", false, "Try again. " ],
-				["Add Firebase.setFirebaseURL(url)", true, "Correct. Close. You essentially do this when you construct a Firebase, though." ],
+				["Add Firebase.setFirebaseURL(url)", true, "Correct. You essentially do this when you construct a Firebase, though." ],
 		]
 	},
 ];

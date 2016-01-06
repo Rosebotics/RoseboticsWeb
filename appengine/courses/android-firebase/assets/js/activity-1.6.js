@@ -36,18 +36,18 @@ var activity = [
 		choices : [
 				["An educational non-profit organization encouraging K-12 students to pursue STEM careers.", false, "Try again. That's JASON." ],
 				["JavaScript Object Notation", true, "Correct. " ],
-				["JavScript On Netbeans", false, "Try again. Although that's what you get if Google completes the phrase 'JavaScript on n...'" ],
+				["JavaScript On Netbeans", false, "Try again. Although that happens to be what you get if Google completes the phrase 'JavaScript on n...'" ],
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> Which annotation put before the key field will tell jackson to ignore the key stored in our model?<br>",
+	"<b>2.</b> Which annotation put before the key field will tell Jackson to ignore the key stored in our model?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
 				["@JsonIgnore", true, "Correct. " ],
 				["@JacksonIgnoreKey", false, "Try again. Good guess." ],
 				["@IgnoreField", false, "Try again. " ],
-				["@JsonProperty('ignore')", false, "Try again. JsonProperty is used to map Android Java field names to firebase JSON field names" ],
+				["@JsonProperty('ignore')", false, "Try again. You can use @JsonProperty to map Android Java field names to firebase JSON field names if they differ. We didn't need to since we chose the same names for our fields." ],
 		]
 	},
 	"<br><br>",
@@ -70,7 +70,7 @@ var activity = [
 		questionType : "multiple choice",
 		choices : [
 				["A HashMap", false, "Try again. It can, but that's not what we used, because another way is more convenient." ],
-				["A MovieQuote model object", true, "Correct. Good. Jackson uses that to figure out how to serialize the object into json." ],
+				["A MovieQuote model object", true, "Correct. Good. Jackson then serializes the object into json." ],
 				["Object", false, "Try again. It can, but would need to be typecast to a map. See the first response." ],
 		]
 	},
