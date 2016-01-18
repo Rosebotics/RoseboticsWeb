@@ -49,11 +49,12 @@ angular.module('ModalControllers', [])
 	  $modalInstance.close(this.selectedTeam);
 	};
 }])
-.controller('CreateTeamModalInstanceCtrl', ["$modalInstance", "$controller", "user", "courses", function ($modalInstance, $controller, user, courses) {
+.controller('CreateTeamModalInstanceCtrl', ["$modalInstance", "$controller", "user", "courses", "CSV", "$scope", function ($modalInstance, $controller, user, courses, CSV, $scope) {
 	angular.extend(this, $controller('SimpleModalInstanceCtrl', {$modalInstance: $modalInstance}));
 	this.teamName = "";
 	this.teamMembers = "";
 	this.includeLeader = false;
+  this.file = false;
 	var self = this;
 	this.courses = angular.copy(courses.ids);
 	this.offeredCourses = courses;
@@ -65,6 +66,42 @@ angular.module('ModalControllers', [])
 		}
 		return "";
 	};
+  this.upload = function() {
+    var showError = function(msg) {
+      alert(msg);
+    };
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var text = reader.result;
+      
+      var csv = null; 
+      try {
+        csv = CSV.toArray(text);
+      } catch(e) {
+        showError("Cannot read CSV!")
+      }
+      var emailCol = false;
+      var emails = [];
+      for (var i = 0; i < csv.length; i++) {
+        var row = csv[i];
+        if (emailCol === false) {
+          for(var j = 0; j < row.length; j++) {
+            if (row[j] === "Email") {
+              emailCol = j;
+            }
+          }
+        } else {
+          if (row.length > emailCol) {
+            emails.push(row[emailCol].toLowerCase());
+          }
+        }
+      }
+      $scope.$apply(function() {
+        self.teamMembers += emails.join();
+      });
+    };
+    reader.readAsText(this.file);
+  };
 	this.add = function() {
 		var newTeam = {name: self.teamName, leader: user.email, members:[], courses:self.courses};
 		var members = self.teamMembers.split(',');

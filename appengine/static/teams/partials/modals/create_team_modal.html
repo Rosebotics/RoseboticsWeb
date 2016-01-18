@@ -1,3 +1,4 @@
+
 <form class="form-horizontal">
 
 	<fieldset>
@@ -27,6 +28,13 @@
 					</label>
 				</div>
 			</div>
+      <div class="form-group">
+        <div class="col-lg-10 col-lg-offset-2">
+          <span class="btn btn-primary btn-file">
+            Import CSV <input type="file" file-change="modal.upload()" ng-model="modal.file">
+          </span>
+        </div>
+      </div>
 			<div class="form-group">
 				<label for="members" class="col-lg-2 control-label">Member
 					Emails</label>
