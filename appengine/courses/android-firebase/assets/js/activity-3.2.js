@@ -30,18 +30,16 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Which of these is NOT a model object within the GradeRecorder Firebase? (Choose all that apply.)",
+	"<b>1.</b> Which of these is NOT a model object within the GradeRecorder Firebase?<br>",
 	{
-		questionType : "multiple choice group",
-		questionsList : [
-				{
-					questionHTML : "",
-					choices : [ "Owner", "Course", "Assignment", "GradeEntry", "Assistant"],
-					correctIndex : [4]
-				}
-				],
-		allCorrectOutput : "Well done!",
-		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
+		questionType : "multiple choice",
+		choices : [
+				["Owner", false, "Try again. " ],
+				["Course", false, "Try again. " ],
+				["Assignment", false, "Try again. " ],
+				["GradeEntry", false, "Try again. " ],
+				["Assistant", true, "Correct. Teaching assistants are just owners, just like the instructors." ],
+		]
 	},
 	"<br><br>",
 	"<b>2.</b> A single course can have multiple assignments. How is this represented in the Firebase?<br>",
@@ -49,8 +47,8 @@ var activity = [
 		questionType : "multiple choice",
 		choices : [
 				["There is a table that maps course keys to assignment keys; we then do a join to get all the assignments for a course", false, "Try again. Sorry, Firebase uses a no-SQL database, so there are no joins." ],
-				["Each assignment stored the key of its course", true, "Correct. That allows us to write a Query for only the assignments that have that key." ],
-				["Each course has a set of keys of its assignments", false, "Try again. Good idea, and that's what we did to relate courses and owners. But what we did allows for simpler Firebase code." ],
+				["Each assignment stores the key of its course", true, "Correct. That allows us to write a Query for only the assignments that have that key." ],
+				["Each course has a set of keys of its assignments", false, "Try again. Good idea, and that's what we did to relate courses and owners. But what we did here allows for simpler Firebase code." ],
 		]
 	},
 	"<br><br>",

@@ -44,7 +44,7 @@ var activity = [
 		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
 	},
 	"<br><br>",
-	"<b>2.</b> To get the name of a course for which we have the key, we called addListenerForSingleValueEvent. What is the signficance of the word Single? If you aren't sure, read <a href="https://www.firebase.com/docs/android/api/#query_methods">this</a><br>",
+	"<b>2.</b> To get the name of a course for which we have the key, we called addListenerForSingleValueEvent. What is the signficance of the word Single? If you aren't sure, read <a href='https://www.firebase.com/docs/android/api/#query_methods' target='_blank'>this</a><br>",
 	{
 		questionType : "multiple choice",
 		choices : [
