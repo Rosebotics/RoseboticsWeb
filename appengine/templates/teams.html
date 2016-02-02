@@ -15,7 +15,7 @@
 <script src="//apis.google.com/js/client.js?onload=init"></script>
 </head>
 <body ng-init="userEmail = '{{rosebotics_student.key.string_id()}}'">
-	{% include 'templates/views/common/angular_navbar.html' %}
+	{% include 'templates/views/common/navbar.html' %}
 	{# http://jinja.pocoo.org/docs/dev/templates/#escaping #}
 	{% raw %}
 	<div class="container hidden" style="margin-top: 20px;">
@@ -66,5 +66,10 @@
 		<h1>Loading...</h1>
 	</div>
 <div class="snackbar-container" data-snackbar="true"></div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<!-- Rosefire Script -->
+<script src="https://cdn.rawgit.com/rockwotj/rosefire/js-v1.0.4/dist/js/rosefire.min.js"></script>
+<!-- Magnific Popup core JS file -->
+<script src="/static/dist/js/rosebotics.min.js"></script>
 </body>
 </html>

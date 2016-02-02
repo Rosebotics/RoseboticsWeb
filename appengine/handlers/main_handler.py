@@ -9,6 +9,8 @@ import json
 from settings import course_list as COURSE_LIST
 from settings import admin_list as ADMIN_LIST
 from models.rosebotics_models import RoseboticsTeamMember, TeamVisibility
+from rosefire import RosefireTokenVerifier
+from google.appengine.api.app_identity import get_application_id
 
 ### PAGES ###
 class HomePage(base_handler.BasePage):
@@ -73,7 +75,10 @@ class EditProfileAction(base_handler.BaseAction):
     rosebotics_student.name = self.request.get("name")
     rosebotics_student.nickname = self.request.get("nickname")
     rosebotics_student.alt_email = self.request.get("alt_email")
-    rosebotics_student.username = self.request.get("username")
+    rosefire_token = self.request.get("rosefire_token")
+    if rosefire_token is not None and rosefire_token != "":
+      authData = RosefireTokenVerifier(get_application_id()).verify(rosefire_token)
+      rosebotics_student.username = authData.username
     rosebotics_student.details = self.request.get("connection")
     rosebotics_student.put()
     self.fill_in_team_members(rosebotics_student)

@@ -79,7 +79,6 @@
       </div>
     </div>
   </div>
-
     <!-- Rosebotics info Modal -->
   <div class="modal fade" id="edit-student-details-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -143,5 +142,51 @@
         </form>
       </div>
     </div>
+  </div>  
+  
+  <!-- Rosefire Modal -->
+  <div class="modal fade" id="rosefire-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content" style="top: 100px;">
+        <div class="modal-header bg-info">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">RHIT Login</h4>
+        </div>
+        <div class="modal-body">
+          <div id="rosefire-error" class="alert alert-danger hidden" role="alert">
+            <a href="#" class="alert-link">Invalid Credentials</a>
+          </div>
+          <form class="form-horizontal">
+            <fieldset>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-12 control-label" for="rose-email">Rose Email</label>  
+              <div class="col-md-12">
+              <input id="rose-email" name="rose-email" type="text" placeholder="you@rose-hulman.edu" class="form-control input-md" required="">
+                
+              </div>
+            </div>
+
+            <!-- Password input-->
+            <div class="form-group">
+              <label class="col-md-12 control-label" for="rose-password">Rose Password</label>
+              <div class="col-md-12">
+                <input id="rose-password" name="rose-password" type="password" placeholder="" class="form-control input-md" required="">
+                
+              </div>
+            </div>
+
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a id="rosefire-login" class="btn btn-primary">Verify</a>
+        </div>
+      </div>
+    </div>
   </div>
+
+
 {% endif %}
