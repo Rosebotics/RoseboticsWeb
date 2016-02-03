@@ -79,7 +79,6 @@
       </div>
     </div>
   </div>
-
     <!-- Rosebotics info Modal -->
   <div class="modal fade" id="edit-student-details-modal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
@@ -110,13 +109,24 @@
             <span class="glyphicon glyphicon-question-sign help-icon pull-right"aria-hidden="true" data-toggle="tooltip" data-placement="right" title="<div style='width:150px'>Enter whatever email you actually check.  Not required to be a gmail or Google account.  Just whatever email address you check.</div>"></span>
             </div>
         </div>
+        {% if rosebotics_student.username %}
         <div class="form-group">
           <label for="student_key" class="col-sm-3 control-label">RHIT Username</label>
             <div class="col-sm-9">
-            <input type="text" name="username" class="form-control with-help" placeholder="" value="{{ rosebotics_student.username if rosebotics_student.username }}"/>
-            <span class="glyphicon glyphicon-question-sign help-icon pull-right"aria-hidden="true" data-toggle="tooltip" data-placement="right" title="<div style='width:150px'>Your Rose-Hulman username, if you have one. If you are a RHIT student, this is a REQUIRED field. If not, you may leave it blank.</div>"></span>
+            <input type="text" name="username" disabled="" class="form-control with-help" placeholder="" value="{{ rosebotics_student.username }}"/>
+            <span class="glyphicon glyphicon-question-sign help-icon pull-right"aria-hidden="true" data-toggle="tooltip" data-placement="right" title="<div style='width:150px'>Your Rose-Hulman username. This was grabbed from being linked with Rose-Hulman</div>"></span>
             </div>
         </div>
+        {% else %}
+        <div class="form-group">
+          <label for="student_key" class="col-sm-3 control-label">RHIT Username</label>
+            <div class="col-sm-9">
+            <input type="text" name="rosefire_token" class="hidden" placeholder="" value=""/>
+            <input type="button" name="getToken" class="btn btn-primary form-control with-help" value="Link with Rose-Hulman"/>
+            <span class="glyphicon glyphicon-question-sign help-icon pull-right" style="top: 10px;" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="<div style='width:150px'>Link your Rose-Hulman account with Rosebotics. If you are a RHIT student, this is REQUIRED.</div>"></span>
+            </div>
+        </div>
+        {% endif %}
         <div class="form-group">
           <label for="student_key" class="col-sm-3 control-label">Rose Connection</label>
             <div class="col-sm-9">
@@ -132,5 +142,51 @@
         </form>
       </div>
     </div>
+  </div>  
+  
+  <!-- Rosefire Modal -->
+  <div class="modal fade" id="rosefire-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content" style="top: 100px;">
+        <div class="modal-header bg-info">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">RHIT Login</h4>
+        </div>
+        <div class="modal-body">
+          <div id="rosefire-error" class="alert alert-danger hidden" role="alert">
+            <a href="#" class="alert-link">Invalid Credentials</a>
+          </div>
+          <form class="form-horizontal">
+            <fieldset>
+
+            <!-- Text input-->
+            <div class="form-group">
+              <label class="col-md-12 control-label" for="rose-email">Rose-Hulman Username</label>  
+              <div class="col-md-12">
+              <input id="rose-email" name="rose-email" type="text" placeholder="username" class="form-control input-md" required="">
+                
+              </div>
+            </div>
+
+            <!-- Password input-->
+            <div class="form-group">
+              <label class="col-md-12 control-label" for="rose-password">Rose-Hulman Password</label>
+              <div class="col-md-12">
+                <input id="rose-password" name="rose-password" type="password" placeholder="" class="form-control input-md" required="">
+                
+              </div>
+            </div>
+
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <a id="rosefire-login" class="btn btn-primary">Verify</a>
+        </div>
+      </div>
+    </div>
   </div>
+
+
 {% endif %}

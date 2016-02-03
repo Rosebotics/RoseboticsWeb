@@ -73,7 +73,6 @@ angular.module('ModalControllers', [])
     var reader = new FileReader();
     reader.onload = function(e) {
       var text = reader.result;
-      
       var csv = null; 
       try {
         csv = CSV.toArray(text);
