@@ -15,7 +15,7 @@ var loginModalFunctions = function() {
     if (!logging_in) {
       logging_in = true;
       var creds = {
-        email: rose_email,
+        email: rose_email + "@rose-hulman.edu",
         password: rose_password,
         registryToken: '85bee1dadcaf0093246a8b3b6c627545a887539d92f71480ec70ba34c67a5f2dc736c47e0c04039844eef9dd9f2ea7b8kENtxsdDt+Oo9mGExHXYBR56vm1r31eCnF0OVXIPQbY1ExYlnCQMZteHQIuCZ4AS/BrFZs9GWNAbit+ph74f5geBc6lN4ZaS3NomanSmFiM='
       };
@@ -24,8 +24,8 @@ var loginModalFunctions = function() {
           $('#rosefire-error').removeClass('hidden');
         } else {
           $('#rosefire-error').addClass('hidden');
-          console.log(token);
           $('input[name="rosefire_token"]').val(token);
+          rosefire_button.val("Linked with " + rose_email);
           rosefire_button.removeClass('btn-primary');
           rosefire_button.addClass('btn-success');
           rosefire_button.addClass('disabled');
