@@ -30,12 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Were you able to launch a Map with a toolbar at the top?<br>",
+	"<b>1.</b> What service finds an address, given a latitude/longitude pair?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Yes", true, "Correct. Good. Carry on!" ],
-				["No", false, "Try again. Please go back and do that now." ],
+				["Geocoding", false, "Try again. No, that's the opposite of geocoding." ],
+				["Reverse geocoding", true, "Correct. " ],
 		]
 	},
 ];

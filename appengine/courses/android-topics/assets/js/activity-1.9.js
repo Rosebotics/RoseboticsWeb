@@ -30,12 +30,28 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Were you able to launch a Map with a toolbar at the top?<br>",
+	"<b>1.</b> What format are the raw state boundaries in?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Yes", true, "Correct. Good. Carry on!" ],
-				["No", false, "Try again. Please go back and do that now." ],
+				["Java objects", false, "Try again. Eventually. I parsed the xml and created a list of objects for you." ],
+				["json", false, "Try again. One site had that, but without colors." ],
+				["xml", true, "Correct. " ],
+				["addPolygon, setPolygonClickListener", false, "Try again. " ],
+				["PolygonOptions", false, "Try again. " ],
+				["ColorUtila", false, "Try again. " ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> What property of the polygon did we change when clicking on it?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["Its color", false, "Try again. Close. What about the color?" ],
+				["Its size", false, "Try again. That would require changing all the points." ],
+				["Its strokeWidth", false, "Try again. It has a stroke width, but we didn't change it." ],
+				["Its transparency", true, "Correct. " ],
+				["Its z-index", false, "Try again. If polygons overlap, the one with the highest z-index is displayed on top." ],
 		]
 	},
 ];

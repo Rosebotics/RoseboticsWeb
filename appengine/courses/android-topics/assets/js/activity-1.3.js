@@ -30,67 +30,13 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> How do you refer to a string in code?<br>",
+	"<b>1.</b> How do you obtain a Map API Key?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["ContextCompat.getColor(context, R.color.somename)", false, "Try again. " ],
-				["getString(R.string.somename)", true, "Correct. " ],
-				["getResources().getQuantityString(R.plurals.somename, how_many)", false, "Try again. Only if you need cases based on plurals." ],
-				["findViewById(R.id.somename)", false, "Try again. " ],
-		]
-	},
-	"<br><br>",
-	"<b>2.</b> How do you refer to plurals in code?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["ContextCompat.getColor(context, R.color.somename)", false, "Try again. " ],
-				["getString(R.string.somename)", false, "Try again. Only if you wanted to handle the different cases without Android support" ],
-				["getResources().getQuantityString(R.plurals.somename, how_many)", true, "Correct. " ],
-				["findViewById(R.id.somename)", false, "Try again. " ],
-		]
-	},
-	"<br><br>",
-	"<b>3.</b> How do you refer to a color in code?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["ContextCompat.getColor(context, R.color.somename)", true, "Correct. " ],
-				["getString(R.string.somename)", false, "Try again. " ],
-				["getResources().getQuantityString(R.plurals.somename, how_many)", false, "Try again. " ],
-				["findViewById(R.id.somename)", false, "Try again. " ],
-		]
-	},
-	"<br><br>",
-	"<b>4.</b> How do you refer to (capture) a view in code?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["ContextCompat.getColor(context, R.color.somename)", false, "Try again. " ],
-				["getString(R.string.somename)", false, "Try again. " ],
-				["getResources().getQuantityString(R.plurals.somename, how_many)", false, "Try again. " ],
-				["findViewById(R.id.somename)", true, "Correct. " ],
-		]
-	},
-	"<br><br>",
-	"<b>5.</b> You use findViewById to get a Button. However, that method returns a View, so what else do you need to do to assign it to a Button?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["Nothing, just assign to a Button", false, "Try again. They are different types, so it won't compile." ],
-				["Pass the View returned by findViewById to the Button constructor", false, "Try again. " ],
-				["Typecast it", true, "Correct. For example, Button b = (Button)findViewById(R.id.someid);" ],
-		]
-	},
-	"<br><br>",
-	"<b>6.</b> What method is used to add a listener to a Button?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["addListener()", false, "Try again. Right idea, though. What kind of listener? There are several." ],
-				["addActionListener()", false, "Try again. That is from the Swing library in Java." ],
-				["setOnClickListener()", true, "Correct. " ],
+				["Follow the Google developers console URL contained from google_maps_key.xml", true, "Correct. Definitely a nice convenience feature." ],
+				["Extract your SHA1 fingerprint manually and enter it and your project's package name in the Google developers console", false, "Try again. That works, but it's not as convenient." ],
+				["Email map_api_key_request@google.com", false, "Try again. " ],
 		]
 	},
 ];

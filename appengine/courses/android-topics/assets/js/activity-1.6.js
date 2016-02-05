@@ -30,63 +30,26 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> To make it easier later on to distinguish which button was pressed, how do we store the 9 buttons in code?<br>",
+	"<b>1.</b> Name all the MarkerOptions() properties that can be specified. We added a few and you can look up others in the API as needed. Look for info on draggable, for example. (Choose all that apply.)",
 	{
-		questionType : "multiple choice",
-		choices : [
-				["as an array", false, "Try again. That is possible, but you would need to convert from a (row,column) pair to an index." ],
-				["as a 2d array", true, "Correct. Tables work well as 2d arrays." ],
-				["as 9 separate variables", false, "Try again. That would work but is cumbersome." ],
-		]
+		questionType : "multiple choice group",
+		questionsList : [
+				{
+					questionHTML : "",
+					choices : [ "anchor", "color", "draggagle", "position", "rotation", "tilt", "title"],
+					correctIndex : [0,2,3,4,6]
+				}
+				],
+		allCorrectOutput : "Well done!",
+		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
 	},
 	"<br><br>",
-	"<b>2.</b> Which class responded to the button clicks?<br>",
+	"<b>2.</b> What value should be returned from onMarkerClick() if we want the title and snippet to appear when clicked?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Each button", false, "Try again. You would need to override the Button class to do that, since Buttons are not OnClickListeners." ],
-				["An anonymous listener for each button", false, "Try again. That could work, but it is not what we did." ],
-				["MainActivity", true, "Correct. " ],
-		]
-	},
-	"<br><br>",
-	"<b>3.</b> Because of that choice, onClick must use getId() to distinguish between how many buttons?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["1", false, "Try again. That was only the new game button." ],
-				["9", false, "Try again. You forgot the new game button!" ],
-				["10", true, "Correct. 9 tic tac toe buttons plus the new game button." ],
-		]
-	},
-	"<br><br>",
-	"<b>4.</b> What neat method did we use to programmatically generate IDs for each button?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["getIdentifier()", true, "Correct. " ],
-				["getId()", false, "Try again. It can also create other identifiers that aren't IDs" ],
-				["findViewById()", false, "Try again. That refers to IDs that already exist in the layout that has been inflated." ],
-		]
-	},
-	"<br><br>",
-	"<b>5.</b> How do we get debug output to the logs in our IDE?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["System.out.println()", false, "Try again. That's Java." ],
-				["Log.d()", true, "Correct. " ],
-				["console.log()", false, "Try again. That's Javascript." ],
-		]
-	},
-	"<br><br>",
-	"<b>6.</b> What did we use for the first parameter of the Log.d() method?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["The message, "Button pressed for " + row + " " + column", false, "Try again. That was the second parameter" ],
-				["The tag, Constants.TTT", false, "Try again. Close. I do create log tag variables like this in larger programs." ],
-				["The tag, "TTT"", true, "Correct. Yes, although creating a constant like Constants.TAG which equals "TTT" would scale better." ],
+				["true", false, "Try again. True means that our onMarkerClick() consumed the click, so it won't be passed along to the system to detect and respond to." ],
+				["false", true, "Correct. " ],
 		]
 	},
 ];
