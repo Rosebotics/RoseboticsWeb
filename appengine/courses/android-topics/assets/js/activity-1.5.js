@@ -30,7 +30,7 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What shows up in the map view is determined by the position of the 'camera' viewing the map. Maps can also have zoom, tilt, and bearing. What class contains methods to determine where to position the camera?<br>",
+	"<b>1.</b> What shows up in the map view is determined by the position of the 'camera' viewing the map. Cameras can also have zoom, tilt, and bearing. What class contains methods to determine where to position the camera?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
@@ -40,15 +40,15 @@ var activity = [
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> We used zoom level 5. At this level, what is typically visible? See <a href='https://developers.google.com/maps/documentation/static-maps/intro#Zoomlevels'>here</a>.<br>",
+	"<b>2.</b> We used zoom level 5. At this level, what is typically visible? See <a href='https://developers.google.com/maps/documentation/static-maps/intro#Zoomlevels' target="_blank">here</a>.<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["A continent", false, "Try again. " ],
-				["A country", true, "Correct. The US doesn't quite fit, but most countries would." ],
+				["The world", false, "Try again. That is zoom level 1" ],
+				["A continent or landmass", true, "Correct. " ],
 				["A city", false, "Try again. City zoom is 10" ],
 				["A street", false, "Try again. Street zoom is 15" ],
-				["A building", false, "Try again. Street zoom is 20" ],
+				["A building", false, "Try again. Building zoom is 20" ],
 		]
 	},
 ];

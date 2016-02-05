@@ -34,7 +34,7 @@ var activity = [
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Geocoding", false, "Try again. No, that's the opposite of geocoding." ],
+				["Geocoding", false, "Try again. What was described is the opposite of geocoding." ],
 				["Reverse geocoding", true, "Correct. " ],
 		]
 	},

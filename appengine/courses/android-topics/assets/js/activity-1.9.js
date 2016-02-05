@@ -34,12 +34,9 @@ var activity = [
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Java objects", false, "Try again. Eventually. I parsed the xml and created a list of objects for you." ],
+				["Java objects", false, "Try again. I did parse the file and create a list of objects for you. But what format was parsed?" ],
 				["json", false, "Try again. One site had that, but without colors." ],
 				["xml", true, "Correct. " ],
-				["addPolygon, setPolygonClickListener", false, "Try again. " ],
-				["PolygonOptions", false, "Try again. " ],
-				["ColorUtila", false, "Try again. " ],
 		]
 	},
 	"<br><br>",
@@ -49,7 +46,7 @@ var activity = [
 		choices : [
 				["Its color", false, "Try again. Close. What about the color?" ],
 				["Its size", false, "Try again. That would require changing all the points." ],
-				["Its strokeWidth", false, "Try again. It has a stroke width, but we didn't change it." ],
+				["Its strokeWidth", false, "Try again. We set the stroke width, but we didn't change it." ],
 				["Its transparency", true, "Correct. " ],
 				["Its z-index", false, "Try again. If polygons overlap, the one with the highest z-index is displayed on top." ],
 		]

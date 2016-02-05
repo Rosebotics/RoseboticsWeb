@@ -34,7 +34,7 @@ var activity = [
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Follow the Google developers console URL contained from google_maps_key.xml", true, "Correct. Definitely a nice convenience feature." ],
+				["Follow the Google developers console URL contained in google_maps_key.xml", true, "Correct. Definitely a nice convenience feature." ],
 				["Extract your SHA1 fingerprint manually and enter it and your project's package name in the Google developers console", false, "Try again. That works, but it's not as convenient." ],
 				["Email map_api_key_request@google.com", false, "Try again. " ],
 		]

@@ -35,6 +35,7 @@ env_variables:
                         course:/smartproductdesign:/courses/smartproductdesign,
                         course:/android-ui:/courses/android-ui,
                         course:/android-firebase:/courses/android-firebase,
+                        course:/android-topics:/courses/android-topics,
                         course:/android-sqlite:/courses/android-sqlite,
                         course:/android-endpoints:/courses/android-endpoints,
                         course:/web-appengine:/courses/web-appengine,
