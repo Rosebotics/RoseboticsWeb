@@ -209,7 +209,7 @@
         <!-- End Google Tag Manager -->
     {% endif %}
 
-    <!-- 
+    <!--
     <div class="gcb-butterbar-container">
       <div id="gcb-butterbar-top" class="gcb-butterbar" style="margin-top:50px" aria-live="polite">
         <p id="gcb-butterbar-message"></p>
@@ -217,7 +217,7 @@
       </div>
     </div>
 
-    
+
     <div id="gcb-header" role="banner">
       <div class="gcb-aux clearfix">
         <p class="gcb-course-image">
@@ -266,7 +266,7 @@
 
     <!-- top section -->
     <div class="is-wrapper" style="margin-top: 20px;">
-      <div class="gcb-aux">
+      <div class="container">
         {% block top_content %}{% endblock %}
         {{ html_hooks.insert('base:after_top_content_ends') }}
 
@@ -280,11 +280,11 @@
     <div style="margin-top: 50px;" id="gcb-signature"></div>
     <div class="gcb-footer" id="gcb-footer">
       <div id="gcb-footer-local">
-        <div class="gcb-aux">
+        <div class="container">
         </div>
       </div>
       <div id="gcb-footer-global" role="contentinfo">
-        <div class="gcb-aux">
+        <div class="container">
           <ul>
             <li>
               <a href="{{course_info.institution.url}}" target="_blank">{{course_info.institution.name}}</a>
@@ -295,7 +295,7 @@
                 {{ gettext('Privacy & Terms') }}
               </a>
             </li>
-            {% if available_locales %}
+            {% if false %}
               <li>
                 {# I18N: Text describing the locale selector. #}
                 {{ gettext('Locale:') }}
@@ -309,6 +309,7 @@
                 </select>
               </li>
             {% endif %}
+
           </ul>
         </div>
       </div>
@@ -331,8 +332,8 @@ gcb-debug-info-end //-->
 <script src="/static/js/rosebotics.js"></script>
 <script>
 $(function () {
-	  $('[data-toggle="tooltip"]').tooltip({'html':true})
-	})
+    $('[data-toggle="tooltip"]').tooltip({'html':true})
+  })
 </script>
  </body>
 </html>
