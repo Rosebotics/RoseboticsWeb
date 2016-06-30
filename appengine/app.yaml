@@ -44,6 +44,7 @@ env_variables:
                         course:/ios-swift-intro:/courses/ios-swift-intro,
                         course:/ios-core-data:/courses/ios-core-data,
                         course:/ios-endpoints:/courses/ios-endpoints,
+                        course:/ios-firebase:/courses/ios-firebase,
                         course:/misc:/courses/misc,
                         course:/me430-electronics:/courses/me430-electronics,
                         course:/me430-pic:/courses/me430-pic,

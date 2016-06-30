@@ -29,17 +29,12 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'Endpoints (old)'
+  title: 'Firebase'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    Welcome to iOS Development with Google Cloud Endpoints.  This track still has valid information but it is no
-    longer used in the Rose-Hulman course.  We moved both the iOS and Android courses to use Firebase.  Firebase
-    is better for this course since there is no backend code.  I love AppEngine and Endpoints.  It still works.
-    I still use it a ton for my ClueKeeper work.  But for this course Firebase is far superior.  Easier to get started,
-    cool real time synchronous database features, no RESTful API's needed, easy hosting, easy OAuth.  So despite
-    my love of AppEngine + Endpoints it's a no brainer to move this course.  (btw this site you are using is all
-    made via AppEngine + some Endpoints work).
+    Welcome to iOS Development with Firebase!  Firebase is a Google product that is soo fun and soo cool.
+    Learn more in the videos or visit http://firebase.google.com
 
   # Information about the instructor to display on the main page.
   instructor_details: 'Dr. David Fisher<br>Rose-Hulman'
@@ -49,7 +44,7 @@ course:
   # priority. The image alt text allows the image to be understood by text-only
   # screen readers.
   main_video:
-    url: https://www.youtube.com/embed/QkqFEciBQuw?rel=0
+    url: https://www.youtube.com/embed/hAhEnczsOdg?rel=0
   main_image:
     url: /assets/img/roselogo.png
     alt_text: Rose-Hulman logo
