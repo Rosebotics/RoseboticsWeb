@@ -1,6 +1,6 @@
 var activity = [
 
-    "<b>1.</b> Did you complete the Lab (and submit it if taking this course for credit)?<br>",
+    "<b>1.</b> Did you complete the Photo Bucket Lab (and submit it if taking this course for credit)?<br>",
     {
       questionType : "multiple choice",
       choices : [ [ "Yep.  All set!", true, "Great!" ],
