@@ -30,7 +30,7 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Did you successfully generate a google client ID?<br>",
+	"<b>1.</b> Did you find your computer's SHA1 fingerprint?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
