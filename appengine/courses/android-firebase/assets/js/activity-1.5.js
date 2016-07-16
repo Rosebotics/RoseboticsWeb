@@ -30,15 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What one thing do you *not* need to do to start using Firebase in your Android client?<br>",
+	"<b>1.</b> Did you successfully cause your FavoriteThings app to communicate with the Firebase backend?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Add compile 'com.firebase:firebase-client-android:2.3.1+' to your gradle file", false, "Try again. " ],
-				["Add packaging options to the gradle file", false, "Try again. " ],
-				["Add internet permission to the manifest", false, "Try again. " ],
-				["Call Firebase.setAndroidContext(context)", false, "Try again. " ],
-				["Add Firebase.setFirebaseURL(url)", true, "Correct. You essentially do this when you construct a Firebase, though." ],
+				["Yes", true, "Correct. Excellent - good start." ],
+				["No", false, "Try again. You'll need to do this to get credit for this part of the codealong app." ],
 		]
 	},
 ];

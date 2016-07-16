@@ -30,48 +30,48 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What are the three types of rules? (Choose all that apply.)",
+	"<b>1.</b> What does JSON stand for?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["An educational non-profit organization encouraging K-12 students to pursue STEM careers.", false, "Try again. That's JASON." ],
+				["JavaScript Object Notation", true, "Correct. " ],
+				["JavaScript On Netbeans", false, "Try again. Although that happens to be what you get if Google completes the phrase 'JavaScript on n...'" ],
+		]
+	},
+	"<br><br>",
+	"<b>2.</b> Which annotation put before the key field will tell GSON to ignore the key stored in our model?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["@Exclude", true, "Correct. " ],
+				["@GsonIgnoreKey", false, "Try again. Good guess." ],
+				["@IgnoreField", false, "Try again. " ],
+				["@SerializedName('ignore')", false, "Try again. You can use @SerializedName to map Android Java field names to firebase JSON field names if they differ. We didn't need to since we chose the same names for our fields." ],
+		]
+	},
+	"<br><br>",
+	"<b>3.</b> What does push() do? (Choose all that apply.)",
 	{
 		questionType : "multiple choice group",
 		questionsList : [
 				{
 					questionHTML : "",
-					choices : [ ".logic", ".login", ".read", ".validate", ".write"],
-					correctIndex : [2,3,4]
+					choices : [ "Creates a new key", "Returns a Firebase reference to that key", "Adds a new item to the Firebase stack"],
+					correctIndex : [0,1]
 				}
 				],
 		allCorrectOutput : "Well done!",
 		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
 	},
 	"<br><br>",
-	"<b>2.</b> What is the $ used for in a rule?<br>",
+	"<b>4.</b> What type parameter does setValue() take?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["It designates an object", false, "Try again. " ],
-				["It denotes that the designated object is used to store currency", false, "Try again. " ],
-				["It is a wildcard variable", true, "Correct. " ],
-		]
-	},
-	"<br><br>",
-	"<b>3.</b> What variable is used to store login data for a user such as their user ID?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["auth", true, "Correct. " ],
-				["login", false, "Try again. Although it is used in conjunction with login." ],
-				["$auth", false, "Try again. $ is for user-defined variables, not built-in ones." ],
-				["$login", false, "Try again. $ is for user-defined variables, not built-in ones." ],
-		]
-	},
-	"<br><br>",
-	"<b>4.</b> Which one of these is _not_ an advantage of Bolt (or its TBD successor)?<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["Simpler format", false, "Try again. That's the main advantage." ],
-				["The ability to define types so it generate validation rules", false, "Try again. That's a huge advantage of bolt. Once you have model objects, you can determine the types easily." ],
-				["Bolt is more expressive; that is, you can define rules in Bolt that can't be defined in json", true, "Correct. Bolt is compiled into json, so it can only do what json can do." ],
+				["A HashMap", false, "Try again. It can, but that's not what we used, because another way is more convenient." ],
+				["A MovieQuote model object", true, "Correct. Good. GSON then serializes the object into json." ],
+				["Object", false, "Try again. It can, but would need to be typecast to a map. See the first response." ],
 		]
 	},
 ];

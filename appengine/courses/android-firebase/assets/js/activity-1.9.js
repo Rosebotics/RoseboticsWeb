@@ -30,12 +30,14 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Did you notice how similar the edit and delete code was?<br>",
+	"<b>1.</b> What one thing do you *not* need to do to start using Firebase in your Android client?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Yes", true, "Correct. Each calls firebaseRef.child(movieQuote.getKey()) and when listening for changes, each loops through the local list to find the key of the one that has been changed" ],
-				["No", false, "Try again. Compare them now, both the changes pushed to Firebase and the listeners." ],
+				["Add a dependency to your gradle file", false, "Try again. " ],
+				["Add google play services to the gradle file", false, "Try again. " ],
+				["Add internet permission to the manifest", false, "Try again. " ],
+				["Add Firebase.setFirebaseURL(url)", true, "Correct. You essentially do this when you construct a Firebase, though." ],
 		]
 	},
 ];

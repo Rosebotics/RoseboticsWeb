@@ -30,48 +30,39 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What does JSON stand for?<br>",
+	"<b>1.</b> Can a Key be at the bottom (a leaf) of the Firebase database JSON tree?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["An educational non-profit organization encouraging K-12 students to pursue STEM careers.", false, "Try again. That's JASON." ],
-				["JavaScript Object Notation", true, "Correct. " ],
-				["JavaScript On Netbeans", false, "Try again. Although that happens to be what you get if Google completes the phrase 'JavaScript on n...'" ],
+				["Sure. Just delete the value below it and the Key will exist at the bottom of the tree", false, "Try again. " ],
+				["No.  If you delete the value for a key, the key is cleaned up (deleted) by Firebase automatically", true, "Correct. " ],
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> Which annotation put before the key field will tell Jackson to ignore the key stored in our model?<br>",
+	"<b>2.</b> Can a Key point to multiple primitive values in the tree?  i.e. can it point to two or more Strings?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["@JsonIgnore", true, "Correct. " ],
-				["@JacksonIgnoreKey", false, "Try again. Good guess." ],
-				["@IgnoreField", false, "Try again. " ],
-				["@JsonProperty('ignore')", false, "Try again. You can use @JsonProperty to map Android Java field names to firebase JSON field names if they differ. We didn't need to since we chose the same names for our fields." ],
+				["No. If a Key points to a primitive value then it does nothing else.", true, "Correct. " ],
+				["Sure. It's a tree that can have multiple branches.", false, "Try again. " ],
 		]
 	},
 	"<br><br>",
-	"<b>3.</b> What does push() do? (Choose all that apply.)",
-	{
-		questionType : "multiple choice group",
-		questionsList : [
-				{
-					questionHTML : "",
-					choices : [ "Creates a new key", "Returns a Firebase reference to that key", "Adds a new item to the Firebase stack"],
-					correctIndex : [0,1]
-				}
-				],
-		allCorrectOutput : "Well done!",
-		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
-	},
-	"<br><br>",
-	"<b>4.</b> What type parameter does setValue() take?<br>",
+	"<b>3.</b> Can a Key point to multiple Keys in the tree?  i.e. can it point to two or more Keys?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["A HashMap", false, "Try again. It can, but that's not what we used, because another way is more convenient." ],
-				["A MovieQuote model object", true, "Correct. Good. Jackson then serializes the object into json." ],
-				["Object", false, "Try again. It can, but would need to be typecast to a map. See the first response." ],
+				["No. If a Key points to a Key then it does nothing else.", false, "Try again. " ],
+				["Sure. It's a tree that can have multiple branches (so long as those branches are other keys)", true, "Correct. " ],
+		]
+	},
+	"<br><br>",
+	"<b>4.</b> One pattern that you see in Firebase databases is a very flat structure to the data that developers design.  Why?<br>",
+	{
+		questionType : "multiple choice",
+		choices : [
+				["No reason. Just the convention that a lot of developers use.", false, "Try again. " ],
+				["Data snapshots give you the key and everything below it. So you try not to nest data to keep things efficient. It's easy to make a query to get more data only when that extra data is needed.", true, "Correct. " ],
 		]
 	},
 ];

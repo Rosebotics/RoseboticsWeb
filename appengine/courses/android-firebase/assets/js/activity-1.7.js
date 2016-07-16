@@ -30,49 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> What methods are part of the ChildEventListener interface? (Choose all that apply.)",
-	{
-		questionType : "multiple choice group",
-		questionsList : [
-				{
-					questionHTML : "",
-					choices : [ "onChildAdded", "onChildChanged", "onChildRemoved", "onChildMoved", "onCancelled"],
-					correctIndex : [0,1,2,3,4]
-				}
-				],
-		allCorrectOutput : "Well done!",
-		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
-	},
-	"<br><br>",
-	"<b>2.</b> What are two things that every data snapshot has? (Choose all that apply.)",
-	{
-		questionType : "multiple choice group",
-		questionsList : [
-				{
-					questionHTML : "",
-					choices : [ "key", "value", "photo"],
-					correctIndex : [0,1]
-				}
-				],
-		allCorrectOutput : "Well done!",
-		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
-	},
-	"<br><br>",
-	"<b>3.</b> What info do I pass to dataSnapshot's getValue() method to cause it to deserialize the snapshot into a java object?<br>",
+	"<b>1.</b> Did you successfully create the MovieQuotes backend?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["The DataSnapshot.DESERIALIZE boolean flag", false, "Try again. Seems reasonable. But no." ],
-				["The object's class", true, "Correct. " ],
-		]
-	},
-	"<br><br>",
-	"<b>4.</b> Firebase has offline capabilities that keep the data synced locally even when not connected to the backend.<br>",
-	{
-		questionType : "multiple choice",
-		choices : [
-				["True", true, "Correct. " ],
-				["False", false, "Try again. In fact, this is why we are studying Firebase even before we study SQLite, which is used for local storage" ],
+				["Yes", true, "Correct. Excellent - good start." ],
+				["No", false, "Try again. You'll need to do this to get credit for the codealong app." ],
 		]
 	},
 ];

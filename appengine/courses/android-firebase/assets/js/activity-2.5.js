@@ -30,28 +30,24 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> How can you check if the user is already authenticated from a prior run of the app?<br>",
+	"<b>1.</b> If mAuth is initialized to FirebaseAuth.getInstance(), how can you check if the user is already authenticated from a prior run of the app?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Check firebase.auth", false, "Try again. Close." ],
-				["Check firebase.getAuth()", true, "Correct. " ],
-				["Check firebase.unauth()", false, "Try again. That's used on logout." ],
-				["Check firebasePath.auth(), where firebasePath is a path to the data we are restricting access to", false, "Try again. It actually dosn't matter which path we used to authenticate." ],
+				["Check mAuth == null", false, "Try again. Close." ],
+				["Check mAuth.getCurrentUser() == null", true, "Correct. " ],
+				["Check mAuth.signin() == null", false, "Try again. That's used on logout." ],
+				["Check firebasePath.auth() == null, where firebasePath is a path to the data we are restricting access to", false, "Try again. It actually dosn't matter which path we used to authenticate." ],
 		]
 	},
 	"<br><br>",
-	"<b>2.</b> What three arguments does the authWithPassword() method require? (Choose all that apply.)",
+	"<b>2.</b> Why did we use an OnCompleteListener when calling signInWithEmailAndPassword()?<br>",
 	{
-		questionType : "multiple choice group",
-		questionsList : [
-				{
-					questionHTML : "",
-					choices : [ "a callback", "email", "password", "uid"],
-					correctIndex : [0,1,2]
-				}
-				],
-		allCorrectOutput : "Well done!",
-		someIncorrectOutput : "Please ignore the previous feedback line. Then try again.",
+		questionType : "multiple choice",
+		choices : [
+				["To go somewhere once the user is logged in", false, "Try again. If it is successful, the listener isn't needed - the AuthStateChanged listener takes care of it." ],
+				["To detect a failed login attempt", true, "Correct. " ],
+				["The listener's callback contains a variable that has the logged-in user's info like displayName, uid, etc.", false, "Try again. The AuthStateChangedListener has the user info." ],
+		]
 	},
 ];

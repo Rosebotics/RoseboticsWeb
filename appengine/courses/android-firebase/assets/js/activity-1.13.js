@@ -30,12 +30,12 @@
 //    see http://code.google.com/p/course-builder/wiki/CreateActivities.
 
 var activity = [
-	"<b>1.</b> Did you successfully authenticate using google?<br>",
+	"<b>1.</b> Did you notice how similar the edit and delete code was?<br>",
 	{
 		questionType : "multiple choice",
 		choices : [
-				["Yes", true, "Correct. Good. Carry on!" ],
-				["No", false, "Try again. Get help if needed. Some students have had trouble with this, but it seems to be when running on a particular device or with a particular user account. If you followed the code, it's probably OK." ],
+				["Yes", true, "Correct. Each calls firebaseRef.child(movieQuote.getKey()) and when listening for changes, each loops through the local list to find the key of the one that has been changed" ],
+				["No", false, "Try again. Compare them now, both the changes pushed to Firebase and the listeners." ],
 		]
 	},
 ];
