@@ -29,7 +29,7 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'Firebase'
+  title: 'Firebase (v3, 2016)'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
