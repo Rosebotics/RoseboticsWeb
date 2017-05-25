@@ -25,6 +25,11 @@ class RoseboticsCourse():
 # coming_soon: If the course doesn't have tracks yet
 # video_id: the id of the youtube video to show in the course page
 
+NGFIRE = RoseboticsCourse(prefix='ngfire',
+                           short_title='NgFire',
+                           formal_title='Angular with Firebase',
+                           desciption='Get started building web apps using the latest and greatest tools, Angular and Firebase.',
+                           color='#dd1b16')
 ANDROID = RoseboticsCourse(prefix='android',
                            short_title='Android',
                            formal_title='Android Application Development',
@@ -45,11 +50,7 @@ ME430 = RoseboticsCourse(prefix='me430',
                          formal_title='Mechatronics',
                          desciption='Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.',
                          color='#f26522')
-NGFIRE = RoseboticsCourse(prefix='ngfire',
-                           short_title='NgFire',
-                           formal_title='Angular with Firebase',
-                           desciption='Get started building web apps using the latest and greatest tools, Angular and Firebase',
-                           color='#dd1b16')
+
 
 CS1 = RoseboticsCourse(prefix='cs1',
                        short_title='CS1',
@@ -66,7 +67,7 @@ SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
                                  color='#03a0a9')
 
 # this order matters!
-course_list = [ANDROID, IOS, WEB, ME430, NGFIRE, CS1, SMART_PRODUCT]
+course_list = [NGFIRE, ANDROID, IOS, WEB, ME430, CS1, SMART_PRODUCT]
 
 admin_list = ["boutell@gmail.com", "fisherds@gmail.com"]
 
