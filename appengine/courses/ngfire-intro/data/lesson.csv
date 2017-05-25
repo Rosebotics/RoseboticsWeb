@@ -1,0 +1,5 @@
+unit_id,unit_title,lesson_id,lesson_title,lesson_activity,lesson_activity_name,lesson_notes,lesson_video_id,lesson_objectives
+1,Welcome,1,Course Overview,,,https://docs.google.com/presentation/d/11ro-WIspcI3cfp5PkTime-lWRIsqXNCz4KtpvW5sdOk/edit?usp=sharing,YeBcvnpoXDs,"What are your thoughts on the statement:<br><div style='text-align:center;font-size:18px;'><b>If you’re not using Angular with Firebase, you're doing it wrong</b></div><br>"
+1,Welcome,2,Install Test,,,https://docs.google.com/document/d/17oH75dh7hiYGDk5BTPBtKdtICkfyqDPdB-m7GSdQzZg/edit?usp=sharing,oKbI-zOfh6A,"<ul><li>Install test lab <a target='_blank' href='https://docs.google.com/document/d/17oH75dh7hiYGDk5BTPBtKdtICkfyqDPdB-m7GSdQzZg/edit?usp=sharing'>instructions</a></li></ul>"
+1,Welcome,3,About Me,,,https://docs.google.com/presentation/d/1ood9-3ZpgKPZtbHTHji3qy0EgXDVUNZixFUmJuKfh-M/edit?usp=sharing,9LkfwHmyVfM,""
+2,Favorite Things,1,Overview and Setup,,,https://docs.google.com/document/d/10ZogFI7-oYyvkDwiD9dfFhShhHsWa-klrBVFSdokxbg/edit?usp=sharing,xOdz7VrbopI,""

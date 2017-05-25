@@ -42,6 +42,8 @@ env_variables:
                         course:/web-appengine:/courses/web-appengine,
                         course:/web-css:/courses/web-css,
                         course:/web-js:/courses/web-js,
+                        course:/ngfire-intro:/courses/ngfire-intro,
+                        course:/ngfire-ionic:/courses/ngfire-ionic,
                         course:/ios-swift-intro:/courses/ios-swift-intro,
                         course:/ios-core-data:/courses/ios-core-data,
                         course:/ios-endpoints:/courses/ios-endpoints,

@@ -11,10 +11,10 @@ class RoseboticsCourse():
     self.coming_soon = coming_soon
     self.color = color
     self.video_id = video_id
-    
+
   def get_url(self):
     return "/" + self.prefix
-  
+
 ###
 # Field descriptions:
 # prefix: start of track names
@@ -45,6 +45,11 @@ ME430 = RoseboticsCourse(prefix='me430',
                          formal_title='Mechatronics',
                          desciption='Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.',
                          color='#f26522')
+NGFIRE = RoseboticsCourse(prefix='ngfire',
+                           short_title='NgFire',
+                           formal_title='Angular with Firebase',
+                           desciption='Get started building web apps using the latest and greatest tools, Angular and Firebase',
+                           color='#dd1b16')
 
 CS1 = RoseboticsCourse(prefix='cs1',
                        short_title='CS1',
@@ -52,13 +57,6 @@ CS1 = RoseboticsCourse(prefix='cs1',
                        desciption='Course coming soon! Stay tuned :)',
                        coming_soon=True,
                        color='#ffd140')
-
-ADV_WEB = RoseboticsCourse(prefix='advweb',
-                           short_title='Adv Web',
-                           formal_title='Advanced Web Development',
-                           desciption='Course coming soon! Stay tuned :)',
-                           coming_soon=True,
-                           color='#dd1b16')
 
 SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
                                  short_title='Smart Product',
@@ -68,7 +66,7 @@ SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
                                  color='#03a0a9')
 
 # this order matters!
-course_list = [ANDROID, IOS, WEB, ME430, CS1, ADV_WEB, SMART_PRODUCT]
+course_list = [ANDROID, IOS, WEB, ME430, NGFIRE, CS1, SMART_PRODUCT]
 
 admin_list = ["boutell@gmail.com", "fisherds@gmail.com"]
 
@@ -81,4 +79,3 @@ def __init_jinja_env():
   return jenv
 
 jinja_env = __init_jinja_env()
-
