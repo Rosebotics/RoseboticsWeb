@@ -5,3 +5,4 @@ id,type,unit_id,title,release_date,now_available
 4,U,4,Rose Routing,,True
 5,U,5,Password Keeper,,True
 6,U,6,Quick Chat,,True
+7,U,7,Firebase Storage,,True
