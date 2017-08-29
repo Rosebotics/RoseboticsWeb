@@ -50,15 +50,11 @@ ME430 = RoseboticsCourse(prefix='me430',
                          formal_title='Mechatronics',
                          desciption='Learn to build and control electronics using a Microchip PIC. Get started building embedded control systems used in smart systems and products.',
                          color='#f26522')
-
-
-CS1 = RoseboticsCourse(prefix='cs1',
-                       short_title='CS1',
-                       formal_title='Intro to Computer Science',
-                       desciption='Course coming soon! Stay tuned :)',
-                       coming_soon=True,
-                       color='#ffd140')
-
+CSSE120 = RoseboticsCourse(prefix='csse120',
+                           short_title='CSSE120',
+                           formal_title='Introduction to Software Development',
+                           desciption='Start your programming career using Python.  No prior experience necessary.',
+                           color='#ffd140')
 SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
                                  short_title='Smart Product',
                                  formal_title='Smart Product Design',
@@ -67,7 +63,7 @@ SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
                                  color='#03a0a9')
 
 # this order matters!
-course_list = [NGFIRE, ANDROID, IOS, WEB, ME430, CS1, SMART_PRODUCT]
+course_list = [NGFIRE, ANDROID, IOS, WEB, ME430, CSSE120, SMART_PRODUCT]
 
 admin_list = ["boutell@gmail.com", "fisherds@gmail.com"]
 

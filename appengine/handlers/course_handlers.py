@@ -6,6 +6,10 @@ class AndroidCoursePage(base_handler.BaseCoursePage):
   def get_course(self):
     return settings.ANDROID
 
+class Csse120CoursePage(base_handler.BaseCoursePage):
+  def get_course(self):
+    return settings.CSSE120
+
 class IosCoursePage(base_handler.BaseCoursePage):
   def get_course(self):
     return settings.IOS
