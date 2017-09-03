@@ -1,3 +1,4 @@
 id,type,unit_id,title,release_date,now_available
 1,U,1,Introduction to Python,,True
 2,U,2,Objects Functions and Methods,,True
+3,U,3,Accumulators and Functions with Parameters,,True
