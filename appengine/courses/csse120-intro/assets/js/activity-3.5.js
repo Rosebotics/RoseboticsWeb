@@ -1,65 +1,15 @@
 var activity = [
 
-    "<b>1.</b> In Python, every item of data is called an:<br>",
-
-
-    {
-      questionType : "freetext",
-      correctAnswerRegex : /object/i,
-      correctAnswerOutput : "Correct!",
-      incorrectAnswerOutput : "Please try again.",
-      showAnswerOutput : "Here is the answer: Object"
-    },
-    "<br><br><b>2.</b> True or False: in Python, programmers can define their <em>own</em> classes.?<br>",
-    {
-      questionType : "multiple choice",
-      choices : [
-          ["True", true, "Correct!" ],
-          ["False", false, "Please try again." ] ]
-    },
-
-    "<br><br><b>3.</b> Every class has 3 things, a <b>name</b>, <b>instance variables</b>, and... <br>",
-    {
-      questionType : "freetext",
-      correctAnswerRegex : /methods/i,
-      correctAnswerOutput : "Correct!",
-      incorrectAnswerOutput : "Please try again."
-    },
-
-    "<br><br><b>4.</b> True or False:  If <code>p1</code> and <code>p2</code> are both instances of a <code>Point</code> class, the <strong>names</strong> of the instance variables for <code>p1</code> are the same as the <strong>names</strong> of the instance variables for <code>p2</code>.<br>",
-    {
-      questionType : "multiple choice",
-      choices : [
-          ["True", true, "Correct!" ],
-          ["False", false, "Please try again." ] ]
-    },
-
-    "<br><br><b>5.</b> True or False:  If <code>p1</code> and <code>p2</code> are both instances of a <code>Point</code> class, the <strong>values</strong> of the instance variables for <code>p1</code> are the same as the <strong>values</strong> of the instance variables for <code>p2</code>.<br>",
-    {
-      questionType : "multiple choice",
-      choices : [
-          ["True", false, "Please try again." ],
-          ["False", true, "Correct!" ] ]
-    },
-
-
-    "<br><br>",
-    {
-      questionType : "multiple choice group",
-      questionsList : [
-        {
-          questionHTML : "<b>6a.</b> The <strong><em>instance variables</em></strong> of a class:",
-          choices : [ "describe the operations that instances of the class can do", "describe the data that instances of the class hold"],
-          correctIndex : 1
-        },
-        {
-          questionHTML : "<b>6b.</b> The <strong><em>methods</em></strong> of a class:",
-          choices : [ "describe the operations that instances of the class can do", "describe the data that instances of the class hold"],
-          correctIndex : 0
-        },
-      ],
-      allCorrectOutput : "Well done!",
-      someIncorrectOutput : "Please try again.",
-    },
+  "<b>1.</b> Trace the snippet of code shown below by hand (no fair typing it into a program, but you will probably want to use paper and pencil to help you keep track of things), and show what gets printed: <pre>  total = 5 <br>  for k in range(3): <br>      total = total * k <br><br>  print(total)</pre>",
+  {
+    questionType: "multiple choice",
+    choices: [
+      ["0", true, "Correct!"],
+      ["1", false, "Please try again."],
+      ["3", false, "Please try again."],
+      ["6", false, "Please try again."],
+      ["24", false, "Please try again."],
+    ]
+  },
 
 ];

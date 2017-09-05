@@ -1,70 +1,32 @@
 var activity = [
-
-    "<img style='height: 300px' src='assets/img/quiz02-04.png' alt='quiz02-04 code'><br>",
-    "<b>1.</b> <b>This diagram is part of a... <br>",
-  {
-    questionType : "multiple choice",
-    choices : [
-        ["Poem called <i>Beowulf</i>", false, "Please try again." ],
-        ["Rocket ship", false, "Please try again." ],
-        ["Garbage can", false, "Please try again." ],
-        ["Flowchart", true, "Correct!" ] ]
-  },
-
-    "<br><br><b>2.</b> Procedural decomposition is:<br>",
-  {
-    questionType : "multiple choice",
-    choices : [
-        ["The process by which leftovers become fertilizer for gardens.", false, "Please try again." ],
-        ["What happens to mummies when they are left out in the open air.", false, "Please try again." ],
-        ["How great ideas become hollow ones.", false, "Please try again." ],
-        ["The process of breaking a problem into a sequence of subproblems, and then breaking those subproblems into sub-subproblems until the problem is reduced to procedures of manageable size.", true, "Correct!" ] ]
-  },
-
-  "<br><br><b>3.</b> Most of the widely-used languages developed since 1990 have been <b>object oriented</b> languages.<br>",
-  {
-    questionType : "multiple choice",
-    choices : [
-        ["True", true, "Correct!" ],
-        ["False", false, "Please try again." ] ]
-  },
-
-  "<br><br><b>4.</b> The <b>procedural</b> programming paradigm focuses on:<br>",
-  {
-  questionType : "multiple choice",
-  choices : [
-      ["Nouns", false, "Please try again."],
-      ["Verbs", true, "Correct!"  ],
-      ["Adjectives", false, "Please try again." ] ]
-  },
-
-  "<br><br><b>5.</b> The <b>object-oriented</b> programming paradigm focuses on:<br>",
-  {
-  questionType : "multiple choice",
-  choices : [
-    ["Nouns", true, "Correct!"],
-    ["Verbs", false, "Please try again."],
-    ["Adjectives", false, "Please try again." ] ]
-  },
-
-  "<br><br><b>6.</b> Today's software engineer typically uses both the procedural and object-oriented paradigms--there is a place for each.<br>",
-  {
-  questionType : "multiple choice",
-  choices : [
-      ["True", true, "Correct!" ],
-      ["False", false, "Please try again." ] ]
-  },
-
-  "<br><br><b>7.</b> Python supports both a procedural and an object-oriented notation.<br>",
-  {
-  questionType : "multiple choice",
-  choices : [
-      ["True", true, "Correct!" ],
-      ["False", false, "Please try again." ] ]
-  },
-
-
+    "<b>1.</b> Trace the snippet of code shown below by hand (no fair typing it into a program, but you may want to use paper and pencil to help you keep track of things), and show what gets printed: <pre>  for k in range(4): <br>      print(k) </pre> <br>",
+    {
+        questionType: "multiple choice",
+        choices: [
+            ["<code>1 2</code> (all on separate lines)", false, "Please try again."],
+            ["<code>1 2 3</code> (all on separate lines)", false, "Please try again."],
+            ["<code>1 2 3 4</code> (all on separate lines)", false, "Please try again."],
+            ["<code>0 1 2</code> (all on separate lines)", false, "Please try again."],
+            ["<code>0 1 2 3</code> (all on separate lines)", true, "Correct!"],
+            ["<code>0 1 2 3 4</code> (all on separate lines)", false, "Please try again."],
+        ]
+    },
+    "<br><br><b>2.</b> Trace the snippet of code shown below by hand (no fair typing it into a program, but you may want to use paper and pencil to help you keep track of things), and show what gets printed: <pre>  for k in range(3): <br>      print(k + 10) </pre> <br>",
+    {
+        questionType: "multiple choice",
+        choices: [
+            ["<code>1 2</code> (all on separate lines)", false, "Please try again."],
+            ["<code>1 2 3</code> (all on separate lines)", false, "Please try again."],
+            ["<code>1 2 3 4</code> (all on separate lines)", false, "Please try again."],
+            ["<code>0 1</code> (all on separate lines)", false, "Please try again."],
+            ["<code>0 1 2</code> (all on separate lines)", false, "Please try again."],
+            ["<code>0 1 2 3</code> (all on separate lines)", false, "Please try again."],
+            ["<code>10 11</code> (all on separate lines)", false, "Please try again."],
+            ["<code>10 11 12</code> (all on separate lines)", true, "Correct!"],
+            ["<code>10 11 12 13</code> (all on separate lines)", false, "Please try again."],
+            ["<code>11 12</code> (all on separate lines)", false, "Please try again."],
+            ["<code>11 12 13</code> (all on separate lines)", false, "Please try again."],
+            ["<code>11 12 13 14</code> (all on separate lines)", false, "Please try again."],
+        ]
+    }
 ];
-
-
-
