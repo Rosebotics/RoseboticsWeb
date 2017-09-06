@@ -3,3 +3,4 @@ id,type,unit_id,title,release_date,now_available
 2,U,2,Objects Functions and Methods,,True
 3,U,3,Accumulators and Functions with Parameters,,True
 4,U,4,The Accumulator Pattern,,True
+5,U,5,Debugging,,True
