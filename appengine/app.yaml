@@ -32,6 +32,7 @@ env_variables:
     modules.oauth2.oauth2=disabled
   GCB_COURSES_CONFIG: >
                         course:/csse120-intro:/courses/csse120-intro,
+                        course:/csse120-classes:/courses/csse120-classes,
                         course:/smartproductdesign:/courses/smartproductdesign,
                         course:/android-ui:/courses/android-ui,
                         course:/android-firebase-v3:/courses/android-firebase-v3,

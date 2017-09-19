@@ -54,7 +54,8 @@ CSSE120 = RoseboticsCourse(prefix='csse120',
                            short_title='CSSE120',
                            formal_title='Introduction to Software Development',
                            desciption='Start your programming career using Python.  No prior experience necessary.',
-                           color='#ffd140')
+                           color='#ffd140',
+                           video_id="BAvF-YAOoqQ")
 SMART_PRODUCT = RoseboticsCourse(prefix='smartproduct',
                                  short_title='Smart Product',
                                  formal_title='Smart Product Design',
