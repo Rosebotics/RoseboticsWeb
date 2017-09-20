@@ -198,4 +198,4 @@ $(document).ready(function() {
 		let targetId = $(this).data("target")
 		$("#" + targetId).toggle();
 	});
-})
+});
