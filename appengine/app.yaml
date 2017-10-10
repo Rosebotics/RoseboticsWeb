@@ -33,6 +33,7 @@ env_variables:
   GCB_COURSES_CONFIG: >
                         course:/csse120-intro:/courses/csse120-intro,
                         course:/csse120-classes:/courses/csse120-classes,
+                        course:/csse120-ev3:/courses/csse120-ev3,
                         course:/smartproductdesign:/courses/smartproductdesign,
                         course:/android-ui:/courses/android-ui,
                         course:/android-firebase-v3:/courses/android-firebase-v3,

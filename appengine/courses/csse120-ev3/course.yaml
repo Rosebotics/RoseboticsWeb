@@ -29,15 +29,16 @@ course:
   admin_user_emails: ''
 
   # Course title
-  title: 'Classes and Sequences'
+  title: 'EV3 Robots'
 
   # Main page blurb. (The '|' at the beginning enables multi-line input.)
   blurb: |
-    In this section of the course we'll start making our own classes.  We'll also focus on doing more
-    advanced work with sequences, which include lists, tuples, and strings.
-    We'll start by helping you learn to trace code that uses objects heavily then work on implementing
-    our own classes. Using your own classes along with sequences will significantly improve the types
-    of programs you can build.
+    In this section of the course we'll be learning to use the EV3 Lego robots with Python.
+    EV3 robots are often used by kids with block based editors, but we'll be doing a bit more with
+    them.  Using an operating system called ev3dev, we'll be dual booting our EV3 brick into a Linux
+    operating system based on Jessie Debian.  Once using a Linux environment we'll use python-ev3dev
+    to control our robot with Python.  We'll work a series of units then finish with a self-selected
+    project.
 
   # Information about the instructor to display on the main page.
   instructor_details: 'Dr. David Fisher <br> Rose-Hulman'
