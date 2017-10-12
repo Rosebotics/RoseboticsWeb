@@ -147,5 +147,5 @@ var activity = [
       ["No, the stop had already happen by then", true, "Correct!"]
     ]
   },
-  
+
 ];

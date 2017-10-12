@@ -22,7 +22,6 @@ var activity = [
     },
     "<br><br>Consider the following code snippet:",
     "<pre>while True:<br>    speed_deg_per_second = int(input('Speed (0 to 900 dps): '))<br>    if speed_deg_per_second == 0:<br>        ___________ # what statement goes here</pre>",
-
     "<b>3.</b> Assuming the goal is to exit the indefinite loop when a 0 value is enterred, what statement should go into the blank? <br>",
 
     {
