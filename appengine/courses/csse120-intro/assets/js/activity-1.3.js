@@ -52,7 +52,7 @@ var activity = [
             [ "A chunk of code that has a name", true, "Correct!" ] ]
     },
 
-    "<br><br><b>6.</b> Consider the following code: <blockquote><code>print(45, 20 * 10)<br>print(1, 2, 3, 4)</code></blockquote>How many times is the <code>print</code> function CALLED?",
+    "<br><br><b>6.</b> Consider the following code snippet: <blockquote><code>print(45, 20 * 10)<br>print(1, 2, 3, 4)</code></blockquote>How many times is the <code>print</code> function CALLED?",
     {
         questionType : "multiple choice",
         choices : [ [ "One time", false, "Although <em>print</em> has a single DEFINITION, it is CALLED two times here. Please try again." ],
