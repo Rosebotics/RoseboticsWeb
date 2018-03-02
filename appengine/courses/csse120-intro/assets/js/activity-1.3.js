@@ -52,7 +52,7 @@ var activity = [
             [ "A chunk of code that has a name", true, "Correct!" ] ]
     },
 
-    "<br><br><b>6.</b> Consider the following code snippet: <blockquote><code>print(45, 20 * 10)<br>print(1, 2, 3, 4)</code></blockquote>How many times is the <code>print</code> function CALLED?",
+    "<br><br><b>6.</b> Consider the following code snippet: <blockquote><code>print(45, 20 * 10)<br>print(1, 2, 3, 4)</code></blockquote>How many times is the <code>print</code> function CALLED?<br>",
     {
         questionType : "multiple choice",
         choices : [ [ "One time", false, "Although <em>print</em> has a single DEFINITION, it is CALLED two times here. Please try again." ],
@@ -60,7 +60,7 @@ var activity = [
             [ "Six times", false, "Although these two statements print more than two numbers, the <em>print</em> function is CALLED here only two times. Please try again." ] ]
     },
 
-    "<br><br><b>7.</b> Continuing to refer to the two <em>print</em> statements above, how many LINES are printed when the code runs?",
+    "<br><br><b>7.</b> Continuing to refer to the two <em>print</em> statements above, how many LINES are printed when the code runs?<br>",
     {
         questionType : "multiple choice",
         choices : [ [ "One", false, "There are TWO <em>print</em> statements in the above, and each displays all its output on a single line. Please try again." ],
@@ -68,7 +68,7 @@ var activity = [
             [ "More than two", false, "In the form that you will use most often, each <em>print</em> displays all its output on a single line.  Please try again." ] ]
     },
 
-    "<br><br><b>8.</b> Continuing to refer to the two <em>print</em> statements above, how many NUMBERS are printed when the code runs?",
+    "<br><br><b>8.</b> Continuing to refer to the two <em>print</em> statements above, how many NUMBERS are printed when the code runs?<br>",
     {
         questionType : "multiple choice",
         choices : [ [ "Two", false, "Please try again." ],
@@ -76,7 +76,7 @@ var activity = [
             [ "Seven", false, "The expression <code>20 * 10</code> is <em>evaluated</em> and results in a SINGLE number. Please try again." ] ]
     },
 
-    "<br><br><b>9.</b> Which of the following would print a single <em>blank</em> line?",
+    "<br><br><b>9.</b> Which of the following would print a single <em>blank</em> line?<br>",
     {
         questionType : "multiple choice",
         choices : [ [ "<code>print</code>", false, "To CALL a function, and hence to make it run, you MUST have the parentheses, even if there is nothing needed inside the parentheses. Please try again." ],
